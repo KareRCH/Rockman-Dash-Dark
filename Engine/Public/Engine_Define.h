@@ -57,6 +57,14 @@
 
 
 
+// Assimp 라이브러리
+#include "assimp/Importer.hpp"
+#include "assimp/cimport.h"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
+
+
+
 // 공용 헤더
 #include "Engine_Typedef.h"
 #include "Engine_Macro.h"

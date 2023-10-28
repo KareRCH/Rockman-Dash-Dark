@@ -12,8 +12,10 @@ protected:
 	virtual ~CBase();
 
 public:
-	inline virtual void AddRef();
+	inline void AddRef();
 	inline _uint Get_RefCount();
+
+public:
 	inline virtual _uint Release();
 	inline virtual void Free();
 
@@ -22,7 +24,6 @@ private:
 };
 
 END_NAME
-
 
 
 CBase::CBase()
