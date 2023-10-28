@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="01. System">
+      <UniqueIdentifier>{d8b39b9d-45f9-42f2-ab8f-33663517fc0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\00. Base">
+      <UniqueIdentifier>{269dd157-0606-4296-888f-c6c192ed3a90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility">
+      <UniqueIdentifier>{1d75081d-d2e1-4e13-824b-c1c2a1b8fba5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component">
+      <UniqueIdentifier>{5c922ddd-0fa1-4c7f-9ed3-ba9917254dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\01. BaseClass">
+      <UniqueIdentifier>{233ad876-561a-4adf-a2f1-eb728e8a02d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Defines">
+      <UniqueIdentifier>{2932c9ad-35f0-4295-ae48-143c37059174}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Public\Base.h">
+      <Filter>01. System\00. Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Engine_Typedef.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Engine_Define.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Engine_Enum.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Engine_Function.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Engine_Macro.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Engine_Struct.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BaseClass\GameObject.h">
+      <Filter>02. Utility\01. BaseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\Component.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Private\Base.cpp">
+      <Filter>01. System\00. Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BaseClass\GameObject.cpp">
+      <Filter>02. Utility\01. BaseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\Component.cpp" />
+  </ItemGroup>
+</Project>
