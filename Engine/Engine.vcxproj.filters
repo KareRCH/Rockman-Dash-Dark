@@ -19,6 +19,12 @@
     <Filter Include="99. Defines">
       <UniqueIdentifier>{2932c9ad-35f0-4295-ae48-143c37059174}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. System\01. GraphicDev">
+      <UniqueIdentifier>{970d303a-a746-446e-a455-440e859508c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Exports">
+      <UniqueIdentifier>{5eef4694-6362-43f9-be11-daf839170cc8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -45,15 +51,36 @@
     <ClInclude Include="Public\BaseClass\GameObject.h">
       <Filter>02. Utility\01. BaseClass</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Component\Component.h" />
+    <ClInclude Include="Public\System\GraphicDev.h">
+      <Filter>01. System\01. GraphicDev</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\Component.h">
+      <Filter>02. Utility\02. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Engine_Const.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Export_Engine.h">
+      <Filter>98. Exports</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Private\Base.cpp">
+    <ClCompile Include="Public\Base.inl">
       <Filter>01. System\00. Base</Filter>
     </ClCompile>
     <ClCompile Include="Private\BaseClass\GameObject.cpp">
       <Filter>02. Utility\01. BaseClass</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Component\Component.cpp" />
+    <ClCompile Include="Private\System\GraphicDev.cpp">
+      <Filter>01. System\01. GraphicDev</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\Component.cpp">
+      <Filter>02. Utility\02. Component</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Public\Export_Engine.inl">
+      <Filter>98. Exports</Filter>
+    </None>
   </ItemGroup>
 </Project>

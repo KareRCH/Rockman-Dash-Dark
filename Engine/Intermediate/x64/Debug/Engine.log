@@ -1,0 +1,23 @@
+﻿  unity_ECMO3G0MHMOSY243.cpp
+     Bin\x64\Debug\Engine.lib 라이브러리 및 Bin\x64\Debug\Engine.exp 개체를 생성하고 있습니다.
+  Engine.vcxproj -> D:\VisualStudio Projects\Rockman-Dash-Dark\Engine\Bin\x64\Debug\Engine.dll
+  헤더가 읽기모드로 복사되었습니다. 바이너리 파일이 복사되었습니다.
+  .\Public\Base.h
+  .\Public\Base.inl
+  .\Public\Engine_Const.h
+  .\Public\Engine_Define.h
+  .\Public\Engine_Enum.h
+  .\Public\Engine_Function.h
+  .\Public\Engine_Macro.h
+  .\Public\Engine_Struct.h
+  .\Public\Engine_Typedef.h
+  .\Public\Export_Engine.h
+  .\Public\Export_Engine.inl
+  .\Public\BaseClass\GameObject.h
+  .\Public\Component\Component.h
+  .\Public\System\GraphicDev.h
+  14개 파일이 복사되었습니다.
+  Bin\x64\Debug\Engine.lib
+  1개 파일이 복사되었습니다.
+  Bin\x64\Debug\Engine.dll
+  1개 파일이 복사되었습니다.
