@@ -9,6 +9,7 @@ class ENGINE_DLL CSceneComponent abstract : public CPrimitiveComponent
 	DERIVED_CLASS(CPrimitiveComponent, CSceneComponent)
 protected:
 	explicit CSceneComponent();
+	explicit CSceneComponent(ID3D11Device* pGraphicDev);
 	explicit CSceneComponent(const CSceneComponent& rhs);
 	virtual ~CSceneComponent();
 

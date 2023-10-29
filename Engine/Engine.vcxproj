@@ -101,7 +101,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -128,7 +128,7 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -151,7 +151,7 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -178,7 +178,7 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -194,6 +194,7 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
     <ClInclude Include="Public\Base.h" />
     <ClInclude Include="Public\BaseClass\GameObject.h" />
     <ClInclude Include="Public\BaseClass\GameObject_Enum.h" />
+    <ClInclude Include="Public\Component\ColliderComponent.h" />
     <ClInclude Include="Public\Component\Component_Enum.h" />
     <ClInclude Include="Public\Component\PrimitiveComponent.h" />
     <ClInclude Include="Public\Component\SceneComponent.h" />
@@ -206,12 +207,48 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
     <ClInclude Include="Public\Engine_Struct.h" />
     <ClInclude Include="Public\Engine_Typedef.h" />
     <ClInclude Include="Public\Export_Engine.h" />
+    <ClInclude Include="Public\Physics\Collide.h" />
+    <ClInclude Include="Public\Physics\CollisionPrimitive.h" />
+    <ClInclude Include="Public\Physics\Contact.h" />
+    <ClInclude Include="Public\Physics\ContactGen_Joint.h" />
+    <ClInclude Include="Public\Physics\ForceGenerator.h" />
+    <ClInclude Include="Public\Physics\PhysicsCore.h" />
+    <ClInclude Include="Public\Physics\PhysicsMgr.h" />
+    <ClInclude Include="Public\Physics\PhysicsPrecision.h" />
+    <ClInclude Include="Public\Physics\PhysicsWorld3D.h" />
+    <ClInclude Include="Public\Physics\RigidBody.h" />
+    <ClInclude Include="Public\System\FontMgr.h" />
+    <ClInclude Include="Public\System\Frame.h" />
+    <ClInclude Include="Public\System\FrameMgr.h" />
     <ClInclude Include="Public\System\GraphicDev.h" />
+    <ClInclude Include="Public\System\InputDev.h" />
+    <ClInclude Include="Public\System\MyFont.h" />
+    <ClInclude Include="Public\System\SoundMgr.h" />
+    <ClInclude Include="Public\System\Timer.h" />
+    <ClInclude Include="Public\System\TimerMgr.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Component\ColliderComponent.cpp" />
     <ClCompile Include="Private\Component\SceneComponent.cpp" />
     <ClCompile Include="Private\Component\TransformComponent.cpp" />
+    <ClCompile Include="Private\Physics\Collide.cpp" />
+    <ClCompile Include="Private\Physics\CollisionPrimitive.cpp" />
+    <ClCompile Include="Private\Physics\Contact.cpp" />
+    <ClCompile Include="Private\Physics\ContactGen_Joint.cpp" />
+    <ClCompile Include="Private\Physics\ForceGenerator.cpp" />
+    <ClCompile Include="Private\Physics\PhysicsCore.cpp" />
+    <ClCompile Include="Private\Physics\PhysicsMgr.cpp" />
+    <ClCompile Include="Private\Physics\PhysicsWorld3D.cpp" />
+    <ClCompile Include="Private\Physics\RigidBody.cpp" />
+    <ClCompile Include="Private\System\FontMgr.cpp" />
+    <ClCompile Include="Private\System\Frame.cpp" />
+    <ClCompile Include="Private\System\FrameMgr.cpp" />
     <ClCompile Include="Private\System\GraphicDev.cpp" />
+    <ClCompile Include="Private\System\InputDev.cpp" />
+    <ClCompile Include="Private\System\MyFont.cpp" />
+    <ClCompile Include="Private\System\SoundMgr.cpp" />
+    <ClCompile Include="Private\System\Timer.cpp" />
+    <ClCompile Include="Private\System\TimerMgr.cpp" />
     <ClCompile Include="Public\Base.inl" />
     <ClCompile Include="Private\BaseClass\GameObject.cpp" />
     <ClCompile Include="Private\Component\PrimitiveComponent.cpp" />

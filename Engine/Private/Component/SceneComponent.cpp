@@ -7,6 +7,11 @@ CSceneComponent::CSceneComponent()
 	
 }
 
+CSceneComponent::CSceneComponent(ID3D11Device* pGraphicDev)
+	: Base(pGraphicDev)
+{
+}
+
 CSceneComponent::CSceneComponent(const CSceneComponent& rhs)
 	: Base(rhs)
 {

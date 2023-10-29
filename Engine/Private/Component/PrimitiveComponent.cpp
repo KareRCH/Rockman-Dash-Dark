@@ -4,6 +4,10 @@ CPrimitiveComponent::CPrimitiveComponent()
 {
 }
 
+CPrimitiveComponent::CPrimitiveComponent(ID3D11Device* pGraphicDev)
+{
+}
+
 CPrimitiveComponent::CPrimitiveComponent(const CPrimitiveComponent& rhs)
 {
 }

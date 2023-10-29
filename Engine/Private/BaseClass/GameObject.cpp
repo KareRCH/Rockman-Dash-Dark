@@ -96,6 +96,8 @@ CPrimitiveComponent* CGameObject::Get_Component(const wstring& strName)
 	{
 		return (*iter);
 	}
+
+	return nullptr;
 }
 
 

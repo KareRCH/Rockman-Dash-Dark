@@ -16,6 +16,7 @@ class ENGINE_DLL CPrimitiveComponent abstract : public CBase
 	DERIVED_CLASS(CBase, CPrimitiveComponent)
 protected:
 	explicit CPrimitiveComponent();
+	explicit CPrimitiveComponent(ID3D11Device* pGraphicDev);
 	explicit CPrimitiveComponent(const CPrimitiveComponent& rhs);
 	virtual ~CPrimitiveComponent();
 
@@ -28,8 +29,11 @@ public:
 protected:
 	virtual void	Free();
 
+protected:
+	ID3D11Device*		m_pGraphicDev = nullptr;	// 렌더 장치
+
 public:
-	GETSET_1(wstring, m_strName, Name, GET_C_REF, SET_C_REF)
+	GETSET_1(wstring, m_strName, Name, GET_C_REF)
 
 private:	// 기본 속성
 	wstring			m_strName;									// 컴포넌트 이름
