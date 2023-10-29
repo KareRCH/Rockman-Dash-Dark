@@ -104,7 +104,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
             //    // 틱 함수
-                pMainApp->Update();
+                pMainApp->Update(0.016f);
                 pMainApp->LateUpdate();
                 pMainApp->Render();
             //}
@@ -117,6 +117,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     FreeConsole();
 #endif
 #endif // _DEBUG
+
+    Safe_Release(pMainApp);
 
     return (int) msg.wParam;
 }
@@ -171,6 +173,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
        CW_USEDEFAULT, 0,
        rc.right - rc.left,
        rc.bottom - rc.top, nullptr, nullptr, hInstance, nullptr);
+
+   g_hWnd = hWnd;
 
    /*DEVMODE devmode = {};
     EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &devmode);

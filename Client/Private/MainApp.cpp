@@ -39,7 +39,7 @@ HRESULT CMainApp::Initialize()
 	return S_OK;
 }
 
-_int CMainApp::Update()
+_int CMainApp::Update(const _float& fTimeDelta)
 {
 	return _int();
 }

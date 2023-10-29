@@ -35,6 +35,7 @@
 # 컴파일 데이터 폴더
 .vs/
 Bin/
+Intermediate/
 ipch/
 Reference/Library/Engine/
 

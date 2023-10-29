@@ -193,7 +193,11 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
   <ItemGroup>
     <ClInclude Include="Public\Base.h" />
     <ClInclude Include="Public\BaseClass\GameObject.h" />
-    <ClInclude Include="Public\Component\Component.h" />
+    <ClInclude Include="Public\BaseClass\GameObject_Enum.h" />
+    <ClInclude Include="Public\Component\Component_Enum.h" />
+    <ClInclude Include="Public\Component\PrimitiveComponent.h" />
+    <ClInclude Include="Public\Component\SceneComponent.h" />
+    <ClInclude Include="Public\Component\TransformComponent.h" />
     <ClInclude Include="Public\Engine_Const.h" />
     <ClInclude Include="Public\Engine_Define.h" />
     <ClInclude Include="Public\Engine_Enum.h" />
@@ -205,10 +209,12 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
     <ClInclude Include="Public\System\GraphicDev.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Component\SceneComponent.cpp" />
+    <ClCompile Include="Private\Component\TransformComponent.cpp" />
     <ClCompile Include="Private\System\GraphicDev.cpp" />
     <ClCompile Include="Public\Base.inl" />
     <ClCompile Include="Private\BaseClass\GameObject.cpp" />
-    <ClCompile Include="Private\Component\Component.cpp" />
+    <ClCompile Include="Private\Component\PrimitiveComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Public\Export_Engine.inl" />

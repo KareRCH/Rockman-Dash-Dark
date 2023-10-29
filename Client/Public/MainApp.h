@@ -20,7 +20,7 @@ public:
 
 public:
 	HRESULT Initialize();
-	_int	Update();
+	_int	Update(const _float& fTimeDelta);
 	void	LateUpdate();
 	void	Render();
 

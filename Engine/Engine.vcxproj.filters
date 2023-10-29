@@ -25,6 +25,18 @@
     <Filter Include="98. Exports">
       <UniqueIdentifier>{5eef4694-6362-43f9-be11-daf839170cc8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent">
+      <UniqueIdentifier>{4082b558-e4bf-413b-a09d-3bd2440a1a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\01. TransformComponent">
+      <UniqueIdentifier>{7c5f0944-9886-478a-a31f-50cb5a9ae843}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\01. BaseClass\01. GameObject">
+      <UniqueIdentifier>{2d0abd39-7ef5-4611-9f3f-a98f3559676f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\01. BaseClass\02. CCollisionObject">
+      <UniqueIdentifier>{17043d84-2fed-4832-b786-da69c1df5945}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -48,13 +60,10 @@
     <ClInclude Include="Public\Engine_Struct.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
-    <ClInclude Include="Public\BaseClass\GameObject.h">
-      <Filter>02. Utility\01. BaseClass</Filter>
-    </ClInclude>
     <ClInclude Include="Public\System\GraphicDev.h">
       <Filter>01. System\01. GraphicDev</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Component\Component.h">
+    <ClInclude Include="Public\Component\PrimitiveComponent.h">
       <Filter>02. Utility\02. Component</Filter>
     </ClInclude>
     <ClInclude Include="Public\Engine_Const.h">
@@ -63,19 +72,40 @@
     <ClInclude Include="Public\Export_Engine.h">
       <Filter>98. Exports</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\SceneComponent.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\TransformComponent.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\01. TransformComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BaseClass\GameObject.h">
+      <Filter>02. Utility\01. BaseClass\01. GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BaseClass\GameObject_Enum.h">
+      <Filter>02. Utility\01. BaseClass\01. GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\Component_Enum.h">
+      <Filter>02. Utility\02. Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
       <Filter>01. System\00. Base</Filter>
     </ClCompile>
-    <ClCompile Include="Private\BaseClass\GameObject.cpp">
-      <Filter>02. Utility\01. BaseClass</Filter>
-    </ClCompile>
     <ClCompile Include="Private\System\GraphicDev.cpp">
       <Filter>01. System\01. GraphicDev</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Component\Component.cpp">
+    <ClCompile Include="Private\Component\PrimitiveComponent.cpp">
       <Filter>02. Utility\02. Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\SceneComponent.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\TransformComponent.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\01. TransformComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BaseClass\GameObject.cpp">
+      <Filter>02. Utility\01. BaseClass\01. GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

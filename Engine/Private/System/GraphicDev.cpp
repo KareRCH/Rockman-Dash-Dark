@@ -96,7 +96,7 @@ HRESULT CGraphicDev::Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVs
     // 백버퍼의 새로고침 비율 설정
     if (m_bVsync_Enabled)
     {
-        swapChainDesc.BufferDesc.RefreshRate.Numerator = iNumerator;            
+        swapChainDesc.BufferDesc.RefreshRate.Numerator = iNumerator;
         swapChainDesc.BufferDesc.RefreshRate.Denominator = iDenominator;
     }
     else
@@ -133,6 +133,8 @@ HRESULT CGraphicDev::Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVs
 
     // 백버퍼 포인터를 얻어온다.
     ID3D11Texture2D* backBufferPtr = nullptr;
+    FAILED_CHECK_RETURN(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr), E_FAIL);
+
     FAILED_CHECK_RETURN(m_pDevice->CreateRenderTargetView(backBufferPtr, NULL, &m_pRenderTargetView), E_FAIL);
 
     Safe_Release(backBufferPtr);
@@ -174,13 +176,13 @@ HRESULT CGraphicDev::Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVs
     // 픽셀 정면 스텐실 설정
     depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
     depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-    depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
     depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
     // 픽셀 후면 스텐실 설정
     depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-    depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+    depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
     depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
     // 깊이 스텐실 상태를 생성
