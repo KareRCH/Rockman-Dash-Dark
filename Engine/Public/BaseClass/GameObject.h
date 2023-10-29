@@ -54,7 +54,7 @@ public:
 public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
 	void OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue);
 	void OnStateLateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue);
-	void OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue);
+	void OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue); 
 
 private:
 	HRESULT Initialize_Component();
