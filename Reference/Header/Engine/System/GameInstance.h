@@ -14,6 +14,11 @@ class CFontMgr;
 class CFrameMgr;
 class CTimerMgr;
 class CManagement;
+enum class EMANAGE_SCENE : _uint;
+class CBlackBoardMgr;
+class CTextureMgr;
+class CProtoMgr;
+class CRenderMgr;
 
 /// <summary>
 /// 클라이언트에서 엔진의 기능을 사용하기 위해 반드시 거쳐야하는 객체
@@ -38,6 +43,8 @@ public:		// 그래픽 디바이스
 									_float fScreenDepth, _float fScreenNear);
 	void	Render_Begin(_float fRed, _float fGreen, _float fBlue, _float fAlpha);
 	void	Render_End();
+	ID3D11Device* Get_GraphicDev();
+	
 
 
 public:		// 인풋 디바이스
@@ -66,8 +73,17 @@ public:		// 프레임 매니저
 public:		// 타이머 매니저
 	HRESULT Initialize_TimerMgr();
 
-public:
-	HRESULT Initialize_Management();
+public:		// 매니지먼트
+	HRESULT Initialize_Management(const EMANAGE_SCENE eManageSceneType);
+
+public:		// 블랙보드 매니저
+	HRESULT Initialize_BlackBoardMgr();
+
+public:		// 텍스처 매니저
+	HRESULT Initialize_TextureMgr(ID3D11Device* const pGraphicDev);
+
+public:		// 프로토 매니저
+	HRESULT Initialize_ProtoMgr();
 
 private:
 	CGraphicDev*	m_pGraphicDev = nullptr;
@@ -78,6 +94,10 @@ private:
 	CFontMgr*		m_pFontMgr = nullptr;
 	CFrameMgr*		m_pFrameMgr = nullptr;
 	CTimerMgr*		m_pTimerMgr = nullptr;
+	CManagement*	m_pManagement = nullptr;
+	CBlackBoardMgr* m_pBlackBoardMgr = nullptr;
+	CTextureMgr*	m_pTextureMgr = nullptr;
+	CProtoMgr*		m_pProtoMgr = nullptr;
 };
 
 inline CGameInstance* GameInstance()

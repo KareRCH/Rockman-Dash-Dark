@@ -30,30 +30,33 @@ CMainApp* CMainApp::Create()
 HRESULT CMainApp::Initialize()
 {
 	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize_GraphicDev(g_iWindowSizeX, g_iWindowSizeY, false, g_hWnd, false, 1.f, 0.01f), E_FAIL);
-	/*m_pDeviceClass = Engine::CGraphicDev::GetInstance();
-	m_pDeviceClass->AddRef();
+	NULL_CHECK_RETURN(m_pGameInstance = Engine::GameInstance(), E_FAIL);
 
-	m_pGraphicDev = m_pDeviceClass->Get_Device();
-	m_pGraphicDev->AddRef();*/
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_GraphicDev(g_iWindowSizeX, g_iWindowSizeY, false, g_hWnd, false, 1.f, 0.01f), E_FAIL);
+
+	m_pGraphicDev = m_pGameInstance->Get_GraphicDev();
+	Safe_AddRef(m_pGraphicDev);
 
 	return S_OK;
 }
 
 _int CMainApp::Update(const _float& fTimeDelta)
 {
-	return _int();
+	m_pGameInstance->Tick_InputDev();
+
+	return 0;
 }
 
 void CMainApp::LateUpdate()
 {
+
 }
 
 void CMainApp::Render()
 {
-	Engine::GameInstance()->Render_Begin(0.f, 0.f, 0.f, 1.f);
+	m_pGameInstance->Render_Begin(0.f, 0.f, 0.f, 1.f);
 
-	Engine::GameInstance()->Render_End();
+	m_pGameInstance->Render_End();
 }
 
 void CMainApp::Free()
@@ -62,5 +65,5 @@ void CMainApp::Free()
 	Safe_Release(m_pGraphicDev);
 
 	// dll ½Ì±ÛÅæ Á¦°Å
-	Engine::GameInstance()->DestroyInstance();
+	Safe_Release(m_pGameInstance);
 }

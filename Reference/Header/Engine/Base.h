@@ -13,9 +13,9 @@ protected:
 public:
 	inline _uint AddRef();
 	inline _uint Get_RefCount();
-
-public:
 	inline virtual _uint Release();
+
+protected:
 	inline virtual void Free() PURE;
 
 private:

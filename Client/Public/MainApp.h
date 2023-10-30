@@ -3,6 +3,12 @@
 #include "Base.h"
 #include "Client_Define.h"
 
+BEGIN(Engine)
+
+class CGameInstance;
+
+END
+
 
 BEGIN(Client)
 
@@ -27,7 +33,8 @@ private:
 
 
 private:		// 접근을 최소화하는 함수, 변수
-	ID3D11Device*		 m_pGraphicDev = nullptr;
+	CGameInstance*			m_pGameInstance = nullptr;
+	ID3D11Device*			m_pGraphicDev = nullptr;
 };
 
 END
