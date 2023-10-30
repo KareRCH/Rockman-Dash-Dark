@@ -2,7 +2,7 @@
 
 #include "Engine_Define.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 enum class ECOMP_UPDATE_TYPE : _uint
 {
@@ -11,4 +11,4 @@ enum class ECOMP_UPDATE_TYPE : _uint
 };
 using ECOMP_UPDATE_T = ECOMP_UPDATE_TYPE;
 
-END_NAME
+END

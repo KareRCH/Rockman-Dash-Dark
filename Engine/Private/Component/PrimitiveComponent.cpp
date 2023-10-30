@@ -12,10 +12,6 @@ CPrimitiveComponent::CPrimitiveComponent(const CPrimitiveComponent& rhs)
 {
 }
 
-CPrimitiveComponent::~CPrimitiveComponent()
-{
-}
-
 void CPrimitiveComponent::Free()
 {
 	

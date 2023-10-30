@@ -9,10 +9,10 @@ namespace Engine
 #define			MSG_BOX(_message)			MessageBox(NULL, TEXT(_message), L"System Message", MB_OK)
 #endif
 
-#define			BEGIN_NAME(NAMESPACE)		namespace NAMESPACE {
-#define			END_NAME					}
+#define			BEGIN(NAMESPACE)			namespace NAMESPACE {
+#define			END							}
 
-#define			USING(NAMESPACE)	using namespace NAMESPACE;
+#define			USING(NAMESPACE)			using namespace NAMESPACE;
 
 #define			SUPER __super
 
@@ -87,21 +87,18 @@ namespace Engine
 		static CLASSNAME*	m_pInstance;				\
 		public:											\
 		static CLASSNAME*	GetInstance( void );		\
-		static void DestroyInstance( void );			
+		static _uint DestroyInstance( void );			
 
 #define IMPLEMENT_SINGLETON(CLASSNAME)					\
-		CLASSNAME*	CLASSNAME::m_pInstance = NULL;		\
+		CLASSNAME*	CLASSNAME::m_pInstance = nullptr;	\
 		CLASSNAME*	CLASSNAME::GetInstance( void )	{	\
-			if(NULL == m_pInstance) {					\
+			if(nullptr == m_pInstance) {				\
 				m_pInstance = new CLASSNAME;			\
 			}											\
 			return m_pInstance;							\
 		}												\
-		void CLASSNAME::DestroyInstance( void ) {		\
-			if(NULL != m_pInstance)	{					\
-				delete m_pInstance;						\
-				m_pInstance = NULL;						\
-			}											\
+		_uint CLASSNAME::DestroyInstance( void ) {		\
+			return Safe_Release(m_pInstance);			\
 		}
 
 #define			THIS_CLASS(CLASSNAME)		using ThisClass = CLASSNAME;

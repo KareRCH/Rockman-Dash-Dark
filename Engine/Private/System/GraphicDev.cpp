@@ -1,12 +1,6 @@
 #include "System/GraphicDev.h"
 
-IMPLEMENT_SINGLETON(CGraphicDev);
-
 CGraphicDev::CGraphicDev()
-{
-}
-
-CGraphicDev::~CGraphicDev()
 {
 }
 
@@ -278,6 +272,23 @@ HRESULT CGraphicDev::Render_End()
     }
 
 	return S_OK;
+}
+
+CGraphicDev* CGraphicDev::Create(_int iScreenWidth, _int iScreenHeight, 
+    _bool bVsync, HWND hWnd, _bool bFullScreen, _float fScreenDepth, _float fScreenNear)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize(iScreenWidth, iScreenHeight, bVsync, hWnd, bFullScreen, fScreenDepth, fScreenNear)))
+    {
+        Engine::Safe_Release(pInstance);
+
+        MSG_BOX("CGraphicDev Create Failed");
+
+        return nullptr;
+    }
+
+    return pInstance;
 }
 
 void CGraphicDev::Free()

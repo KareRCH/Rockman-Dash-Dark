@@ -1,14 +1,36 @@
 #include "System/TimerMgr.h"
 
-IMPLEMENT_SINGLETON(CTimerMgr)
-
 CTimerMgr::CTimerMgr()
 {
 }
 
-CTimerMgr::~CTimerMgr()
+HRESULT CTimerMgr::Initialize()
 {
-	Free();
+	return S_OK;
+}
+
+CTimerMgr* CTimerMgr::Create()
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		MSG_BOX("PhysicsMgr Create Failed");
+		Engine::Safe_Release(pInstance);
+
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+void CTimerMgr::Free()
+{
+	for (auto iter = m_mapTimers.begin(); iter != m_mapTimers.end(); ++iter)
+	{
+		Safe_Release((*iter).second);
+	}
+	m_mapTimers.clear();
 }
 
 _float CTimerMgr::Get_TimeDelta(const _tchar* pTimerTag)
@@ -27,7 +49,7 @@ void CTimerMgr::Set_TimeDelta(const _tchar* pTimerTag)
 	pTimer->SetUp_TimeDelta();
 }
 
-HRESULT CTimerMgr::Ready_Timer(const _tchar* pTimerTag)
+HRESULT CTimerMgr::Create_Timer(const _tchar* pTimerTag)
 {
 	CTimer* pTimer = Find_Timer(pTimerTag);
 
@@ -44,7 +66,7 @@ HRESULT CTimerMgr::Ready_Timer(const _tchar* pTimerTag)
 
 CTimer* CTimerMgr::Find_Timer(const _tchar* pTimerTag) const
 {
-	auto	iter = find_if(m_mapTimers.begin(), m_mapTimers.end(), CTag_Finder(pTimerTag));
+	auto	iter = m_mapTimers.find(pTimerTag);
 
 	if (iter == m_mapTimers.end())
 		return nullptr;
@@ -52,8 +74,4 @@ CTimer* CTimerMgr::Find_Timer(const _tchar* pTimerTag) const
 	return iter->second;
 }
 
-void CTimerMgr::Free()
-{
-	for_each(m_mapTimers.begin(), m_mapTimers.end(), CDeleteMap());
-	m_mapTimers.clear();
-}
+

@@ -4,30 +4,38 @@
 #include "System/Timer.h"
 
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
-class ENGINE_DLL CTimerMgr : public CBase
+/// <summary>
+/// 타이머 관리 클래스
+/// </summary>
+class CTimerMgr final : public CBase
 {
-	DECLARE_SINGLETON(CTimerMgr)
+	DERIVED_CLASS(CBase, CTimerMgr)
+
 private:
 	explicit CTimerMgr();
-	virtual ~CTimerMgr();
+	virtual ~CTimerMgr() = default;
 
 public:
+	HRESULT				Initialize();
+
+public:
+	static CTimerMgr*	Create();
+
+private:
+	virtual void		Free();
+
+public:
+	HRESULT			Create_Timer(const _tchar* pTimerTag);
 	_float			Get_TimeDelta(const _tchar* pTimerTag);
 	void			Set_TimeDelta(const _tchar* pTimerTag);
 
-public:
-	HRESULT			Ready_Timer(const _tchar* pTimerTag);
+private:
+	CTimer*			Find_Timer(const _tchar* pTimerTag) const;
 
 private:
-	CTimer* Find_Timer(const _tchar* pTimerTag) const;
-
-private:
-	map<const _tchar*, CTimer*>		m_mapTimers;
-
-public:
-	virtual void	Free();
+	map<wstring, CTimer*>		m_mapTimers;
 };
 
-END_NAME
+END

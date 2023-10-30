@@ -2,14 +2,14 @@
 
 #include "Base.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
-class ENGINE_DLL CGraphicDev : public CBase
+class CGraphicDev : public CBase
 {
-	DERIVED_CLASS_SINGLETON(CBase, CGraphicDev)
+	DERIVED_CLASS(CBase, CGraphicDev)
 public:
 	explicit CGraphicDev();
-	virtual ~CGraphicDev();
+	virtual ~CGraphicDev() = default;
 
 public:
 	HRESULT		Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
@@ -18,6 +18,10 @@ public:
 	HRESULT		Render_End();
 
 public:
+	static CGraphicDev* Create(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
+							_float fScreenDepth, _float fScreenNear);
+
+private:
 	virtual void Free();
 
 public:
@@ -43,4 +47,4 @@ private:
 	XMMATRIX m_matOrtho;
 };
 
-END_NAME
+END

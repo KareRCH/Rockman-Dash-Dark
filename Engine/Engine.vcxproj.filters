@@ -94,6 +94,15 @@
     <Filter Include="01. System\06. Frame">
       <UniqueIdentifier>{4834d76a-cdf2-4ee1-85fc-b2a233fcf249}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\01. BaseClass\03. Scene">
+      <UniqueIdentifier>{333f689f-6fb5-4a40-b44c-9fd2402670c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\01. BaseClass\04. Layer">
+      <UniqueIdentifier>{33d3a709-0023-47bf-a81f-479214a249f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\03. Manager\00. Management">
+      <UniqueIdentifier>{7cbcff4a-8bed-4d2f-b78e-f1a7368cb647}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -126,9 +135,6 @@
     <ClInclude Include="Public\Engine_Const.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Export_Engine.h">
-      <Filter>98. Exports</Filter>
-    </ClInclude>
     <ClInclude Include="Public\Component\SceneComponent.h">
       <Filter>02. Utility\02. Component\01. SceneComponent</Filter>
     </ClInclude>
@@ -144,7 +150,7 @@
     <ClInclude Include="Public\Component\Component_Enum.h">
       <Filter>02. Utility\02. Component</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Physics\PhysicsMgr.h">
+    <ClInclude Include="Public\System\PhysicsMgr.h">
       <Filter>02. Utility\03. Manager\01. PhysicsMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\Physics\CollisionPrimitive.h">
@@ -201,6 +207,42 @@
     <ClInclude Include="Public\System\MyFont.h">
       <Filter>01. System\05. Font</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\GameInstance.h">
+      <Filter>02. Utility\03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BaseClass\BlackBoard.h">
+      <Filter>02. Utility\03. Manager\06. BlackBoardMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\BlackBoardMgr.h">
+      <Filter>02. Utility\03. Manager\06. BlackBoardMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\BlackBoardPtr.h">
+      <Filter>02. Utility\03. Manager\06. BlackBoardMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\KeyMgr.h">
+      <Filter>02. Utility\03. Manager\05. KeyMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\TextureMgr.h">
+      <Filter>02. Utility\03. Manager\04. TextureMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BaseClass\Layer.h">
+      <Filter>02. Utility\01. BaseClass\04. Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BaseClass\Scene.h">
+      <Filter>02. Utility\01. BaseClass\03. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\ProtoMgr.h">
+      <Filter>02. Utility\03. Manager\03. ProtoMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\Management.h">
+      <Filter>02. Utility\03. Manager\00. Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\MultiStateTexture.h">
+      <Filter>02. Utility\03. Manager\04. TextureMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\Texture.h">
+      <Filter>02. Utility\03. Manager\04. TextureMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -221,7 +263,7 @@
     <ClCompile Include="Private\BaseClass\GameObject.cpp">
       <Filter>02. Utility\01. BaseClass\01. GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Physics\PhysicsMgr.cpp">
+    <ClCompile Include="Private\System\PhysicsMgr.cpp">
       <Filter>02. Utility\03. Manager\01. PhysicsMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\Physics\Collide.cpp">
@@ -275,10 +317,41 @@
     <ClCompile Include="Private\System\MyFont.cpp">
       <Filter>01. System\05. Font</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Public\Export_Engine.inl">
-      <Filter>98. Exports</Filter>
-    </None>
+    <ClCompile Include="Private\System\GameInstance.cpp">
+      <Filter>02. Utility\03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BaseClass\BlackBoard.cpp">
+      <Filter>02. Utility\03. Manager\06. BlackBoardMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\BlackBoardMgr.cpp">
+      <Filter>02. Utility\03. Manager\06. BlackBoardMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\BlackBoardPtr.cpp">
+      <Filter>02. Utility\03. Manager\06. BlackBoardMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\KeyMgr.cpp">
+      <Filter>02. Utility\03. Manager\05. KeyMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\TextureMgr.cpp">
+      <Filter>02. Utility\03. Manager\04. TextureMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BaseClass\Scene.cpp">
+      <Filter>02. Utility\01. BaseClass\03. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BaseClass\Layer.cpp">
+      <Filter>02. Utility\01. BaseClass\04. Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\ProtoMgr.cpp">
+      <Filter>02. Utility\03. Manager\03. ProtoMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\Management.cpp">
+      <Filter>02. Utility\03. Manager\00. Management</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\MultiStateTexture.cpp">
+      <Filter>02. Utility\03. Manager\04. TextureMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\Texture.cpp">
+      <Filter>02. Utility\03. Manager\04. TextureMgr</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

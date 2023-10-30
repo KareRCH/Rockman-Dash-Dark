@@ -7,7 +7,7 @@
 #include "MainApp.h"
 #include <dwmapi.h>
 
-#include "Export_Engine.h"
+#include "Client_Define.h"
 
 
 #define MAX_LOADSTRING 100
@@ -76,6 +76,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     if (nullptr == pMainApp)
         return FALSE;
 
+    /*FAILED_CHECK_RETURN(Engine::Ready_Timer(L"Timer_Immediate"), FALSE);
+    FAILED_CHECK_RETURN(Engine::Ready_Timer(L"Timer_FPS"), FALSE);
+
+    FAILED_CHECK_RETURN(Engine::Ready_Frame(L"Frame", 60.f), FALSE);*/
+
     // 기본 메시지 루프입니다:
     while (true)
     {
@@ -118,7 +123,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 #endif
 #endif // _DEBUG
 
-    Safe_Release(pMainApp);
+    if (0 != Safe_Release(pMainApp))
+    {
+        MSG_BOX("메인 앱 누수");
+    }
 
     return (int) msg.wParam;
 }

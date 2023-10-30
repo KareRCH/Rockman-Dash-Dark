@@ -11,10 +11,6 @@ CGameObject::CGameObject(const CGameObject& rhs)
 {
 }
 
-CGameObject::~CGameObject()
-{
-}
-
 HRESULT CGameObject::Initialize()
 {
 	FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
@@ -22,7 +18,7 @@ HRESULT CGameObject::Initialize()
 	return S_OK;
 }
 
-_int CGameObject::Update(const _float& fTimeDelta)
+_int CGameObject::Tick(const _float& fTimeDelta)
 {
 	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::UPDATE)].begin();
 		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::UPDATE)].end(); ++iter)
@@ -33,7 +29,7 @@ _int CGameObject::Update(const _float& fTimeDelta)
 	return 0;
 }
 
-void CGameObject::LateUpdate()
+void CGameObject::LateTick()
 {
 	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::LATE)].begin(); 
 		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::LATE)].end(); ++iter)

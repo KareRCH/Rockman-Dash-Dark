@@ -4,7 +4,7 @@
 #include "BaseClass/GameObject_Enum.h"
 #include "Component/Component_Enum.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 class CGameObject;
 
@@ -18,7 +18,7 @@ protected:
 	explicit CPrimitiveComponent();
 	explicit CPrimitiveComponent(ID3D11Device* pGraphicDev);
 	explicit CPrimitiveComponent(const CPrimitiveComponent& rhs);
-	virtual ~CPrimitiveComponent();
+	virtual ~CPrimitiveComponent() = default;
 
 public:
 	virtual HRESULT Initialize() PURE;
@@ -26,18 +26,21 @@ public:
 	virtual void	LateUpdate() PURE;
 	virtual void	Render() PURE;
 
+public:
+	virtual CPrimitiveComponent*	Clone() PURE;
+
 protected:
-	virtual void	Free();
+	virtual void					Free();
 
 protected:
 	ID3D11Device*		m_pGraphicDev = nullptr;	// 렌더 장치
 
 public:
-	GETSET_1(wstring, m_strName, Name, GET_C_REF)
+	GETSET_1(wstring,	m_strName, Name, GET_C_REF)
 
 private:	// 기본 속성
-	wstring			m_strName;									// 컴포넌트 이름
-	_float			m_fPriority[Cast_EnumDef(EUPDATE_TYPE::SIZE)];	// 우선도
+	wstring				m_strName;										// 컴포넌트 이름
+	_float				m_fPriority[Cast_EnumDef(EUPDATE_TYPE::SIZE)];	// 우선도
 
 public:
 	// 외부에서는 포인터 변경 불가를 조건으로 주소를 얻음
@@ -116,6 +119,6 @@ inline void CPrimitiveComponent::Set_StateRender(const ECOMP_UPDATE_TYPE value)
 		m_fnStateRender_Updated(this, m_eStateRender);
 }
 
-END_NAME
+END
 
 

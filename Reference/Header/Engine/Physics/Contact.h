@@ -6,7 +6,7 @@
 #include "Physics/PhysicsPrecision.h"
 #include "Physics/RigidBody.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 
 /// <summary>
@@ -151,4 +151,4 @@ public:
 	virtual _uint Add_Contact(FContact* pContact, _uint iLimit) const PURE;
 };
 
-END_NAME
+END

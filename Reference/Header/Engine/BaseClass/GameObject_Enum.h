@@ -2,7 +2,7 @@
 
 #include "Engine_Define.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 enum class EUPDATE_TYPE : _uint
 {
@@ -19,4 +19,4 @@ enum class EGAMEOBJ_STATE : _uint
 };
 using EGOBJ_ST = EGAMEOBJ_STATE;
 
-END_NAME
+END

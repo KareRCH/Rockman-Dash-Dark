@@ -6,7 +6,7 @@
 #include "Physics/CollisionPrimitive.h"
 #include "Physics/Contact.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 using list_collide_test = list<pair<FCollisionPrimitive*, FContact>>;
 
@@ -63,4 +63,4 @@ private:
 	_bool						m_bIsPaused = false;
 };
 
-END_NAME
+END

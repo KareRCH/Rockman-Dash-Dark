@@ -3,10 +3,17 @@
 #include "Base.h"
 #include "Component/TransformComponent.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 class CPrimitiveComponent;
 
+enum class EGOBJECT_STATE : _uint
+{
+	DEAD		= EBIT_FLAG32_0,
+	PAUSE		= EBIT_FLAG32_1,
+	RENDER		= EBIT_FLAG32_2,
+};
+using EGOBJ_STATE = EGOBJECT_STATE;
 
 /// <summary>
 /// 씬에 추가되어 사용되는 좌표를 기본적으로 탑재하는 오브젝트 클래스
@@ -18,16 +25,23 @@ class ENGINE_DLL CGameObject abstract : public CBase
 protected:
 	explicit CGameObject();
 	explicit CGameObject(const CGameObject& rhs);
-	virtual ~CGameObject();
+	virtual ~CGameObject() = default;
 
 public:
 	virtual HRESULT Initialize();
-	virtual _int	Update(const _float& fTimeDelta);
-	virtual void	LateUpdate();
+	virtual _int	Tick(const _float& fTimeDelta);
+	virtual void	LateTick();
 	virtual void	Render();
 
 protected:
 	virtual void	Free();
+
+public:
+	_bool		IsDead() { return m_iStateFlag & Cast_EnumDef(EGOBJ_STATE::DEAD); }
+	void		Set_Dead() { m_iStateFlag |= Cast_EnumDef(EGOBJ_STATE::DEAD); }
+
+	GETSET_2(wstring, m_strName, Name, GET_C_REF, SET_C_REF)
+	_float		Get_Priority(_uint iIndex) { return m_fPriority[iIndex]; }
 
 private:	// 기본 속성
 	_uint_64					m_iID = 0ULL;			// 식별용 ID
@@ -36,6 +50,7 @@ private:	// 기본 속성
 	_uint						m_iStateFlag = 0U;		// 상태 플래그
 	
 	_float						m_fPriority[Cast_EnumDef(EUPDATE_T::SIZE)];	// 우선도
+	ID3D11Device*				m_pDevice = nullptr;
 
 public: // 각 오브젝트는 자식 오브젝트를 가질 수 있음
 	GETSET_2(CGameObject*, m_pOwner, Owner, GET_REF_C, SET__C)
@@ -43,7 +58,12 @@ public: // 각 오브젝트는 자식 오브젝트를 가질 수 있음
 private:
 	CGameObject* m_pOwner = nullptr;
 
-public:
+
+
+#pragma region 컴포넌트
+
+private:
+	HRESULT Initialize_Component();
 	void Add_Component(const wstring& strName, CPrimitiveComponent* pComponent);
 	CPrimitiveComponent* Get_Component(const _uint iIndex)
 	{
@@ -55,9 +75,6 @@ public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
 	void OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue);
 	void OnStateLateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue);
 	void OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue);
-
-private:
-	HRESULT Initialize_Component();
 
 private:	// 컴포넌트 속성
 	vector<CPrimitiveComponent*>			m_vecComponent;				// 컴포넌트 관리 컨테이너
@@ -82,6 +99,9 @@ public:		// 트랜스폼 컴포넌트에 대한 함수 정의
 
 private:	// 게임 오브젝트 기본 정의 컴포넌트
 	CTransformComponent*					m_pTransformComp = nullptr;
+
+#pragma endregion
+
 };
 
-END_NAME
+END

@@ -6,29 +6,32 @@
 #include "Component/ColliderComponent.h"
 
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 class CGameObject;
 
 /// <summary>
 /// 물리 세계를 관리하는 클래스
 /// </summary>
-class ENGINE_DLL CPhysicsMgr : public CBase
+class CPhysicsMgr final : public CBase
 {
-	DERIVED_CLASS_SINGLETON(CBase, CPhysicsMgr)
+	DERIVED_CLASS(CBase, CPhysicsMgr)
 
 private:
 	explicit CPhysicsMgr();
-	virtual ~CPhysicsMgr();
+	virtual ~CPhysicsMgr() = default;
 
 public:
-	virtual void	Free();
-
-public:
-	HRESULT			Ready_Physics(const _uint iMaxPhysicsWorld3D);
-	void			StartFrame_Physics();
+	HRESULT			Initialize(const _uint iMaxPhysicsWorld3D);
+	void			StartFrame();
 	// 물리 정확도를 위해 Precision의 실수 타입을 사용한다.
-	_int			Update_Physics(const Real& fTimeDelta);
+	_int			Tick(const Real& fTimeDelta);
+
+public:
+	static CPhysicsMgr* Create(const _uint iMaxPhysicsWorld3D);
+
+private:
+	virtual void	Free();
 
 public:
 	GETSET_1(vector<CPhysicsWorld3D*>, m_vecWorld3D, VecWorld3D, GET_PTR)
@@ -48,4 +51,4 @@ public:	// 물리세계에 충돌 테스트를 진행후 그 리스트를 돌려받기
 	list<pair<CGameObject*, FContact>> IntersectTests_Ray_GetGameObject(const _uint iWorldID, const _vec3 vPos, const _vec3 vNormal, _ulong iMask);
 };
 
-END_NAME
+END

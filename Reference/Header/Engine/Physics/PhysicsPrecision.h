@@ -3,7 +3,7 @@
 #include "Engine_Define.h"
 #include <float.h>
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 // 연산 정확도를 위해 정의된 헤더
 #if 0
@@ -35,4 +35,4 @@ typedef double Real;
 #define R_PI 3.14159265358979
 #endif
 
-END_NAME
+END

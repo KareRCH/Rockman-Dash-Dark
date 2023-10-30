@@ -1,16 +1,36 @@
 #include "System/FrameMgr.h"
 
-IMPLEMENT_SINGLETON(CFrameMgr)
-
-
 CFrameMgr::CFrameMgr()
 {
 }
 
-
-CFrameMgr::~CFrameMgr()
+HRESULT CFrameMgr::Initialize()
 {
-	Free();
+	return S_OK;
+}
+
+CFrameMgr* CFrameMgr::Create()
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		MSG_BOX("FrameMgr Create Failed");
+		Engine::Safe_Release(pInstance);
+
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+void CFrameMgr::Free()
+{
+	for (auto iter = m_mapFrame.begin(); iter != m_mapFrame.end(); ++iter)
+	{
+		Safe_Release((*iter).second);
+	}
+	m_mapFrame.clear();
 }
 
 _bool CFrameMgr::IsPermit_Call(const _tchar* pFrameTag, const _float& fTimeDelta)
@@ -21,7 +41,7 @@ _bool CFrameMgr::IsPermit_Call(const _tchar* pFrameTag, const _float& fTimeDelta
 	return pFrame->IsPermit_Call(fTimeDelta);
 }
 
-HRESULT CFrameMgr::Ready_Frame(const _tchar* pFrameTag, const _float& fCallLimit)
+HRESULT CFrameMgr::Create_Frame(const _tchar* pFrameTag, const _float& fCallLimit)
 {
 	CFrame* pFrame = Find_Frame(pFrameTag);
 
@@ -38,7 +58,7 @@ HRESULT CFrameMgr::Ready_Frame(const _tchar* pFrameTag, const _float& fCallLimit
 
 CFrame* CFrameMgr::Find_Frame(const _tchar* pFrameTag)
 {
-	auto	iter = find_if(m_mapFrame.begin(), m_mapFrame.end(), CTag_Finder(pFrameTag));
+	auto	iter = m_mapFrame.find(pFrameTag);
 
 	if (iter == m_mapFrame.end())
 		return nullptr;
@@ -55,7 +75,7 @@ void CFrameMgr::Set_FrameRate(const _tchar* pFrameTag, const _float& fFrameRate)
 	pFrame->Set_FrameRate(fFrameRate);
 }
 
-const _float& CFrameMgr::Get_FrameRate(const _tchar* pFrameTag)
+const _float CFrameMgr::Get_FrameRate(const _tchar* pFrameTag)
 {
 	CFrame* pFrame = Find_Frame(pFrameTag);
 	if (pFrame == nullptr)
@@ -64,8 +84,4 @@ const _float& CFrameMgr::Get_FrameRate(const _tchar* pFrameTag)
 	return pFrame->Get_FrameRate();
 }
 
-void CFrameMgr::Free()
-{
-	for_each(m_mapFrame.begin(), m_mapFrame.end(), CDeleteMap());
-	m_mapFrame.clear();
-}
+

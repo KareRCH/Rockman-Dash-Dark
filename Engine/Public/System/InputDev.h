@@ -2,18 +2,25 @@
 
 #include "Base.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
-class ENGINE_DLL CInputDev : public CBase
+class CInputDev : public CBase
 {
-	DERIVED_CLASS_SINGLETON(CBase, CInputDev)
+	DERIVED_CLASS(CBase, CInputDev)
 
 private:
-	explicit CInputDev(void);
-	virtual ~CInputDev(void);
+	explicit CInputDev();
+	virtual ~CInputDev() = default;
 
 public:
-	virtual void	Free(void);
+	HRESULT				Initialize(HINSTANCE hInst, HWND hWnd);
+	void				Tick(void);
+
+public:
+	static CInputDev*	Create(HINSTANCE hInst, HWND hWnd);
+
+private:
+	virtual void		Free(void);
 
 public:
 	_byte	Get_DIKeyState(_ubyte byKeyID)
@@ -31,10 +38,6 @@ public:
 		return (*(((_long*)&m_tMouseState) + eMouseState));
 	}
 
-public:
-	HRESULT Ready_InputDev(HINSTANCE hInst, HWND hWnd);
-	void	Update_InputDev(void);
-
 private:
 	LPDIRECTINPUT8			m_pInputSDK = nullptr;
 
@@ -49,4 +52,4 @@ private:
 
 };
 
-END_NAME
+END

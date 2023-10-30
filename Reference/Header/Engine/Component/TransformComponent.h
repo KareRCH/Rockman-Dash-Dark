@@ -2,7 +2,7 @@
 
 #include "Component/SceneComponent.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 /// <summary>
 /// 씬 컴포넌트로부터 상속받은 좌표계를 통해 추가적인
@@ -32,4 +32,4 @@ public:
 
 };
 
-END_NAME
+END

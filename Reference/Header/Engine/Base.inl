@@ -6,16 +6,6 @@ Engine::CBase::CBase()
 {
 }
 
-Engine::CBase::CBase(const CBase& rhs)
-{
-
-}
-
-Engine::CBase::~CBase()
-{
-
-}
-
 _uint Engine::CBase::AddRef()
 {
 	return ++m_iRefCount;

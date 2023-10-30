@@ -1,34 +1,19 @@
 #include "System/InputDev.h"
 
-IMPLEMENT_SINGLETON(CInputDev)
-
-Engine::CInputDev::CInputDev(void)
+Engine::CInputDev::CInputDev()
 	: m_byKeyState(), m_tMouseState()
 {
 
 }
 
-Engine::CInputDev::~CInputDev(void)
+HRESULT Engine::CInputDev::Initialize(HINSTANCE hInst, HWND hWnd)
 {
-	Free();
-}
-
-void Engine::CInputDev::Free(void)
-{
-	Safe_Release(m_pKeyBoard);
-	Safe_Release(m_pMouse);
-	Safe_Release(m_pInputSDK);
-}
-
-HRESULT Engine::CInputDev::Ready_InputDev(HINSTANCE hInst, HWND hWnd)
-{
-
 	// DInput 컴객체를 생성하는 함수
 	FAILED_CHECK_RETURN(DirectInput8Create(hInst,
-						DIRECTINPUT_VERSION,
-						IID_IDirectInput8,
-						(void**)&m_pInputSDK,
-						NULL), E_FAIL);
+		DIRECTINPUT_VERSION,
+		IID_IDirectInput8,
+		(void**)&m_pInputSDK,
+		NULL), E_FAIL);
 
 	// 키보드 객체 생성
 	FAILED_CHECK_RETURN(m_pInputSDK->CreateDevice(GUID_SysKeyboard, &m_pKeyBoard, nullptr), E_FAIL);
@@ -59,10 +44,34 @@ HRESULT Engine::CInputDev::Ready_InputDev(HINSTANCE hInst, HWND hWnd)
 	return S_OK;
 }
 
-void Engine::CInputDev::Update_InputDev(void)
+void Engine::CInputDev::Tick(void)
 {
 	m_pKeyBoard->GetDeviceState(256, m_byKeyState);
 	m_pMouse->GetDeviceState(sizeof(m_tMouseState), &m_tMouseState);
 }
+
+
+CInputDev* CInputDev::Create(HINSTANCE hInst, HWND hWnd)
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize(hInst, hWnd)))
+	{
+		MSG_BOX("InputDev Create Failed");
+		Engine::Safe_Release(pInstance);
+
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+void Engine::CInputDev::Free(void)
+{
+	Safe_Release(m_pKeyBoard);
+	Safe_Release(m_pMouse);
+	Safe_Release(m_pInputSDK);
+}
+
 
 

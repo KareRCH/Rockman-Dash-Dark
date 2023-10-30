@@ -1,8 +1,6 @@
-#include "Physics/PhysicsMgr.h"
+#include "System/PhysicsMgr.h"
 
 #include "BaseClass/GameObject.h"
-
-IMPLEMENT_SINGLETON(CPhysicsMgr)
 
 // 성희 추가 Ray에 사용하는 매크로
 #define CMP(x, y) \
@@ -13,20 +11,7 @@ CPhysicsMgr::CPhysicsMgr()
 
 }
 
-CPhysicsMgr::~CPhysicsMgr()
-{
-	Free();
-}
-
-void CPhysicsMgr::Free()
-{
-	for (auto item : m_vecWorld3D)
-	{
-		Safe_Release(item);
-	}
-}
-
-HRESULT CPhysicsMgr::Ready_Physics(const _uint iMaxPhysicsWorld3D)
+HRESULT CPhysicsMgr::Initialize(const _uint iMaxPhysicsWorld3D)
 {
 	m_vecWorld3D.reserve(iMaxPhysicsWorld3D);
 	m_vecWorld3D.clear();
@@ -39,7 +24,7 @@ HRESULT CPhysicsMgr::Ready_Physics(const _uint iMaxPhysicsWorld3D)
 	return S_OK;
 }
 
-void CPhysicsMgr::StartFrame_Physics()
+void CPhysicsMgr::StartFrame()
 {
 	for (auto iter = m_vecWorld3D.begin(); iter != m_vecWorld3D.end(); ++iter)
 	{
@@ -47,7 +32,7 @@ void CPhysicsMgr::StartFrame_Physics()
 	}
 }
 
-_int CPhysicsMgr::Update_Physics(const Real& fTimeDelta)
+_int CPhysicsMgr::Tick(const Real& fTimeDelta)
 {
 	for (auto iter = m_vecWorld3D.begin(); iter != m_vecWorld3D.end(); ++iter)
 	{
@@ -55,6 +40,29 @@ _int CPhysicsMgr::Update_Physics(const Real& fTimeDelta)
 	}
 
 	return 0;
+}
+
+CPhysicsMgr* CPhysicsMgr::Create(const _uint iMaxPhysicsWorld3D)
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize(iMaxPhysicsWorld3D)))
+	{
+		MSG_BOX("PhysicsMgr Create Failed");
+		Engine::Safe_Release(pInstance);
+
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+void CPhysicsMgr::Free()
+{
+	for (auto item : m_vecWorld3D)
+	{
+		Safe_Release(item);
+	}
 }
 
 list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_GetGameObject(const _uint iWorldID, FCollisionPrimitive* pSrc)

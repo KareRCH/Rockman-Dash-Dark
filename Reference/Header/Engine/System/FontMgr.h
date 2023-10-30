@@ -4,20 +4,29 @@
 
 #include "System/MyFont.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
-class ENGINE_DLL CFontMgr : public CBase
+/// <summary>
+/// 폰트 관리 클래스
+/// </summary>
+class CFontMgr : public CBase
 {
-	DERIVED_CLASS_SINGLETON(CBase, CFontMgr)
+	DERIVED_CLASS(CBase, CFontMgr)
 private:
 	explicit CFontMgr();
-	virtual ~CFontMgr();
-
-private:
-	virtual void	Free();
+	virtual ~CFontMgr() = default;
 
 public:
-	HRESULT		Ready_Font(ID3D11Device* pGraphicDev,
+	HRESULT				Initialize();
+
+public:
+	static CFontMgr*	Create();
+
+private:
+	virtual void		Free();
+
+public:
+	HRESULT		Create_Font(ID3D11Device* pGraphicDev,
 							const _tchar* pFontTag,
 							const _tchar* pFontType,
 							const _uint& iWidth,
@@ -30,12 +39,11 @@ public:
 							D3DCOLOR Color);
 
 private:
-	CMyFont* Find_Font(const _tchar* pFontTag);
+	CMyFont*	Find_Font(const _tchar* pFontTag);
 
 private:
 	_unmap<const _tchar*, CMyFont*>			m_mapFont;
 
-
 };
 
-END_NAME
+END

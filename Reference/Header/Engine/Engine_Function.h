@@ -29,81 +29,33 @@ namespace Engine
 	}
 
 	template<typename T>
-	unsigned long Safe_Release(T& pInstance)
+	_uint Safe_Release(T& pInstance)
 	{
-		unsigned long		dwRefCnt = 0;
+		_uint		dwRefCnt = 0;
 
 		if (nullptr != pInstance)
 		{
 			dwRefCnt = pInstance->Release();
 
 			if (0 == dwRefCnt)
-				pInstance = NULL;
+				pInstance = nullptr;
 		}
 
 		return dwRefCnt;
 	}
 
-	
-
-	// Functor
-	class CTag_Finder
+	template<typename T>
+	_uint Safe_AddRef(T& pInstance)
 	{
-	public:
-		explicit CTag_Finder(const _tchar* pTag) : m_pTargetTag(pTag){}
-		~CTag_Finder(void) {}
+		_uint		dwRefCnt = 0;
 
-	public:
-		template<typename T> 
-		_bool		operator()(const T& pair)
+		if (nullptr != pInstance)
 		{
-			if (0 == lstrcmpW(m_pTargetTag, pair.first))
-				return true;
-			
-			return false;
+			dwRefCnt = pInstance->AddRef();
 		}
 
-	private:
-		const _tchar*		m_pTargetTag = nullptr;
-	};
-
-	class CDeleteObj
-	{
-	public:
-		explicit CDeleteObj(void) {}
-		~CDeleteObj(void) {}
-	public: // operator
-		template <typename T>
-		void operator () (T& pInstance)
-		{
-			_ulong dwRefCnt = 0;
-
-			dwRefCnt = pInstance->Release();
-
-			if (0 == dwRefCnt)
-				pInstance = nullptr;
-		}
-	};
-
-	// 연관컨테이너 삭제용
-	class CDeleteMap
-	{
-	public:
-		explicit CDeleteMap(void) {}
-		~CDeleteMap(void) {}
-	public: // operator	
-		template <typename T>
-		void operator () (T& Pair)
-		{
-			_ulong dwRefCnt = 0;
-
-			dwRefCnt = Pair.second->Release();
-
-			if (0 == dwRefCnt)
-				Pair.second = NULL;
-		}
-	};
-
+		return dwRefCnt;
+	}
 
 	inline POINT Get_MousePos_Client(const HWND& hWnd)
 	{

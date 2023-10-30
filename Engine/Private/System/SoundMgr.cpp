@@ -1,34 +1,10 @@
 #include "System/SoundMgr.h"
 
-IMPLEMENT_SINGLETON(CSoundMgr)
-
 CSoundMgr::CSoundMgr()
 {
 }
 
-
-CSoundMgr::~CSoundMgr()
-{
-	Free();
-}
-
-void CSoundMgr::Free()
-{
-	for (auto& pairSoundCtn : m_mapSound)
-	{
-		for (auto& pairSound : pairSoundCtn.second->Get_MapSound())
-		{
-			FMOD_Sound_Release(pairSound.second);
-		}
-		pairSoundCtn.second->Free();
-	}
-	m_mapSound.clear();
-
-	FMOD_System_Release(m_pSystem);
-	FMOD_System_Close(m_pSystem);
-}
-
-HRESULT CSoundMgr::Ready_Sound()
+HRESULT CSoundMgr::Initialize()
 {
 	FMOD_RESULT	result;
 
@@ -69,9 +45,40 @@ HRESULT CSoundMgr::Ready_Sound()
 	//LoadSoundFile_GroupAsync(L"FallenAces", "./Resource/Sound/FallenAces/extra/");
 
 	
-	Wait_GroupAsync();
+	//Wait_GroupAsync();
 
 	return S_OK;
+}
+
+CSoundMgr* CSoundMgr::Create()
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		MSG_BOX("SoundMgr Create Failed");
+		Engine::Safe_Release(pInstance);
+
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+void CSoundMgr::Free()
+{
+	for (auto& pairSoundCtn : m_mapSound)
+	{
+		for (auto& pairSound : pairSoundCtn.second->Get_MapSound())
+		{
+			FMOD_Sound_Release(pairSound.second);
+		}
+		Safe_Release(pairSoundCtn.second);
+	}
+	m_mapSound.clear();
+
+	FMOD_System_Release(m_pSystem);
+	FMOD_System_Close(m_pSystem);
 }
 
 void CSoundMgr::Play_Sound(_tchar* pCategoryKey, _tchar* pSoundKey, CHANNELID eID, float fVolume)
@@ -115,7 +122,7 @@ void CSoundMgr::Play_BGM(_tchar* pCategoryKey, _tchar* pSoundKey, float fVolume)
 
 
 	// 여기부터 사운드 플레이
-	CSoundMgr::GetInstance()->Stop_Sound(SOUND_BGM);
+	Stop_Sound(SOUND_BGM);
 	FMOD_System_PlaySound(m_pSystem, iter->second, m_pChannelGroup[BGM_GROUP], FALSE, &m_pChannelArr[SOUND_BGM]);
 	FMOD_Channel_SetMode(m_pChannelArr[SOUND_BGM], FMOD_LOOP_NORMAL);
 	FMOD_Channel_SetVolume(m_pChannelArr[SOUND_BGM], 0.1f);//fVolume);

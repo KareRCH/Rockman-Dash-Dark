@@ -1,6 +1,6 @@
 #include "MainApp.h"
 
-#include "Export_Engine.h"
+#include "Engine_Define.h"
 
 IMPLEMENT_SINGLETON(CMainApp)
 
@@ -29,12 +29,13 @@ CMainApp* CMainApp::Create()
 
 HRESULT CMainApp::Initialize()
 {
-	FAILED_CHECK_RETURN(Engine::Initialize_GraphicDev(g_iWindowSizeX, g_iWindowSizeY, false, g_hWnd, false, 1.f, 0.01f), E_FAIL);
-	m_pDeviceClass = Engine::CGraphicDev::GetInstance();
+	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize_GraphicDev(g_iWindowSizeX, g_iWindowSizeY, false, g_hWnd, false, 1.f, 0.01f), E_FAIL);
+	/*m_pDeviceClass = Engine::CGraphicDev::GetInstance();
 	m_pDeviceClass->AddRef();
 
 	m_pGraphicDev = m_pDeviceClass->Get_Device();
-	m_pGraphicDev->AddRef();
+	m_pGraphicDev->AddRef();*/
 
 	return S_OK;
 }
@@ -50,17 +51,16 @@ void CMainApp::LateUpdate()
 
 void CMainApp::Render()
 {
-	Engine::Render_Begin(0.f, 0.f, 0.f, 1.f);
+	Engine::GameInstance()->Render_Begin(0.f, 0.f, 0.f, 1.f);
 
-	Engine::Render_End();
+	Engine::GameInstance()->Render_End();
 }
 
 void CMainApp::Free()
 {
 	// ÀåÄ¡ Á¦°Å
 	Safe_Release(m_pGraphicDev);
-	Safe_Release(m_pDeviceClass);
 
 	// dll ½Ì±ÛÅæ Á¦°Å
-	Engine::Release_Engine();
+	Engine::GameInstance()->DestroyInstance();
 }

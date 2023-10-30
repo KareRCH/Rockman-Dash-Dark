@@ -2,7 +2,7 @@
 
 #include "Component/PrimitiveComponent.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 class ENGINE_DLL CSceneComponent abstract : public CPrimitiveComponent
 {
@@ -82,4 +82,4 @@ private:
 	_matrix		m_matTransform;
 };
 
-END_NAME
+END

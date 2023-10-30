@@ -2,7 +2,7 @@
 
 #include "Physics/PhysicsPrecision.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 //extern Real fSleepEpsilon;		// 슬립조건 오차범위
 
@@ -1018,4 +1018,4 @@ public:
     }
 };
 
-END_NAME
+END

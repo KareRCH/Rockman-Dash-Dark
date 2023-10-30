@@ -5,7 +5,7 @@
 #include "Physics/RigidBody.h"
 #include "Physics/Contact.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 enum class ECOLLISION_TYPE
 {
@@ -389,4 +389,4 @@ public:
 	FVector3	vHalfSize;
 };
 
-END_NAME
+END

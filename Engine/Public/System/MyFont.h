@@ -2,9 +2,9 @@
 
 #include "Base.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
-class ENGINE_DLL CMyFont : public CBase
+class CMyFont : public CBase
 {
 	DERIVED_CLASS(CBase, CMyFont)
 private:
@@ -37,4 +37,4 @@ private:
 	virtual void		Free();
 };
 
-END_NAME
+END

@@ -6,14 +6,14 @@
 #include <future>
 #include <thread>
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
-class ENGINE_DLL FSoundData
+class FSoundData final : public CBase
 {
-	THIS_CLASS(FSoundData)
+	DERIVED_CLASS(CBase, FSoundData)
 private:
 	FSoundData() {}
-	~FSoundData() {}
+	virtual ~FSoundData() {}
 
 public:
 	static FSoundData* Create()
@@ -22,11 +22,9 @@ public:
 
 		return pInstance;
 	}
-	void Free()
+	virtual void Free()
 	{
 		mapSound.clear();
-
-		delete this;
 	}
 
 public:
@@ -37,19 +35,26 @@ private:
 	map_sound mapSound;
 };
 
-class ENGINE_DLL CSoundMgr : public CBase
+
+/// <summary>
+/// 사운드 담당 클래스
+/// </summary>
+class CSoundMgr final : public CBase
 {
-	DERIVED_CLASS_SINGLETON(CBase, CSoundMgr)
+	DERIVED_CLASS(CBase, CSoundMgr)
 
 private:
 	CSoundMgr();
-	~CSoundMgr();
-
-private:
-	virtual void Free() override;
+	virtual ~CSoundMgr() = default;
 
 public:
-	HRESULT Ready_Sound();
+	HRESULT				Initialize();
+
+public:
+	static CSoundMgr*	Create();
+
+private:
+	virtual void		Free() override;
 
 public:
 	// 사운드 재생
@@ -73,6 +78,7 @@ private:
 	// 사운드 파일 단일로 비동기 로드할 때 쓰이는 함수ㅈ
 	FMOD_RESULT LoadSoundFile_Async(const char* pPath, const char* pFileName, FMOD_RESULT& hResult, FMOD_SOUND** pSound);
 
+private:
 	// 사운드 리소스 정보를 갖는 객체 
 	_unmap<wstring, FSoundData*>	m_mapSound;
 	mutex							m_mtxSound;
@@ -88,4 +94,4 @@ private:
 	FMOD_CHANNELGROUP*	m_pMasterChanelGroup;
 };
 
-END_NAME
+END

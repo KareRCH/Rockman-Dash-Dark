@@ -1,24 +1,39 @@
 #include "System/FontMgr.h"
 
-IMPLEMENT_SINGLETON(CFontMgr)
-
 CFontMgr::CFontMgr()
 {
 }
 
-
-CFontMgr::~CFontMgr()
+HRESULT CFontMgr::Initialize()
 {
-	Free();
+	return S_OK;
+}
+
+CFontMgr* CFontMgr::Create()
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		MSG_BOX("FontMgr Create Failed");
+		Engine::Safe_Release(pInstance);
+
+		return nullptr;
+	}
+
+	return pInstance;
 }
 
 void CFontMgr::Free()
 {
-	for_each(m_mapFont.begin(), m_mapFont.end(), CDeleteMap());
+	for (auto iter = m_mapFont.begin(); iter != m_mapFont.end(); ++iter)
+	{
+		Safe_Release((*iter).second);
+	}
 	m_mapFont.clear();
 }
 
-HRESULT CFontMgr::Ready_Font(ID3D11Device* pGraphicDev, const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
+HRESULT CFontMgr::Create_Font(ID3D11Device* pGraphicDev, const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
 {
 	CMyFont* pMyFont = nullptr;
 
@@ -31,7 +46,7 @@ HRESULT CFontMgr::Ready_Font(ID3D11Device* pGraphicDev, const _tchar* pFontTag, 
 	pMyFont = CMyFont::Create(pGraphicDev, pFontType, iWidth, iHeight, iWeight);
 	NULL_CHECK_RETURN(pMyFont, E_FAIL);
 
-	m_mapFont.insert({ pFontTag, pMyFont });
+	m_mapFont.emplace(pFontTag, pMyFont);
 
 	return S_OK;
 }
@@ -46,7 +61,7 @@ void CFontMgr::Render_Font(const _tchar* pFontTag, const _tchar* pString, const 
 
 CMyFont* CFontMgr::Find_Font(const _tchar* pFontTag)
 {
-	auto iter = find_if(m_mapFont.begin(), m_mapFont.end(), CTag_Finder(pFontTag));
+	auto iter = m_mapFont.find(pFontTag);
 
 	if (iter == m_mapFont.end())
 		return nullptr;

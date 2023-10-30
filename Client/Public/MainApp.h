@@ -1,12 +1,10 @@
 #pragma once
 
 #include "Base.h"
+#include "Client_Define.h"
 
-BEGIN_NAME(Engine)
 
-class CGraphicDev;
-
-END_NAME
+BEGIN(Client)
 
 class CMainApp : public Engine::CBase
 {
@@ -29,7 +27,7 @@ private:
 
 
 private:		// 접근을 최소화하는 함수, 변수
-	Engine::CGraphicDev* m_pDeviceClass;
-	ID3D11Device*		 m_pGraphicDev;
+	ID3D11Device*		 m_pGraphicDev = nullptr;
 };
 
+END

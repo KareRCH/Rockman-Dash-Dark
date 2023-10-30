@@ -4,7 +4,7 @@
 
 #include "Physics/RigidBody.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 class ENGINE_DLL FContactGen_Joint : public FContactGenerator
 {
@@ -20,4 +20,4 @@ public:
 	virtual _uint		Add_Contact(FContact* pContact, _uint iLimit) const override { return 0; }
 };
 
-END_NAME
+END

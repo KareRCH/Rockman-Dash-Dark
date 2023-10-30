@@ -6,7 +6,7 @@
 #include "Component/ColliderComponent.h"
 
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 class CGameObject;
 
@@ -48,4 +48,4 @@ public:	// 물리세계에 충돌 테스트를 진행후 그 리스트를 돌려받기
 	list<pair<CGameObject*, FContact>> IntersectTests_Ray_GetGameObject(const _uint iWorldID, const _vec3 vPos, const _vec3 vNormal, _ulong iMask);
 };
 
-END_NAME
+END

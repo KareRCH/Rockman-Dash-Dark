@@ -6,7 +6,7 @@
 #include "Physics/PhysicsWorld3D.h"
 #include "Physics/Contact.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 class FCollisionPrimitive;
 
@@ -102,7 +102,7 @@ protected:
 	void SeeColliderFrame(ID3D11Device* pGraphicDev);
 };
 
-END_NAME
+END
 
 
 template <typename Class>

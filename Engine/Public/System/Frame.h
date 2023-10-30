@@ -2,9 +2,9 @@
 
 #include <Base.h>
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
-class ENGINE_DLL CFrame : public CBase
+class CFrame : public CBase
 {
 	DERIVED_CLASS(CBase, CFrame)
 
@@ -35,4 +35,4 @@ private:
 
 };
 
-END_NAME
+END

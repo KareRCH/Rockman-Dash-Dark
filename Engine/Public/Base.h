@@ -2,14 +2,13 @@
 
 #include "Engine_Define.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 class ENGINE_DLL CBase abstract
 {
 protected:
 	inline explicit CBase();
-	inline explicit CBase(const CBase& rhs);
-	inline virtual ~CBase();
+	inline virtual ~CBase() = default;
 
 public:
 	inline _uint AddRef();
@@ -25,6 +24,6 @@ private:
 
 #include "Base.inl"
 
-END_NAME
+END
 
 

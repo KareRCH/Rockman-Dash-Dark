@@ -2,10 +2,12 @@
 
 #include "Base.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
-class ENGINE_DLL CTimer : public CBase
+class CTimer : public CBase
 {
+	DERIVED_CLASS(CBase, CTimer)
+
 private:
 	explicit CTimer();
 	virtual ~CTimer();
@@ -30,4 +32,4 @@ private:
 	virtual void			Free();
 };
 
-END_NAME
+END

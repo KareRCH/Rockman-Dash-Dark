@@ -4,7 +4,7 @@
 
 #include "Physics/RigidBody.h"
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 class FForceGenerator;
 
@@ -83,4 +83,4 @@ public:
 	virtual void Update_Force(FRigidBody* pBody, const Real& fDuration);
 };
 
-END_NAME
+END

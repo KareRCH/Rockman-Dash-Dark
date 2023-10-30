@@ -6,7 +6,7 @@
 #include <memory.h>
 #include <assert.h>
 
-BEGIN_NAME(Engine)
+BEGIN(Engine)
 
 class FCollisionPrimitive;
 
@@ -507,4 +507,4 @@ protected:
     void*           pOwner = nullptr;                // 충돌기하학 모양, 
 };
 
-END_NAME
+END
