@@ -9,21 +9,21 @@ CKeyMgr::CKeyMgr()
 
 HRESULT CKeyMgr::Initialize()
 {
-	Add_InputKey(new INPUT_KEY_INFO(L"Right"));
-	//m_vInputKeys.back()->Add_Keys(VK_RIGHT, 'D');
-	Add_InputKey(new INPUT_KEY_INFO(L"Left"));
-	//m_vInputKeys.back()->Add_Keys(VK_LEFT, 'A');
-	Add_InputKey(new INPUT_KEY_INFO(L"Up"));
-	//m_vInputKeys.back()->Add_Key(VK_UP);
-	Add_InputKey(new INPUT_KEY_INFO(L"Down"));
-	//m_vInputKeys.back()->Add_Key(VK_DOWN);
+	//Add_InputKey(new INPUT_KEY_INFO(L"Right"));
+	////m_vInputKeys.back()->Add_Keys(VK_RIGHT, 'D');
+	//Add_InputKey(new INPUT_KEY_INFO(L"Left"));
+	////m_vInputKeys.back()->Add_Keys(VK_LEFT, 'A');
+	//Add_InputKey(new INPUT_KEY_INFO(L"Up"));
+	////m_vInputKeys.back()->Add_Key(VK_UP);
+	//Add_InputKey(new INPUT_KEY_INFO(L"Down"));
+	////m_vInputKeys.back()->Add_Key(VK_DOWN);
 
-	Add_InputKey(new INPUT_KEY_INFO(L"UI_Accept"));
-	//m_vInputKeys.back()->Add_Key(VK_ACCEPT);
-	Add_InputKey(new INPUT_KEY_INFO(L"UI_Cancel"));
-	//m_vInputKeys.back()->Add_Key(VK_ESCAPE);
-	Add_InputKey(new INPUT_KEY_INFO(L"UI_Menu"));
-	//m_vInputKeys.back()->Add_Key(VK_ACCEPT);
+	//Add_InputKey(new INPUT_KEY_INFO(L"UI_Accept"));
+	////m_vInputKeys.back()->Add_Key(VK_ACCEPT);
+	//Add_InputKey(new INPUT_KEY_INFO(L"UI_Cancel"));
+	////m_vInputKeys.back()->Add_Key(VK_ESCAPE);
+	//Add_InputKey(new INPUT_KEY_INFO(L"UI_Menu"));
+	////m_vInputKeys.back()->Add_Key(VK_ACCEPT);
 
 	return S_OK;
 }

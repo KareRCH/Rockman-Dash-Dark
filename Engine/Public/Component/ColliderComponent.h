@@ -18,10 +18,9 @@ class ENGINE_DLL CColliderComponent : public CSceneComponent
 	DERIVED_CLASS(CSceneComponent, CColliderComponent)
 
 protected:
-	explicit CColliderComponent();
 	explicit CColliderComponent(ID3D11Device* pGraphicDev);
 	explicit CColliderComponent(const CColliderComponent& rhs);
-	virtual ~CColliderComponent();
+	virtual ~CColliderComponent() = default;
 
 public:
 	static	CPrimitiveComponent*			Create(ID3D11Device* pGraphicDev, ECOLLISION eType);
@@ -31,9 +30,9 @@ public:
 public:
 	PRIVATE virtual HRESULT Initialize() { return S_OK; }
 	PUBLIC	virtual HRESULT Initialize(ID3D11Device* pGraphicDev, ECOLLISION eType);
-	virtual _int	Update(const _float& fTimeDelta);
-	virtual void	LateUpdate() {}
-	virtual void	Render() {}
+	virtual _int	Tick(const _float& fTimeDelta);
+	virtual void	LateTick() {}
+	virtual void	Render(ID3D11DeviceContext* pDeviceContext) {}
 
 protected:
 	virtual void				Free();

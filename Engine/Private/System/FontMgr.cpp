@@ -56,7 +56,7 @@ void CFontMgr::Render_Font(const _tchar* pFontTag, const _tchar* pString, const 
 	CMyFont* pMyFont = Find_Font(pFontTag);
 	NULL_CHECK(pMyFont);
 
-	pMyFont->Render_Font(pString, pPos, Color);
+	//pMyFont->Render_Font(pString, pPos, Color);
 }
 
 CMyFont* CFontMgr::Find_Font(const _tchar* pFontTag)

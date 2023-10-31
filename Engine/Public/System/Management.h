@@ -21,25 +21,27 @@ private:
 	virtual ~CManagement() = default;
 
 public:
+	HRESULT				Initialize(const EMANAGE_SCENE eType);
+	_int				Tick(const _float& fTimeDelta);
+	void				LateTick();
+	void				Render(ID3D11Device* pGraphicDev);
+
+public:
+	static CManagement* Create(const EMANAGE_SCENE eType);
+
+private:
+	virtual void		Free();
+
+public:
 	CPrimitiveComponent*	Get_Component(COMPONENTID eID, const _tchar* pLayerTag, const _tchar* pObjTag, const _tchar* pComponentTag);
 	CGameObject*			Get_GameObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 	void					Add_GameObject(const _tchar* pLayerTag, CGameObject* const pObj);
 	void					Add_GameObject(const _tchar* pLayerTag, const _tchar* pObjTag, CGameObject* const pObj);
 
 	// 툴에서 쓰이는 함수
-	void			Add_Layer(const _tchar* pLayerTag, CLayer* const pLayer);
+	void					Add_Layer(const _tchar* pLayerTag, CLayer* const pLayer);
 
-public:
-	HRESULT			Initialize(const EMANAGE_SCENE eType);
-	_int			Tick(const _float& fTimeDelta);
-	void			LateTick();
-	void			Render(ID3D11Device* pGraphicDev);
 
-public:
-	static CManagement* Create(const EMANAGE_SCENE eType);
-
-private:
-	virtual void	Free();
 
 public:
 	// 씬 생성해서 바로 집어넣는 방식

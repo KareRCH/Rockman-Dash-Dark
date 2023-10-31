@@ -23,7 +23,7 @@ class ENGINE_DLL CGameObject abstract : public CBase
 {
 	DERIVED_CLASS(CBase, CGameObject)
 protected:
-	explicit CGameObject();
+	explicit CGameObject(ID3D11Device* pGraphicDev);
 	explicit CGameObject(const CGameObject& rhs);
 	virtual ~CGameObject() = default;
 
@@ -31,7 +31,7 @@ public:
 	virtual HRESULT Initialize();
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick();
-	virtual void	Render();
+	virtual void	Render(ID3D11DeviceContext* pDeviceContext);
 
 protected:
 	virtual void	Free();

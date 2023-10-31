@@ -3,10 +3,6 @@
 #include "Physics/CollisionPrimitive.h"
 #include "Physics/Contact.h"
 
-CColliderComponent::CColliderComponent()
-{
-}
-
 CColliderComponent::CColliderComponent(ID3D11Device* pGraphicDev)
     : Base(pGraphicDev)
     , m_iCollisionLayer_Flag(m_iCollisionLayer_Flag)
@@ -83,10 +79,6 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     // 이벤트 함수 클론 제외, 수동으로 외부에서 추가
 }
 
-CColliderComponent::~CColliderComponent()
-{
-}
-
 CPrimitiveComponent* CColliderComponent::Create(ID3D11Device* pGraphicDev, ECOLLISION eType)
 {
     ThisClass* pInstance = new ThisClass(pGraphicDev);
@@ -157,7 +149,7 @@ HRESULT CColliderComponent::Initialize(ID3D11Device* pGraphicDev, ECOLLISION eTy
     return S_OK;
 }
 
-_int CColliderComponent::Update(const _float& fTimeDelta)
+_int CColliderComponent::Tick(const _float& fTimeDelta)
 {
     OnCollisionExited();
     SeeColliderFrame(m_pGraphicDev);

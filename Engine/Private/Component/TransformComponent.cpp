@@ -1,6 +1,7 @@
 #include "Component/TransformComponent.h"
 
-CTransformComponent::CTransformComponent()
+CTransformComponent::CTransformComponent(ID3D11Device* pGraphicDev)
+	: Base(pGraphicDev)
 {
 }
 
@@ -19,19 +20,19 @@ HRESULT CTransformComponent::Initialize()
 	return S_OK;
 }
 
-_int CTransformComponent::Update(const _float& fTimeDelta)
+_int CTransformComponent::Tick(const _float& fTimeDelta)
 {
-	SUPER::Update(fTimeDelta);
+	SUPER::Tick(fTimeDelta);
 
 	return 0;
 }
 
-void CTransformComponent::LateUpdate()
+void CTransformComponent::LateTick()
 {
 
 }
 
-void CTransformComponent::Render()
+void CTransformComponent::Render(ID3D11DeviceContext* pDeviceContext)
 {
 
 }

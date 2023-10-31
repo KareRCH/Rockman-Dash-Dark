@@ -3,7 +3,7 @@
 #include "Component/PrimitiveComponent.h"
 
 
-CGameObject::CGameObject()
+CGameObject::CGameObject(ID3D11Device* pGraphicDev)
 {
 }
 
@@ -23,7 +23,7 @@ _int CGameObject::Tick(const _float& fTimeDelta)
 	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::UPDATE)].begin();
 		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::UPDATE)].end(); ++iter)
 	{
-		(*iter)->Update(fTimeDelta);
+		(*iter)->Tick(fTimeDelta);
 	}
 
 	return 0;
@@ -34,16 +34,16 @@ void CGameObject::LateTick()
 	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::LATE)].begin(); 
 		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::LATE)].end(); ++iter)
 	{
-		(*iter)->LateUpdate();
+		(*iter)->LateTick();
 	}
 }
 
-void CGameObject::Render()
+void CGameObject::Render(ID3D11DeviceContext* pDeviceContext)
 {
 	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::RENDER)].begin();
 		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::RENDER)].end(); ++iter)
 	{
-		(*iter)->Render();
+		(*iter)->Render(pDeviceContext);
 	}
 }
 

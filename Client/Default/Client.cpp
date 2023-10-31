@@ -53,8 +53,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 #endif
 #endif // _DEBUG
 
-
-
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_CLIENT, szWindowClass, MAX_LOADSTRING);
@@ -76,11 +74,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     if (nullptr == pMainApp)
         return FALSE;
 
-    /*FAILED_CHECK_RETURN(Engine::Ready_Timer(L"Timer_Immediate"), FALSE);
-    FAILED_CHECK_RETURN(Engine::Ready_Timer(L"Timer_FPS"), FALSE);
-
-    FAILED_CHECK_RETURN(Engine::Ready_Frame(L"Frame", 60.f), FALSE);*/
-
     // 기본 메시지 루프입니다:
     while (true)
     {
@@ -97,22 +90,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            //Engine::Set_TimeDelta(L"Timer_Immediate");
+            ::GameInstance()->Tick_Timer(L"Timer_Immediate");
 
-            //_float	fTimeDelta_Immediate = Engine::Get_TimeDelta(L"Timer_Immediate");
+            _float	fTimeDelta_Immediate = GameInstance()->Get_TimerDelta(L"Timer_Immediate");
 
-            //// 프레임이 넘어갈 때 틱 함수 작동
-            //if (Engine::IsPermit_Call(L"Frame", fTimeDelta_Immediate))
-            //{
-            //    Engine::Set_TimeDelta(L"Timer_FPS");
-            //    _float	fTimeDelta_60 = Engine::Get_TimeDelta(L"Timer_FPS");
+            // 프레임이 넘어갈 때 틱 함수 작동
+            if (::GameInstance()->IsPermit_Call(L"Frame", fTimeDelta_Immediate))
+            {
+                ::GameInstance()->Tick_Timer(L"Timer_FPS");
+                _float	fTimeDelta = ::GameInstance()->Get_TimerDelta(L"Timer_FPS");
 
-
-            //    // 틱 함수
-                pMainApp->Update(0.016f);
-                pMainApp->LateUpdate();
-                pMainApp->Render();
-            //}
+                // 틱 함수
+              pMainApp->Tick(fTimeDelta);
+              pMainApp->LateTick();
+              pMainApp->Render();
+            }
         }
     }
 

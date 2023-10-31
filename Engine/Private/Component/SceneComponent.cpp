@@ -1,15 +1,11 @@
 #include "Component/SceneComponent.h"
 
-CSceneComponent::CSceneComponent()
-	: m_vPosition(_vec3()), m_vRotation(_vec3()), m_vScale(_vec3()), m_qtOrientation(_vec4())
+CSceneComponent::CSceneComponent(ID3D11Device* pGraphicDev)
+	: Base(pGraphicDev)
+	, m_vPosition(_vec3()), m_vRotation(_vec3()), m_vScale(_vec3()), m_qtOrientation(_vec4())
 	, m_matTransform(XMMatrixIdentity())
 {
 	
-}
-
-CSceneComponent::CSceneComponent(ID3D11Device* pGraphicDev)
-	: Base(pGraphicDev)
-{
 }
 
 CSceneComponent::CSceneComponent(const CSceneComponent& rhs)
@@ -21,7 +17,7 @@ CSceneComponent::~CSceneComponent()
 {
 }
 
-_int CSceneComponent::Update(const _float& fTimeDelta)
+_int CSceneComponent::Tick(const _float& fTimeDelta)
 {
 	// 여기에 자동 함수 추가
 

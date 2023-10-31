@@ -103,6 +103,21 @@
     <Filter Include="02. Utility\03. Manager\00. Management">
       <UniqueIdentifier>{7cbcff4a-8bed-4d2f-b78e-f1a7368cb647}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Shader">
+      <UniqueIdentifier>{f0851f53-d322-43e4-9bb7-bbabbfd419b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. ShaderComponent">
+      <UniqueIdentifier>{530a3b69-f0fc-49cf-8049-d7cfe931e9e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. ShaderComponent\01. ColorShaderComp">
+      <UniqueIdentifier>{98ac80ab-e878-4a3d-a709-0f8ddf19540e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\04. VIBufferComp">
+      <UniqueIdentifier>{0c9a5d10-387a-49fa-a3c8-9a98ab62016e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\04. VIBufferComp\01. Tri">
+      <UniqueIdentifier>{d64ffa75-e403-4388-ac72-b6fff7601d92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -243,6 +258,18 @@
     <ClInclude Include="Public\System\Texture.h">
       <Filter>02. Utility\03. Manager\04. TextureMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\ShaderComponent.h">
+      <Filter>02. Utility\02. Component\03. ShaderComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\ColorShaderComp.h">
+      <Filter>02. Utility\02. Component\03. ShaderComponent\01. ColorShaderComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\VIBufferComp.h">
+      <Filter>02. Utility\02. Component\04. VIBufferComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\TriBufferComp.h">
+      <Filter>02. Utility\02. Component\04. VIBufferComp\01. Tri</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -353,5 +380,25 @@
     <ClCompile Include="Private\System\Texture.cpp">
       <Filter>02. Utility\03. Manager\04. TextureMgr</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Component\ShaderComponent.cpp">
+      <Filter>02. Utility\02. Component\03. ShaderComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\ColorShaderComp.cpp">
+      <Filter>02. Utility\02. Component\03. ShaderComponent\01. ColorShaderComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\VIBufferComp.cpp">
+      <Filter>02. Utility\02. Component\04. VIBufferComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\TriBufferComp.cpp">
+      <Filter>02. Utility\02. Component\04. VIBufferComp\01. Tri</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Public\Shader\VS_Test.vs">
+      <Filter>03. Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Public\Shader\PS_Test.hlsl">
+      <Filter>03. Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

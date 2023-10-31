@@ -1,8 +1,78 @@
 #include "System/Management.h"
 
+#include "System/GameInstance.h"
+
 CManagement::CManagement()
-	: m_pScene_Current(nullptr)
+	: m_pScene_Current(nullptr), m_pScene_Reserve(nullptr)
 {
+}
+
+HRESULT CManagement::Initialize(const EMANAGE_SCENE eType)
+{
+	m_eSceneProcess = eType;
+
+	return S_OK;
+}
+
+_int CManagement::Tick(const _float& fTimeDelta)
+{
+	if (m_pScene_Reserve)
+	{
+		switch (m_eSceneProcess)
+		{
+		case Engine::EMANAGE_SCENE::SINGLE:
+		{
+			Safe_Release(m_pScene_Current);
+			m_pScene_Current = m_pScene_Reserve;
+			m_pScene_Reserve = nullptr;
+			break;
+		}
+		case Engine::EMANAGE_SCENE::MULTI:
+		{
+			m_pScene_Current = m_pScene_Reserve;
+			m_pScene_Reserve = nullptr;
+			break;
+		}
+		}
+
+		//GameInstance()->Clear_RenderGroup();
+		GameInstance()->Play_PhysicsSimulation(0);
+	}
+
+	// 씬 없으면 예외처리
+	NULL_CHECK_RETURN(m_pScene_Current, -1);
+
+	return m_pScene_Current->Update_Scene(fTimeDelta);
+}
+
+void CManagement::LateTick()
+{
+	// 씬 없으면 예외처리
+	NULL_CHECK(m_pScene_Current);
+	m_pScene_Current->LateUpdate_Scene();
+}
+
+void CManagement::Render(ID3D11Device* pGraphicDev)
+{
+	//GameInstance()->Render_GameObject(pGraphicDev);
+
+	NULL_CHECK(m_pScene_Current);
+	m_pScene_Current->Render_Scene();		// 디버깅용
+}
+
+CManagement* CManagement::Create(const EMANAGE_SCENE eType)
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize(eType)))
+	{
+		MSG_BOX("Management Create Failed");
+		Engine::Safe_Release(pInstance);
+
+		return nullptr;
+	}
+
+	return pInstance;
 }
 
 void CManagement::Free()
@@ -19,6 +89,11 @@ void CManagement::Free()
 		break;
 	}
 }
+
+
+//-------------------------------------------------------
+
+
 
 CPrimitiveComponent* Engine::CManagement::Get_Component(COMPONENTID eID, const _tchar* pLayerTag, const _tchar* pObjTag, const _tchar* pComponentTag)
 {
@@ -53,73 +128,7 @@ void CManagement::Add_Layer(const _tchar* pLayerTag, CLayer* const pLayer)
 	m_pScene_Current->Add_Layer(pLayerTag, pLayer);
 }
 
-HRESULT CManagement::Initialize(const EMANAGE_SCENE eType)
-{
-	m_eSceneProcess = eType;
 
-	return S_OK;
-}
-
-_int CManagement::Tick(const _float& fTimeDelta)
-{
-	if (m_pScene_Reserve)
-	{
-		switch (m_eSceneProcess)
-		{
-		case Engine::EMANAGE_SCENE::SINGLE:
-		{
-			Safe_Release(m_pScene_Current);
-			m_pScene_Current = m_pScene_Reserve;
-			m_pScene_Reserve = nullptr;
-			break;
-		}
-		case Engine::EMANAGE_SCENE::MULTI:
-		{
-			m_pScene_Current = m_pScene_Reserve;
-			m_pScene_Reserve = nullptr;
-			break;
-		}
-		}
-
-		//Engine::Clear_RenderGroup();
-		//Engine::Play_PhysicsSimulation(0);
-	}
-
-	// 씬 없으면 예외처리
-	NULL_CHECK_RETURN(m_pScene_Current, -1)
-
-	return m_pScene_Current->Update_Scene(fTimeDelta);
-}
-
-void CManagement::LateTick()
-{
-	// 씬 없으면 예외처리
-	NULL_CHECK(m_pScene_Current);
-	m_pScene_Current->LateUpdate_Scene();
-}
-
-void CManagement::Render(ID3D11Device* pGraphicDev)
-{
-	//Engine::Render_GameObject(pGraphicDev);
-
-	NULL_CHECK(m_pScene_Current);
-	m_pScene_Current->Render_Scene();		// 디버깅용
-}
-
-CManagement* CManagement::Create(const EMANAGE_SCENE eType)
-{
-	ThisClass* pInstance = new ThisClass();
-
-	if (FAILED(pInstance->Initialize(eType)))
-	{
-		MSG_BOX("Management Create Failed");
-		Engine::Safe_Release(pInstance);
-
-		return nullptr;
-	}
-
-	return pInstance;
-}
 
 HRESULT CManagement::Set_Scene(CScene* pScene)
 {
@@ -128,7 +137,7 @@ HRESULT CManagement::Set_Scene(CScene* pScene)
 
 	// 씬 해제 후 새로운 씬을 로드
 	m_pScene_Reserve = pScene;
-	//Engine::Stop_PhysicsSimulation(0);
+	//GameInstance()->Stop_PhysicsSimulation(0);
 
 	return S_OK;
 }

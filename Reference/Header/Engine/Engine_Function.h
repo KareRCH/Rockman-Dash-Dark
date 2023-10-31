@@ -35,7 +35,7 @@ namespace Engine
 
 		if (nullptr != pInstance)
 		{
-			dwRefCnt = pInstance->Release();
+			dwRefCnt = static_cast<_uint>(pInstance->Release());
 
 			if (0 == dwRefCnt)
 				pInstance = nullptr;
@@ -51,7 +51,7 @@ namespace Engine
 
 		if (nullptr != pInstance)
 		{
-			dwRefCnt = pInstance->AddRef();
+			dwRefCnt = static_cast<_uint>(pInstance->AddRef());
 		}
 
 		return dwRefCnt;

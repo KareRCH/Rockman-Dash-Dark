@@ -6,11 +6,7 @@ CMyFont::CMyFont(ID3D11Device* pGraphicDev)
 	m_pGraphicDev->AddRef();
 }
 
-CMyFont::~CMyFont()
-{
-}
-
-HRESULT CMyFont::Ready_Font(const _tchar* pFontType,
+HRESULT CMyFont::Initialize(const _tchar* pFontType,
 	const _uint& iWidth,
 	const _uint& iHeight,
 	const _uint& iWeight)
@@ -19,17 +15,22 @@ HRESULT CMyFont::Ready_Font(const _tchar* pFontType,
 	return S_OK;
 }
 
-void CMyFont::Render_Font(const _tchar* pString, const _vec2* pPos, D3DCOLOR Color)
+void CMyFont::Render(const _tchar* pString, const _vec2* pPos, D3DCOLOR Color)
 {
 	RECT	rc{ LONG(pPos->x), LONG(pPos->y) };
 
+	/*m_pSprite->Begin(D3DXSPRITE_ALPHABLEND);
+
+	m_pFont->DrawTextW(m_pSprite, pString, lstrlen(pString), &rc, DT_NOCLIP, Color);
+
+	m_pSprite->End();*/
 }
 
 CMyFont* CMyFont::Create(ID3D11Device* pGraphicDev, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
 {
 	ThisClass* pInstance = new ThisClass(pGraphicDev);
 
-	if (FAILED(pInstance->Ready_Font(pFontType, iWidth, iHeight, iWeight)))
+	if (FAILED(pInstance->Initialize(pFontType, iWidth, iHeight, iWeight)))
 	{
 		Safe_Release(pInstance);
 		MSG_BOX("폰트 문제야");

@@ -278,32 +278,32 @@ namespace Engine
 #pragma endregion
 
 
-//#define DXCOLOR_WHITE         D3DCOLOR_ARGB(255, 255, 255, 255) // 흰색
-//#define DXCOLOR_BLACK         D3DCOLOR_ARGB(255,   0,   0,   0) // 검은색
-//#define DXCOLOR_RED           D3DCOLOR_ARGB(255, 255,   0,   0) // 빨간색
-//#define DXCOLOR_PURPLE        D3DCOLOR_ARGB(255, 128,   0, 128) // 자주색
-//#define DXCOLOR_MAGENTA       D3DCOLOR_ARGB(255, 255,   0, 255) // 심홍색
-//#define DXCOLOR_ORANGE        D3DCOLOR_ARGB(255, 255, 165,   0) // 주황색
-//#define DXCOLOR_DARK_ORANGE   D3DCOLOR_ARGB(255, 115,  57,   0) // 짙은 주황색
-//#define DXCOLOR_YELLOW        D3DCOLOR_ARGB(255, 255, 255,   0) // 노란색
-//#define DXCOLOR_GREEN         D3DCOLOR_ARGB(255,   0, 255,   0) // 초록색
-//#define DXCOLOR_CYAN          D3DCOLOR_ARGB(255,   0, 255, 255) // 청록색
-//#define DXCOLOR_DARK_GREEN    D3DCOLOR_ARGB(255,   0, 128,   0) // 어두운 초록색
-//#define DXCOLOR_OLIVE         D3DCOLOR_ARGB(255, 128, 128,   0) // 올리브색
-//#define DXCOLOR_BLUE          D3DCOLOR_ARGB(255,   0,   0, 255) // 파란색
-//#define DXCOLOR_NAVY          D3DCOLOR_ARGB(255,   0,   0, 128) // 짙은 파란색
-//#define DXCOLOR_TEAL          D3DCOLOR_ARGB(255,   0, 128, 128) // 옥색
-//#define DXCOLOR_MAROON        D3DCOLOR_ARGB(255, 128,   0,   0) // 고동색
-//#define DXCOLOR_PINK          D3DCOLOR_ARGB(255, 255, 192, 203) // 분홍색
-//#define DXCOLOR_LAVENDER      D3DCOLOR_ARGB(255, 230, 230, 250) // 라벤더색
-//#define DXCOLOR_GOLD          D3DCOLOR_ARGB(255, 255, 215,   0) // 금색
-//#define DXCOLOR_SILVER        D3DCOLOR_ARGB(255, 192, 192, 192) // 은색
-//#define DXCOLOR_BROWN         D3DCOLOR_ARGB(255, 165,  42,  42) // 갈색
-//#define DXCOLOR_GRAY          D3DCOLOR_ARGB(255, 128, 128, 128) // 회색
-//#define DXCOLOR_LIGHT_GRAY    D3DCOLOR_ARGB(255, 194, 194, 194) // 회색
-//#define DXCOLOR_INDIGO        D3DCOLOR_ARGB(255,  75,   0, 130) // 남색
-//#define DXCOLOR_TURQUOISE     D3DCOLOR_ARGB(255,  64, 224, 208) // 터키스색
-//#define DXCOLOR_LIME          D3DCOLOR_ARGB(255,   0, 255,   0) // 라임색
+#define DXCOLOR_WHITE         0xFFFFFFFF			// 흰색
+#define DXCOLOR_BLACK         0xFF000000			// 검은색
+#define DXCOLOR_RED           0xFFFF0000 // 빨간색
+#define DXCOLOR_PURPLE        0xFF880088 // 자주색
+#define DXCOLOR_MAGENTA       0xFFFF00FF // 심홍색
+#define DXCOLOR_ORANGE        0xFFFFA500 // 주황색
+#define DXCOLOR_DARK_ORANGE   0xFF733900 // 짙은 주황색
+#define DXCOLOR_YELLOW        0xFFFFFF00 // 노란색
+#define DXCOLOR_GREEN         0xFF00FF00 // 초록색
+#define DXCOLOR_CYAN          0xFF00FFFF // 청록색
+#define DXCOLOR_DARK_GREEN    0xFF008800 // 어두운 초록색
+#define DXCOLOR_OLIVE         0xFF888800 // 올리브색
+#define DXCOLOR_BLUE          0xFF0000FF // 파란색
+#define DXCOLOR_NAVY          0xFF000088 // 짙은 파란색
+#define DXCOLOR_TEAL          0xFF008888 // 옥색
+#define DXCOLOR_MAROON        0xFF880000 // 고동색
+#define DXCOLOR_PINK          0xFFFFC0CB // 분홍색
+//#define DXCOLOR_LAVENDER      0xFF, 230, 230, 250 // 라벤더색
+//#define DXCOLOR_GOLD          0xFF, 255, 215,   0 // 금색
+//#define DXCOLOR_SILVER        0xFF, 192, 192, 192 // 은색
+//#define DXCOLOR_BROWN         0xFF, 165,  42,  42 // 갈색
+//#define DXCOLOR_GRAY          0xFF, 128, 128, 128 // 회색
+//#define DXCOLOR_LIGHT_GRAY    0xFF, 194, 194, 194 // 회색
+//#define DXCOLOR_INDIGO        0xFF,  75,   0, 130 // 남색
+//#define DXCOLOR_TURQUOISE     0xFF,  64, 224, 208 // 터키스색
+//#define DXCOLOR_LIME          0xFF,   0, 255,   0 // 라임색
 
 }
 

@@ -12,24 +12,28 @@ END
 
 BEGIN(Client)
 
-class CMainApp : public Engine::CBase
+class CMainApp final : public Engine::CBase
 {
 	DERIVED_CLASS_SINGLETON(CBase, CMainApp)
+
 private:
 	explicit CMainApp();
-	virtual ~CMainApp();
+	virtual ~CMainApp() = default;
+
+public:
+	HRESULT	Initialize();
+	_int	Tick(const _float& fTimeDelta);
+	void	LateTick();
+	void	Render();
 
 public:
 	static CMainApp* Create();
 
-public:
-	HRESULT Initialize();
-	_int	Update(const _float& fTimeDelta);
-	void	LateUpdate();
-	void	Render();
-
 private:
 	virtual void Free() override;
+
+private:
+	void Render_FrameRate();
 
 
 private:		// 접근을 최소화하는 함수, 변수

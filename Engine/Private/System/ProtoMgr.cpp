@@ -17,8 +17,9 @@ CProtoMgr* CProtoMgr::Create()
 
     if (FAILED(pInstance->Initialize()))
     {
-        MSG_BOX("ProtoMgr Create Failed");
         Engine::Safe_Release(pInstance);
+
+        MSG_BOX("ProtoMgr Create Failed");
 
         return nullptr;
     }
