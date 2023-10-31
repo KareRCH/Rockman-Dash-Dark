@@ -26,6 +26,7 @@ private:
 
 public:
 	GETSET_1(ID3D11Device*, m_pDevice, Device, GET_REF)
+	GETSET_1(ID3D11DeviceContext*, m_pDeviceContext, DeviceContext, GET_REF)
 
 private:
 	_bool	m_bVsync_Enabled = false;

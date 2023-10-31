@@ -297,13 +297,13 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
     <ClCompile Include="Private\Component\PrimitiveComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Public\Shader\PS_Test.hlsl">
+    <FxCompile Include="Public\Shader\PS_Test1.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="Public\Shader\VS_Test.vs">
+    <FxCompile Include="Public\Shader\VS_Test1.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

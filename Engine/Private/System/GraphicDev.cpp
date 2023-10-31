@@ -244,20 +244,25 @@ HRESULT CGraphicDev::Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVs
 	return S_OK;
 }
 
-HRESULT CGraphicDev::Render_Begin(_float fRed, _float fGreen, _float fBlue, _float fAlpha)
+HRESULT CGraphicDev::Clear_BackBuffer_View(_float4 vClearColor)
 {
-    _float color[4] = { fRed, fGreen, fBlue, fAlpha };
+    _float color[4] = { vClearColor.x, vClearColor.y, vClearColor.z, vClearColor.w };
 
     // 백버퍼 지우기
     m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
 
+    return S_OK;
+}
+
+HRESULT CGraphicDev::Clear_DepthStencil_View()
+{
     // 깊이 버퍼 지우기
     m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
 
-	return S_OK;
+    return S_OK;
 }
 
-HRESULT CGraphicDev::Render_End()
+HRESULT CGraphicDev::Present()
 {
     // 렌더링 완료되어 화면에 백 버퍼를 표시
     if (m_bVsync_Enabled)
@@ -271,7 +276,7 @@ HRESULT CGraphicDev::Render_End()
         m_pSwapChain->Present(0, 0);
     }
 
-	return S_OK;
+    return S_OK;
 }
 
 CGraphicDev* CGraphicDev::Create(_int iScreenWidth, _int iScreenHeight, 

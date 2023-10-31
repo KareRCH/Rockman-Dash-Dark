@@ -394,10 +394,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Public\Shader\VS_Test.vs">
+    <FxCompile Include="Public\Shader\VS_Test1.hlsl">
       <Filter>03. Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Public\Shader\PS_Test.hlsl">
+    <FxCompile Include="Public\Shader\PS_Test1.hlsl">
       <Filter>03. Shader</Filter>
     </FxCompile>
   </ItemGroup>

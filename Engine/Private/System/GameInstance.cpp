@@ -59,20 +59,28 @@ HRESULT CGameInstance::Initialize_GraphicDev(_int iScreenWidth, _int iScreenHeig
 	return S_OK;
 }
 
-void CGameInstance::Render_Begin(_float fRed, _float fGreen, _float fBlue, _float fAlpha)
+HRESULT CGameInstance::Clear_BackBuffer_View(_float4 vClearColor)
 {
 	if (nullptr == m_pGraphicDev)
 		return;
 
-	m_pGraphicDev->Render_Begin(fRed, fGreen, fBlue, fAlpha);
+	return m_pGraphicDev->Clear_BackBuffer_View(vClearColor);
 }
 
-void CGameInstance::Render_End()
+HRESULT CGameInstance::Clear_DepthStencil_View()
 {
 	if (nullptr == m_pGraphicDev)
 		return;
 
-	m_pGraphicDev->Render_End();
+	return m_pGraphicDev->Clear_DepthStencil_View();
+}
+
+HRESULT CGameInstance::Present()
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	return m_pGraphicDev->Present();
 }
 
 ID3D11Device* CGameInstance::Get_GraphicDev()
@@ -81,6 +89,14 @@ ID3D11Device* CGameInstance::Get_GraphicDev()
 		return nullptr;
 
 	return m_pGraphicDev->Get_Device();
+}
+
+ID3D11DeviceContext* CGameInstance::Get_GraphicContext()
+{
+	if (nullptr == m_pGraphicDev)
+		return nullptr;
+
+	return m_pGraphicDev->Get_DeviceContext();
 }
 
 

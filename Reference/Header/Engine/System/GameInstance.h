@@ -28,6 +28,11 @@ class FCollisionPrimitive;
 /// <summary>
 /// 클라이언트에서 엔진의 기능을 사용하기 위해 반드시 거쳐야하는 객체
 /// 기존의 Export_Engine을 대체하여 사용될 것이다.
+/// 
+/// DX11을 통해 필요한 객체를 생성하고 렌더링 하는 작업을 수행한다.
+/// 지급 생성한 씬을 보관하고 필요에 따라 업데이트 수정
+/// 내가 생성한 객체들을 보관하고 업데이트하고 렌더한다.
+/// 내가 생성한 여러 
 /// </summary>
 class ENGINE_DLL CGameInstance final : public CBase
 {
@@ -44,11 +49,12 @@ private:
 	virtual void Free() override;
 
 public:		// 그래픽 디바이스
-	HRESULT			Initialize_GraphicDev(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
-											_float fScreenDepth, _float fScreenNear);
-	void			Render_Begin(_float fRed, _float fGreen, _float fBlue, _float fAlpha);
-	void			Render_End();
-	ID3D11Device*	Get_GraphicDev();
+	HRESULT					Initialize_GraphicDev(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
+													_float fScreenDepth, _float fScreenNear);
+	void					Render_Begin(_float fRed, _float fGreen, _float fBlue, _float fAlpha);
+	void					Render_End();
+	ID3D11Device*			Get_GraphicDev();
+	ID3D11DeviceContext*	Get_GraphicContext();
 	
 
 
@@ -66,7 +72,7 @@ public:		// 키 매니저
 	void	LateTick_KeyMgr();
 
 public:		// 피직스 매니저
-	HRESULT Initialize_PhysicsMgr(_uint iPhysicsWorldCount = 1);
+	HRESULT				Initialize_PhysicsMgr(_uint iPhysicsWorldCount = 1);
 	inline void			StartFrame_PhysicsMgr();
 	inline _int			Tick_PhysicsMgr(const Real& fTimeDelta);
 	inline void			Pause_PhysicsSimulation(const _uint iWorldID);
@@ -128,6 +134,11 @@ private:
 inline CGameInstance* GameInstance()
 {
 	return CGameInstance::GetInstance();
+}
+
+inline void Release_GameInstance()
+{
+	CGameInstance::GetInstance()->DestroyInstance();
 }
 
 END

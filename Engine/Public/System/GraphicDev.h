@@ -14,8 +14,9 @@ public:
 public:
 	HRESULT		Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
 							_float fScreenDepth, _float fScreenNear);
-	HRESULT		Render_Begin(_float fRed, _float fGreen, _float fBlue, _float fAlpha);
-	HRESULT		Render_End();
+	HRESULT		Clear_BackBuffer_View(_float4 vClearColor);
+	HRESULT		Clear_DepthStencil_View();
+	HRESULT		Present();
 
 public:
 	static CGraphicDev* Create(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
@@ -26,6 +27,7 @@ private:
 
 public:
 	GETSET_1(ID3D11Device*, m_pDevice, Device, GET_REF)
+	GETSET_1(ID3D11DeviceContext*, m_pDeviceContext, DeviceContext, GET_REF)
 
 private:
 	_bool	m_bVsync_Enabled = false;

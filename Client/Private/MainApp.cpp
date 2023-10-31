@@ -8,7 +8,9 @@
 IMPLEMENT_SINGLETON(CMainApp)
 
 CMainApp::CMainApp()
+	: m_pGameInstance(Engine::GameInstance())
 {
+	Safe_AddRef(m_pGameInstance);
 }
 
 CMainApp* CMainApp::Create()
@@ -30,12 +32,14 @@ CMainApp* CMainApp::Create()
 HRESULT CMainApp::Initialize()
 {
 	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(), E_FAIL);
-	NULL_CHECK_RETURN(m_pGameInstance = Engine::GameInstance(), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_GraphicDev(g_iWindowSizeX, g_iWindowSizeY, false, g_hWnd, false, 1.f, 0.01f), E_FAIL);
 
-	m_pGraphicDev = m_pGameInstance->Get_GraphicDev();
-	Safe_AddRef(m_pGraphicDev);
+	m_pDevice = m_pGameInstance->Get_GraphicDev();
+	Safe_AddRef(m_pDevice);
+
+	m_pDeviceContext = m_pGameInstance->Get_GraphicContext();
+	Safe_AddRef(m_pDeviceContext);
 
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_InputDev(g_hInst, g_hWnd), E_FAIL);
@@ -49,10 +53,10 @@ HRESULT CMainApp::Initialize()
 
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_FontMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pGraphicDev, L"Font_Default", L"πŸ≈¡", 15, 20, FW_HEAVY), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pGraphicDev, L"Font_Jinji", L"±√º≠", 30, 30, FW_THIN), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pGraphicDev, L"Font_Thin_Jinji", L"±√º≠", 18, 30, FW_THIN), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pGraphicDev, L"MonsterUI", L"«‘√ ∑’πŸ≈¡", 14, 25, FW_THIN), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"Font_Default", L"πŸ≈¡", 15, 20, FW_HEAVY), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"Font_Jinji", L"±√º≠", 30, 30, FW_THIN), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"Font_Thin_Jinji", L"±√º≠", 18, 30, FW_THIN), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"MonsterUI", L"«‘√ ∑’πŸ≈¡", 14, 25, FW_THIN), E_FAIL);
 
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_FrameMgr(), E_FAIL);
@@ -69,7 +73,7 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_BlackBoardMgr(), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(m_pGraphicDev), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(m_pDevice), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ProtoMgr(), E_FAIL);
 
@@ -111,10 +115,12 @@ void CMainApp::Render()
 void CMainApp::Free()
 {
 	// ¿Âƒ° ¡¶∞≈
-	Safe_Release(m_pGraphicDev);
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pDeviceContext);
 
 	// dll ΩÃ±€≈Ê ¡¶∞≈
-	Safe_Release(m_pGameInstance);
+	Safe_Release(m_pGameInstance); 
+	Release_GameInstance();
 }
 
 void CMainApp::Render_FrameRate()

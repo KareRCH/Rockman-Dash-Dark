@@ -52,15 +52,24 @@ namespace Engine
 	typedef		_float						_real;
 #endif // _WIN64
 
-	typedef		DirectX::XMFLOAT2			_vec2;
-	typedef		DirectX::XMFLOAT3			_vec3;
-	typedef		DirectX::XMFLOAT4			_vec4;
-	typedef		DirectX::XMMATRIX			_matrix;
+	// 저장용 벡터
+	typedef		DirectX::XMFLOAT2			_float2;
+	typedef		DirectX::XMFLOAT3			_float3;
+	typedef		DirectX::XMFLOAT4			_float4;
 
+	// 계산용 벡터
+	typedef		DirectX::XMVECTOR			_vec;
+
+	// 저장용 행렬
 	typedef		DirectX::XMFLOAT3X3			_float3x3;
 	typedef		DirectX::XMFLOAT3X4			_float3x4;
 	typedef		DirectX::XMFLOAT4X3			_float4x3;
 	typedef		DirectX::XMFLOAT4X4			_float4x4;
+
+	// 계산용 행렬
+	typedef		DirectX::XMMATRIX			_matrix;
+
+	
 
 
 	// 추가 정의 타입
