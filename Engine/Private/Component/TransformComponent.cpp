@@ -10,10 +10,6 @@ CTransformComponent::CTransformComponent(const CTransformComponent& rhs)
 {
 }
 
-CTransformComponent::~CTransformComponent()
-{
-}
-
 HRESULT CTransformComponent::Initialize()
 {
 

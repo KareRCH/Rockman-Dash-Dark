@@ -84,14 +84,14 @@ private:	// 컴포넌트 속성
 
 
 public:		// 트랜스폼 컴포넌트에 대한 함수 정의
-	const _vec3	Get_Position() const { return m_pTransformComp->Get_Position(); }
-	void		Set_Position(const _vec3& value) { m_pTransformComp->Set_Position(value); }
+	const _float3	Get_Position() const { return m_pTransformComp->Get_Position(); }
+	void		Set_Position(const _float3& value) { m_pTransformComp->Set_Position(value); }
 
-	const _vec3	Get_Rotation() const { return m_pTransformComp->Get_Rotation(); }
-	void		Set_Rotation(const _vec3& value) { m_pTransformComp->Set_Rotation(value); }
+	const _float3	Get_Rotation() const { return m_pTransformComp->Get_Rotation(); }
+	void		Set_Rotation(const _float3& value) { m_pTransformComp->Set_Rotation(value); }
 
-	const _vec3	Get_Scale() const { return m_pTransformComp->Get_Scale(); }
-	void		Set_Scale(const _vec3& value) { m_pTransformComp->Set_Scale(value); }
+	const _float3	Get_Scale() const { return m_pTransformComp->Get_Scale(); }
+	void		Set_Scale(const _float3& value) { m_pTransformComp->Set_Scale(value); }
 
 	void		Calculate_Transform() { m_pTransformComp->Calculate_Transform(); }
 	void		Calculate_TransformFromParent(const _matrix& matTransform) 

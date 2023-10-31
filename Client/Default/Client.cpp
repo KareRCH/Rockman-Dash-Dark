@@ -120,6 +120,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         MSG_BOX("메인 앱 누수");
     }
 
+    if (0 != Release_GameInstance())
+    {
+        MSG_BOX("게임 인스턴스 누수");
+    }
+
     return (int) msg.wParam;
 }
 

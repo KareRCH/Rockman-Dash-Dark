@@ -18,7 +18,7 @@ public:
 								const _uint& iWeight);
 
 	void			Render(const _tchar* pString,
-							const _vec2* pPos,
+							const _float2* pPos,
 							D3DCOLOR Color);
 
 public:

@@ -22,7 +22,7 @@ protected:
 	virtual void	Free();
 
 public:
-	GETSET_2(_vec3, m_vPosition, Position, GET_C_REF, SET_C_REF)
+	GETSET_2(_float3, m_vPosition, Position, GET_C_REF, SET_C_REF)
 	void Set_Position(const _float x, const _float y, const _float z)
 	{
 		m_vPosition.x = x;
@@ -33,7 +33,7 @@ public:
 	void Set_PosY(const _float value) { m_vPosition.y = value; }
 	void Set_PosZ(const _float value) { m_vPosition.z = value; }
 
-	GETSET_2(_vec3, m_vRotation, Rotation, GET_C_REF, SET_C_REF)
+	GETSET_2(_float3, m_vRotation, Rotation, GET_C_REF, SET_C_REF)
 	void Set_Rotation(const _float x, const _float y, const _float z)
 	{
 		m_vRotation.x = x;
@@ -44,7 +44,7 @@ public:
 	void Set_RotationY(const _float value) { m_vRotation.y = value; }
 	void Set_RotationZ(const _float value) { m_vRotation.z = value; }
 
-	GETSET_2(_vec3, m_vScale, Scale, GET_C_REF, SET_C_REF)
+	GETSET_2(_float3, m_vScale, Scale, GET_C_REF, SET_C_REF)
 	void Set_Scale(const _float x, const _float y, const _float z)
 	{
 		m_vScale.x = x;
@@ -56,7 +56,7 @@ public:
 	void Set_ScaleZ(const _float value) { m_vScale.z = value; }
 
 	GETSET_2(_matrix, m_matTransform, Transform, GET_C_REF, SET_C_REF)
-	//_vec3 Get_PosByTransform() { return _vec3(m_matTransform.r[3], m_matTransform._42, m_matTransform._43); }
+	//_float3 Get_PosByTransform() { return _float3(m_matTransform.r[3], m_matTransform._42, m_matTransform._43); }
 
 	inline void Calculate_Transform()
 	{
@@ -74,10 +74,10 @@ public:
 	}
 
 private:
-	_vec3		m_vPosition;
-	_vec3		m_vRotation;
-	_vec3		m_vScale;
-	_vec4		m_qtOrientation;
+	_float3		m_vPosition;
+	_float3		m_vRotation;
+	_float3		m_vScale;
+	_float4		m_qtOrientation;
 	_matrix		m_matTransform;
 };
 

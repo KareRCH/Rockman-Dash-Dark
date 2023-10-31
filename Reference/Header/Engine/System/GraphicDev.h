@@ -14,8 +14,9 @@ public:
 public:
 	HRESULT		Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
 							_float fScreenDepth, _float fScreenNear);
-	HRESULT		Render_Begin(_float fRed, _float fGreen, _float fBlue, _float fAlpha);
-	HRESULT		Render_End();
+	HRESULT		Clear_BackBuffer_View(_float4 vClearColor);
+	HRESULT		Clear_DepthStencil_View();
+	HRESULT		Present();
 
 public:
 	static CGraphicDev* Create(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,

@@ -305,9 +305,9 @@ public:
         z = -z;
     }
 
-    _vec3 Convert_DX9Vec3()
+    _float3 Convert_DX9Vec3()
     {
-        _vec3 v3;
+        _float3 v3;
         v3.x = (_float)x;
         v3.y = (_float)y;
         v3.z = (_float)z;

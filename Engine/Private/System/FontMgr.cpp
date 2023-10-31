@@ -51,7 +51,7 @@ HRESULT CFontMgr::Create_Font(ID3D11Device* pGraphicDev, const _tchar* pFontTag,
 	return S_OK;
 }
 
-void CFontMgr::Render_Font(const _tchar* pFontTag, const _tchar* pString, const _vec2* pPos, D3DCOLOR Color)
+void CFontMgr::Render_Font(const _tchar* pFontTag, const _tchar* pString, const _float2* pPos, D3DCOLOR Color)
 {
 	CMyFont* pMyFont = Find_Font(pFontTag);
 	NULL_CHECK(pMyFont);

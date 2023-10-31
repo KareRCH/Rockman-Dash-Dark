@@ -14,7 +14,7 @@ class ENGINE_DLL CTransformComponent : public CSceneComponent
 protected:
 	explicit CTransformComponent(ID3D11Device* pGraphicDev);
 	explicit CTransformComponent(const CTransformComponent& rhs);
-	virtual ~CTransformComponent();
+	virtual ~CTransformComponent() = default;
 
 public:
 	virtual HRESULT Initialize();

@@ -12,7 +12,7 @@ namespace Engine
 
 	//typedef struct tagVertexColor
 	//{
-	//	_vec3		vPosition;		
+	//	_float3		vPosition;		
 	//	_ulong		dwColor;
 
 	//}VTXCOL;
@@ -21,17 +21,17 @@ namespace Engine
 
 	//typedef struct tagVertexTexture
 	//{
-	//	_vec3		vPosition;
-	//	_vec3		vNormal;
-	//	_vec2		vTexUV;
+	//	_float3		vPosition;
+	//	_float3		vNormal;
+	//	_float2		vTexUV;
 
 	//}VTXTEX;
 	//const _ulong	FVF_TEX = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1;
 
 	//typedef struct tagVertexCubeTexture
 	//{
-	//	_vec3		vPosition;
-	//	_vec3		vTexUV;
+	//	_float3		vPosition;
+	//	_float3		vTexUV;
 
 	//}VTXCUBE;
 
@@ -70,9 +70,9 @@ namespace Engine
 	//		fAge = 0.0f;
 	//		bIsAlive = true;
 	//	}
-	//	_vec3		vPosition; // 현재 위치를 저장
-	//	_vec3		vVelocity; // 현재 속도를 저장
-	//	_vec3		vAcceleration; // 현재 가속도를 저장 
+	//	_float3		vPosition; // 현재 위치를 저장
+	//	_float3		vVelocity; // 현재 속도를 저장
+	//	_float3		vAcceleration; // 현재 가속도를 저장 
 	//	_float      fLifeTime;     // 물체가 살아있는동안의 수명 - 얼마나 오래 존재할것인가 
 	//	_float      fAge;          // 물체의 현재 나이 - 얼마나 오래 존재했는가 
 	//	D3DXCOLOR   Color;        // 현재 색상 - 어떤 색상으로 렌더링 되어야 하는가 
@@ -99,8 +99,8 @@ namespace Engine
 
 	//typedef struct tagBoundingBox
 	//{
-	//	_vec3 vMin;
-	//	_vec3 vMax;
+	//	_float3 vMin;
+	//	_float3 vMax;
 	//}BoundingBox;
 
 

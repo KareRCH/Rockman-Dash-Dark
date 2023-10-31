@@ -62,7 +62,7 @@ HRESULT CGameInstance::Initialize_GraphicDev(_int iScreenWidth, _int iScreenHeig
 HRESULT CGameInstance::Clear_BackBuffer_View(_float4 vClearColor)
 {
 	if (nullptr == m_pGraphicDev)
-		return;
+		return E_FAIL;
 
 	return m_pGraphicDev->Clear_BackBuffer_View(vClearColor);
 }
@@ -70,7 +70,7 @@ HRESULT CGameInstance::Clear_BackBuffer_View(_float4 vClearColor)
 HRESULT CGameInstance::Clear_DepthStencil_View()
 {
 	if (nullptr == m_pGraphicDev)
-		return;
+		return E_FAIL;
 
 	return m_pGraphicDev->Clear_DepthStencil_View();
 }
@@ -78,7 +78,7 @@ HRESULT CGameInstance::Clear_DepthStencil_View()
 HRESULT CGameInstance::Present()
 {
 	if (nullptr == m_pGraphicDev)
-		return;
+		return E_FAIL;
 
 	return m_pGraphicDev->Present();
 }
@@ -304,7 +304,7 @@ HRESULT CGameInstance::Create_Font(ID3D11Device* pGraphicDev, const _tchar* pFon
 	return S_OK;
 }
 
-void CGameInstance::Render_Font(const _tchar* pFontTag, const _tchar* pString, const _vec2* pPos, D3DCOLOR Color)
+void CGameInstance::Render_Font(const _tchar* pFontTag, const _tchar* pString, const _float2* pPos, D3DCOLOR Color)
 {
 	if (nullptr == m_pFontMgr)
 		return;

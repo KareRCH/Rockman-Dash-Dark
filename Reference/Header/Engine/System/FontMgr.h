@@ -35,7 +35,7 @@ public:
 
 	void		Render_Font(const _tchar* pFontTag,
 							const _tchar* pString,
-							const _vec2* pPos,
+							const _float2* pPos,
 							D3DCOLOR Color);
 
 private:

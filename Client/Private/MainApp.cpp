@@ -101,7 +101,9 @@ void CMainApp::LateTick()
 
 void CMainApp::Render()
 {
-	m_pGameInstance->Render_Begin(0.f, 0.f, 0.f, 1.f);
+	m_pGameInstance->Clear_BackBuffer_View({0.f, 0.f, 0.f, 1.f});
+
+	m_pGameInstance->Clear_DepthStencil_View();
 
 	//m_pGameInstance->Render_Scene(m_pGraphicDev);
 
@@ -109,7 +111,7 @@ void CMainApp::Render()
 	Render_FrameRate();
 #endif
 
-	m_pGameInstance->Render_End();
+	m_pGameInstance->Present();
 }
 
 void CMainApp::Free()
@@ -119,8 +121,7 @@ void CMainApp::Free()
 	Safe_Release(m_pDeviceContext);
 
 	// dll ΩÃ±€≈Ê ¡¶∞≈
-	Safe_Release(m_pGameInstance); 
-	Release_GameInstance();
+	Safe_Release(m_pGameInstance);
 }
 
 void CMainApp::Render_FrameRate()
@@ -132,7 +133,7 @@ void CMainApp::Render_FrameRate()
 	wstringstream ss;
 	ss << fResultFrameRate;
 	wstring str = ss.str();
-	_vec2 vFontPos = { 0.f, 0.f };
+	_float2 vFontPos = { 0.f, 0.f };
 	D3DCOLOR colorFont;
 
 	if (fResultFrameRate >= fFrameRate * 0.9f)

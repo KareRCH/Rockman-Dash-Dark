@@ -2,7 +2,7 @@
 
 CSceneComponent::CSceneComponent(ID3D11Device* pGraphicDev)
 	: Base(pGraphicDev)
-	, m_vPosition(_vec3()), m_vRotation(_vec3()), m_vScale(_vec3()), m_qtOrientation(_vec4())
+	, m_vPosition(_float3()), m_vRotation(_float3()), m_vScale(_float3()), m_qtOrientation(_float4())
 	, m_matTransform(XMMatrixIdentity())
 {
 	

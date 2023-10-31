@@ -15,7 +15,7 @@ HRESULT CMyFont::Initialize(const _tchar* pFontType,
 	return S_OK;
 }
 
-void CMyFont::Render(const _tchar* pString, const _vec2* pPos, D3DCOLOR Color)
+void CMyFont::Render(const _tchar* pString, const _float2* pPos, D3DCOLOR Color)
 {
 	RECT	rc{ LONG(pPos->x), LONG(pPos->y) };
 

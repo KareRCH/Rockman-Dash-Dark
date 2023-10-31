@@ -51,8 +51,9 @@ private:
 public:		// 그래픽 디바이스
 	HRESULT					Initialize_GraphicDev(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
 													_float fScreenDepth, _float fScreenNear);
-	void					Render_Begin(_float fRed, _float fGreen, _float fBlue, _float fAlpha);
-	void					Render_End();
+	HRESULT					Clear_BackBuffer_View(_float4 vClearColor);
+	HRESULT					Clear_DepthStencil_View();
+	HRESULT					Present();
 	ID3D11Device*			Get_GraphicDev();
 	ID3D11DeviceContext*	Get_GraphicContext();
 	
@@ -86,7 +87,7 @@ public:		// 사운드 매니저
 public:		// 폰트 매니저
 	HRESULT Initialize_FontMgr();
 	HRESULT Create_Font(ID3D11Device* pGraphicDev, const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight);
-	void	Render_Font(const _tchar* pFontTag, const _tchar* pString, const _vec2* pPos, D3DCOLOR Color);
+	void	Render_Font(const _tchar* pFontTag, const _tchar* pString, const _float2* pPos, D3DCOLOR Color);
 
 public:		// 프레임 매니저
 	HRESULT Initialize_FrameMgr();
@@ -136,9 +137,9 @@ inline CGameInstance* GameInstance()
 	return CGameInstance::GetInstance();
 }
 
-inline void Release_GameInstance()
+inline _uint Release_GameInstance()
 {
-	CGameInstance::GetInstance()->DestroyInstance();
+	return CGameInstance::GetInstance()->DestroyInstance();
 }
 
 END

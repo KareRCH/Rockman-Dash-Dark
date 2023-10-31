@@ -81,7 +81,7 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_GetGameObject(con
 	return listGameObject;
 }
 
-list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Collider_GetGameObject(const _uint iWorldID, const _vec3 vPos, CColliderComponent* pSrc, _ulong iMask)
+list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Collider_GetGameObject(const _uint iWorldID, const _float3 vPos, CColliderComponent* pSrc, _ulong iMask)
 {
 	FCollisionPrimitive* pShape = static_cast<FCollisionPrimitive*>(pSrc->Get_Shape());
 	pShape->Set_Position(pShape->Get_Position() + FVector3(vPos.x, vPos.y, vPos.z));
@@ -90,7 +90,7 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Collider_GetGameO
 	return IntersectTests_GetGameObject(iWorldID, pShape);
 }
 
-list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Sphere_GetGameObject(const _uint iWorldID, _vec3 vPos, _float fRadius, _ulong iMask)
+list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Sphere_GetGameObject(const _uint iWorldID, _float3 vPos, _float fRadius, _ulong iMask)
 {
 	FCollisionSphere pShape;
 	pShape.Set_Position(FVector3(vPos.x, vPos.y, vPos.z));
@@ -100,7 +100,7 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Sphere_GetGameObj
 	return IntersectTests_GetGameObject(iWorldID, static_cast<FCollisionPrimitive*>(&pShape));
 }
 
-list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Box_GetGameObject(const _uint iWorldID, _vec3 vPos, _vec3 vHalfSize, _ulong iMask)
+list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Box_GetGameObject(const _uint iWorldID, _float3 vPos, _float3 vHalfSize, _ulong iMask)
 {
 	FCollisionBox pShape;
 	pShape.Set_Position(FVector3(vPos.x, vPos.y, vPos.z));
@@ -110,7 +110,7 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Box_GetGameObject
 	return IntersectTests_GetGameObject(iWorldID, static_cast<FCollisionPrimitive*>(&pShape));
 }
 
-list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Capsule_GetGameObject(const _uint iWorldID, _vec3 vPos, _vec3 vNormal, _float fRadius, _ulong iMask)
+list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Capsule_GetGameObject(const _uint iWorldID, _float3 vPos, _float3 vNormal, _float fRadius, _ulong iMask)
 {
 	FCollisionCapsule pShape;
 	pShape.Set_Position(FVector3(vPos.x, vPos.y, vPos.z));
@@ -121,7 +121,7 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Capsule_GetGameOb
 	return IntersectTests_GetGameObject(iWorldID, static_cast<FCollisionPrimitive*>(&pShape));
 }
 
-list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Line_GetGameObject(const _uint iWorldID, _vec3 vStart, _vec3 vEnd, _ulong iMask)
+list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Line_GetGameObject(const _uint iWorldID, _float3 vStart, _float3 vEnd, _ulong iMask)
 {
 	FCollisionLine pShape;
 	//pShape.Set_Position(FVector3(vPos.x, vPos.y, vPos.z));
@@ -132,7 +132,7 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Line_GetGameObjec
 	return IntersectTests_GetGameObject(iWorldID, static_cast<FCollisionPrimitive*>(&pShape));
 }
 
-list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Ray_GetGameObject(const _uint iWorldID, const _vec3 vPos, const _vec3 vNormal, _ulong iMask)
+list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Ray_GetGameObject(const _uint iWorldID, const _float3 vPos, const _float3 vNormal, _ulong iMask)
 {
 	FCollisionRay pShape;
 	pShape.vOrigin = (FVector3(vPos.x, vPos.y, vPos.z));
@@ -143,21 +143,21 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Ray_GetGameObject
 }
 
 //															광선쏘는 주인,					맞는 대상,		쏘는 방향
-//bool CPhysicsMgr::CollisionRayToCube(const CColliderComponent* pCRay, const CColliderComponent* pCBox, _vec3 vRayDest)
+//bool CPhysicsMgr::CollisionRayToCube(const CColliderComponent* pCRay, const CColliderComponent* pCBox, _float3 vRayDest)
 //{
-//	//_vec3 vRayOrigin = pCRay->m_tCollider.vCenter;
-//	_vec3 vRayOrigin = pCRay->Get_Pos(); // 광선의 원점(시작점)
+//	//_float3 vRayOrigin = pCRay->m_tCollider.vCenter;
+//	_float3 vRayOrigin = pCRay->Get_Pos(); // 광선의 원점(시작점)
 //	
-//	_vec3 vRayDir = vRayDest - vRayOrigin; // 광선의 방향
+//	_float3 vRayDir = vRayDest - vRayOrigin; // 광선의 방향
 //	D3DXVec3Normalize(&vRayDir, &vRayDir); // 방향 벡터 노멀라이즈
 //
-//	_vec3 vRayToCenter = pCBox->Get_Pos() - vRayOrigin; // 광선의 원점에서 AABB(대상)의 중심까지의 벡터
+//	_float3 vRayToCenter = pCBox->Get_Pos() - vRayOrigin; // 광선의 원점에서 AABB(대상)의 중심까지의 벡터
 //
-//	_vec3 vAxisDotToRD = { D3DXVec3Dot(&pCBox->m_tCollider.axis[0], &vRayDir), // 광선의 방향과 AABB(대상)의 각 축과의 내적값을 가지는 벡터
+//	_float3 vAxisDotToRD = { D3DXVec3Dot(&pCBox->m_tCollider.axis[0], &vRayDir), // 광선의 방향과 AABB(대상)의 각 축과의 내적값을 가지는 벡터
 //						D3DXVec3Dot(&pCBox->m_tCollider.axis[1], &vRayDir),
 //						D3DXVec3Dot(&pCBox->m_tCollider.axis[2], &vRayDir) };
 //
-//	_vec3 vAxisDotToRTC = { D3DXVec3Dot(&pCBox->m_tCollider.axis[0], &vRayToCenter), // 광선의 원점에서 AABB(대상)의 각 축까지의 벡터와의 내적값을 가지는 벡터
+//	_float3 vAxisDotToRTC = { D3DXVec3Dot(&pCBox->m_tCollider.axis[0], &vRayToCenter), // 광선의 원점에서 AABB(대상)의 각 축까지의 벡터와의 내적값을 가지는 벡터
 //					   D3DXVec3Dot(&pCBox->m_tCollider.axis[1], &vRayToCenter),
 //					   D3DXVec3Dot(&pCBox->m_tCollider.axis[2], &vRayToCenter) };
 //

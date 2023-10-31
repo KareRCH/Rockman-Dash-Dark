@@ -87,7 +87,7 @@ public:		// 사운드 매니저
 public:		// 폰트 매니저
 	HRESULT Initialize_FontMgr();
 	HRESULT Create_Font(ID3D11Device* pGraphicDev, const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight);
-	void	Render_Font(const _tchar* pFontTag, const _tchar* pString, const _vec2* pPos, D3DCOLOR Color);
+	void	Render_Font(const _tchar* pFontTag, const _tchar* pString, const _float2* pPos, D3DCOLOR Color);
 
 public:		// 프레임 매니저
 	HRESULT Initialize_FrameMgr();
@@ -137,9 +137,9 @@ inline CGameInstance* GameInstance()
 	return CGameInstance::GetInstance();
 }
 
-inline void Release_GameInstance()
+inline _uint Release_GameInstance()
 {
-	CGameInstance::GetInstance()->DestroyInstance();
+	return CGameInstance::GetInstance()->DestroyInstance();
 }
 
 END

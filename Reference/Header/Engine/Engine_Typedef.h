@@ -53,9 +53,9 @@ namespace Engine
 #endif // _WIN64
 
 	// 저장용 벡터
-	typedef		DirectX::XMFLOAT2			_vec2;
-	typedef		DirectX::XMFLOAT3			_vec3;
-	typedef		DirectX::XMFLOAT4			_vec4;
+	typedef		DirectX::XMFLOAT2			_float2;
+	typedef		DirectX::XMFLOAT3			_float3;
+	typedef		DirectX::XMFLOAT4			_float4;
 
 	// 계산용 벡터
 	typedef		DirectX::XMVECTOR			_vec;
