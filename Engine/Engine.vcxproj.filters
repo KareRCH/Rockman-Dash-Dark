@@ -270,6 +270,9 @@
     <ClInclude Include="Public\Component\TriBufferComp.h">
       <Filter>02. Utility\02. Component\04. VIBufferComp\01. Tri</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\RenderMgr.h">
+      <Filter>02. Utility\03. Manager\02. RenderMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -391,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="Private\Component\TriBufferComp.cpp">
       <Filter>02. Utility\02. Component\04. VIBufferComp\01. Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\RenderMgr.cpp">
+      <Filter>02. Utility\03. Manager\02. RenderMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

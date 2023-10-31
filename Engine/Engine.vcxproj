@@ -248,6 +248,7 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
     <ClInclude Include="Public\System\InputDev.h" />
     <ClInclude Include="Public\System\MyFont.h" />
     <ClInclude Include="Public\System\ProtoMgr.h" />
+    <ClInclude Include="Public\System\RenderMgr.h" />
     <ClInclude Include="Public\System\SoundMgr.h" />
     <ClInclude Include="Public\System\Texture.h" />
     <ClInclude Include="Public\System\TextureMgr.h" />
@@ -287,6 +288,7 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
     <ClCompile Include="Private\System\InputDev.cpp" />
     <ClCompile Include="Private\System\MyFont.cpp" />
     <ClCompile Include="Private\System\ProtoMgr.cpp" />
+    <ClCompile Include="Private\System\RenderMgr.cpp" />
     <ClCompile Include="Private\System\SoundMgr.cpp" />
     <ClCompile Include="Private\System\Texture.cpp" />
     <ClCompile Include="Private\System\TextureMgr.cpp" />
