@@ -16,6 +16,15 @@
     <Filter Include="00. MainApp">
       <UniqueIdentifier>{ef58806f-7984-41bc-b85c-427cd0249bf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Scene">
+      <UniqueIdentifier>{ef00fae5-7d37-4266-b1fd-1e96325b477a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject">
+      <UniqueIdentifier>{5b738fcb-870f-4f63-81cf-081305ae8940}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Test">
+      <UniqueIdentifier>{6e80a748-65ee-46b4-a6ba-7432f13ce48d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Client_Define.h">
@@ -36,6 +45,9 @@
     <ClInclude Include="Public\MainApp.h">
       <Filter>00. MainApp</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\TestObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -43,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="Private\MainApp.cpp">
       <Filter>00. MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\TestObject.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

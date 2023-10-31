@@ -184,10 +184,12 @@ xcopy "$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)
     <ClInclude Include="Default\Resource.h" />
     <ClInclude Include="Default\targetver.h" />
     <ClInclude Include="Public\Client_Define.h" />
+    <ClInclude Include="Public\GameObject\TestObject.h" />
     <ClInclude Include="Public\MainApp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp" />
+    <ClCompile Include="Private\GameObject\TestObject.cpp" />
     <ClCompile Include="Private\MainApp.cpp" />
   </ItemGroup>
   <ItemGroup>
