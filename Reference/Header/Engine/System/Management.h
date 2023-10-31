@@ -24,7 +24,7 @@ public:
 	HRESULT				Initialize(const EMANAGE_SCENE eType);
 	_int				Tick(const _float& fTimeDelta);
 	void				LateTick();
-	void				Render(ID3D11Device* pGraphicDev);
+	void				Render(ID3D11DeviceContext* const pDeviceContext);
 
 public:
 	static CManagement* Create(const EMANAGE_SCENE eType);

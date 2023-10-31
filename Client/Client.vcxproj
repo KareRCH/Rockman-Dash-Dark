@@ -46,7 +46,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableUnitySupport>false</EnableUnitySupport>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -186,11 +186,13 @@ xcopy "$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)
     <ClInclude Include="Public\Client_Define.h" />
     <ClInclude Include="Public\GameObject\TestObject.h" />
     <ClInclude Include="Public\MainApp.h" />
+    <ClInclude Include="Public\TestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp" />
     <ClCompile Include="Private\GameObject\TestObject.cpp" />
     <ClCompile Include="Private\MainApp.cpp" />
+    <ClCompile Include="Private\TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />

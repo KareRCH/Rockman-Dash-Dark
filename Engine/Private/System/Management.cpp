@@ -40,24 +40,30 @@ _int CManagement::Tick(const _float& fTimeDelta)
 	}
 
 	// 씬 없으면 예외처리
-	NULL_CHECK_RETURN(m_pScene_Current, -1);
+	if (nullptr == m_pScene_Current)
+		return -1;
 
-	return m_pScene_Current->Update_Scene(fTimeDelta);
+	return m_pScene_Current->Tick(fTimeDelta);
 }
 
 void CManagement::LateTick()
 {
 	// 씬 없으면 예외처리
-	NULL_CHECK(m_pScene_Current);
-	m_pScene_Current->LateUpdate_Scene();
+	if (nullptr == m_pScene_Current)
+		return;
+
+	m_pScene_Current->LateTick();
 }
 
-void CManagement::Render(ID3D11Device* pGraphicDev)
+void CManagement::Render(ID3D11DeviceContext* const pDeviceContext)
 {
 	//GameInstance()->Render_GameObject(pGraphicDev);
 
-	NULL_CHECK(m_pScene_Current);
-	m_pScene_Current->Render_Scene();		// 디버깅용
+	// 씬 없으면 예외처리
+	if (nullptr == m_pScene_Current)
+		return;
+
+	m_pScene_Current->Render(pDeviceContext);		// 디버깅용
 }
 
 CManagement* CManagement::Create(const EMANAGE_SCENE eType)

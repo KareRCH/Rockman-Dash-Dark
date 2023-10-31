@@ -13,7 +13,7 @@ class ENGINE_DLL CShaderComponent abstract : public CPrimitiveComponent
 {
 	DERIVED_CLASS(CPrimitiveComponent, CShaderComponent)
 protected:
-	explicit CShaderComponent(ID3D11Device* pGraphicDev);
+	explicit CShaderComponent(ID3D11Device* pDevice);
 	explicit CShaderComponent(const CShaderComponent& rhs);
 	virtual ~CShaderComponent() = default;
 
@@ -28,6 +28,9 @@ protected:
 
 protected:
 	virtual void	Free();
+
+protected:
+	void OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hWnd, const _tchar* pShaderFileName);
 
 protected:
 	ID3D11VertexShader* m_pVertexShader = nullptr;

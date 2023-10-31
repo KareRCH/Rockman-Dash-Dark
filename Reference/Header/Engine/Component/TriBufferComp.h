@@ -19,10 +19,14 @@ public:
 	virtual void	Render(ID3D11DeviceContext* pDeviceContext);
 
 public:
+	static CTriBufferComp* Create(ID3D11Device* pGraphicDev);
 	virtual CPrimitiveComponent* Clone();
 
 protected:
 	virtual void	Free();
+
+protected:
+	
 };
 
 END

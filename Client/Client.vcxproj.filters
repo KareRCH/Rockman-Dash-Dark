@@ -46,6 +46,9 @@
       <Filter>00. MainApp</Filter>
     </ClInclude>
     <ClInclude Include="Public\GameObject\TestObject.h">
+      <Filter>02. GameObject\99. Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\TestScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -57,6 +60,9 @@
       <Filter>00. MainApp</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\TestObject.cpp">
+      <Filter>02. GameObject\99. Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\TestScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

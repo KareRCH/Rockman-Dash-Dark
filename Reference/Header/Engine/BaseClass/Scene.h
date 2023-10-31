@@ -4,26 +4,27 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CScene : public CBase
+class ENGINE_DLL CScene abstract : public CBase
 {
 	DERIVED_CLASS(CBase, CScene)
 protected:
 	explicit CScene(ID3D11Device* pGraphicDev);
+	explicit CScene(const CScene& rhs) = delete;
 	virtual ~CScene() = default;
 
 public:
-	virtual void	Free();
+	virtual HRESULT		Initialize();
+	virtual _int		Tick(const _float& fTimeDelta);
+	virtual void		LateTick();
+	virtual void		Render(ID3D11DeviceContext* const pDeviceContext);
 
-public:
-	virtual HRESULT		Ready_Scene();
-	virtual _int		Update_Scene(const _float& fTimeDelta);
-	virtual void		LateUpdate_Scene();
-	virtual void		Render_Scene();
-
-	virtual HRESULT		ReadyLate_Scene();
+	virtual HRESULT		InitializeLate_Scene();
 
 protected:
-	ID3D11Device*		m_pGraphicDev = nullptr;
+	virtual void	Free();
+
+protected:
+	ID3D11Device*		m_pDevice = nullptr;
 
 public:
 	CPrimitiveComponent*	Get_Component(COMPONENTID eID, const _tchar* pLayerTag, const _tchar* pObjTag, const _tchar* pComponentTag);
@@ -38,7 +39,7 @@ public:
 
 protected:	// 레이어 관련
 	// 모든 레이어가 준비되었을 때 작성하는 코드입니다.
-	virtual HRESULT		Ready_Layer_Completed() PURE;
+	virtual HRESULT			Initialize_Layer_Completed() PURE;
 	
 
 protected:

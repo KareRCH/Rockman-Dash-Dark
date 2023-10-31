@@ -39,7 +39,7 @@ class ENGINE_DLL CGameInstance final : public CBase
 	DERIVED_CLASS_SINGLETON(CBase, CGameInstance)
 
 private:
-	CGameInstance();
+	explicit CGameInstance();
 	virtual ~CGameInstance() = default;
 
 public:
@@ -105,7 +105,7 @@ public:		// 매니지먼트
 	HRESULT Initialize_Management(const EMANAGE_SCENE eManageSceneType);
 	_int	Tick_Scene(const _float& fTimeDelta);
 	void	LateTick_Scene();
-	void	Render_Scene(ID3D11Device* pGraphicDev);
+	void	Render_Scene(ID3D11DeviceContext* const pDeviceContext);
 	HRESULT	Set_Scene(CScene* pScene);
 
 public:		// 블랙보드 매니저

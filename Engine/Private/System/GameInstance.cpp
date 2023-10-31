@@ -440,12 +440,12 @@ void CGameInstance::LateTick_Scene()
 	m_pManagement->LateTick();
 }
 
-void CGameInstance::Render_Scene(ID3D11Device* pGraphicDev)
+void CGameInstance::Render_Scene(ID3D11DeviceContext* const pDeviceContext)
 {
 	if (nullptr == m_pManagement)
 		return;
 
-	m_pManagement->Render(pGraphicDev);
+	m_pManagement->Render(pDeviceContext);
 }
 
 HRESULT CGameInstance::Set_Scene(CScene* pScene)

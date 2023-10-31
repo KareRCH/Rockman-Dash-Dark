@@ -15,7 +15,7 @@ class ENGINE_DLL CPrimitiveComponent abstract : public CBase
 {
 	DERIVED_CLASS(CBase, CPrimitiveComponent)
 protected:
-	explicit CPrimitiveComponent(ID3D11Device* pGraphicDev);
+	explicit CPrimitiveComponent(ID3D11Device* pDevice);
 	explicit CPrimitiveComponent(const CPrimitiveComponent& rhs);
 	virtual ~CPrimitiveComponent() = default;
 
@@ -32,7 +32,7 @@ protected:
 	virtual void					Free();
 
 protected:
-	ID3D11Device*		m_pGraphicDev = nullptr;	// ·»´õ ÀåÄ¡
+	ID3D11Device*		m_pDevice = nullptr;	// ·»´õ ÀåÄ¡
 	_bool				m_bClone;
 
 public:

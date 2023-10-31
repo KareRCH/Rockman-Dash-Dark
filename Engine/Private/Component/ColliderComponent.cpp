@@ -152,7 +152,7 @@ HRESULT CColliderComponent::Initialize(ID3D11Device* pGraphicDev, ECOLLISION eTy
 _int CColliderComponent::Tick(const _float& fTimeDelta)
 {
     OnCollisionExited();
-    SeeColliderFrame(m_pGraphicDev);
+    SeeColliderFrame(m_pDevice);
     // Exited ÃÊ±âÈ­
     for (auto iter = m_listColliderObject.begin(); iter != m_listColliderObject.end(); ++iter)
         iter->second = false;

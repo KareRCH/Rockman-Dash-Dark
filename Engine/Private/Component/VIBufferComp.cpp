@@ -7,6 +7,7 @@ CVIBufferComp::CVIBufferComp(ID3D11Device* pGraphicDev)
 
 CVIBufferComp::CVIBufferComp(const CVIBufferComp& rhs)
 	: Base(rhs)
+	, m_pVtxBuffer(rhs.m_pVtxBuffer), m_pIndexBuffer(rhs.m_pIndexBuffer)
 {
 }
 

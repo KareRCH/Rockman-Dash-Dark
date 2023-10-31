@@ -67,24 +67,31 @@ namespace Engine
 	}
 
 #pragma region 컴파일러용 캐스팅 함수
-	// 이 버전은 다른 모든 숫자형에 대응하는 템플릿형 함수
-	template<typename Return, typename = enable_if_t<is_arithmetic<Return>::value || is_enum<Return>::value>,
-		typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
+	// static_cast버전
+	template<typename Return, typename T>
 	constexpr Return Cast(T value)
 	{
 		return static_cast<Return>(value);
 	}
 
-	template<typename T, typename = enable_if_t<is_enum<T>::value>,
-		typename Return = underlying_type_t<T>>
-	constexpr Return Cast_EnumDef(T value)
+	// 다이나믹 캐스트 버전
+	template<typename Return, typename T>
+	Return DynCast(T value)
 	{
-		return static_cast<Return>(value);
+		static_assert(is_base_of<Return, T>::value, "Return should be a base class of T");
+		return dynamic_cast<Return>(value);
+	}
+
+	// reinterpret_cast버전
+	template<typename Return, typename T>
+	constexpr Return ReCast(T value)
+	{
+		return reinterpret_cast<Return>(value);
 	}
 
 	template<typename T, typename = enable_if_t<is_enum<T>::value>,
 		typename Return = underlying_type_t<T>>
-	Return RCast_EnumDef(T value)
+	constexpr Return Cast_EnumDef(T value)
 	{
 		return static_cast<Return>(value);
 	}

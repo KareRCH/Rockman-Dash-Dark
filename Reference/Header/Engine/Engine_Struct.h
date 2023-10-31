@@ -10,14 +10,20 @@ class unorded_map;
 namespace Engine
 {
 
-	//typedef struct tagVertexColor
-	//{
-	//	_float3		vPosition;		
-	//	_ulong		dwColor;
+	typedef struct tagVertexColor
+	{
+		_float3		vPosition;		
+		_float4		vColor;
 
-	//}VTXCOL;
+	}VTXCOL;
 	//const _ulong	FVF_COL = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX0;
 
+	struct MATRIX_BUFFER_T
+	{
+		_matrix		matWorld;
+		_matrix		matView;
+		_matrix		matProj;
+	};
 
 	//typedef struct tagVertexTexture
 	//{

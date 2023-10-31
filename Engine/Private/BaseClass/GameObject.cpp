@@ -3,7 +3,8 @@
 #include "Component/PrimitiveComponent.h"
 
 
-CGameObject::CGameObject(ID3D11Device* pGraphicDev)
+CGameObject::CGameObject(ID3D11Device* pDevice)
+	: m_pDevice(pDevice)
 {
 }
 
@@ -38,7 +39,7 @@ void CGameObject::LateTick()
 	}
 }
 
-void CGameObject::Render(ID3D11DeviceContext* pDeviceContext)
+void CGameObject::Render(ID3D11DeviceContext* const pDeviceContext)
 {
 	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::RENDER)].begin();
 		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::RENDER)].end(); ++iter)
@@ -53,6 +54,7 @@ void CGameObject::Free()
 	{
 		Safe_Release((*iter));
 	}
+	m_vecComponent.clear();
 }
 
 

@@ -23,6 +23,12 @@ public:
 
 protected:
 	virtual void	Free();
+
+protected:
+	ID3D11Buffer* m_pVtxBuffer = nullptr;
+	ID3D11Buffer* m_pIndexBuffer = nullptr;
+	_uint m_iVtxCount = 0;
+	_uint m_iIndexCount = 0;
 };
 
 END

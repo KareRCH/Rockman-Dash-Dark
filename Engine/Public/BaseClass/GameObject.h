@@ -23,7 +23,7 @@ class ENGINE_DLL CGameObject abstract : public CBase
 {
 	DERIVED_CLASS(CBase, CGameObject)
 protected:
-	explicit CGameObject(ID3D11Device* pGraphicDev);
+	explicit CGameObject(ID3D11Device* pDevice);
 	explicit CGameObject(const CGameObject& rhs);
 	virtual ~CGameObject() = default;
 
@@ -31,7 +31,7 @@ public:
 	virtual HRESULT Initialize();
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick();
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext);
+	virtual void	Render(ID3D11DeviceContext* const pDeviceContext);
 
 protected:
 	virtual void	Free();
@@ -50,6 +50,8 @@ private:	// 기본 속성
 	_uint						m_iStateFlag = 0U;		// 상태 플래그
 	
 	_float						m_fPriority[Cast_EnumDef(EUPDATE_T::SIZE)];	// 우선도
+
+protected:
 	ID3D11Device*				m_pDevice = nullptr;
 
 public: // 각 오브젝트는 자식 오브젝트를 가질 수 있음
@@ -62,14 +64,16 @@ private:
 
 #pragma region 컴포넌트
 
-private:
-	HRESULT Initialize_Component();
+public:
 	void Add_Component(const wstring& strName, CPrimitiveComponent* pComponent);
 	CPrimitiveComponent* Get_Component(const _uint iIndex)
 	{
 		return m_vecComponent[iIndex];
 	}
 	CPrimitiveComponent* Get_Component(const wstring& strName);
+
+private:
+	HRESULT Initialize_Component();
 
 public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
 	void OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue);

@@ -3,30 +3,17 @@
 
 
 CScene::CScene(ID3D11Device* pGraphicDev)
-	: m_pGraphicDev(pGraphicDev)
+	: m_pDevice(pGraphicDev)
 {
-	m_pGraphicDev->AddRef();
+	m_pDevice->AddRef();
 }
 
-void CScene::Free()
-{
-	// 레이어 컨테이너 비우고 삭제
-	for (auto iter = m_mapLayer.begin(); iter != m_mapLayer.end();)
-	{
-		Safe_Release((*iter).second);
-		iter = m_mapLayer.erase(iter);
-	}
-
-	// 레퍼런스 카운트 줄이기
-	Safe_Release(m_pGraphicDev);
-}
-
-HRESULT CScene::Ready_Scene()
+HRESULT CScene::Initialize()
 {
 	return S_OK;
 }
 
-_int CScene::Update_Scene(const _float& fTimeDelta)
+_int CScene::Tick(const _float& fTimeDelta)
 {
 	// 우선도 설정을 해준다.
 	{
@@ -55,7 +42,7 @@ _int CScene::Update_Scene(const _float& fTimeDelta)
 	return iResult;
 }
 
-void CScene::LateUpdate_Scene()
+void CScene::LateTick()
 {
 	for (auto& iter : m_vecPriorityLayer)
 		iter->LateUpdate_Layer();
@@ -64,13 +51,25 @@ void CScene::LateUpdate_Scene()
 	m_vecPriorityLayer.clear();
 }
 
-void CScene::Render_Scene()
+void CScene::Render(ID3D11DeviceContext* const pDeviceContext)
 {
 	// _DEBUG 용
-
 }
 
-HRESULT CScene::ReadyLate_Scene()
+void CScene::Free()
+{
+	// 레이어 컨테이너 비우고 삭제
+	for (auto iter = m_mapLayer.begin(); iter != m_mapLayer.end();)
+	{
+		Safe_Release((*iter).second);
+		iter = m_mapLayer.erase(iter);
+	}
+
+	// 레퍼런스 카운트 줄이기
+	Safe_Release(m_pDevice);
+}
+
+HRESULT CScene::InitializeLate_Scene()
 {
 	return S_OK;
 }

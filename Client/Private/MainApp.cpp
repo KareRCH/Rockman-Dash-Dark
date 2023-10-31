@@ -4,6 +4,7 @@
 #include "Engine_Define.h"
 
 #include "System/Management.h"
+#include "TestScene.h"
 
 IMPLEMENT_SINGLETON(CMainApp)
 
@@ -67,15 +68,14 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Timer(L"Timer_Immediate"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Timer(L"Timer_FPS"), E_FAIL);
 
-	
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_Management(EMANAGE_SCENE::SINGLE), E_FAIL);
-
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_BlackBoardMgr(), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(m_pDevice), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ProtoMgr(), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_Management(EMANAGE_SCENE::SINGLE), E_FAIL);
+	m_pGameInstance->Set_Scene(CTestScene::Create(m_pDevice));
 
 	return S_OK;
 }
@@ -86,7 +86,7 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 
 	m_pGameInstance->StartFrame_PhysicsMgr();
 
-	//m_pGameInstance->Tick_Scene(fTimeDelta);
+	m_pGameInstance->Tick_Scene(fTimeDelta);
 
 	m_pGameInstance->Tick_PhysicsMgr(fTimeDelta);
 
@@ -95,7 +95,7 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 
 void CMainApp::LateTick()
 {
-	//m_pGameInstance->LateTick_Scene();
+	m_pGameInstance->LateTick_Scene();
 	m_pGameInstance->LateTick_KeyMgr();
 }
 
@@ -105,7 +105,7 @@ void CMainApp::Render()
 
 	m_pGameInstance->Clear_DepthStencil_View();
 
-	//m_pGameInstance->Render_Scene(m_pGraphicDev);
+	m_pGameInstance->Render_Scene(m_pDeviceContext);
 
 #ifdef _DEBUG
 	Render_FrameRate();
