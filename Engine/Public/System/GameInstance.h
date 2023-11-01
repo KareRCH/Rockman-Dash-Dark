@@ -57,6 +57,9 @@ public:		// 그래픽 디바이스
 	HRESULT					Present();
 	ID3D11Device*			Get_GraphicDev();
 	ID3D11DeviceContext*	Get_GraphicContext();
+	const _matrix& Get_GraphicDev_ProjectionMatrix();
+	const _matrix& Get_GraphicDev_WorldMatrix();
+	const _matrix& Get_GraphicDev_OrthoMatrix();
 	
 
 
@@ -123,10 +126,14 @@ public:		// 렌더 매니저
 	void	Render(ID3D11DeviceContext* pDeviceContext);
 	void	Add_RenderGroup(ERENDER_TYPE eType, class CGameObject* pGameObject);
 	void	Clear_RenderGroup();
-	void	Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPers);
-	const _matrix* const Get_PerspectiveViewMatrix(const _uint iCam) const;
-	void	Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrtho);
-	const _matrix* const Get_OrthogonalViewMatrix(const _uint iCam) const;
+	void			Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView);
+	const _matrix 	Get_PerspectiveViewMatrix(const _uint iCam) const;
+	void			Set_PerspectiveProjMatrix(const _uint iCam, const _matrix& matPersProj);
+	const _matrix	Get_PerspectiveProjMatrix(const _uint iCam) const;
+	void			Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrthoView);
+	const _matrix	Get_OrthogonalViewMatrix(const _uint iCam) const;
+	void			Set_OrthogonalProjMatrix(const _uint iCam, const _matrix& matOrthoProj);
+	const _matrix	Get_OrthogonalProjMatrix(const _uint iCam) const;
 
 private:
 	CGraphicDev*	m_pGraphicDev = nullptr;

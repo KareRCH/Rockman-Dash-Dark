@@ -28,13 +28,13 @@ HRESULT CTriBufferComp::Initialize()
 	}
 
 	vertices[0].vPosition = _float3(-1.f, -1.f, 0.f);
-	vertices[0].vColor = _float4(1.f, 1.f, 0.f, 1.f);
+	vertices[0].vColor = _float4(1.f, 1.f, 1.f, 1.f);
 
 	vertices[1].vPosition = _float3(0.f, 1.f, 0.f);
-	vertices[1].vColor = _float4(1.f, 1.f, 0.f, 1.f);
+	vertices[1].vColor = _float4(1.f, 1.f, 1.f, 1.f);
 
 	vertices[2].vPosition = _float3(1.f, -1.f, 0.f);
-	vertices[2].vColor = _float4(1.f, 1.f, 0.f, 1.f);
+	vertices[2].vColor = _float4(1.f, 1.f, 1.f, 1.f);
 
 	indices[0] = 0;
 	indices[1] = 1;

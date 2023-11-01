@@ -2,11 +2,14 @@
 
 CCamera::CCamera(ID3D11Device* const pDevice)
     : Base(pDevice)
+    , m_vAt(_float3(0.f, 0.f, 0.f)), m_vUp(_float3(0.f, 1.f, 0.f))
+    , m_matPersView(XMMatrixIdentity()), m_matPersProj(XMMatrixIdentity())
 {
 }
 
 CCamera::CCamera(const CCamera& rhs)
     : Base(rhs)
+    , m_matPersProj(rhs.m_matPersProj)
 {
 }
 

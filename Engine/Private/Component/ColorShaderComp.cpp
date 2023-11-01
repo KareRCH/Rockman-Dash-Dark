@@ -98,7 +98,7 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
         }
         else
         {
-            MessageBox(hWnd, vsFileName, L"파일 없음", MB_OK);
+            MessageBox(hWnd, psFileName, L"파일 없음", MB_OK);
         }
 
         return E_FAIL;

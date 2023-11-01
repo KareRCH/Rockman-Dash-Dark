@@ -26,6 +26,11 @@ private:
 	virtual void Free();
 
 public:
+	const _matrix& GetProjectionMatrix();
+	const _matrix& GetWorldMatrix();
+	const _matrix& GetOrthoMatrix();
+
+public:
 	GETSET_1(ID3D11Device*, m_pDevice, Device, GET_REF)
 	GETSET_1(ID3D11DeviceContext*, m_pDeviceContext, DeviceContext, GET_REF)
 

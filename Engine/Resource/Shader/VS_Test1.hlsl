@@ -7,7 +7,7 @@ cbuffer MatrixBuffer
 
 struct VS_INPUT
 {
-    float4 position : POSITION;
+    float3 position : POSITION;
     float4 color : COLOR;
 };
 
@@ -21,7 +21,6 @@ PS_INPUT main(VS_INPUT input) : PS_INPUT
 {
     PS_INPUT output;
     
-    input.position.w = 1.f;
     
     output.position = mul(input.position, matWorld);
     output.position = mul(output.position, matView);

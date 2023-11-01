@@ -34,7 +34,7 @@ HRESULT CMainApp::Initialize()
 {
 	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_GraphicDev(g_iWindowSizeX, g_iWindowSizeY, false, g_hWnd, false, 1.f, 0.01f), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_GraphicDev(g_iWindowSizeX, g_iWindowSizeY, false, g_hWnd, false, 1000.f, 0.01f), E_FAIL);
 
 	m_pDevice = m_pGameInstance->Get_GraphicDev();
 	Safe_AddRef(m_pDevice);
@@ -111,7 +111,7 @@ void CMainApp::Render()
 	m_pGameInstance->Render(m_pDeviceContext);
 
 #ifdef _DEBUG
-	Render_FrameRate();
+	//Render_FrameRate();
 #endif
 
 	m_pGameInstance->Present();

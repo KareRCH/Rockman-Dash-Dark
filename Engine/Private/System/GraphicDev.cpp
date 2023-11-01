@@ -42,9 +42,9 @@ HRESULT CGraphicDev::Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVs
     _uint iDenominator = 0;
     for (_uint i = 0; i < iNumModes; i++)
     {
-        if (displayModeList[i].Width == (_uint)g_iWindowSizeX)
+        if (displayModeList[i].Width == (_uint)iScreenWidth)
         {
-            if (displayModeList[i].Height == (_uint)g_iWindowSizeY)
+            if (displayModeList[i].Height == (_uint)iScreenHeight)
             {
                 iNumerator = displayModeList[i].RefreshRate.Numerator;
                 iDenominator = displayModeList[i].RefreshRate.Denominator;
@@ -84,8 +84,8 @@ HRESULT CGraphicDev::Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVs
     ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 	
     swapChainDesc.BufferCount = 1;          // 백버퍼 개수
-    swapChainDesc.BufferDesc.Width = 0;     // 백버퍼 너비 높이
-    swapChainDesc.BufferDesc.Height = 0;
+    swapChainDesc.BufferDesc.Width = iScreenWidth;     // 백버퍼 너비 높이
+    swapChainDesc.BufferDesc.Height = iScreenHeight;
     swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;   // 32비트 서피스 설정
     // 백버퍼의 새로고침 비율 설정
     if (m_bVsync_Enabled)
@@ -110,6 +110,10 @@ HRESULT CGraphicDev::Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVs
 
     // 전체화면
     swapChainDesc.Windowed = !bFullScreen;
+
+    // 스캔 라인 순서 및 크기를 지정하지 않음
+    swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+    swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
     // 출력 후 백버퍼를 비우도록 지정
     swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
@@ -181,6 +185,10 @@ HRESULT CGraphicDev::Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVs
 
     // 깊이 스텐실 상태를 생성
     FAILED_CHECK_RETURN(m_pDevice->CreateDepthStencilState(&depthStencilDesc, &m_pDepthStencilState), E_FAIL);
+
+
+    // 깊이 스텐실 상태를 설정한다.
+    m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
 
     // 깊이 스텐실 뷰의 구조체를 초기화
     D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
@@ -310,4 +318,22 @@ void CGraphicDev::Free()
     Safe_Release(m_pDeviceContext);
     Safe_Release(m_pDevice);
     Safe_Release(m_pSwapChain);
+}
+
+
+const _matrix& CGraphicDev::GetProjectionMatrix()
+{
+    return m_matProjection;
+}
+
+
+const _matrix& CGraphicDev::GetWorldMatrix()
+{
+    return m_matWorld;
+}
+
+
+const _matrix& CGraphicDev::GetOrthoMatrix()
+{
+    return m_matOrtho;
 }

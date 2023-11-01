@@ -71,16 +71,23 @@ private:
 	list<CGameObject*>		m_RenderGroup[Cast_EnumDef(ERENDER_T::SIZE)];
 
 public:		// 카메라 행렬저장용
-	void Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPers);
+	void Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView);
 	const _matrix& Get_PerspectiveViewMatrix(const _uint iCam) const { return m_matPersView[iCam]; }
 
-	void Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrtho);
+	void Set_PerspectiveProjMatrix(const _uint iCam, const _matrix& matPersProj);
+	const _matrix& Get_PerspectiveProjMatrix(const _uint iCam) const { return m_matPersProj[iCam]; }
+
+	void Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrthoView);
 	const _matrix& Get_OrthogonalViewMatrix(const _uint iCam) const { return m_matOrthoView[iCam]; }
+
+	void Set_OrthogonalProjMatrix(const _uint iCam, const _matrix& matPersProj);
+	const _matrix& Get_OrthogonalProjMatrix(const _uint iCam) const { return m_matOrthoProj[iCam]; }
 
 private:	// 렌더러의 위치 속성은 뷰를 기반으로
 	_matrix		m_matPersView[Cast_EnumDef(EGCAMERA_INDEX::SIZE)];			// 원근용 뷰 행렬
+	_matrix		m_matPersProj[Cast_EnumDef(EGCAMERA_INDEX::SIZE)];			// 원근용 투영 행렬
 	_matrix		m_matOrthoView[Cast_EnumDef(EGCAMERA_INDEX::SIZE)];			// 직교용 뷰 행렬
-	_matrix		m_matOrthoProject;											// UI용 직교투영 범위
+	_matrix		m_matOrthoProj[Cast_EnumDef(EGCAMERA_INDEX::SIZE)];			// UI용 직교투영 범위
 
 public:
 	GETSET_1(vector<D3D11_VIEWPORT>,	m_vecViewport,		VecViewport,				GET_REF)
