@@ -25,6 +25,9 @@
     <Filter Include="02. GameObject\99. Test">
       <UniqueIdentifier>{6e80a748-65ee-46b4-a6ba-7432f13ce48d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Camera">
+      <UniqueIdentifier>{dcf43b10-a011-43ad-81a7-9bbd3f68a12f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Client_Define.h">
@@ -51,6 +54,9 @@
     <ClInclude Include="Public\TestScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\DynamicCamera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -63,6 +69,9 @@
       <Filter>02. GameObject\99. Test</Filter>
     </ClCompile>
     <ClCompile Include="Private\TestScene.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\DynamicCamera.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

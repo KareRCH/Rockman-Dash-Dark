@@ -23,7 +23,7 @@ class ENGINE_DLL CGameObject abstract : public CBase
 {
 	DERIVED_CLASS(CBase, CGameObject)
 protected:
-	explicit CGameObject(ID3D11Device* pDevice);
+	explicit CGameObject(ID3D11Device* const pDevice);
 	explicit CGameObject(const CGameObject& rhs);
 	virtual ~CGameObject() = default;
 
@@ -37,10 +37,15 @@ protected:
 	virtual void	Free();
 
 public:
+	GETSET_2(wstring, m_strName, Name, GET_C_REF, SET_C_REF)
+
+	void		Add_Tag(const wstring& strTag) { m_setTag.emplace(strTag); }
+	void		Delete_Tag(const wstring& strTag);
+
 	_bool		IsDead() { return m_iStateFlag & Cast_EnumDef(EGOBJ_STATE::DEAD); }
 	void		Set_Dead() { m_iStateFlag |= Cast_EnumDef(EGOBJ_STATE::DEAD); }
-
-	GETSET_2(wstring, m_strName, Name, GET_C_REF, SET_C_REF)
+	
+	
 	_float		Get_Priority(_uint iIndex) { return m_fPriority[iIndex]; }
 
 private:	// 기본 속성
@@ -65,7 +70,7 @@ private:
 #pragma region 컴포넌트
 
 public:
-	void Add_Component(const wstring& strName, CPrimitiveComponent* pComponent);
+	HRESULT Add_Component(const wstring& strName, CPrimitiveComponent* pComponent);
 	CPrimitiveComponent* Get_Component(const _uint iIndex)
 	{
 		return m_vecComponent[iIndex];
@@ -100,6 +105,7 @@ public:		// 트랜스폼 컴포넌트에 대한 함수 정의
 	void		Calculate_Transform() { m_pTransformComp->Calculate_Transform(); }
 	void		Calculate_TransformFromParent(const _matrix& matTransform) 
 					{ m_pTransformComp->Calculate_TransformFromParent(matTransform); }
+	const _matrix& Get_Transform() const { return m_pTransformComp->Get_Transform(); }
 
 private:	// 게임 오브젝트 기본 정의 컴포넌트
 	CTransformComponent*					m_pTransformComp = nullptr;

@@ -19,7 +19,7 @@ class CTestObject final : public CGameObject
 {
 	DERIVED_CLASS(CGameObject, CTestObject)
 protected:
-	explicit CTestObject(ID3D11Device* pGraphicDev);
+	explicit CTestObject(ID3D11Device* const pDevice);
 	explicit CTestObject(const CGameObject& rhs);
 	virtual ~CTestObject() = default;
 
@@ -30,7 +30,7 @@ public:
 	virtual void	Render(ID3D11DeviceContext* const pDeviceContext);
 
 public:
-	static CTestObject* Create(ID3D11Device* const pGraphicDev);
+	static CTestObject* Create(ID3D11Device* const pDevice);
 
 protected:
 	virtual void	Free();

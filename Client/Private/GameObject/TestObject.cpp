@@ -3,9 +3,12 @@
 #include "Component/TriBufferComp.h"
 #include "Component/ColorShaderComp.h"
 
-CTestObject::CTestObject(ID3D11Device* pGraphicDev)
-    : Base(pGraphicDev)
+#include "System/RenderMgr.h"
+
+CTestObject::CTestObject(ID3D11Device* const pDevice)
+    : Base(pDevice)
 {
+    Set_Name(L"TestObject");
 }
 
 CTestObject::CTestObject(const CGameObject& rhs)
@@ -15,7 +18,7 @@ CTestObject::CTestObject(const CGameObject& rhs)
 
 HRESULT CTestObject::Initialize()
 {
-    FAILED_CHECK_RETURN(SUPER::Initialize(), E_FAIL);
+    FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 
     return S_OK;
@@ -24,6 +27,11 @@ HRESULT CTestObject::Initialize()
 _int CTestObject::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
+
+    Set_Position(_float3(0.f, 0.f, 10.f));
+    Calculate_Transform();
+
+    GameInstance()->Add_RenderGroup(ERENDER_T::PERSPECTIVE, this);
 
     return 0;
 }
@@ -37,13 +45,13 @@ void CTestObject::Render(ID3D11DeviceContext* const pDeviceContext)
 {
     SUPER::Render(pDeviceContext);
 
-    m_ColorShaderComp->Render(pDeviceContext);
     m_TriBufferComp->Render(pDeviceContext);
+    m_ColorShaderComp->Render(pDeviceContext, Get_Transform(), (*GameInstance()->Get_PerspectiveViewMatrix(0)), XMMatrixIdentity());
 }
 
-CTestObject* CTestObject::Create(ID3D11Device* const pGraphicDev)
+CTestObject* CTestObject::Create(ID3D11Device* const pDevice)
 {
-    ThisClass* pInstance = new ThisClass(pGraphicDev);
+    ThisClass* pInstance = new ThisClass(pDevice);
 
     if (FAILED(pInstance->Initialize()))
     {
@@ -64,10 +72,10 @@ void CTestObject::Free()
 
 HRESULT CTestObject::Initialize_Component()
 {
-    Add_Component(L"Buffer", m_TriBufferComp = CTriBufferComp::Create(m_pDevice));
+    FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_TriBufferComp = CTriBufferComp::Create(m_pDevice)), E_FAIL);
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    Add_Component(L"Shader", m_ColorShaderComp = CColorShaderComp::Create(m_pDevice));
+    FAILED_CHECK_RETURN(Add_Component(L"Shader", m_ColorShaderComp = CColorShaderComp::Create(m_pDevice, g_hWnd)), E_FAIL);
     //m_ColorShaderComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
     m_ColorShaderComp->Set_IndexCount(3);
 

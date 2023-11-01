@@ -3,7 +3,7 @@
 #include "Component/PrimitiveComponent.h"
 
 
-CGameObject::CGameObject(ID3D11Device* pDevice)
+CGameObject::CGameObject(ID3D11Device* const pDevice)
 	: m_pDevice(pDevice)
 {
 }
@@ -57,6 +57,14 @@ void CGameObject::Free()
 	m_vecComponent.clear();
 }
 
+void CGameObject::Delete_Tag(const wstring& strTag)
+{
+	auto iter = m_setTag.find(strTag);
+
+	if (iter != m_setTag.end())
+		m_setTag.erase(iter);
+}
+
 
 
 
@@ -64,7 +72,7 @@ void CGameObject::Free()
 
 
 
-void CGameObject::Add_Component(const wstring& strName, CPrimitiveComponent* pComponent)
+HRESULT CGameObject::Add_Component(const wstring& strName, CPrimitiveComponent* pComponent)
 {
 	auto iter = find_if(m_vecComponent.begin(), m_vecComponent.end(), 
 		[&strName](CPrimitiveComponent* pComp) {
@@ -75,12 +83,17 @@ void CGameObject::Add_Component(const wstring& strName, CPrimitiveComponent* pCo
 	if (iter != m_vecComponent.end())
 	{
 		Safe_Release(pComponent);
-		return;
+		return E_FAIL;
 	}
+
+	// 완료시 벡터에 컴포넌트 추가
+	m_vecComponent.push_back(pComponent);
 
 	pComponent->Set_StateUpdate_Event<ThisClass>(this, &ThisClass::OnStateUpdate_Updated);
 	pComponent->Set_StateLateUpdate_Event<ThisClass>(this, &ThisClass::OnStateLateUpdate_Updated);
 	pComponent->Set_StateRender_Event<ThisClass>(this, &ThisClass::OnStateRender_Updated);
+
+	return S_OK;
 }
 
 CPrimitiveComponent* CGameObject::Get_Component(const wstring& strName)
@@ -153,7 +166,7 @@ void CGameObject::OnStateLateUpdate_Updated(const CPrimitiveComponent* const pCo
 
 void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue)
 {
-	_uint iIndex = Cast_EnumDef(EUPDATE_T::RENDER);
+	constexpr _uint iIndex = Cast_EnumDef(EUPDATE_T::RENDER);
 
 	auto iter = find_if(m_listUpdateComp[0].begin(),
 		m_listUpdateComp[0].end(),
@@ -175,7 +188,7 @@ void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, 
 
 HRESULT CGameObject::Initialize_Component()
 {
-	//m_pTransformComp = new CTransformComponent();
+	FAILED_CHECK_RETURN(Add_Component(L"Transform", m_pTransformComp = CTransformComponent::Create(m_pDevice)), E_FAIL);
 
 	return S_OK;
 }

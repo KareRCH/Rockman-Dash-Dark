@@ -12,6 +12,8 @@
 #include "System/BlackBoardMgr.h"
 #include "System/TextureMgr.h"
 #include "System/ProtoMgr.h"
+#include "System/RenderMgr.h"
+#include "BaseClass/GameObject.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -38,6 +40,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pBlackBoardMgr);
 	Safe_Release(m_pTextureMgr);
 	Safe_Release(m_pProtoMgr);
+	Safe_Release(m_pRenderMgr);
 }
 
 
@@ -512,6 +515,81 @@ HRESULT CGameInstance::Initialize_ProtoMgr()
 	NULL_CHECK_RETURN(m_pProtoMgr = CProtoMgr::Create(), E_FAIL);
 
 	return S_OK;
+}
+
+
+#pragma endregion
+
+
+//-----------------------------------------------------
+
+
+#pragma region ·»´õ ¸Å´ÏÀú
+
+HRESULT CGameInstance::Initialize_RenderMgr(const _uint iWidth, const _uint iHeight)
+{
+	if (nullptr != m_pRenderMgr)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(m_pRenderMgr = CRenderMgr::Create(), E_FAIL);
+
+	return S_OK;
+}
+
+void CGameInstance::Render(ID3D11DeviceContext* pDeviceContext)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Render(pDeviceContext);
+}
+
+void CGameInstance::Add_RenderGroup(ERENDER_TYPE eType, CGameObject* pGameObject)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Add_RenderGroup(eType, pGameObject);
+}
+
+void CGameInstance::Clear_RenderGroup()
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Clear_RenderGroup();
+}
+
+void CGameInstance::Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPers)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Set_PerspectiveViewMatrix(iCam, matPers);
+}
+
+const _matrix* const CGameInstance::Get_PerspectiveViewMatrix(const _uint iCam) const
+{
+	if (nullptr == m_pRenderMgr)
+		return nullptr;
+
+	return &(m_pRenderMgr->Get_PerspectiveViewMatrix(iCam));
+}
+
+void CGameInstance::Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrtho)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Set_OrthogonalViewMatrix(iCam, matOrtho);
+}
+
+const _matrix* const CGameInstance::Get_OrthogonalViewMatrix(const _uint iCam) const
+{
+	if (nullptr == m_pRenderMgr)
+		return nullptr;
+
+	return &(m_pRenderMgr->Get_OrthogonalViewMatrix(iCam));
 }
 
 #pragma endregion

@@ -184,12 +184,14 @@ xcopy "$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)
     <ClInclude Include="Default\Resource.h" />
     <ClInclude Include="Default\targetver.h" />
     <ClInclude Include="Public\Client_Define.h" />
+    <ClInclude Include="Public\GameObject\DynamicCamera.h" />
     <ClInclude Include="Public\GameObject\TestObject.h" />
     <ClInclude Include="Public\MainApp.h" />
     <ClInclude Include="Public\TestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp" />
+    <ClCompile Include="Private\GameObject\DynamicCamera.cpp" />
     <ClCompile Include="Private\GameObject\TestObject.cpp" />
     <ClCompile Include="Private\MainApp.cpp" />
     <ClCompile Include="Private\TestScene.cpp" />

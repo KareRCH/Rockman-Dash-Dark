@@ -1,7 +1,7 @@
 #include "Component/TransformComponent.h"
 
-CTransformComponent::CTransformComponent(ID3D11Device* pGraphicDev)
-	: Base(pGraphicDev)
+CTransformComponent::CTransformComponent(ID3D11Device* pDevice)
+	: Base(pDevice)
 {
 }
 
@@ -33,12 +33,30 @@ void CTransformComponent::Render(ID3D11DeviceContext* pDeviceContext)
 
 }
 
-void CTransformComponent::Create(ID3D11Device* m_pDevice)
+CTransformComponent* CTransformComponent::Create(ID3D11Device* m_pDevice)
 {
-	
+	ThisClass* pInstance = new ThisClass(m_pDevice);
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		Engine::Safe_Release(pInstance);
+
+		MSG_BOX("CGraphicDev Create Failed");
+		
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+CPrimitiveComponent* CTransformComponent::Clone()
+{
+	return new ThisClass(*this);
 }
 
 void CTransformComponent::Free()
 {
 	SUPER::Free();
 }
+
+

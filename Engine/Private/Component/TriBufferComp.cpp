@@ -28,13 +28,13 @@ HRESULT CTriBufferComp::Initialize()
 	}
 
 	vertices[0].vPosition = _float3(-1.f, -1.f, 0.f);
-	vertices[0].vColor = _float4(0.f, 1.f, 0.f, 1.f);
+	vertices[0].vColor = _float4(1.f, 1.f, 0.f, 1.f);
 
 	vertices[1].vPosition = _float3(0.f, 1.f, 0.f);
-	vertices[1].vColor = _float4(0.f, 1.f, 0.f, 1.f);
+	vertices[1].vColor = _float4(1.f, 1.f, 0.f, 1.f);
 
 	vertices[2].vPosition = _float3(1.f, -1.f, 0.f);
-	vertices[2].vColor = _float4(0.f, 1.f, 0.f, 1.f);
+	vertices[2].vColor = _float4(1.f, 1.f, 0.f, 1.f);
 
 	indices[0] = 0;
 	indices[1] = 1;
@@ -56,10 +56,24 @@ HRESULT CTriBufferComp::Initialize()
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	if (FAILED(m_pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVtxBuffer)))
-	{
-		return E_FAIL;
-	}
+	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVtxBuffer), E_FAIL);
+
+	// 정적 인덱스 버퍼의 구조체를 설정한다.
+	D3D11_BUFFER_DESC indexBufferDesc;
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(_uint) * m_iIndexCount;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
+
+	// 정적 인덱스 데이터를 가리키는 보조 리소스 구조체를 작성
+	D3D11_SUBRESOURCE_DATA indexData;
+	indexData.pSysMem = indices;
+	indexData.SysMemPitch = 0;
+	indexData.SysMemSlicePitch = 0;
+
+	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_pIndexBuffer), E_FAIL)
 
 
 	Safe_Delete_Array(vertices);

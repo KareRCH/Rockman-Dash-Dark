@@ -77,6 +77,8 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_Management(EMANAGE_SCENE::SINGLE), E_FAIL);
 	m_pGameInstance->Set_Scene(CTestScene::Create(m_pDevice));
 
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_RenderMgr(), E_FAIL);
+
 	return S_OK;
 }
 
@@ -101,11 +103,12 @@ void CMainApp::LateTick()
 
 void CMainApp::Render()
 {
-	m_pGameInstance->Clear_BackBuffer_View({0.f, 0.f, 0.f, 1.f});
+	m_pGameInstance->Clear_BackBuffer_View({0.4f, 0.4f, 0.4f, 1.f});
 
 	m_pGameInstance->Clear_DepthStencil_View();
 
-	m_pGameInstance->Render_Scene(m_pDeviceContext);
+	//m_pGameInstance->Render_Scene(m_pDeviceContext);
+	m_pGameInstance->Render(m_pDeviceContext);
 
 #ifdef _DEBUG
 	Render_FrameRate();

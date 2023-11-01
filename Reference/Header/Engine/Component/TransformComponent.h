@@ -12,7 +12,7 @@ class ENGINE_DLL CTransformComponent : public CSceneComponent
 {
 	DERIVED_CLASS(CSceneComponent, CTransformComponent)
 protected:
-	explicit CTransformComponent(ID3D11Device* pGraphicDev);
+	explicit CTransformComponent(ID3D11Device* pDevice);
 	explicit CTransformComponent(const CTransformComponent& rhs);
 	virtual ~CTransformComponent() = default;
 
@@ -23,12 +23,14 @@ public:
 	virtual void	Render(ID3D11DeviceContext* pDeviceContext);
 
 public:
-	static	void	Create(ID3D11Device* m_pDevice);
+	static	CTransformComponent* Create(ID3D11Device* m_pDevice);
+	virtual CPrimitiveComponent* Clone() override;
 
 protected:
 	virtual void	Free();
 
 public:
+	
 
 };
 

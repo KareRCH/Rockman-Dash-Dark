@@ -4,6 +4,11 @@
 
 BEGIN(Engine)
 
+enum class EGCAMERA_INDEX : _uint
+{
+	ONE, TWO, THREE, FOUR, SIZE
+};
+
 // 렌더타겟용 뷰포트 열거체
 enum class EVIEWPORT : _uint
 {
@@ -15,6 +20,14 @@ enum class EVIEWPORT_RT : _uint
 {
 	NORMAL, DEPTH, HEIGHT, SIZE
 };
+
+enum class ERENDER_TYPE : _uint
+{
+	PERSPECTIVE,
+	ORTHOGONAL,
+	SIZE
+};
+using ERENDER_T = ERENDER_TYPE;
 
 /// <summary>
 /// 렌더러는 기존 레이어의 Rendering 역할을 부여받은 클래스로
@@ -29,14 +42,24 @@ private:
 	explicit CRenderMgr();
 	virtual ~CRenderMgr() = default;
 
+public:
+	HRESULT			Initialize(const _uint iWidth = 1280U, const _uint iHeight = 720U);
+	void			Render(ID3D11DeviceContext* pGraphicDev);
+
+public:
+	static CRenderMgr* Create(const _uint iWidth = 1280U, const _uint iHeight = 720U);
+
 private:
 	virtual void	Free();
 
 public:
-	HRESULT			Initialize(const _uint iWidth = 1200U, const _uint iHeight = 900U);
-	void			Add_RenderGroup(RENDERID eType, CGameObject* pGameObject);
-	void			Render(ID3D11DeviceContext* pGraphicDev);
+	void			Add_RenderGroup(ERENDER_T eType, CGameObject* pGameObject);
 	void			Clear_RenderGroup();
+
+	void			Render_Perspective(ID3D11DeviceContext* pGraphicDev);
+	void			Render_Orthogonal(ID3D11DeviceContext* pGraphicDev);
+
+
 
 public:
 	GETSET_1(HRESULT, m_hReadyResult, ReadyResult, GET_C_REF)
@@ -44,58 +67,20 @@ public:
 private:
 	HRESULT			m_hReadyResult;
 
-
-public:
-	void			Render_Priority(ID3D11DeviceContext* pGraphicDev);
-	void			Render_AlphaTest(ID3D11DeviceContext* pGraphicDev);
-	void			Render_NonAlpha(ID3D11DeviceContext* pGraphicDev);
-	void			Render_Alpha(ID3D11DeviceContext* pGraphicDev);
-	void			Render_UI(ID3D11DeviceContext* pGraphicDev);
-
 private:
-	list<CGameObject*>		m_RenderGroup[RENDER_END];
+	list<CGameObject*>		m_RenderGroup[Cast_EnumDef(ERENDER_T::SIZE)];
 
+public:		// 카메라 행렬저장용
+	void Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPers);
+	const _matrix& Get_PerspectiveViewMatrix(const _uint iCam) const { return m_matPersView[iCam]; }
 
-public:
-#pragma region 트랜스폼 변경 함수들
-	// 원근 뷰 행렬을 계산한다.
-	//inline void Readjust_PersView();
-	// 직교 뷰 행렬을 계산한다.
-	//inline void Readjust_OrthoView();
-	
-#pragma endregion
+	void Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrtho);
+	const _matrix& Get_OrthogonalViewMatrix(const _uint iCam) const { return m_matOrthoView[iCam]; }
 
-public:		// 트랜스폼 영역, Transform에서 옮겨온 거임
-	GETSET_1(_float3, m_vInfo[INFO_RIGHT],	Right,	GET_C_REF)
-	GETSET_1(_float3, m_vInfo[INFO_UP],		Up,		GET_C_REF)
-	GETSET_1(_float3, m_vInfo[INFO_LOOK],	Look,	GET_C_REF)
-	GETSET_2(_float3, m_vInfo[INFO_POS],	Pos,	GET_C_REF, SET_C)
-	void Set_PosX(const _float value) { m_vInfo[INFO_POS].x = value; }
-	void Set_PosY(const _float value) { m_vInfo[INFO_POS].y = value; }
-	void Set_PosZ(const _float value) { m_vInfo[INFO_POS].z = value; }
-
-	GETSET_2(_float3,	m_vRotation,		Rotation,		GET_C_REF, SET_C)
-	void Set_RotationX(const _float value) { m_vRotation.x = value; }
-	void Set_RotationY(const _float value) { m_vRotation.y = value; }
-	void Set_RotationZ(const _float value) { m_vRotation.z = value; }
-
-	GETSET_2(_float3,	m_vScale,			Scale,			GET_C_REF, SET_C)
-	void Set_ScaleX(const _float value) { m_vScale.x = value; }
-	void Set_ScaleY(const _float value) { m_vScale.y = value; }
-	void Set_ScaleZ(const _float value) { m_vScale.z = value; }
-
-	GETSET_2(_matrix,					m_matPersView,		MatPersView,				GET_PTR, SET_C_PTR)
-	GETSET_2(_matrix,					m_matOrthoView,		MatOrthoView,				GET_PTR, SET_C_PTR)
-	GETSET_2(_matrix,					m_matOrthoProject,	MatOrthoProject,			GET_PTR, SET_C_PTR)
-
-
-private:	// 렌더러의 위치 속성은 뷰를 기반으로 
-	_float3		m_vInfo[INFO_END];		// 위치, 방향 정보
-	_float3		m_vRotation;			// 오일러 회전축
-	_float3		m_vScale;				// 크기
-	_matrix		m_matPersView;			// 원근용 뷰 행렬
-	_matrix		m_matOrthoView;			// 직교용 뷰 행렬
-	_matrix		m_matOrthoProject;		// UI용 직교투영 범위
+private:	// 렌더러의 위치 속성은 뷰를 기반으로
+	_matrix		m_matPersView[Cast_EnumDef(EGCAMERA_INDEX::SIZE)];			// 원근용 뷰 행렬
+	_matrix		m_matOrthoView[Cast_EnumDef(EGCAMERA_INDEX::SIZE)];			// 직교용 뷰 행렬
+	_matrix		m_matOrthoProject;											// UI용 직교투영 범위
 
 public:
 	GETSET_1(vector<D3D11_VIEWPORT>,	m_vecViewport,		VecViewport,				GET_REF)
@@ -104,82 +89,9 @@ public:
 	GETSET_1(vector<D3D11_VIEWPORT>,	m_vecViewport_RT,	VecViewport_RenderTarget,	GET_REF)
 
 private:
-
 	vector<D3D11_VIEWPORT>		m_vecViewport;			// 일반 뷰포트 세팅
 	vector<D3D11_VIEWPORT>		m_vecViewport_RT;		// 렌더 타겟 뷰포트
 
 };
 
 END
-
-
-
-//inline void CRenderMgr::Readjust_PersView()
-//{
-//	D3DXMatrixIdentity(&m_matPersView);
-//
-//	// 3x3만큼 월드 행렬로부터 vInfo에 복사
-//	for (_int i = 0; i < INFO_POS; ++i)
-//		memcpy(&m_vInfo[i], &m_matPersView.m[i][0], sizeof(_float3));
-//
-//	// 크기 변환
-//	for (_int i = 0; i < INFO_POS; ++i)
-//	{
-//		D3DXVec3Normalize(&m_vInfo[i], &m_vInfo[i]);
-//		m_vInfo[i] *= *(((_float*)&m_vScale) + i);
-//	}
-//
-//	// 회전 변환
-//	_matrix		matRot[ROT_END];
-//
-//	D3DXMatrixRotationX(&matRot[ROT_X], m_vRotation.x);
-//	D3DXMatrixRotationY(&matRot[ROT_Y], m_vRotation.y);
-//	D3DXMatrixRotationZ(&matRot[ROT_Z], m_vRotation.z);
-//
-//	for (_int i = 0; i < INFO_POS; ++i)
-//	{
-//		for (_int j = 0; j < ROT_END; ++j)
-//		{
-//			D3DXVec3TransformNormal(&m_vInfo[i], &m_vInfo[i], &matRot[j]);
-//		}
-//	}
-//
-//	// 월드 행렬 구성
-//	for (_int i = 0; i < INFO_END; ++i)
-//		memcpy(&m_matPersView.m[i][0], &m_vInfo[i], sizeof(_float3));
-//}
-//
-//inline void CRenderMgr::Readjust_OrthoView()
-//{
-//	D3DXMatrixIdentity(&m_matOrthoView);
-//
-//	// 3x3만큼 월드 행렬로부터 vInfo에 복사
-//	for (_int i = 0; i < INFO_POS; ++i)
-//		memcpy(&m_vInfo[i], &m_matOrthoView.m[i][0], sizeof(_float3));
-//
-//	// 크기 변환
-//	for (_int i = 0; i < INFO_POS; ++i)
-//	{
-//		D3DXVec3Normalize(&m_vInfo[i], &m_vInfo[i]);
-//		m_vInfo[i] *= *(((_float*)&m_vScale) + i);
-//	}
-//
-//	// 회전 변환
-//	_matrix		matRot[ROT_END];
-//
-//	D3DXMatrixRotationX(&matRot[ROT_X], m_vRotation.x);
-//	D3DXMatrixRotationY(&matRot[ROT_Y], m_vRotation.y);
-//	D3DXMatrixRotationZ(&matRot[ROT_Z], m_vRotation.z);
-//
-//	for (_int i = 0; i < INFO_POS; ++i)
-//	{
-//		for (_int j = 0; j < ROT_END; ++j)
-//		{
-//			D3DXVec3TransformNormal(&m_vInfo[i], &m_vInfo[i], &matRot[j]);
-//		}
-//	}
-//
-//	// 월드 행렬 구성
-//	for (_int i = 0; i < INFO_END; ++i)
-//		memcpy(&m_matOrthoView.m[i][0], &m_vInfo[i], sizeof(_float3));
-//}

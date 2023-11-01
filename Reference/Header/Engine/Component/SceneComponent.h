@@ -72,6 +72,24 @@ public:
 
 		m_matTransform *= matParent;
 	}
+	inline const _float3 Get_RightFromTransform()
+	{
+		_float3 vReturn;
+		XMStoreFloat3(&vReturn, m_matTransform.r[0]);
+		return vReturn;
+	}
+	inline const _float3 Get_UpFromTransform()
+	{
+		_float3 vReturn;
+		XMStoreFloat3(&vReturn, m_matTransform.r[1]);
+		return vReturn;
+	}
+	inline const _float3 Get_LookFromTransform()
+	{
+		_float3 vReturn;
+		XMStoreFloat3(&vReturn, m_matTransform.r[2]);
+		return vReturn;
+	}
 
 private:
 	_float3		m_vPosition;

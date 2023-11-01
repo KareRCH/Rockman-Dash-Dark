@@ -110,7 +110,8 @@
 xcopy ".\Public\*.*" "$(SolutionDir)Reference\Header\$(TargetName)\" /y /e
 attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
 xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(PlatformTarget)\" /y</Command>
+xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
+xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -140,7 +141,8 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
 xcopy ".\Public\*.*" "$(SolutionDir)Reference\Header\$(TargetName)\" /y /e
 attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
 xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(PlatformTarget)\" /y</Command>
+xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
+xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -166,7 +168,8 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
 xcopy ".\Public\*.*" "$(SolutionDir)Reference\Header\$(TargetName)\" /y /e
 attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
 xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y</Command>
+xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
+xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -196,7 +199,8 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$
 xcopy ".\Public\*.*" "$(SolutionDir)Reference\Header\$(TargetName)\" /y /e
 attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
 xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(PlatformTarget)\" /y</Command>
+xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
+xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -205,6 +209,7 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
   <ItemGroup>
     <ClInclude Include="Public\Base.h" />
     <ClInclude Include="Public\BaseClass\BlackBoard.h" />
+    <ClInclude Include="Public\BaseClass\Camera.h" />
     <ClInclude Include="Public\BaseClass\GameObject.h" />
     <ClInclude Include="Public\BaseClass\GameObject_Enum.h" />
     <ClInclude Include="Public\BaseClass\Layer.h" />
@@ -257,6 +262,7 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\BaseClass\BlackBoard.cpp" />
+    <ClCompile Include="Private\BaseClass\Camera.cpp" />
     <ClCompile Include="Private\BaseClass\Layer.cpp" />
     <ClCompile Include="Private\BaseClass\Scene.cpp" />
     <ClCompile Include="Private\Component\ColliderComponent.cpp" />
@@ -299,13 +305,13 @@ xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(Configuration)\$(
     <ClCompile Include="Private\Component\PrimitiveComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Public\Shader\PS_Test1.hlsl">
+    <FxCompile Include="Resource\Shader\PS_Test1.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="Public\Shader\VS_Test1.hlsl">
+    <FxCompile Include="Resource\Shader\VS_Test1.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

@@ -20,7 +20,7 @@ HRESULT CColorShaderComp::Initialize(HWND hWnd)
 {
     FAILED_CHECK_RETURN(Initialize(), E_FAIL);
 
-    Initialize_Shader(hWnd, L"VS_Test.vs", L"PS_Test.hlsl");
+    Initialize_Shader(hWnd, L"./Resource/Shader/VS_Test1.hlsl", L"./Resource/Shader/PS_Test1.hlsl");
 
     return S_OK;
 }
@@ -30,12 +30,9 @@ _int CColorShaderComp::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-void CColorShaderComp::Render(ID3D11DeviceContext* pDeviceContext)
+void CColorShaderComp::Render(ID3D11DeviceContext* pDeviceContext, const _matrix& matWorld, const _matrix& matView, const _matrix& matProj)
 {
-    _matrix world, view, proj;
-    proj = view = world = XMMatrixIdentity();
-
-    if (Set_ShaderParameter(pDeviceContext, world, view, proj) == E_FAIL)
+    if (Set_ShaderParameter(pDeviceContext, matWorld, matView, matProj) == E_FAIL)
     {
         return;
     }
@@ -43,11 +40,11 @@ void CColorShaderComp::Render(ID3D11DeviceContext* pDeviceContext)
     Render_Shader(pDeviceContext, m_iIndexCount);
 }
 
-CColorShaderComp* CColorShaderComp::Create(ID3D11Device* pGraphicDev)
+CColorShaderComp* CColorShaderComp::Create(ID3D11Device* pDevice, HWND hWnd)
 {
-    ThisClass* pInstance = new ThisClass(pGraphicDev);
+    ThisClass* pInstance = new ThisClass(pDevice);
 
-    if (FAILED(pInstance->Initialize()))
+    if (FAILED(pInstance->Initialize(hWnd)))
     {
         Engine::Safe_Release(pInstance);
 
@@ -127,7 +124,7 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
 
     tPolygonLayout[1].SemanticName = "COLOR";
     tPolygonLayout[1].SemanticIndex = 0;
-    tPolygonLayout[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    tPolygonLayout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
     tPolygonLayout[1].InputSlot = 0;
     tPolygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
     tPolygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
@@ -135,11 +132,8 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
 
     _uint iNumElements = sizeof(tPolygonLayout) / sizeof(tPolygonLayout[0]);
 
-    if (FAILED(m_pDevice->CreateInputLayout(tPolygonLayout, iNumElements,
-        pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(), &m_pLayout)))
-    {
-        return E_FAIL;
-    }
+    FAILED_CHECK_RETURN(m_pDevice->CreateInputLayout(tPolygonLayout, iNumElements,
+        pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(), &m_pLayout), E_FAIL);
 
     Safe_Release(pVertexShaderBuf);
     Safe_Release(pPixelShaderBuf);
@@ -152,10 +146,7 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     tMatBufferDesc.MiscFlags = 0;
     tMatBufferDesc.StructureByteStride = 0;
 
-    if (FAILED(m_pDevice->CreateBuffer(&tMatBufferDesc, NULL, &m_pMatrixBuffer)))
-    {
-        return E_FAIL;
-    }
+    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&tMatBufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
 
     return S_OK;
 }
@@ -169,10 +160,7 @@ HRESULT CColorShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContex
 
     // 상수 버퍼의 내용을 쓸 수 있도록 잠금
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    if (FAILED(pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
-    {
-        return E_FAIL;
-    }
+    FAILED_CHECK_RETURN(pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     // 상수 버퍼의 데이터에 대한 포인터를 가져옴
     MATRIX_BUFFER_T* pDataPtr = Cast<MATRIX_BUFFER_T*>(mappedResource.pData);

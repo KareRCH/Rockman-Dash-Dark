@@ -1,6 +1,7 @@
 #include "TestScene.h"
 
 #include "GameObject/TestObject.h"
+#include "GameObject/DynamicCamera.h"
 
 CTestScene::CTestScene(ID3D11Device* pGraphicDev)
     : Base(pGraphicDev)
@@ -13,7 +14,9 @@ HRESULT CTestScene::Initialize()
 
     CLayer* pLayer = CLayer::Create(0.f);
     Add_Layer(L"GameLogic", pLayer);
+
     pLayer->Add_GameObject(CTestObject::Create(m_pDevice));
+    pLayer->Add_GameObject(CDynamicCamera::Create(m_pDevice));
 
     return S_OK;
 }

@@ -21,6 +21,7 @@ class CBlackBoardMgr;
 class CTextureMgr;
 class CProtoMgr;
 class CRenderMgr;
+enum class ERENDER_TYPE : _uint;
 
 class CScene;
 class FCollisionPrimitive;
@@ -117,6 +118,16 @@ public:		// 텍스처 매니저
 public:		// 프로토 매니저
 	HRESULT Initialize_ProtoMgr();
 
+public:		// 렌더 매니저
+	HRESULT	Initialize_RenderMgr(const _uint iWidth = 1280U, const _uint iHeight = 720U);
+	void	Render(ID3D11DeviceContext* pDeviceContext);
+	void	Add_RenderGroup(ERENDER_TYPE eType, class CGameObject* pGameObject);
+	void	Clear_RenderGroup();
+	void	Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPers);
+	const _matrix* const Get_PerspectiveViewMatrix(const _uint iCam) const;
+	void	Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrtho);
+	const _matrix* const Get_OrthogonalViewMatrix(const _uint iCam) const;
+
 private:
 	CGraphicDev*	m_pGraphicDev = nullptr;
 	CInputDev*		m_pInputDev = nullptr;
@@ -130,6 +141,7 @@ private:
 	CBlackBoardMgr* m_pBlackBoardMgr = nullptr;
 	CTextureMgr*	m_pTextureMgr = nullptr;
 	CProtoMgr*		m_pProtoMgr = nullptr;
+	CRenderMgr*		m_pRenderMgr = nullptr;
 };
 
 inline CGameInstance* GameInstance()

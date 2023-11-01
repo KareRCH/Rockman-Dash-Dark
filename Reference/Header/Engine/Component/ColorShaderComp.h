@@ -17,10 +17,11 @@ public:
 	virtual HRESULT	Initialize(HWND hWnd);
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick() {}
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext);
+	virtual void	Render(ID3D11DeviceContext* pDeviceContext) {}
+	virtual void	Render(ID3D11DeviceContext* pDeviceContext, const _matrix& matWorld, const _matrix& matView, const _matrix& matProj);
 
 public:
-	static CColorShaderComp*		Create(ID3D11Device* pGraphicDev);
+	static CColorShaderComp*		Create(ID3D11Device* pDevice, HWND hWnd);
 	virtual CPrimitiveComponent*	Clone();
 
 protected:
@@ -36,6 +37,7 @@ public:
 
 private:
 	_uint m_iIndexCount = 0;
+	
 };
 
 END

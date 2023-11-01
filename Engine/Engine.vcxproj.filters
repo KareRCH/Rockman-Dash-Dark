@@ -118,6 +118,9 @@
     <Filter Include="02. Utility\02. Component\04. VIBufferComp\01. Tri">
       <UniqueIdentifier>{d64ffa75-e403-4388-ac72-b6fff7601d92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\01. BaseClass\05. Camera">
+      <UniqueIdentifier>{cbace4bd-8956-4d90-bb10-05422bcb9a5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -273,6 +276,9 @@
     <ClInclude Include="Public\System\RenderMgr.h">
       <Filter>02. Utility\03. Manager\02. RenderMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Public\BaseClass\Camera.h">
+      <Filter>02. Utility\01. BaseClass\05. Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -398,12 +404,15 @@
     <ClCompile Include="Private\System\RenderMgr.cpp">
       <Filter>02. Utility\03. Manager\02. RenderMgr</Filter>
     </ClCompile>
+    <ClCompile Include="Private\BaseClass\Camera.cpp">
+      <Filter>02. Utility\01. BaseClass\05. Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Public\Shader\VS_Test1.hlsl">
+    <FxCompile Include="Resource\Shader\PS_Test1.hlsl">
       <Filter>03. Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Public\Shader\PS_Test1.hlsl">
+    <FxCompile Include="Resource\Shader\VS_Test1.hlsl">
       <Filter>03. Shader</Filter>
     </FxCompile>
   </ItemGroup>
