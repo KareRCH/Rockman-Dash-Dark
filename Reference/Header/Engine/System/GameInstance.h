@@ -8,6 +8,7 @@
 BEGIN(Engine)
 
 class CGraphicDev;
+struct FDEVICE_INIT;
 class CInputDev;
 class CKeyMgr;
 class CPhysicsMgr;
@@ -50,13 +51,15 @@ private:
 	virtual void Free() override;
 
 public:		// 그래픽 디바이스
-	HRESULT					Initialize_GraphicDev(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
-													_float fScreenDepth, _float fScreenNear);
+	HRESULT					Initialize_GraphicDev(const FDEVICE_INIT& tInit);
 	HRESULT					Clear_BackBuffer_View(_float4 vClearColor);
 	HRESULT					Clear_DepthStencil_View();
 	HRESULT					Present();
 	ID3D11Device*			Get_GraphicDev();
 	ID3D11DeviceContext*	Get_GraphicContext();
+	const _matrix& Get_GraphicDev_ProjectionMatrix();
+	const _matrix& Get_GraphicDev_WorldMatrix();
+	const _matrix& Get_GraphicDev_OrthoMatrix();
 	
 
 
@@ -123,10 +126,14 @@ public:		// 렌더 매니저
 	void	Render(ID3D11DeviceContext* pDeviceContext);
 	void	Add_RenderGroup(ERENDER_TYPE eType, class CGameObject* pGameObject);
 	void	Clear_RenderGroup();
-	void	Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPers);
-	const _matrix* const Get_PerspectiveViewMatrix(const _uint iCam) const;
-	void	Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrtho);
-	const _matrix* const Get_OrthogonalViewMatrix(const _uint iCam) const;
+	void			Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView);
+	const _matrix 	Get_PerspectiveViewMatrix(const _uint iCam) const;
+	void			Set_PerspectiveProjMatrix(const _uint iCam, const _matrix& matPersProj);
+	const _matrix	Get_PerspectiveProjMatrix(const _uint iCam) const;
+	void			Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrthoView);
+	const _matrix	Get_OrthogonalViewMatrix(const _uint iCam) const;
+	void			Set_OrthogonalProjMatrix(const _uint iCam, const _matrix& matOrthoProj);
+	const _matrix	Get_OrthogonalProjMatrix(const _uint iCam) const;
 
 private:
 	CGraphicDev*	m_pGraphicDev = nullptr;

@@ -6,13 +6,52 @@ CGraphicDev::CGraphicDev()
 
 HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
 {
+    _uint		iFlag = 0;
+
+#ifdef _DEBUG
+    iFlag = D3D11_CREATE_DEVICE_DEBUG;
+#endif
+    D3D_FEATURE_LEVEL			FeatureLV;
+
+    /* 그래픽 장치를 초기화한다. */
+    /* ID3D11Device, ID3D11DeviceContext 바로 생성한다. */
+    if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, iFlag, nullptr, 0, D3D11_SDK_VERSION, &m_pDevice, &FeatureLV, &m_pDeviceContext)))
+        return E_FAIL;
+
     FAILED_CHECK_RETURN(Ready_SwapChain(tInit), E_FAIL);
 
-    FAILED_CHECK_RETURN(Ready_Depth(tInit), E_FAIL);
+    FAILED_CHECK_RETURN(Ready_BackBufferRenderTargetView(tInit), E_FAIL);
 
-    FAILED_CHECK_RETURN(Ready_Stencil(tInit), E_FAIL);
+    FAILED_CHECK_RETURN(Ready_DepthStencilRenderTargetView(tInit), E_FAIL);
 
     FAILED_CHECK_RETURN(Ready_Viewport(tInit), E_FAIL);
+
+    /* 장치에 바인드해놓을 렌더타겟들과 뎁스스텐실뷰를 셋팅한다. */
+    /* 장치는 최대 8개의 렌더타겟을 동시에 들고 있을 수 있다. */
+    ID3D11RenderTargetView* pRTVs[1] = {
+        m_pRenderTargetView,
+
+    };
+
+    m_pDeviceContext->OMSetRenderTargets(1, pRTVs,
+        m_pDepthStencilView);
+
+    D3D11_VIEWPORT			ViewPortDesc;
+    ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
+    ViewPortDesc.TopLeftX = 0;
+    ViewPortDesc.TopLeftY = 0;
+    ViewPortDesc.Width = (_float)tInit.iScreenWidth;
+    ViewPortDesc.Height = (_float)tInit.iScreenHeight;
+    ViewPortDesc.MinDepth = 0.f;
+    ViewPortDesc.MaxDepth = 1.f;
+
+    m_pDeviceContext->RSSetViewports(1, &ViewPortDesc);
+
+    //*ppDeviceOut = m_pDevice;
+    //*ppDeviceContextOut = m_pDeviceContext;
+
+    Safe_AddRef(m_pDevice);
+    Safe_AddRef(m_pDeviceContext);
 
 	return S_OK;
 }
@@ -86,224 +125,116 @@ void CGraphicDev::Free()
 
 HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
 {
-    m_bVsync_Enabled = tInit.bVSync;
+    IDXGIDevice* pDevice = nullptr;
+    m_pDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDevice);
 
-    // 그래픽 인터페이스 팩토리 생성
-    IDXGIFactory* factory = nullptr;
-    FAILED_CHECK_RETURN(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory), E_FAIL);
+    IDXGIAdapter* pAdapter = nullptr;
+    pDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&pAdapter);
 
-    // 팩토리 객체를 사용해 첫번째 그래픽 카드 인터페이스 어댑터를 생성한다.
-    IDXGIAdapter* adapter = nullptr;
-    FAILED_CHECK_RETURN(factory->EnumAdapters(0, &adapter), E_FAIL);
+    IDXGIFactory* pFactory = nullptr;
+    pAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&pFactory);
 
-    // 출력(모니터)에 대한 첫번째 어댑터를 지정
-    IDXGIOutput* adapterOutput = nullptr;
-    FAILED_CHECK_RETURN(adapter->EnumOutputs(0, &adapterOutput), E_FAIL);
+    /* 스왑체인을 생성한다. = 텍스쳐를 생성하는 행위 + 스왑하는 형태  */
+    DXGI_SWAP_CHAIN_DESC		SwapChain;
+    ZeroMemory(&SwapChain, sizeof(DXGI_SWAP_CHAIN_DESC));
 
-    // 출력 (모니터)에 대한 DXGI_FORMAT_R8G8B8A8_UNORM 표시 형식에 맞는 모드 수를 가져옴
-    _uint iNumModes = 0;
-    FAILED_CHECK_RETURN(adapterOutput->GetDisplayModeList(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_ENUM_MODES_INTERLACED,
-        &iNumModes, NULL), E_FAIL);
+    /*텍스쳐(백버퍼)를 생성하는 행위*/
+    SwapChain.BufferDesc.Width = tInit.iScreenWidth;
+    SwapChain.BufferDesc.Height = tInit.iScreenHeight;
 
-    // 가능한 모든 모니터와 그래픽카드 조합을 저장할 리스트 생성
-    DXGI_MODE_DESC* displayModeList = new DXGI_MODE_DESC[iNumModes];
-    if (!displayModeList)
+
+    SwapChain.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    SwapChain.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+    SwapChain.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+    SwapChain.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    SwapChain.BufferCount = 1;
+
+    /*스왑하는 형태*/
+    SwapChain.BufferDesc.RefreshRate.Numerator = 60;
+    SwapChain.BufferDesc.RefreshRate.Denominator = 1;
+    SwapChain.SampleDesc.Quality = 0;
+    SwapChain.SampleDesc.Count = 1;
+
+    SwapChain.OutputWindow = tInit.hWnd;
+    SwapChain.Windowed = !tInit.bFullScreen;
+    SwapChain.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+
+    /* 백버퍼라는 텍스쳐를 생성했다. */
+    if (FAILED(pFactory->CreateSwapChain(m_pDevice, &SwapChain, &m_pSwapChain)))
         return E_FAIL;
 
-    // 디스플레이 모드에 대한 리스트를 채운다.
-    FAILED_CHECK_RETURN(adapterOutput->GetDisplayModeList(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_ENUM_MODES_INTERLACED,
-        &iNumModes, displayModeList), E_FAIL);
 
 
-    // 이모든 디스플레이 모드에 대해 화면 너비/높이에 맞는 디스플레이모드 찾기
-    // 적합한 것을 찾으면 모니터의 새로고침 비율의 분모와 분자 값을 저장
-    _uint iNumerator = 0;
-    _uint iDenominator = 0;
-    for (_uint i = 0; i < iNumModes; i++)
-    {
-        if (displayModeList[i].Width == (_uint)g_iWindowSizeX)
-        {
-            if (displayModeList[i].Height == (_uint)g_iWindowSizeY)
-            {
-                iNumerator = displayModeList[i].RefreshRate.Numerator;
-                iDenominator = displayModeList[i].RefreshRate.Denominator;
-            }
-        }
-    }
-
-    // 비디오카드의 구조체를 얻는다.
-    DXGI_ADAPTER_DESC adapterDesc;
-    FAILED_CHECK_RETURN(adapter->GetDesc(&adapterDesc), E_FAIL);
-
-
-    // 비디오카드 메모리 용량 단위를 메가바이트 단위로 저장
-    m_iVideoCardMemory = (_int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
-
-
-    // 비디오카드의 이름을 저장
-    size_t iStringLength = 0;
-    if (wcstombs_s(&iStringLength, m_cVideoCardDescription, 128, adapterDesc.Description, 128) != 0)
-    {
-        return E_FAIL;
-    }
-
-    // 디스플레이 모드 리스트 해제
-    Safe_Delete_Array(displayModeList);
-
-    // 출력 어댑터를 해제
-    Safe_Release(adapterOutput);
-
-    // 어댑터 해제
-    Safe_Release(adapter);
-
-    // 팩토리 객체 해제
-    Safe_Release(factory);
-
-    //-----------------------------------------------
-
-    DXGI_SWAP_CHAIN_DESC swapChainDesc;
-    ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
-
-    swapChainDesc.BufferCount = 1;          // 백버퍼 개수
-    swapChainDesc.BufferDesc.Width = 0;     // 백버퍼 너비 높이
-    swapChainDesc.BufferDesc.Height = 0;
-    swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;   // 32비트 서피스 설정
-    // 백버퍼의 새로고침 비율 설정
-    if (m_bVsync_Enabled)
-    {
-        swapChainDesc.BufferDesc.RefreshRate.Numerator = iNumerator;
-        swapChainDesc.BufferDesc.RefreshRate.Denominator = iDenominator;
-    }
-    else
-    {
-        swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
-        swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
-    }
-    // 백버퍼의 사용용도 지정
-    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-
-    // 렌더링에 사용될 윈도우 핸들 지정
-    swapChainDesc.OutputWindow = tInit.hWnd;
-
-    // 멀티샘플링을 끈다
-    swapChainDesc.SampleDesc.Count = 1;
-    swapChainDesc.SampleDesc.Quality = 0;
-
-    // 전체화면
-    swapChainDesc.Windowed = !tInit.bFullScreen;
-
-    // 출력 후 백버퍼를 비우도록 지정
-    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-
-    // 추가 옵션 플래그 사용 X
-    swapChainDesc.Flags = 0;
-
-    // 피처레벨을 DirectX 11로 설정
-    D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
-
-
-    // 스왑 체인, Direct3D 장치 및 Direct3D 장치 컨텍스트를 만든다.
-    FAILED_CHECK_RETURN(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1,
-        D3D11_SDK_VERSION, &swapChainDesc, &m_pSwapChain, &m_pDevice, NULL, &m_pDeviceContext), E_FAIL);
-
-    // 백버퍼 포인터를 얻어온다.
-    ID3D11Texture2D* backBufferPtr = nullptr;
-    FAILED_CHECK_RETURN(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr), E_FAIL);
-
-    FAILED_CHECK_RETURN(m_pDevice->CreateRenderTargetView(backBufferPtr, NULL, &m_pRenderTargetView), E_FAIL);
-
-    Safe_Release(backBufferPtr);
+    Safe_Release(pFactory);
+    Safe_Release(pAdapter);
+    Safe_Release(pDevice);
 
     return S_OK;
 }
 
-HRESULT CGraphicDev::Ready_Depth(const FDEVICE_INIT& tInit)
+HRESULT CGraphicDev::Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit)
 {
-    // 깊이 버퍼 구조체를 초기화한다.
-    D3D11_TEXTURE2D_DESC depthBufferDesc;
-    ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
+    if (nullptr == m_pDevice)
+        return E_FAIL;
 
-    // 깊이 버퍼 구조체를 작성한다.
-    depthBufferDesc.Width = tInit.iScreenWidth;
-    depthBufferDesc.Height = tInit.iScreenHeight;
-    depthBufferDesc.MipLevels = 1;
-    depthBufferDesc.ArraySize = 1;
-    depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depthBufferDesc.SampleDesc.Count = 1;
-    depthBufferDesc.SampleDesc.Quality = 0;
-    depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    depthBufferDesc.CPUAccessFlags = 0;
-    depthBufferDesc.MiscFlags = 0;
 
-    // 설정된 깊이버퍼 구조체를 사용하여 깊이 버퍼 텍스쳐를 생성한다.
-    FAILED_CHECK_RETURN(m_pDevice->CreateTexture2D(&depthBufferDesc, NULL, &m_pDethStencilBuffer), E_FAIL);
+
+    /* 내가 앞으로 사용하기위한 용도의 텍스쳐를 생성하기위한 베이스 데이터를 가지고 있는 객체이다. */
+    /* 내가 앞으로 사용하기위한 용도의 텍스쳐 : ID3D11RenderTargetView, ID3D11ShaderResoureView, ID3D11DepthStencilView */
+    ID3D11Texture2D* pBackBufferTexture = nullptr;
+
+    /* 스왑체인이 들고있던 텍스처를 가져와봐. */
+    if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBufferTexture)))
+        return E_FAIL;
+
+    if (FAILED(m_pDevice->CreateRenderTargetView(pBackBufferTexture, nullptr, &m_pRenderTargetView)))
+        return E_FAIL;
+
+
+
+    Safe_Release(pBackBufferTexture);
 
     return S_OK;
 }
 
-HRESULT CGraphicDev::Ready_Stencil(const FDEVICE_INIT& tInit)
+HRESULT CGraphicDev::Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tInit)
 {
-    // 스텐실 상태 구조체를 초기화한다.
-    D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-    ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+    if (nullptr == m_pDevice)
+        return E_FAIL;
 
-    depthStencilDesc.DepthEnable = true;
-    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    ID3D11Texture2D* pDepthStencilTexture = nullptr;
 
-    depthStencilDesc.StencilEnable = true;
-    depthStencilDesc.StencilReadMask = 0xFF;
-    depthStencilDesc.StencilWriteMask = 0xFF;
+    D3D11_TEXTURE2D_DESC	TextureDesc;
+    ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
-    // 픽셀 정면 스텐실 설정
-    depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-    depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    TextureDesc.Width = tInit.iScreenWidth;
+    TextureDesc.Height = tInit.iScreenHeight;
+    TextureDesc.MipLevels = 1;
+    TextureDesc.ArraySize = 1;
+    TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-    // 픽셀 후면 스텐실 설정
-    depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-    depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    TextureDesc.SampleDesc.Quality = 0;
+    TextureDesc.SampleDesc.Count = 1;
 
-    // 깊이 스텐실 상태를 생성
-    FAILED_CHECK_RETURN(m_pDevice->CreateDepthStencilState(&depthStencilDesc, &m_pDepthStencilState), E_FAIL);
+    TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+    TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL
+        /*| D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE*/;
+    TextureDesc.CPUAccessFlags = 0;
+    TextureDesc.MiscFlags = 0;
 
-    // 깊이 스텐실 뷰의 구조체를 초기화
-    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-    ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
+    if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr,
+        &pDepthStencilTexture)))
+        return E_FAIL;
 
-    depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-    depthStencilViewDesc.Texture2D.MipSlice = 0;
+    /* RenderTarget */
+    /* ShaderResource */
+    /* DepthStencil */
 
-    // 깊이 스텐실 뷰를 생성
-    FAILED_CHECK_RETURN(m_pDevice->CreateDepthStencilView(m_pDethStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView), E_FAIL);
+    if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr,
+        &m_pDepthStencilView)))
+        return E_FAIL;
 
-    // 렌더링 대상 뷰와 깊이 스텐실 버퍼를 출력 렌더 파이프 라인에 바인딩
-    m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-
-    //-------------------------------------
-
-    // 그려지는 대상 뷰와 깊이 스텐실 버퍼를 출력 렌더 파이프 라인에 바인딩
-    D3D11_RASTERIZER_DESC rasterDesc;
-    rasterDesc.AntialiasedLineEnable = false;
-    rasterDesc.CullMode = D3D11_CULL_BACK;
-    rasterDesc.DepthBias = 0;
-    rasterDesc.DepthBiasClamp = 0.0f;
-    rasterDesc.DepthClipEnable = true;
-    rasterDesc.FillMode = D3D11_FILL_SOLID;
-    rasterDesc.FrontCounterClockwise = false;
-    rasterDesc.MultisampleEnable = false;
-    rasterDesc.ScissorEnable = false;
-    rasterDesc.SlopeScaledDepthBias = 0.0f;
-
-    // 방금 작성한 구조체에서 래스터 라이저 상태를 만든다.
-    FAILED_CHECK_RETURN(m_pDevice->CreateRasterizerState(&rasterDesc, &m_pRasterState), E_FAIL);
-
-    m_pDeviceContext->RSSetState(m_pRasterState);
+    Safe_Release(pDepthStencilTexture);
 
     return S_OK;
 }
@@ -322,7 +253,7 @@ HRESULT CGraphicDev::Ready_Viewport(const FDEVICE_INIT& tInit)
     m_pDeviceContext->RSSetViewports(1, &viewport);
 
     // 투영 행렬을 설정
-    _float fFieldOfView = 3.141592654f / 4.f;
+    _float fFieldOfView = XM_PI * 0.25f;
     _float fScreenAspect = (_float)tInit.iScreenWidth / (_float)tInit.iScreenHeight;
 
     // 3D 렌더링을 위한 투영 행렬을 만든다.
@@ -335,4 +266,19 @@ HRESULT CGraphicDev::Ready_Viewport(const FDEVICE_INIT& tInit)
     m_matOrtho = XMMatrixOrthographicLH((_float)tInit.iScreenWidth, (_float)tInit.iScreenHeight, tInit.fScreenNear, tInit.fScreenDepth);
 
     return S_OK;
+}
+
+const _matrix& CGraphicDev::GetProjectionMatrix()
+{
+    return m_matProjection;
+}
+
+const _matrix& CGraphicDev::GetWorldMatrix()
+{
+    return m_matWorld;
+}
+
+const _matrix& CGraphicDev::GetOrthoMatrix()
+{
+    return m_matOrtho;
 }

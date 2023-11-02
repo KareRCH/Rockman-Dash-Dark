@@ -20,7 +20,7 @@ HRESULT CColorShaderComp::Initialize(HWND hWnd)
 {
     FAILED_CHECK_RETURN(Initialize(), E_FAIL);
 
-    Initialize_Shader(hWnd, L"./Resource/Shader/VS_Test1.hlsl", L"./Resource/Shader/PS_Test1.hlsl");
+    FAILED_CHECK_RETURN(Initialize_Shader(hWnd, L"./Resource/Shader/VS_Test1.hlsl", L"./Resource/Shader/PS_Test1.hlsl"), E_FAIL);
 
     return S_OK;
 }
@@ -48,7 +48,7 @@ CColorShaderComp* CColorShaderComp::Create(ID3D11Device* pDevice, HWND hWnd)
     {
         Engine::Safe_Release(pInstance);
 
-        MSG_BOX("ColoShaderComp Create Failed");
+        MSG_BOX("ColorShaderComp Create Failed");
         
         return nullptr;
     }
@@ -64,15 +64,16 @@ CPrimitiveComponent* CColorShaderComp::Clone()
 void CColorShaderComp::Free()
 {
     SUPER::Free();
+
 }
 
 HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName, const _tchar* psFileName)
 {
-    ID3D10Blob* errorMessage = nullptr;
+    ID3DBlob* errorMessage = nullptr;
 
     // 정점 셰이더 컴파일
-    ID3D10Blob* pVertexShaderBuf = nullptr;
-    if (FAILED(D3DCompileFromFile(vsFileName, NULL, NULL, "main", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+    ID3DBlob* pVertexShaderBuf = nullptr;
+    if (FAILED(D3DCompileFromFile(vsFileName, NULL, NULL, "main", "vs_5_0", 0, 0,
         &pVertexShaderBuf, &errorMessage)))
     {
         if (errorMessage)
@@ -88,8 +89,8 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     }
 
     // 픽셀 셰이더 컴파일
-    ID3D10Blob* pPixelShaderBuf = nullptr;
-    if (FAILED(D3DCompileFromFile(psFileName, NULL, NULL, "main", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+    ID3DBlob* pPixelShaderBuf = nullptr;
+    if (FAILED(D3DCompileFromFile(psFileName, NULL, NULL, "main", "ps_5_0", 0, 0,
         &pPixelShaderBuf, &errorMessage)))
     {
         if (errorMessage)
@@ -98,7 +99,7 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
         }
         else
         {
-            MessageBox(hWnd, vsFileName, L"파일 없음", MB_OK);
+            MessageBox(hWnd, psFileName, L"파일 없음", MB_OK);
         }
 
         return E_FAIL;
@@ -126,7 +127,7 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     tPolygonLayout[1].SemanticIndex = 0;
     tPolygonLayout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
     tPolygonLayout[1].InputSlot = 0;
-    tPolygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+    tPolygonLayout[1].AlignedByteOffset = 12;
     tPolygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     tPolygonLayout[1].InstanceDataStepRate = 0;
 
@@ -142,7 +143,7 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     tMatBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     tMatBufferDesc.ByteWidth = sizeof(MATRIX_BUFFER_T);
     tMatBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    tMatBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+    tMatBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     tMatBufferDesc.MiscFlags = 0;
     tMatBufferDesc.StructureByteStride = 0;
 

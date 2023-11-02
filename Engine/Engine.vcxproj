@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_DLL|Win32">
+      <Configuration>Debug_DLL</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_DLL|x64">
+      <Configuration>Debug_DLL</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -33,6 +41,13 @@
     <CharacterSet>Unicode</CharacterSet>
     <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -42,6 +57,13 @@
     <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -63,33 +85,35 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Engine.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Engine.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Engine.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Engine.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Engine.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Engine.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>Bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>Intermediate\$(PlatformTarget)\$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>Bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>Intermediate\$(PlatformTarget)\$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>Bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>Intermediate\$(PlatformTarget)\$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>Bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>Intermediate\$(PlatformTarget)\$(Configuration)\</IntDir>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -101,18 +125,25 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Message>헤더가 읽기모드로 복사되었습니다. 바이너리 파일이 복사되었습니다.</Message>
-      <Command>attrib -r "$(SolutionDir)Reference\Header\*.*" /s /d
-xcopy ".\Public\*.*" "$(SolutionDir)Reference\Header\$(TargetName)\" /y /e
-attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
-xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;ENGINE_EXPORTS;_DEBUG_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.\Public\;$(SolutionDir)Reference\Header\FMod\core\;$(SolutionDir)Reference\Header\FMod\fsbank\;$(SolutionDir)Reference\Header\FMod\studio\;$(SolutionDir)Reference\Header\RapidJson\;$(SolutionDir)Reference\Header\Assimp\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
@@ -132,18 +163,8 @@ xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Comman
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Message>헤더가 읽기모드로 복사되었습니다. 바이너리 파일이 복사되었습니다.</Message>
-      <Command>attrib -r "$(SolutionDir)Reference\Header\*.*" /s /d
-xcopy ".\Public\*.*" "$(SolutionDir)Reference\Header\$(TargetName)\" /y /e
-attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
-xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
@@ -159,18 +180,25 @@ xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Comman
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Message>헤더가 읽기모드로 복사되었습니다. 바이너리 파일이 복사되었습니다.</Message>
-      <Command>attrib -r "$(SolutionDir)Reference\Header\*.*" /s /d
-xcopy ".\Public\*.*" "$(SolutionDir)Reference\Header\$(TargetName)\" /y /e
-attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
-xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;ENGINE_EXPORTS;_DEBUG_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.\Public\;$(SolutionDir)Reference\Header\FMod\core\;$(SolutionDir)Reference\Header\FMod\fsbank\;$(SolutionDir)Reference\Header\FMod\studio\;$(SolutionDir)Reference\Header\RapidJson\;$(SolutionDir)Reference\Header\Assimp\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
@@ -190,23 +218,14 @@ xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Comman
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Message>헤더가 읽기모드로 복사되었습니다. 바이너리 파일이 복사되었습니다.</Message>
-      <Command>attrib -r "$(SolutionDir)Reference\Header\*.*" /s /d
-xcopy ".\Public\*.*" "$(SolutionDir)Reference\Header\$(TargetName)\" /y /e
-attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
-xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="LogicDeviceBasic.h" />
     <ClInclude Include="Public\Base.h" />
     <ClInclude Include="Public\BaseClass\BlackBoard.h" />
     <ClInclude Include="Public\BaseClass\Camera.h" />
@@ -238,8 +257,10 @@ xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Comman
     <ClInclude Include="Public\Physics\PhysicsCore.h" />
     <ClInclude Include="Public\System\BlackBoardMgr.h" />
     <ClInclude Include="Public\System\BlackBoardPtr.h" />
+    <ClInclude Include="Public\System\JobMgr.h" />
     <ClInclude Include="Public\System\KeyMgr.h" />
     <ClInclude Include="Public\System\Management.h" />
+    <ClInclude Include="Public\System\ModelMgr.h" />
     <ClInclude Include="Public\System\MultiStateTexture.h" />
     <ClInclude Include="Public\System\PhysicsMgr.h" />
     <ClInclude Include="Public\Physics\PhysicsPrecision.h" />
@@ -280,8 +301,10 @@ xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Comman
     <ClCompile Include="Private\Physics\PhysicsCore.cpp" />
     <ClCompile Include="Private\System\BlackBoardMgr.cpp" />
     <ClCompile Include="Private\System\BlackBoardPtr.cpp" />
+    <ClCompile Include="Private\System\JobMgr.cpp" />
     <ClCompile Include="Private\System\KeyMgr.cpp" />
     <ClCompile Include="Private\System\Management.cpp" />
+    <ClCompile Include="Private\System\ModelMgr.cpp" />
     <ClCompile Include="Private\System\MultiStateTexture.cpp" />
     <ClCompile Include="Private\System\PhysicsMgr.cpp" />
     <ClCompile Include="Private\Physics\PhysicsWorld3D.cpp" />
@@ -307,14 +330,34 @@ xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Comman
   <ItemGroup>
     <FxCompile Include="Resource\Shader\PS_Test1.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\PS_Texture.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Resource\Shader\VS_Test1.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\VS_Texture.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>

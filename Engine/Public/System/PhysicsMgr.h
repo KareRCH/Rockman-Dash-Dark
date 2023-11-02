@@ -13,7 +13,7 @@ class CGameObject;
 /// <summary>
 /// 물리 세계를 관리하는 클래스
 /// </summary>
-class CPhysicsMgr final : public CBase
+class ENGINE_DLL_DBG CPhysicsMgr final : public CBase
 {
 	DERIVED_CLASS(CBase, CPhysicsMgr)
 

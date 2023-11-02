@@ -23,6 +23,7 @@ class CGraphicDev : public CBase
 	DERIVED_CLASS(CBase, CGraphicDev)
 public:
 	explicit CGraphicDev();
+	explicit CGraphicDev(const CGraphicDev& rhs) = delete;
 	virtual ~CGraphicDev() = default;
 
 public:
@@ -39,9 +40,14 @@ private:
 
 private:
 	HRESULT		Ready_SwapChain(const FDEVICE_INIT& tInit);
-	HRESULT		Ready_Depth(const FDEVICE_INIT& tInit);
-	HRESULT		Ready_Stencil(const FDEVICE_INIT& tInit);
+	HRESULT		Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit);
+	HRESULT		Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tInit);
 	HRESULT		Ready_Viewport(const FDEVICE_INIT& tInit);
+
+public:
+	const _matrix& GetProjectionMatrix();
+	const _matrix& GetWorldMatrix();
+	const _matrix& GetOrthoMatrix();
 
 public:
 	GETSET_1(ID3D11Device*, m_pDevice, Device, GET_REF)

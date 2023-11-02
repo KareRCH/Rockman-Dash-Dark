@@ -23,10 +23,21 @@ _int CDynamicCamera::Tick(const _float& fTimeDelta)
     SUPER::Tick(fTimeDelta);
 
 
-    Set_Position(_float3(0.f, 0.f, -10.f));
+    Set_Position(_float3(0.f, 0.f, 5.f));
     Calculate_Transform();
 
-    GameInstance()->Set_PerspectiveViewMatrix(0U, Get_Transform());
+    _float3 vPos, vUp, vAt;
+    vPos = Get_Position();
+    vAt = _float3(0.f, 0.f, 10.f);
+    vUp = _float3(0.f, 1.f, 0.f);
+
+    m_matPersView = XMMatrixLookAtLH(XMLoadFloat3(&vPos),
+        XMLoadFloat3(&vAt), XMLoadFloat3(&vUp));
+    m_matPersProj = XMMatrixPerspectiveFovLH(XM_PI * 0.25f, ((_float)g_iWindowSizeX / (_float)g_iWindowSizeY), 0.1f, 1000.f);
+    //m_matPersProj = XMMatrixOrthographicLH(g_iWindowSizeX, g_iWindowSizeY, 0.1f, 1000.f);
+
+    GameInstance()->Set_PerspectiveViewMatrix(0U, m_matPersView);
+    GameInstance()->Set_PerspectiveProjMatrix(0U, m_matPersProj);
 
     return 0;
 }

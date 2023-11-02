@@ -23,6 +23,12 @@ public:
 
 protected:
 	virtual void	Free();
+
+protected:
+	_float3 m_vAt;
+	_float3 m_vUp;
+	_matrix m_matPersView;
+	_matrix	m_matPersProj;
 };
 
 END

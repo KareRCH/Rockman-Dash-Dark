@@ -88,9 +88,6 @@
     <Filter Include="02. Utility\02. Component\02. ColliderComponent">
       <UniqueIdentifier>{03c4b040-9878-4e4f-b467-187da4eb5f46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. System\06. Time">
-      <UniqueIdentifier>{d4340771-336d-4acd-8ccc-eaa555fbbdd3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. System\06. Frame">
       <UniqueIdentifier>{4834d76a-cdf2-4ee1-85fc-b2a233fcf249}</UniqueIdentifier>
     </Filter>
@@ -120,6 +117,18 @@
     </Filter>
     <Filter Include="02. Utility\01. BaseClass\05. Camera">
       <UniqueIdentifier>{cbace4bd-8956-4d90-bb10-05422bcb9a5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\06. LogicDevice">
+      <UniqueIdentifier>{0962f9e2-0e08-4ce2-bf79-d838df3167a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\08. JobQueue">
+      <UniqueIdentifier>{ea16359c-bdef-4959-9f5d-d99941d2cf66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\07. Time">
+      <UniqueIdentifier>{d4340771-336d-4acd-8ccc-eaa555fbbdd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\09. ModelMgr">
+      <UniqueIdentifier>{5aa8e2a3-03c4-4a3f-babe-365db73dd9d8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -211,10 +220,10 @@
       <Filter>01. System\05. Font</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\TimerMgr.h">
-      <Filter>01. System\06. Time</Filter>
+      <Filter>01. System\07. Time</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Timer.h">
-      <Filter>01. System\06. Time</Filter>
+      <Filter>01. System\07. Time</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Frame.h">
       <Filter>01. System\06. Frame</Filter>
@@ -279,6 +288,15 @@
     <ClInclude Include="Public\BaseClass\Camera.h">
       <Filter>02. Utility\01. BaseClass\05. Camera</Filter>
     </ClInclude>
+    <ClInclude Include="LogicDeviceBasic.h">
+      <Filter>02. Utility\06. LogicDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\JobMgr.h">
+      <Filter>01. System\08. JobQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\ModelMgr.h">
+      <Filter>01. System\09. ModelMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -339,10 +357,10 @@
       <Filter>01. System\05. Font</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\TimerMgr.cpp">
-      <Filter>01. System\06. Time</Filter>
+      <Filter>01. System\07. Time</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Timer.cpp">
-      <Filter>01. System\06. Time</Filter>
+      <Filter>01. System\07. Time</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Frame.cpp">
       <Filter>01. System\06. Frame</Filter>
@@ -407,12 +425,24 @@
     <ClCompile Include="Private\BaseClass\Camera.cpp">
       <Filter>02. Utility\01. BaseClass\05. Camera</Filter>
     </ClCompile>
+    <ClCompile Include="Private\System\JobMgr.cpp">
+      <Filter>01. System\08. JobQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\ModelMgr.cpp">
+      <Filter>01. System\09. ModelMgr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\PS_Test1.hlsl">
       <Filter>03. Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\VS_Test1.hlsl">
+      <Filter>03. Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\VS_Texture.hlsl">
+      <Filter>03. Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\PS_Texture.hlsl">
       <Filter>03. Shader</Filter>
     </FxCompile>
   </ItemGroup>

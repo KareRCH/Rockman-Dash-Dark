@@ -5,6 +5,7 @@
 
 #include "System/Management.h"
 #include "TestScene.h"
+#include "System/GraphicDev.h"
 
 IMPLEMENT_SINGLETON(CMainApp)
 
@@ -34,7 +35,17 @@ HRESULT CMainApp::Initialize()
 {
 	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_GraphicDev(g_iWindowSizeX, g_iWindowSizeY, false, g_hWnd, false, 1.f, 0.01f), E_FAIL);
+	FDEVICE_INIT tDeviceInit;
+	tDeviceInit.hWnd = g_hWnd;
+	tDeviceInit.bVSync = false;
+	tDeviceInit.bFullScreen = false;
+	tDeviceInit.iScreenWidth = g_iWindowSizeX;
+	tDeviceInit.iScreenHeight = g_iWindowSizeY;
+	tDeviceInit.fScreenDepth = 1000.f;
+	tDeviceInit.fScreenNear = 0.1f;
+	
+
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_GraphicDev(tDeviceInit), E_FAIL);
 
 	m_pDevice = m_pGameInstance->Get_GraphicDev();
 	Safe_AddRef(m_pDevice);
@@ -103,15 +114,17 @@ void CMainApp::LateTick()
 
 void CMainApp::Render()
 {
-	m_pGameInstance->Clear_BackBuffer_View({0.4f, 0.4f, 0.4f, 1.f});
+	m_pGameInstance->Clear_BackBuffer_View(_float4(0.0f, 0.f, 1.0f, 1.f));
 
 	m_pGameInstance->Clear_DepthStencil_View();
 
 	//m_pGameInstance->Render_Scene(m_pDeviceContext);
+	//m_pDeviceContext->Begin(nullptr);
 	m_pGameInstance->Render(m_pDeviceContext);
+	//m_pDeviceContext->End(nullptr);
 
 #ifdef _DEBUG
-	Render_FrameRate();
+	//Render_FrameRate();
 #endif
 
 	m_pGameInstance->Present();

@@ -25,6 +25,12 @@ namespace Engine
 		_matrix		matProj;
 	};
 
+	struct VERTEX_TEXTURE
+	{
+		_float3		vPosition;
+		_float2		vTexture;
+	};
+
 	//typedef struct tagVertexTexture
 	//{
 	//	_float3		vPosition;

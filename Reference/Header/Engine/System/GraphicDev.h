@@ -4,26 +4,50 @@
 
 BEGIN(Engine)
 
+struct FDEVICE_INIT
+{
+	HWND	hWnd;
+	_bool	bVSync;
+	_bool	bFullScreen;
+	_uint	iScreenWidth;
+	_uint	iScreenHeight;
+	_float	fScreenNear;
+	_float	fScreenDepth;
+};
+
+/// <summary>
+/// 그래픽장치를 초기화하는 클래스
+/// </summary>
 class CGraphicDev : public CBase
 {
 	DERIVED_CLASS(CBase, CGraphicDev)
 public:
 	explicit CGraphicDev();
+	explicit CGraphicDev(const CGraphicDev& rhs) = delete;
 	virtual ~CGraphicDev() = default;
 
 public:
-	HRESULT		Initialize(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
-							_float fScreenDepth, _float fScreenNear);
+	HRESULT		Initialize(const FDEVICE_INIT& tInit);
 	HRESULT		Clear_BackBuffer_View(_float4 vClearColor);
 	HRESULT		Clear_DepthStencil_View();
 	HRESULT		Present();
 
 public:
-	static CGraphicDev* Create(_int iScreenWidth, _int iScreenHeight, _bool bVsync, HWND hWnd, _bool bFullScreen,
-							_float fScreenDepth, _float fScreenNear);
+	static CGraphicDev* Create(const FDEVICE_INIT& tInit);
 
 private:
 	virtual void Free();
+
+private:
+	HRESULT		Ready_SwapChain(const FDEVICE_INIT& tInit);
+	HRESULT		Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit);
+	HRESULT		Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tInit);
+	HRESULT		Ready_Viewport(const FDEVICE_INIT& tInit);
+
+public:
+	const _matrix& GetProjectionMatrix();
+	const _matrix& GetWorldMatrix();
+	const _matrix& GetOrthoMatrix();
 
 public:
 	GETSET_1(ID3D11Device*, m_pDevice, Device, GET_REF)

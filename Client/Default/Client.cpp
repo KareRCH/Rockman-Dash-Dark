@@ -101,9 +101,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 _float	fTimeDelta = ::GameInstance()->Get_TimerDelta(L"Timer_FPS");
 
                 // 틱 함수
-              pMainApp->Tick(fTimeDelta);
-              pMainApp->LateTick();
-              pMainApp->Render();
+                pMainApp->Tick(fTimeDelta);
+                pMainApp->LateTick();
+                pMainApp->Render();
             }
         }
     }
@@ -179,8 +179,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
        rc.right - rc.left,
        rc.bottom - rc.top, nullptr, nullptr, hInstance, nullptr);
 
-   g_hWnd = hWnd;
-
    /*DEVMODE devmode = {};
     EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &devmode);
     HWND hWnd = CreateWindowEx(WS_EX_APPWINDOW, szWindowClass, szTitle, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
@@ -194,7 +192,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
+   g_hWnd = hWnd;
+
    ShowWindow(hWnd, nCmdShow);
+   SetForegroundWindow(hWnd);
+   SetFocus(hWnd);
    UpdateWindow(hWnd);
 
    return TRUE;
@@ -217,21 +219,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
         // 눈뽕 방지
-        RECT rect;
-        GetClientRect(g_hWnd, &rect);
-        HDC hdc = GetDC(g_hWnd);
-        HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
-        FillRect(hdc, &rect, brush);
-        DeleteObject(brush);
-        ReleaseDC(g_hWnd, hdc);
+        //RECT rect;
+        //GetClientRect(hWnd, &rect);
+        //HDC hdc = GetDC(hWnd);
+        //HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
+        //FillRect(hdc, &rect, brush);
+        //DeleteObject(brush);
+        //ReleaseDC(hWnd, hdc);
 
-        g_bLockEsc = false;
+        //g_bLockEsc = false;
 
-        // 검은색 타이틀바
-        COLORREF DARK_COLOR = 0x00505050;
-        BOOL SET_CAPTION_COLOR = SUCCEEDED(DwmSetWindowAttribute(
-            hWnd, DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR,
-            &DARK_COLOR, sizeof(DARK_COLOR)));
+        //// 검은색 타이틀바
+        //COLORREF DARK_COLOR = 0x00505050;
+        //BOOL SET_CAPTION_COLOR = SUCCEEDED(DwmSetWindowAttribute(
+        //    hWnd, DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR,
+        //    &DARK_COLOR, sizeof(DARK_COLOR)));
 
         break;
     }
@@ -254,13 +256,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
-        // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
+        //// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
 
-        RECT rect;
-        GetClientRect(g_hWnd, &rect);
-        HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
-        FillRect(hdc, &rect, brush);
-        DeleteObject(brush);
+        //RECT rect;
+        //GetClientRect(g_hWnd, &rect);
+        //HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
+        //FillRect(hdc, &rect, brush);
+        //DeleteObject(brush);
 
         EndPaint(hWnd, &ps);
         break;

@@ -9,7 +9,7 @@ BEGIN(Engine)
 /// <summary>
 /// 타이머 관리 클래스
 /// </summary>
-class CTimerMgr final : public CBase
+class ENGINE_DLL_DBG CTimerMgr final : public CBase
 {
 	DERIVED_CLASS(CBase, CTimerMgr)
 

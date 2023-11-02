@@ -9,7 +9,7 @@ BEGIN(Engine)
 /// 블랙보드 매니저
 /// 블랙보드를 추가하고 블랙보드를 얻어와준다.
 /// </summary>
-class CBlackBoardMgr final : public CBase
+class ENGINE_DLL_DBG CBlackBoardMgr final : public CBase
 {
 	DERIVED_CLASS(CBase, CBlackBoardMgr)
 private:

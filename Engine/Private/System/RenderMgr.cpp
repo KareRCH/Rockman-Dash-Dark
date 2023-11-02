@@ -6,9 +6,11 @@ CRenderMgr::CRenderMgr()
 	for (_uint i = 0; i < Cast_EnumDef(EGCAMERA_INDEX::SIZE); i++)
 	{
 		m_matPersView[i] = XMMatrixIdentity();
+		m_matPersProj[i] = XMMatrixIdentity();
 		m_matOrthoView[i] = XMMatrixIdentity();
+		m_matOrthoProj[i] = XMMatrixIdentity();
 	}
-	m_matOrthoProject = XMMatrixIdentity();
+	
 }
 
 HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
@@ -96,19 +98,35 @@ void CRenderMgr::Render_Orthogonal(ID3D11DeviceContext* pGraphicDev)
 		iter->Render(pGraphicDev);
 }
 
-void CRenderMgr::Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPers)
+void CRenderMgr::Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView)
 {
 	if (0U > iCam || Cast_EnumDef(ERENDER_T::SIZE) <= iCam)
 		return;
 
-	m_matPersView[iCam] = matPers;
+	m_matPersView[iCam] = matPersView;
 }
 
-void CRenderMgr::Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrtho)
+void CRenderMgr::Set_PerspectiveProjMatrix(const _uint iCam, const _matrix& matPersProj)
 {
 	if (0U > iCam || Cast_EnumDef(ERENDER_T::SIZE) <= iCam)
 		return;
 
-	m_matOrthoView[iCam] = matOrtho;
+	m_matPersProj[iCam] = matPersProj;
+}
+
+void CRenderMgr::Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrthoView)
+{
+	if (0U > iCam || Cast_EnumDef(ERENDER_T::SIZE) <= iCam)
+		return;
+
+	m_matOrthoView[iCam] = matOrthoView;
+}
+
+void CRenderMgr::Set_OrthogonalProjMatrix(const _uint iCam, const _matrix& matPersProj)
+{
+	if (0U > iCam || Cast_EnumDef(ERENDER_T::SIZE) <= iCam)
+		return;
+
+	m_matOrthoProj[iCam] = matPersProj;
 }
 

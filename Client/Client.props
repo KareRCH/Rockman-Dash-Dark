@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir>Bin\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>Intermediate\$(PlatformTarget)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\fmodL.dll" "$(OutDir)" /y
+xcopy "$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\fmodstudioL.dll" "$(OutDir)" /y
+xcopy "$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\assimp-vc143-mtd.dll" "$(OutDir)" /y</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;Dwmapi.lib;Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\Public\;.\Default\;$(SolutionDir)Reference\Header\Engine\;$(SolutionDir)Reference\Header\FMod\core\;$(SolutionDir)Reference\Header\FMod\fsbank\;$(SolutionDir)Reference\Header\FMod\studio\;$(SolutionDir)Reference\Header\Assimp\;$(SolutionDir)Reference\Header\RapidJson\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

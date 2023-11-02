@@ -29,6 +29,7 @@ _int CTestObject::Tick(const _float& fTimeDelta)
     SUPER::Tick(fTimeDelta);
 
     Set_Position(_float3(0.f, 0.f, 10.f));
+    //Set_Scale(_float3(5.f, 5.f, 5.f));
     Calculate_Transform();
 
     GameInstance()->Add_RenderGroup(ERENDER_T::PERSPECTIVE, this);
@@ -46,7 +47,8 @@ void CTestObject::Render(ID3D11DeviceContext* const pDeviceContext)
     SUPER::Render(pDeviceContext);
 
     m_TriBufferComp->Render(pDeviceContext);
-    m_ColorShaderComp->Render(pDeviceContext, Get_Transform(), (*GameInstance()->Get_PerspectiveViewMatrix(0)), XMMatrixIdentity());
+    m_ColorShaderComp->Render(pDeviceContext, Get_Transform(), 
+        GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0));
 }
 
 CTestObject* CTestObject::Create(ID3D11Device* const pDevice)

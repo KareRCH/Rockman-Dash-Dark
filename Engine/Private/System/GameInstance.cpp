@@ -49,14 +49,13 @@ void CGameInstance::Free()
 //----------------------------------------------------------------
 
 
-HRESULT CGameInstance::Initialize_GraphicDev(_int iScreenWidth, _int iScreenHeight, 
-	_bool bVsync, HWND hWnd, _bool bFullScreen, _float fScreenDepth, _float fScreenNear)
+HRESULT CGameInstance::Initialize_GraphicDev(const FDEVICE_INIT& tInit)
 {
 	if (nullptr != m_pGraphicDev)
 		return E_FAIL;
 
 	NULL_CHECK_RETURN(
-		m_pGraphicDev = CGraphicDev::Create(iScreenWidth, iScreenHeight, bVsync, hWnd, bFullScreen, fScreenDepth, fScreenNear)
+		m_pGraphicDev = CGraphicDev::Create(tInit)
 		, E_FAIL);
 
 	return S_OK;
@@ -100,6 +99,30 @@ ID3D11DeviceContext* CGameInstance::Get_GraphicContext()
 		return nullptr;
 
 	return m_pGraphicDev->Get_DeviceContext();
+}
+
+const _matrix& CGameInstance::Get_GraphicDev_ProjectionMatrix()
+{
+	if (nullptr == m_pGraphicDev)
+		return _matrix();
+
+	return m_pGraphicDev->GetProjectionMatrix();
+}
+
+const _matrix& CGameInstance::Get_GraphicDev_WorldMatrix()
+{
+	if (nullptr == m_pGraphicDev)
+		return _matrix();
+
+	return m_pGraphicDev->GetWorldMatrix();
+}
+
+const _matrix& CGameInstance::Get_GraphicDev_OrthoMatrix()
+{
+	if (nullptr == m_pGraphicDev)
+		return _matrix();
+
+	return m_pGraphicDev->GetOrthoMatrix();
 }
 
 
@@ -568,12 +591,28 @@ void CGameInstance::Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& m
 	m_pRenderMgr->Set_PerspectiveViewMatrix(iCam, matPers);
 }
 
-const _matrix* const CGameInstance::Get_PerspectiveViewMatrix(const _uint iCam) const
+const _matrix CGameInstance::Get_PerspectiveViewMatrix(const _uint iCam) const
 {
 	if (nullptr == m_pRenderMgr)
-		return nullptr;
+		return _matrix();
 
-	return &(m_pRenderMgr->Get_PerspectiveViewMatrix(iCam));
+	return m_pRenderMgr->Get_PerspectiveViewMatrix(iCam);
+}
+
+void CGameInstance::Set_PerspectiveProjMatrix(const _uint iCam, const _matrix& matPersProj)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Set_PerspectiveProjMatrix(iCam, matPersProj);
+}
+
+const _matrix CGameInstance::Get_PerspectiveProjMatrix(const _uint iCam) const
+{
+	if (nullptr == m_pRenderMgr)
+		return _matrix();
+
+	return m_pRenderMgr->Get_PerspectiveProjMatrix(iCam);
 }
 
 void CGameInstance::Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrtho)
@@ -584,12 +623,28 @@ void CGameInstance::Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& ma
 	m_pRenderMgr->Set_OrthogonalViewMatrix(iCam, matOrtho);
 }
 
-const _matrix* const CGameInstance::Get_OrthogonalViewMatrix(const _uint iCam) const
+const _matrix CGameInstance::Get_OrthogonalViewMatrix(const _uint iCam) const
 {
 	if (nullptr == m_pRenderMgr)
-		return nullptr;
+		return _matrix();
 
-	return &(m_pRenderMgr->Get_OrthogonalViewMatrix(iCam));
+	return m_pRenderMgr->Get_OrthogonalViewMatrix(iCam);
+}
+
+void CGameInstance::Set_OrthogonalProjMatrix(const _uint iCam, const _matrix& matOrthoProj)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Set_OrthogonalProjMatrix(iCam, matOrthoProj);
+}
+
+const _matrix CGameInstance::Get_OrthogonalProjMatrix(const _uint iCam) const
+{
+	if (nullptr == m_pRenderMgr)
+		return _matrix();
+
+	return m_pRenderMgr->Get_OrthogonalProjMatrix(iCam);
 }
 
 #pragma endregion
