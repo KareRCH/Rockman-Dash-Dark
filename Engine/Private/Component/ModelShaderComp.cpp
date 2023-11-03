@@ -125,7 +125,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     tPolygonLayout[1].SemanticIndex = 0;
     tPolygonLayout[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
     tPolygonLayout[1].InputSlot = 0;
-    tPolygonLayout[1].AlignedByteOffset = 12;
+    tPolygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
     tPolygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     tPolygonLayout[1].InstanceDataStepRate = 0;
 
@@ -133,7 +133,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     tPolygonLayout[2].SemanticIndex = 0;
     tPolygonLayout[2].Format = DXGI_FORMAT_R32G32_FLOAT;
     tPolygonLayout[2].InputSlot = 0;
-    tPolygonLayout[2].AlignedByteOffset = 12;
+    tPolygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
     tPolygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     tPolygonLayout[2].InstanceDataStepRate = 0;
 
@@ -154,6 +154,24 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     tMatBufferDesc.StructureByteStride = 0;
 
     FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&tMatBufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
+
+
+    // 텍스처 샘플러 상태 구조체 생성
+    D3D11_SAMPLER_DESC samplerDesc;
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.MipLODBias = 0.f;
+    samplerDesc.MaxAnisotropy = 1;
+    samplerDesc.BorderColor[0] = 0;
+    samplerDesc.BorderColor[1] = 0;
+    samplerDesc.BorderColor[2] = 0;
+    samplerDesc.BorderColor[3] = 0;
+    samplerDesc.MinLOD = 0;
+    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+    FAILED_CHECK_RETURN(m_pDevice->CreateSamplerState(&samplerDesc, &m_pSamplereState), E_FAIL);
 
     return S_OK;
 }
@@ -185,6 +203,9 @@ HRESULT CModelShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContex
 
     pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
 
+    // 픽셀 셰이더에서 셰이더 텍스처 리소스 설정
+    //pDeviceContext->PSSetShaderResources(0, 1, &);
+
     return S_OK;
 }
 
@@ -194,6 +215,8 @@ void CModelShaderComp::Render_Shader(ID3D11DeviceContext* pDeviceContext, _int i
 
     pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
     pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
+
+    pDeviceContext->PSSetSamplers(0, 1, &m_pSamplereState);
 
     pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
 }

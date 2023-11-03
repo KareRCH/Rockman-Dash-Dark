@@ -85,9 +85,6 @@
     <Filter Include="01. System\02. Physics\Core">
       <UniqueIdentifier>{c4166190-ffd6-4bbc-960c-92017c74407d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Utility\02. Component\02. ColliderComponent">
-      <UniqueIdentifier>{03c4b040-9878-4e4f-b467-187da4eb5f46}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. System\06. Frame">
       <UniqueIdentifier>{4834d76a-cdf2-4ee1-85fc-b2a233fcf249}</UniqueIdentifier>
     </Filter>
@@ -109,12 +106,6 @@
     <Filter Include="02. Utility\02. Component\03. ShaderComponent\01. ColorShaderComp">
       <UniqueIdentifier>{98ac80ab-e878-4a3d-a709-0f8ddf19540e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Utility\02. Component\04. VIBufferComp">
-      <UniqueIdentifier>{0c9a5d10-387a-49fa-a3c8-9a98ab62016e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\02. Component\04. VIBufferComp\01. Tri">
-      <UniqueIdentifier>{d64ffa75-e403-4388-ac72-b6fff7601d92}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Utility\01. BaseClass\05. Camera">
       <UniqueIdentifier>{cbace4bd-8956-4d90-bb10-05422bcb9a5b}</UniqueIdentifier>
     </Filter>
@@ -133,11 +124,23 @@
     <Filter Include="01. System\10. ImGuiMgr">
       <UniqueIdentifier>{9dc3ba77-0153-4cba-9787-9d64148ceb12}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Utility\02. Component\04. VIBufferComp\02. Model">
-      <UniqueIdentifier>{283a955c-0e99-4937-a06b-3036fbda9927}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Utility\02. Component\03. ShaderComponent\02. ModelShaderComp">
       <UniqueIdentifier>{45f8fbc5-e422-45fd-8e94-29ceb43c9020}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\02. ColliderComponent">
+      <UniqueIdentifier>{03c4b040-9878-4e4f-b467-187da4eb5f46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. BufferComponent">
+      <UniqueIdentifier>{0c9a5d10-387a-49fa-a3c8-9a98ab62016e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. BufferComponent\01. Tri">
+      <UniqueIdentifier>{d64ffa75-e403-4388-ac72-b6fff7601d92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. BufferComponent\02. Model">
+      <UniqueIdentifier>{283a955c-0e99-4937-a06b-3036fbda9927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\04. TextureComponent">
+      <UniqueIdentifier>{e944931a-4f57-4403-9301-a8b715b47b9f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -217,7 +220,7 @@
       <Filter>01. System\02. Physics\Core</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\ColliderComponent.h">
-      <Filter>02. Utility\02. Component\02. ColliderComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\02. ColliderComponent</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\InputDev.h">
       <Filter>01. System\03. Input</Filter>
@@ -286,10 +289,10 @@
       <Filter>02. Utility\02. Component\03. ShaderComponent\01. ColorShaderComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\VIBufferComp.h">
-      <Filter>02. Utility\02. Component\04. VIBufferComp</Filter>
+      <Filter>02. Utility\02. Component\02. BufferComponent</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\TriBufferComp.h">
-      <Filter>02. Utility\02. Component\04. VIBufferComp\01. Tri</Filter>
+      <Filter>02. Utility\02. Component\02. BufferComponent\01. Tri</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\RenderMgr.h">
       <Filter>02. Utility\03. Manager\02. RenderMgr</Filter>
@@ -313,9 +316,12 @@
       <Filter>01. System\10. ImGuiMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\ModelBufferComp.h">
-      <Filter>02. Utility\02. Component\04. VIBufferComp\02. Model</Filter>
+      <Filter>02. Utility\02. Component\02. BufferComponent\02. Model</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Component\ModelShaderComp.h" />
+    <ClInclude Include="Public\Component\ModelShaderComp.h">
+      <Filter>02. Utility\02. Component\03. ShaderComponent\02. ModelShaderComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\TextureComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -364,7 +370,7 @@
       <Filter>01. System\02. Physics\Core</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\ColliderComponent.cpp">
-      <Filter>02. Utility\02. Component\02. ColliderComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\02. ColliderComponent</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\InputDev.cpp">
       <Filter>01. System\03. Input</Filter>
@@ -433,10 +439,10 @@
       <Filter>02. Utility\02. Component\03. ShaderComponent\01. ColorShaderComp</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\VIBufferComp.cpp">
-      <Filter>02. Utility\02. Component\04. VIBufferComp</Filter>
+      <Filter>02. Utility\02. Component\02. BufferComponent</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\TriBufferComp.cpp">
-      <Filter>02. Utility\02. Component\04. VIBufferComp\01. Tri</Filter>
+      <Filter>02. Utility\02. Component\02. BufferComponent\01. Tri</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\RenderMgr.cpp">
       <Filter>02. Utility\03. Manager\02. RenderMgr</Filter>
@@ -457,9 +463,12 @@
       <Filter>01. System\10. ImGuiMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\ModelBufferComp.cpp">
-      <Filter>02. Utility\02. Component\04. VIBufferComp\02. Model</Filter>
+      <Filter>02. Utility\02. Component\02. BufferComponent\02. Model</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Component\ModelShaderComp.cpp" />
+    <ClCompile Include="Private\Component\ModelShaderComp.cpp">
+      <Filter>02. Utility\02. Component\03. ShaderComponent\02. ModelShaderComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\TextureComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\PS_Test1.hlsl">
@@ -474,13 +483,11 @@
     <FxCompile Include="Resource\Shader\PS_Texture.hlsl">
       <Filter>03. Shader</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resource\Shader\ModelTest.vs">
+    <FxCompile Include="Resource\Shader\ModelTest.ps">
       <Filter>03. Shader</Filter>
-    </None>
-    <None Include="Resource\Shader\ModelTest.ps">
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\ModelTest.vs">
       <Filter>03. Shader</Filter>
-    </None>
+    </FxCompile>
   </ItemGroup>
 </Project>

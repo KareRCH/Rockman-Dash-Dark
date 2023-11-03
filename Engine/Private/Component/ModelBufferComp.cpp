@@ -25,6 +25,7 @@ HRESULT CModelBufferComp::Initialize(const string& strGroupKey, const string& st
 	m_iVtxCount = pMesh->vecVertices.size();
 	m_iIndexCount = pMesh->vecIndices.size();
 
+
 	VERTEX_MODEL* vertices = new VERTEX_MODEL[m_iVtxCount];
 	if (!vertices)
 		return E_FAIL;

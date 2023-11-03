@@ -34,6 +34,12 @@ public:
 	HRESULT Initialize_Shader(HWND hWnd, const _tchar* vsFileName, const _tchar* psFileName);
 	HRESULT	Set_ShaderParameter(ID3D11DeviceContext* pDeviceContext, XMMATRIX matWorld, XMMATRIX matView, XMMATRIX matProj);
 	void	Render_Shader(ID3D11DeviceContext* pDeviceContext, _int iIndexCount);
+
+
+private:
+	ID3D11SamplerState* m_pSamplereState = nullptr;
 };
+
+
 
 END

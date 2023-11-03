@@ -41,7 +41,7 @@ namespace Engine
 	struct MESH
 	{
 		vector<VERTEX_MODEL> vecVertices;
-		vector<_int>		vecIndices;
+		vector<_uint>		vecIndices;
 		_uint				iMaterIndex;
 	};
 

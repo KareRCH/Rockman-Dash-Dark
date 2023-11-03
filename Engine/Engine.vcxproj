@@ -242,6 +242,7 @@
     <ClInclude Include="Public\Component\PrimitiveComponent.h" />
     <ClInclude Include="Public\Component\SceneComponent.h" />
     <ClInclude Include="Public\Component\ShaderComponent.h" />
+    <ClInclude Include="Public\Component\TextureComponent.h" />
     <ClInclude Include="Public\Component\TransformComponent.h" />
     <ClInclude Include="Public\Component\TriBufferComp.h" />
     <ClInclude Include="Public\Component\VIBufferComp.h" />
@@ -297,6 +298,7 @@
     <ClCompile Include="Private\Component\ModelShaderComp.cpp" />
     <ClCompile Include="Private\Component\SceneComponent.cpp" />
     <ClCompile Include="Private\Component\ShaderComponent.cpp" />
+    <ClCompile Include="Private\Component\TextureComponent.cpp" />
     <ClCompile Include="Private\Component\TransformComponent.cpp" />
     <ClCompile Include="Private\Component\TriBufferComp.cpp" />
     <ClCompile Include="Private\Component\VIBufferComp.cpp" />
@@ -370,8 +372,24 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resource\Shader\ModelTest.ps" />
-    <None Include="Resource\Shader\ModelTest.vs" />
+    <FxCompile Include="Resource\Shader\ModelTest.ps">
+      <FileType>Document</FileType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\ModelTest.vs">
+      <FileType>Document</FileType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
