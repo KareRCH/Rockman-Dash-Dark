@@ -6,7 +6,9 @@
 BEGIN(Engine)
 
 class CTriBufferComp;
+class CModelBufferComp;
 class CColorShaderComp;
+class CModelShaderComp;
 
 END
 
@@ -39,8 +41,10 @@ private:
 	HRESULT	Initialize_Component();
 
 private:
-	CTriBufferComp* m_TriBufferComp = nullptr;
-	CColorShaderComp* m_ColorShaderComp = nullptr;
+	CTriBufferComp* m_pTriBufferComp = nullptr;
+	CModelBufferComp* m_pModelBufferComp = nullptr;
+	CColorShaderComp* m_pColorShaderComp = nullptr;
+	CModelShaderComp* m_pModelShaderComp = nullptr;
 };
 
 END

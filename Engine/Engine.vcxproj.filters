@@ -130,6 +130,15 @@
     <Filter Include="01. System\09. ModelMgr">
       <UniqueIdentifier>{5aa8e2a3-03c4-4a3f-babe-365db73dd9d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. System\10. ImGuiMgr">
+      <UniqueIdentifier>{9dc3ba77-0153-4cba-9787-9d64148ceb12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\04. VIBufferComp\02. Model">
+      <UniqueIdentifier>{283a955c-0e99-4937-a06b-3036fbda9927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. ShaderComponent\02. ModelShaderComp">
+      <UniqueIdentifier>{45f8fbc5-e422-45fd-8e94-29ceb43c9020}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -297,6 +306,16 @@
     <ClInclude Include="Public\System\ModelMgr.h">
       <Filter>01. System\09. ModelMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\ImGuiMgr.h">
+      <Filter>01. System\10. ImGuiMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BaseClass\ImGuiWin.h">
+      <Filter>01. System\10. ImGuiMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\ModelBufferComp.h">
+      <Filter>02. Utility\02. Component\04. VIBufferComp\02. Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\ModelShaderComp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -431,6 +450,16 @@
     <ClCompile Include="Private\System\ModelMgr.cpp">
       <Filter>01. System\09. ModelMgr</Filter>
     </ClCompile>
+    <ClCompile Include="Private\System\ImGuiMgr.cpp">
+      <Filter>01. System\10. ImGuiMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BaseClass\ImGuiWin.cpp">
+      <Filter>01. System\10. ImGuiMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\ModelBufferComp.cpp">
+      <Filter>02. Utility\02. Component\04. VIBufferComp\02. Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\ModelShaderComp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\PS_Test1.hlsl">
@@ -445,5 +474,13 @@
     <FxCompile Include="Resource\Shader\PS_Texture.hlsl">
       <Filter>03. Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\Shader\ModelTest.vs">
+      <Filter>03. Shader</Filter>
+    </None>
+    <None Include="Resource\Shader\ModelTest.ps">
+      <Filter>03. Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

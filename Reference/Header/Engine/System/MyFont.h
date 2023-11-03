@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class CMyFont : public CBase
+class ENGINE_DLL_DBG CMyFont final : public CBase
 {
 	DERIVED_CLASS(CBase, CMyFont)
 private:

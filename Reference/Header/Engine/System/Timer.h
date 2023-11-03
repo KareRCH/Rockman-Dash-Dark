@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class CTimer : public CBase
+class ENGINE_DLL_DBG CTimer : public CBase
 {
 	DERIVED_CLASS(CBase, CTimer)
 

@@ -32,11 +32,16 @@ protected:
 protected:
 	void OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hWnd, const _tchar* pShaderFileName);
 
+public:
+	GETSET_1(_uint, m_iIndexCount, IndexCount, SET_C)
+
 protected:
 	ID3D11VertexShader* m_pVertexShader = nullptr;
 	ID3D11PixelShader*	m_pPixelShader = nullptr;
 	ID3D11InputLayout*	m_pLayout = nullptr;
 	ID3D11Buffer*		m_pMatrixBuffer = nullptr;
+	_uint m_iIndexCount = 0;
+
 };
 
 END

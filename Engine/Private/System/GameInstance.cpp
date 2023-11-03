@@ -14,6 +14,7 @@
 #include "System/ProtoMgr.h"
 #include "System/RenderMgr.h"
 #include "BaseClass/GameObject.h"
+#include "System/ModelMgr.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -41,6 +42,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pTextureMgr);
 	Safe_Release(m_pProtoMgr);
 	Safe_Release(m_pRenderMgr);
+	Safe_Release(m_pModelMgr);
 }
 
 
@@ -648,3 +650,30 @@ const _matrix CGameInstance::Get_OrthogonalProjMatrix(const _uint iCam) const
 }
 
 #pragma endregion
+
+HRESULT CGameInstance::Initialize_ModelMgr(const string& strMainPath)
+{
+	if (nullptr != m_pModelMgr)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(m_pModelMgr = CModelMgr::Create(strMainPath), E_FAIL);
+
+	return S_OK;
+}
+
+void CGameInstance::Load_Model(const string& strFileName, const string& strGroupName)
+{
+	if (nullptr == m_pModelMgr)
+		return;
+
+	m_pModelMgr->Load_Model(strFileName, strGroupName);
+}
+
+const MESH* const CGameInstance::Get_Model(const string& strGroupName, const string& strModelName)
+{
+	if (nullptr == m_pModelMgr)
+		return nullptr;
+
+	return m_pModelMgr->Get_Model(strGroupName, strModelName);
+}
+

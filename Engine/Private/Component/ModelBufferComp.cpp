@@ -1,62 +1,66 @@
-#include "Component/TriBufferComp.h"
+#include "Component/ModelBufferComp.h"
 
-CTriBufferComp::CTriBufferComp(ID3D11Device* pGraphicDev)
-	: Base(pGraphicDev)
+#include "System/GameInstance.h"
+
+CModelBufferComp::CModelBufferComp(ID3D11Device* pGraphicDev)
+    : Base(pGraphicDev)
 {
 }
 
-CTriBufferComp::CTriBufferComp(const CTriBufferComp& rhs)
-	: Base(rhs)
+CModelBufferComp::CModelBufferComp(const CModelBufferComp& rhs)
+    : Base(rhs)
 {
 }
 
-HRESULT CTriBufferComp::Initialize()
+HRESULT CModelBufferComp::Initialize()
 {
-	m_iVtxCount = 3;
-	m_iIndexCount = 3;
 
-	VTXCOL* vertices = new VTXCOL[m_iVtxCount];
+    return S_OK;
+}
+
+HRESULT CModelBufferComp::Initialize(const string& strGroupKey, const string& strModelKey)
+{
+	const MESH* pMesh = GameInstance()->Get_Model(strGroupKey, strModelKey);
+
+	m_iVtxCount = pMesh->vecVertices.size();
+	m_iIndexCount = pMesh->vecIndices.size();
+
+	VERTEX_MODEL* vertices = new VERTEX_MODEL[m_iVtxCount];
 	if (!vertices)
-	{
 		return E_FAIL;
-	}
 
 	_uint* indices = new _uint[m_iIndexCount];
 	if (!indices)
-	{
 		return E_FAIL;
+
+	// 정점 버퍼 제작
+	for (_uint i = 0; i < m_iVtxCount; i++)
+	{
+		vertices[i].vPosition = pMesh->vecVertices[i].vPosition;
+		vertices[i].vNormal = pMesh->vecVertices[i].vNormal;
+		vertices[i].vTexCoord = pMesh->vecVertices[i].vTexCoord;
 	}
 
-	vertices[0].vPosition = _float3(-1.f, -1.f, 0.f);
-	vertices[0].vColor = _float4(1.f, 0.f, 0.f, 1.f);
-
-	vertices[1].vPosition = _float3(1.f, 1.f, 0.f);
-	vertices[1].vColor = _float4(0.f, 1.f, 0.f, 1.f);
-
-	vertices[2].vPosition = _float3(1.f, -1.f, 0.f);
-	vertices[2].vColor = _float4(0.f, 0.f, 1.f, 1.f);
-
-	indices[0] = 0;
-	indices[1] = 1;
-	indices[2] = 2;
-
-	// 정적 정점 버퍼의 구조체를 설정
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VTXCOL) * m_iVtxCount;
+	vertexBufferDesc.ByteWidth = sizeof(VERTEX_MODEL) * m_iVtxCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
 
-
-	// 정점 데이터에 대한 포인터 제공
 	D3D11_SUBRESOURCE_DATA vertexData;
 	vertexData.pSysMem = vertices;
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
 	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVtxBuffer), E_FAIL);
+
+	// 인덱스 버퍼 제작
+	for (_uint i = 0; i < m_iIndexCount; i++)
+	{
+		indices[i] = pMesh->vecIndices[i];
+	}
 
 	// 정적 인덱스 버퍼의 구조체를 설정한다.
 	D3D11_BUFFER_DESC indexBufferDesc;
@@ -75,39 +79,38 @@ HRESULT CTriBufferComp::Initialize()
 
 	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_pIndexBuffer), E_FAIL);
 
-
 	Safe_Delete_Array(vertices);
 	Safe_Delete_Array(indices);
 
 	return S_OK;
 }
 
-_int CTriBufferComp::Tick(const _float& fTimeDelta)
+_int CModelBufferComp::Tick(const _float& fTimeDelta)
 {
-	return 0;
+    return 0;
 }
 
-void CTriBufferComp::LateTick()
+void CModelBufferComp::LateTick()
 {
 }
 
-void CTriBufferComp::Render(ID3D11DeviceContext* pDeviceContext)
+void CModelBufferComp::Render(ID3D11DeviceContext* pDeviceContext)
 {
-	_uint iStride = sizeof(VTXCOL);
+	_uint iStride = sizeof(VERTEX_MODEL);
 	_uint iOffset = 0;
 
-	// 렌더링 할 수 있도록 입력 어셈블러에서 정점 버퍼를 활성으로 설정
+	// 정점 버퍼 활성
 	pDeviceContext->IASetVertexBuffers(0, 1, &m_pVtxBuffer, &iStride, &iOffset);
 
-	// 렌더링 할 수 있도록 입력 어셈블러에서 인덱스 버퍼를 활성으로 설정
+	// 인텍스 버퍼 활성
 	pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	// 정점 버퍼로 그릴 기본형 설정. 삼각형 설정
+	// 정점 버퍼 삼각형 리스트
 	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 }
 
-CTriBufferComp* CTriBufferComp::Create(ID3D11Device* pGraphicDev)
+CModelBufferComp* CModelBufferComp::Create(ID3D11Device* pGraphicDev)
 {
 	ThisClass* pInstance = new ThisClass(pGraphicDev);
 
@@ -115,7 +118,7 @@ CTriBufferComp* CTriBufferComp::Create(ID3D11Device* pGraphicDev)
 	{
 		Engine::Safe_Release(pInstance);
 
-		MSG_BOX("TriBufferComp Create Failed");
+		MSG_BOX("ModelBufferComp Create Failed");
 
 		return nullptr;
 	}
@@ -123,15 +126,12 @@ CTriBufferComp* CTriBufferComp::Create(ID3D11Device* pGraphicDev)
 	return pInstance;
 }
 
-CPrimitiveComponent* CTriBufferComp::Clone()
+CPrimitiveComponent* CModelBufferComp::Clone()
 {
-	return new ThisClass(*this);
+    return new ThisClass(*this);
 }
 
-void CTriBufferComp::Free()
+void CModelBufferComp::Free()
 {
-	SUPER::Free();
-
-	Safe_Release(m_pVtxBuffer);
-	Safe_Release(m_pIndexBuffer);
+    SUPER::Free();
 }

@@ -1,5 +1,9 @@
 #include "System/ImGuiMgr.h"
 
+CImGuiMgr::CImGuiMgr()
+{
+}
+
 HRESULT CImGuiMgr::Initialize()
 {
     return S_OK;

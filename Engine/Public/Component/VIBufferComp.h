@@ -24,6 +24,10 @@ public:
 protected:
 	virtual void	Free();
 
+public:
+	GETSET_1(_uint, m_iVtxCount, VertexCount, GET_C_REF)
+	GETSET_1(_uint, m_iIndexCount, IndexCount, GET_C_REF)
+
 protected:
 	ID3D11Buffer* m_pVtxBuffer = nullptr;
 	ID3D11Buffer* m_pIndexBuffer = nullptr;

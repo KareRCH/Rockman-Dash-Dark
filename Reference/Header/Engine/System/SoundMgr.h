@@ -8,7 +8,7 @@
 
 BEGIN(Engine)
 
-class FSoundData final : public CBase
+class ENGINE_DLL_DBG FSoundData final : public CBase
 {
 	DERIVED_CLASS(CBase, FSoundData)
 private:

@@ -12,11 +12,15 @@ HRESULT CTestScene::Initialize()
 {
     FAILED_CHECK_RETURN(SUPER::Initialize(), E_FAIL);
 
+    GameInstance()->Load_Model("Character/RockVolnut/Test.fbx", "RockVolnut");
+
     CLayer* pLayer = CLayer::Create(0.f);
     Add_Layer(L"GameLogic", pLayer);
 
     pLayer->Add_GameObject(CTestObject::Create(m_pDevice));
     pLayer->Add_GameObject(CDynamicCamera::Create(m_pDevice));
+
+    
 
     return S_OK;
 }

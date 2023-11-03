@@ -17,7 +17,7 @@ xcopy "$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)
       <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;Dwmapi.lib;Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\Public\;.\Default\;$(SolutionDir)Reference\Header\Engine\;$(SolutionDir)Reference\Header\FMod\core\;$(SolutionDir)Reference\Header\FMod\fsbank\;$(SolutionDir)Reference\Header\FMod\studio\;$(SolutionDir)Reference\Header\Assimp\;$(SolutionDir)Reference\Header\RapidJson\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Public\;.\Default\;$(SolutionDir)Reference\Header\Engine\;$(SolutionDir)Reference\Header\FMod\core\;$(SolutionDir)Reference\Header\FMod\fsbank\;$(SolutionDir)Reference\Header\FMod\studio\;$(SolutionDir)Reference\Header\Assimp\;$(SolutionDir)Reference\Header\RapidJson\;$(SolutionDir)Reference\Header\ImGui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

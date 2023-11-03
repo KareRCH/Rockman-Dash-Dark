@@ -7,21 +7,8 @@
 
 BEGIN(Engine)
 
-class CGraphicDev;
 struct FDEVICE_INIT;
-class CInputDev;
-class CKeyMgr;
-class CPhysicsMgr;
-class CSoundMgr;
-class CFontMgr;
-class CFrameMgr;
-class CTimerMgr;
-class CManagement;
 enum class EMANAGE_SCENE : _uint;
-class CBlackBoardMgr;
-class CTextureMgr;
-class CProtoMgr;
-class CRenderMgr;
 enum class ERENDER_TYPE : _uint;
 
 class CScene;
@@ -135,20 +122,26 @@ public:		// ·»´õ ¸Å´ÏÀú
 	void			Set_OrthogonalProjMatrix(const _uint iCam, const _matrix& matOrthoProj);
 	const _matrix	Get_OrthogonalProjMatrix(const _uint iCam) const;
 
+public:
+	HRESULT	Initialize_ModelMgr(const string& strMainPath);
+	void	Load_Model(const string& strFileName, const string& strGroupName);
+	const MESH* const Get_Model(const string& strGroupName, const string& strModelName);
+
 private:
-	CGraphicDev*	m_pGraphicDev = nullptr;
-	CInputDev*		m_pInputDev = nullptr;
-	CKeyMgr*		m_pKeyMgr = nullptr;
-	CPhysicsMgr*	m_pPhysicsMgr = nullptr;
-	CSoundMgr*		m_pSoundMgr = nullptr;
-	CFontMgr*		m_pFontMgr = nullptr;
-	CFrameMgr*		m_pFrameMgr = nullptr;
-	CTimerMgr*		m_pTimerMgr = nullptr;
-	CManagement*	m_pManagement = nullptr;
-	CBlackBoardMgr* m_pBlackBoardMgr = nullptr;
-	CTextureMgr*	m_pTextureMgr = nullptr;
-	CProtoMgr*		m_pProtoMgr = nullptr;
-	CRenderMgr*		m_pRenderMgr = nullptr;
+	class CGraphicDev*		m_pGraphicDev = nullptr;
+	class CInputDev*		m_pInputDev = nullptr;
+	class CKeyMgr*			m_pKeyMgr = nullptr;
+	class CPhysicsMgr*		m_pPhysicsMgr = nullptr;
+	class CSoundMgr*		m_pSoundMgr = nullptr;
+	class CFontMgr*			m_pFontMgr = nullptr;
+	class CFrameMgr*		m_pFrameMgr = nullptr;
+	class CTimerMgr*		m_pTimerMgr = nullptr;
+	class CManagement*		m_pManagement = nullptr;
+	class CBlackBoardMgr*	m_pBlackBoardMgr = nullptr;
+	class CTextureMgr*		m_pTextureMgr = nullptr;
+	class CProtoMgr*		m_pProtoMgr = nullptr;
+	class CRenderMgr*		m_pRenderMgr = nullptr;
+	class CModelMgr*		m_pModelMgr = nullptr;
 };
 
 inline CGameInstance* GameInstance()

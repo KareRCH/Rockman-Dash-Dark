@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class CFrameMgr final : public CBase
+class ENGINE_DLL_DBG CFrameMgr final : public CBase
 {
 	DERIVED_CLASS(CBase, CFrameMgr)
 private:

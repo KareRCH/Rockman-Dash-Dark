@@ -55,25 +55,25 @@ HRESULT CMainApp::Initialize()
 
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_InputDev(g_hInst, g_hWnd), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_KeyMgr(), E_FAIL);
-
+	
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_RenderMgr(), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_PhysicsMgr(1), E_FAIL);
-
-
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_SoundMgr(), E_FAIL);
-
-
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_FontMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"Font_Default", L"¹ÙÅÁ", 15, 20, FW_HEAVY), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"Font_Jinji", L"±Ã¼­", 30, 30, FW_THIN), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"Font_Thin_Jinji", L"±Ã¼­", 18, 30, FW_THIN), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"MonsterUI", L"ÇÔÃÊ·Õ¹ÙÅÁ", 14, 25, FW_THIN), E_FAIL);
 
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(m_pDevice), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ModelMgr("./Resource/Model/"), E_FAIL);
 
+	
+
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_KeyMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_FrameMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Frame(L"Frame", 60.f), E_FAIL);
-
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TimerMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Timer(L"Timer_Immediate"), E_FAIL);
@@ -81,14 +81,15 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_BlackBoardMgr(), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(m_pDevice), E_FAIL);
+	
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ProtoMgr(), E_FAIL);
-
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_Management(EMANAGE_SCENE::SINGLE), E_FAIL);
 	m_pGameInstance->Set_Scene(CTestScene::Create(m_pDevice));
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_RenderMgr(), E_FAIL);
+	
+
+	
 
 	return S_OK;
 }

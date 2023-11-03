@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class CInputDev : public CBase
+class ENGINE_DLL_DBG CInputDev final : public CBase
 {
 	DERIVED_CLASS(CBase, CInputDev)
 

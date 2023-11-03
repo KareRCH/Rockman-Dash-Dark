@@ -9,7 +9,7 @@ BEGIN(Engine)
 /// <summary>
 /// 폰트 관리 클래스
 /// </summary>
-class CFontMgr : public CBase
+class ENGINE_DLL_DBG CFontMgr final : public CBase
 {
 	DERIVED_CLASS(CBase, CFontMgr)
 private:

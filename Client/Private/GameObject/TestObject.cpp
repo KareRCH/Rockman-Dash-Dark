@@ -2,6 +2,8 @@
 
 #include "Component/TriBufferComp.h"
 #include "Component/ColorShaderComp.h"
+#include "Component/ModelBufferComp.h"
+#include "Component/ModelShaderComp.h"
 
 #include "System/RenderMgr.h"
 
@@ -46,8 +48,8 @@ void CTestObject::Render(ID3D11DeviceContext* const pDeviceContext)
 {
     SUPER::Render(pDeviceContext);
 
-    m_TriBufferComp->Render(pDeviceContext);
-    m_ColorShaderComp->Render(pDeviceContext, Get_Transform(), 
+    m_pModelBufferComp->Render(pDeviceContext);
+    m_pModelShaderComp->Render(pDeviceContext, Get_Transform(),
         GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0));
 }
 
@@ -74,12 +76,13 @@ void CTestObject::Free()
 
 HRESULT CTestObject::Initialize_Component()
 {
-    FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_TriBufferComp = CTriBufferComp::Create(m_pDevice)), E_FAIL);
+    FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_pModelBufferComp = CModelBufferComp::Create(m_pDevice)), E_FAIL);
+    m_pModelBufferComp->Initialize("RockVolnut", "Cube");
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    FAILED_CHECK_RETURN(Add_Component(L"Shader", m_ColorShaderComp = CColorShaderComp::Create(m_pDevice, g_hWnd)), E_FAIL);
+    FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create(m_pDevice, g_hWnd)), E_FAIL);
     //m_ColorShaderComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
-    m_ColorShaderComp->Set_IndexCount(3);
+    m_pModelShaderComp->Set_IndexCount(m_pModelBufferComp->Get_IndexCount());
 
     return S_OK;
 }

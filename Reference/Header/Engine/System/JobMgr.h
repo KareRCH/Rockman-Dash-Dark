@@ -8,7 +8,7 @@
 
 BEGIN(Engine)
 
-class CJobMgr final :public CBase
+class ENGINE_DLL_DBG CJobMgr final :public CBase
 {
 	DERIVED_CLASS(CBase, CJobMgr)
 

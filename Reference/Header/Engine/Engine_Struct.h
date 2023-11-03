@@ -31,6 +31,20 @@ namespace Engine
 		_float2		vTexture;
 	};
 
+	struct VERTEX_MODEL
+	{
+		_float3		vPosition;
+		_float3		vNormal;
+		_float2		vTexCoord;
+	};
+
+	struct MESH
+	{
+		vector<VERTEX_MODEL> vecVertices;
+		vector<_int>		vecIndices;
+		_uint				iMaterIndex;
+	};
+
 	//typedef struct tagVertexTexture
 	//{
 	//	_float3		vPosition;
