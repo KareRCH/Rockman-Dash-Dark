@@ -55,7 +55,7 @@ void CModelMgr::Load_Model(const string& strFileName, const string& strGroupKey)
 		aiProcess_Triangulate |                 // 3개 이상의 모서리를 가진 다각형 면을 삼각형으로 만듬(나눔)
 		aiProcess_ConvertToLeftHanded |         // D3D의 왼손좌표계로 변환
 		aiProcess_SortByPType;					// 단일타입의 프리미티브로 구성된 '깨끗한' 매쉬를 만듬
-
+	
 	m_pScene = importer.ReadFile((m_strMainDir + strFileName).c_str(), iFlag);
 
 	if (!m_pScene || m_pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !m_pScene->mRootNode)
@@ -74,45 +74,59 @@ void CModelMgr::Load_Model(const string& strFileName, const string& strGroupKey)
 	for (_uint i = 0; i < pRootNode->mNumChildren; i++)
 	{
 		aiNode* pChildNode = pRootNode->mChildren[i];
-		for (_uint j = 0; j < pChildNode->mNumMeshes; j++)
+		
+		aiMesh* pMesh = m_pScene->mMeshes[i];
+		for (_uint j = 0; j < m_pScene->mNumMaterials; j++)
 		{
-			aiMesh* pMesh = m_pScene->mMeshes[pChildNode->mMeshes[j]];
+			aiMaterial* pMater = m_pScene->mMaterials[j];
+			_uint tt = pMater->GetTextureCount(aiTextureType_DIFFUSE);
+			pMater->GetTexture(aiTextureType_DIFFUSE, )
+			string strTest = pMater->GetName().C_Str();
+			tt = -1;
+		}
 
-			// 점
-			for (_uint k = 0; k < pMesh->mNumVertices; k++)
-			{
-				_float3 vPos(&pMesh->mVertices[k].x);
-				_float3 vNormal(&pMesh->mNormals[k].x);
-				_float2 vTexCoord;
-				if (pMesh->HasTextureCoords(0))
-					vTexCoord = _float2(&pMesh->mTextureCoords[0][k].x);
-				else
-					vTexCoord = _float2(0.f, 0.f);
+		// 점
+		for (_uint k = 0; k < pMesh->mNumVertices; k++)
+		{
+			_float3 vPos(&pMesh->mVertices[k].x);
+			_float3 vNormal(&pMesh->mNormals[k].x);
+			_float2 vTexCoord;
+			if (pMesh->HasTextureCoords(0))
+				vTexCoord = _float2(&pMesh->mTextureCoords[0][k].x);
+			else
+				vTexCoord = _float2(0.f, 0.f);
 
-				VERTEX_MODEL vData = { vPos, vNormal, vTexCoord };
-				m_vecMesh[j].vecVertices.push_back(vData);
-			}
+			VERTEX_MODEL vData = { vPos, vNormal, vTexCoord };
+			m_vecMesh[i].vecVertices.push_back(vData);
+		}
 
-			// 면
-			for (_uint k = 0; k < pMesh->mNumFaces; k++)
-			{
-				aiFace& face = pMesh->mFaces[k];
-				m_vecMesh[j].vecIndices.push_back(face.mIndices[0]);
-				m_vecMesh[j].vecIndices.push_back(face.mIndices[1]);
-				m_vecMesh[j].vecIndices.push_back(face.mIndices[2]);
-			}
+		// 면
+		for (_uint k = 0; k < pMesh->mNumFaces; k++)
+		{
+			aiFace& face = pMesh->mFaces[k];
+			m_vecMesh[i].vecIndices.push_back(face.mIndices[0]);
+			m_vecMesh[i].vecIndices.push_back(face.mIndices[1]);
+			m_vecMesh[i].vecIndices.push_back(face.mIndices[2]);
+		}
 			
-			for (_uint k = 0; k < pMesh->mNumBones; k++)
-			{
-				aiBone* pBone = pMesh->mBones[k];
-			}
+		for (_uint k = 0; k < pMesh->mNumBones; k++)
+		{
+			aiBone* pBone = pMesh->mBones[k];
+		}
 
+		auto iter = m_mapModelGroup.find(strGroupKey);
+		if (iter == m_mapModelGroup.end())
+		{
 			FModelGroup* pGroup = FModelGroup::Create(false, true);
-			pGroup->mapMesh.emplace(pMesh->mName.C_Str(), m_vecMesh[j]);
+			pGroup->mapMesh.emplace(pMesh->mName.C_Str(), m_vecMesh[i]);
 			m_mapModelGroup.emplace(strGroupKey, pGroup);
 		}
+		else
+		{
+			(*iter).second->mapMesh.emplace(pMesh->mName.C_Str(), m_vecMesh[i]);
+		}
 	}
-	
+	int t = 0;
 }
 
 const MESH* const CModelMgr::Get_Model(const string& strGroupKey, const string& strModelKey)
