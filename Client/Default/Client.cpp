@@ -4,11 +4,10 @@
 
 #include "framework.h"
 #include "Client.h"
-#include "MainApp.h"
-#include <dwmapi.h>
 
 #include "Client_Define.h"
-
+#include "MainApp.h"
+#include <dwmapi.h>
 
 #define MAX_LOADSTRING 100
 
@@ -219,21 +218,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
         // 눈뽕 방지
-        //RECT rect;
-        //GetClientRect(hWnd, &rect);
-        //HDC hdc = GetDC(hWnd);
-        //HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
-        //FillRect(hdc, &rect, brush);
-        //DeleteObject(brush);
-        //ReleaseDC(hWnd, hdc);
+        RECT rect;
+        GetClientRect(hWnd, &rect);
+        HDC hdc = GetDC(hWnd);
+        HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
+        FillRect(hdc, &rect, brush);
+        DeleteObject(brush);
+        ReleaseDC(hWnd, hdc);
 
-        //g_bLockEsc = false;
+        g_bLockEsc = false;
 
-        //// 검은색 타이틀바
-        //COLORREF DARK_COLOR = 0x00505050;
-        //BOOL SET_CAPTION_COLOR = SUCCEEDED(DwmSetWindowAttribute(
-        //    hWnd, DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR,
-        //    &DARK_COLOR, sizeof(DARK_COLOR)));
+        // 검은색 타이틀바
+        COLORREF DARK_COLOR = 0x00505050;
+        BOOL SET_CAPTION_COLOR = SUCCEEDED(DwmSetWindowAttribute(
+            hWnd, DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR,
+            &DARK_COLOR, sizeof(DARK_COLOR)));
 
         break;
     }
@@ -256,14 +255,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
-        //// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
-
-        //RECT rect;
-        //GetClientRect(g_hWnd, &rect);
-        //HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
-        //FillRect(hdc, &rect, brush);
-        //DeleteObject(brush);
-
         EndPaint(hWnd, &ps);
         break;
     }

@@ -5,6 +5,7 @@
 #pragma warning(disable : 4251)
 
 
+// min max 매크로는 호환성 문제로 사용되지 않습니다. ( assimp )
 #ifdef min
 #undef min
 #endif
@@ -12,7 +13,7 @@
 #undef max
 #endif
 
-// Assimp 라이브러리 (항상 맨위에 둘 것, std 라이브러리가 있으면 min 매크로 때문에 꼬임)
+// Assimp 라이브러리
 #include <assimp/Importer.hpp>
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>

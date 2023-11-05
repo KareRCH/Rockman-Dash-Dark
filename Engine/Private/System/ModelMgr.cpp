@@ -74,25 +74,16 @@ void CModelMgr::Load_Model(const string& strFileName, const string& strGroupKey)
 	for (_uint i = 0; i < pRootNode->mNumChildren; i++)
 	{
 		aiNode* pChildNode = pRootNode->mChildren[i];
-		
 		aiMesh* pMesh = m_pScene->mMeshes[i];
-		for (_uint j = 0; j < m_pScene->mNumMaterials; j++)
-		{
-			aiMaterial* pMater = m_pScene->mMaterials[j];
-			_uint tt = pMater->GetTextureCount(aiTextureType_DIFFUSE);
-			pMater->GetTexture(aiTextureType_DIFFUSE, )
-			string strTest = pMater->GetName().C_Str();
-			tt = -1;
-		}
 
 		// 점
-		for (_uint k = 0; k < pMesh->mNumVertices; k++)
+		for (_uint j = 0; j < pMesh->mNumVertices; j++)
 		{
-			_float3 vPos(&pMesh->mVertices[k].x);
-			_float3 vNormal(&pMesh->mNormals[k].x);
+			_float3 vPos(&pMesh->mVertices[j].x);
+			_float3 vNormal(&pMesh->mNormals[j].x);
 			_float2 vTexCoord;
 			if (pMesh->HasTextureCoords(0))
-				vTexCoord = _float2(&pMesh->mTextureCoords[0][k].x);
+				vTexCoord = _float2(&pMesh->mTextureCoords[0][j].x);
 			else
 				vTexCoord = _float2(0.f, 0.f);
 
@@ -100,20 +91,39 @@ void CModelMgr::Load_Model(const string& strFileName, const string& strGroupKey)
 			m_vecMesh[i].vecVertices.push_back(vData);
 		}
 
-		// 면
-		for (_uint k = 0; k < pMesh->mNumFaces; k++)
+		// 면 (인덱싱)
+		for (_uint j = 0; j < pMesh->mNumFaces; j++)
 		{
-			aiFace& face = pMesh->mFaces[k];
+			aiFace& face = pMesh->mFaces[j];
 			m_vecMesh[i].vecIndices.push_back(face.mIndices[0]);
 			m_vecMesh[i].vecIndices.push_back(face.mIndices[1]);
 			m_vecMesh[i].vecIndices.push_back(face.mIndices[2]);
 		}
-			
-		for (_uint k = 0; k < pMesh->mNumBones; k++)
+		
+		// 뼈
+		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
-			aiBone* pBone = pMesh->mBones[k];
+			aiBone* pBone = pMesh->mBones[j];
+			
 		}
 
+		// 애니메이션
+		for (_uint j = 0; j < m_pScene->mNumAnimations; j++)
+		{
+			aiAnimation* pAnim = m_pScene->mAnimations[j];
+		}
+
+		// 머터리얼
+		for (_uint j = 0; j < m_pScene->mNumMaterials; j++)
+		{
+			aiMaterial* pMater = m_pScene->mMaterials[j];
+			_uint tt = pMater->GetTextureCount(aiTextureType_DIFFUSE);
+			//pMater->GetTexture(aiTextureType_DIFFUSE, )
+			//string strTest = pMater->GetName().C_Str();
+			//tt = -1;
+		}
+
+		// 파싱데이터 임포트
 		auto iter = m_mapModelGroup.find(strGroupKey);
 		if (iter == m_mapModelGroup.end())
 		{

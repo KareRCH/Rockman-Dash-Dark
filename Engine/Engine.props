@@ -21,7 +21,9 @@ xcopy ".\Public\*.*" "$(SolutionDir)Reference\Header\$(TargetName)\" /y /e
 attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
 xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
 xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e</Command>
+xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e
+xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Tool\Bin\$(PlatformTarget)\$(Configuration)\" /y
+xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Tool\Resource\" /y /e</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup />

@@ -28,11 +28,11 @@
     <Filter Include="02. GameObject\02. Camera">
       <UniqueIdentifier>{dcf43b10-a011-43ad-81a7-9bbd3f68a12f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="99. Define">
+      <UniqueIdentifier>{cd904f9a-4514-4b3c-a813-0823cf1b28cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Public\Client_Define.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Default\Client.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -51,14 +51,17 @@
     <ClInclude Include="Public\GameObject\TestObject.h">
       <Filter>02. GameObject\99. Test</Filter>
     </ClInclude>
-    <ClInclude Include="Public\TestScene.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Public\GameObject\DynamicCamera.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. GameObject\02. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\TestScene.h">
+      <Filter>01. Scene</Filter>
     </ClInclude>
     <ClInclude Include="Public\GameObject\TestTextureObject.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. GameObject\99. Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Client_Define.h">
+      <Filter>99. Define</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -71,14 +74,14 @@
     <ClCompile Include="Private\GameObject\TestObject.cpp">
       <Filter>02. GameObject\99. Test</Filter>
     </ClCompile>
-    <ClCompile Include="Private\TestScene.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Private\GameObject\DynamicCamera.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. GameObject\02. Camera</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\TestTextureObject.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. GameObject\99. Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\TestScene.cpp">
+      <Filter>01. Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
