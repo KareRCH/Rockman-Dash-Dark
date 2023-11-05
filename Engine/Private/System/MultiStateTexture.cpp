@@ -2,7 +2,6 @@
 
 #include <future>
 #include <thread>
-#include <DirectXTex.h>
 
 
 
