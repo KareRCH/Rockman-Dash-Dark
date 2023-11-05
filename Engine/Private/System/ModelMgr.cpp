@@ -71,7 +71,7 @@ void CModelMgr::Load_Model(const string& strFileName, const string& strGroupKey)
 	m_iBoneCount = 0;
 
 	aiNode* pRootNode = m_pScene->mRootNode;
-	for (_uint i = 0; i < pRootNode->mNumChildren; i++)
+	for (_uint i = 0; i < m_pScene->mNumMeshes; i++)
 	{
 		aiNode* pChildNode = pRootNode->mChildren[i];
 		aiMesh* pMesh = m_pScene->mMeshes[i];

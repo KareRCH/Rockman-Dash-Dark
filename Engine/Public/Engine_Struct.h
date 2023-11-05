@@ -25,6 +25,13 @@ namespace Engine
 		_matrix		matProj;
 	};
 
+	struct LIGHT_BUFFER_T
+	{
+		_float4		vDiffuseColor;
+		_float3		vLightDirection;
+		_float		fPadding;		// 메모리가 16의 배수가 되도록 설정한 변수
+	};
+
 	struct VERTEX_TEXTURE
 	{
 		_float3		vPosition;
@@ -44,6 +51,8 @@ namespace Engine
 		vector<_uint>		vecIndices;
 		_uint				iMaterIndex;
 	};
+
+	
 
 	//typedef struct tagVertexTexture
 	//{

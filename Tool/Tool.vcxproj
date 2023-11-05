@@ -135,14 +135,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Reference\Header\ImGui\imconfig.h" />
-    <ClInclude Include="..\Reference\Header\ImGui\imgui.h" />
-    <ClInclude Include="..\Reference\Header\ImGui\imgui_impl_dx11.h" />
-    <ClInclude Include="..\Reference\Header\ImGui\imgui_impl_win32.h" />
-    <ClInclude Include="..\Reference\Header\ImGui\imgui_internal.h" />
-    <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
-    <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
-    <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
     <ClInclude Include="Include\framework.h" />
     <ClInclude Include="Include\Resource.h" />
     <ClInclude Include="Include\targetver.h" />

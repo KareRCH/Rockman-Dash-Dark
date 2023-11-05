@@ -5,37 +5,36 @@
 BEGIN(Engine)
 
 /// <summary>
-/// 상태를 가지는 텍스처 정보
-/// 스테이트 키에 대해 
+/// 키값을 통해 텍스처 분류를 해놓은 텍스처 클래스
+/// 
 /// </summary>
 class CMultiStateTexture final : public CTexture
 {
 	DERIVED_CLASS(CTexture, CMultiStateTexture)
 
 private:
-	explicit CMultiStateTexture(ID3D11Device* pGraphicDev);
+	explicit CMultiStateTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	virtual ~CMultiStateTexture() = default;
 
 public:
 	virtual HRESULT				Initialize();
 
 public:
-	static CMultiStateTexture*	Create(ID3D11Device* pGraphicDev);
+	static CMultiStateTexture*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 
 private:
 	virtual void				Free();
 
 public:
-	virtual HRESULT Insert_Texture(const _tchar* pFilePath, TEXTUREID eType, const _tchar* pStateKey = L"", const _range<_uint>& iCntRange = _range<_uint>(0U, 0U)) override;
-	virtual HRESULT Insert_TextureAsync(const _tchar* pFilePath, TEXTUREID eType, vector<ID3D11Texture2D*>& vecTexture, _uint iIndex);
-	virtual void	Transfer_Texture(vector<ID3D11Texture2D*>* pVecTexture, const _tchar* pStateKey);
+	// 공간 할당만 해놓는 함수
+	virtual	HRESULT	Reserve(const string& strStateKey, _bool bPermanent);
+	virtual HRESULT Insert_Texture(const string& strFilePath, const string& strStateKey, const _bool bPermanent) override;
+	virtual void	Transfer_Texture() override {};
+	virtual void	Transfer_Texture(ID3D11ShaderResourceView* pTexture, const string& strStateKey);
 
 protected:
-	using multi_tex_map = _unmap<wstring, vector<ID3D11Texture2D*>>;
-	multi_tex_map			m_mapMultiState;				// 스테이트 키에 대한 텍스처 정보
-	TEXTUREID				m_eType = TEX_NORMAL;			// 텍스처 종류
-
-	virtual void Transfer_Texture() override;
+	using multi_tex_map = _unmap<string, FTextureData*>;
+	multi_tex_map			m_mapTexture;				// 텍스처 정보
 
 };
 

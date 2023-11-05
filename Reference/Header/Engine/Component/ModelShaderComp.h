@@ -21,7 +21,7 @@ public:
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick() {}
 	virtual void	Render(ID3D11DeviceContext* pDeviceContext) {}
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext, const _matrix& matWorld, const _matrix& matView, const _matrix& matProj);
+	virtual void	Render(ID3D11DeviceContext* pDeviceContext, const MATRIX_BUFFER_T& tMatrixBuf, const LIGHT_BUFFER_T& tLightBuf);
 
 public:
 	static CModelShaderComp* Create(ID3D11Device* pDevice, HWND hWnd);
@@ -32,12 +32,15 @@ protected:
 
 public:
 	HRESULT Initialize_Shader(HWND hWnd, const _tchar* vsFileName, const _tchar* psFileName);
-	HRESULT	Set_ShaderParameter(ID3D11DeviceContext* pDeviceContext, XMMATRIX matWorld, XMMATRIX matView, XMMATRIX matProj);
+	HRESULT	Set_ShaderParameter(ID3D11DeviceContext* pDeviceContext, MATRIX_BUFFER_T tMatrixBuf, LIGHT_BUFFER_T tLightBuf);
 	void	Render_Shader(ID3D11DeviceContext* pDeviceContext, _int iIndexCount);
 
+public:
+	GETSET_1(ID3D11ShaderResourceView*, m_pTexture, Texture, SET_REF_C)
 
 private:
 	ID3D11SamplerState* m_pSamplereState = nullptr;
+	ID3D11ShaderResourceView* m_pTexture = nullptr;
 };
 
 

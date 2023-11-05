@@ -42,30 +42,6 @@
     <ClInclude Include="Public\Tool_Define.h">
       <Filter>99. Define</Filter>
     </ClInclude>
-    <ClInclude Include="..\Reference\Header\ImGui\imconfig.h">
-      <Filter>98. ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Reference\Header\ImGui\imgui.h">
-      <Filter>98. ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Reference\Header\ImGui\imgui_impl_dx11.h">
-      <Filter>98. ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Reference\Header\ImGui\imgui_impl_win32.h">
-      <Filter>98. ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Reference\Header\ImGui\imgui_internal.h">
-      <Filter>98. ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h">
-      <Filter>98. ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h">
-      <Filter>98. ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h">
-      <Filter>98. ImGui</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Include\Tool.cpp">

@@ -2,11 +2,12 @@
 
 #include <future>
 #include <thread>
+#include <DirectXTex.h>
 
 
 
-CMultiStateTexture::CMultiStateTexture(ID3D11Device* pGraphicDev)
-	: Base(pGraphicDev)
+CMultiStateTexture::CMultiStateTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
+	: Base(pDevice, pDeviceContext)
 {
 }
 
@@ -15,9 +16,9 @@ HRESULT CMultiStateTexture::Initialize()
 	return S_OK;
 }
 
-CMultiStateTexture* CMultiStateTexture::Create(ID3D11Device* pGraphicDev)
+CMultiStateTexture* CMultiStateTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 {
-	ThisClass* pInstance = new ThisClass(pGraphicDev);
+	ThisClass* pInstance = new ThisClass(pDevice, pDeviceContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -32,113 +33,104 @@ CMultiStateTexture* CMultiStateTexture::Create(ID3D11Device* pGraphicDev)
 
 void CMultiStateTexture::Free()
 {
-	for (auto item : m_mapMultiState)
+	for (auto item : m_mapTexture)
 	{
-		for (auto indexItem : item.second)
-			Safe_Release(indexItem);
+		item.second->Free();
 	}
 }
 
-HRESULT CMultiStateTexture::Insert_Texture(const _tchar* pFilePath, TEXTUREID eType, const _tchar* pStateKey, const _range<_uint>& iCntRange)
+HRESULT CMultiStateTexture::Reserve(const string& strStateKey, _bool bPermanent)
 {
-	// 스테이트 키에 이미 텍스처 셋이 있으면 처리하지 않는다.
-	/*CTextureMgr::GetInstance()->Get_Mutex()->lock();
-	if (m_mapMultiState.find(pStateKey) != m_mapMultiState.end())
+	auto iter = m_mapTexture.find(strStateKey);
+	if (iter != m_mapTexture.end())
 		return E_FAIL;
-	CTextureMgr::GetInstance()->Get_Mutex()->unlock();*/
+
+	m_mapTexture.emplace(strStateKey, FTextureData::Create(nullptr, nullptr, bPermanent));
+
+	return S_OK;
+}
+
+HRESULT CMultiStateTexture::Insert_Texture(const string& strFilePath, const string& strStateKey, const _bool bPermanent)
+{
+	auto iter = m_mapTexture.find(strFilePath);
+
+	// 키값이 있다면 로드된 텍스처인지 확인한다.
+	if (iter != m_mapTexture.end())
+	{
+		if (!(*iter).second->Is_Loaded())
+			return E_FAIL;
+	}
+
+	// 로드되지 않았다면 텍스처 삽입을 진행한다.
 
 	// 파일 존재여부 확인, 특히 사이즈에 해당하는 카운트 값이 존재하는지 확인, 잘못된 경로가 있다면 오류 반환
-	//{
-	//	TCHAR	szFileName[256] = L"";
-	//	wsprintf(szFileName, pFilePath, iCntRange.second);
+	_char szFileName[256] = "";
+	sprintf(szFileName, strFilePath.c_str());
 
-	//	wifstream file(szFileName);
-	//	FALSE_CHECK_RETURN(file.good(), E_FAIL);
-	//	
-	//}
-	
-	vector<wstring> vecPath;
-	vector<ID3D11Texture2D*> vecTexture;
-	vector<future<HRESULT>> vecAsync;
+	ifstream file(szFileName);
+	FALSE_CHECK_RETURN(file.good(), E_FAIL);
 
-	// 초기세팅, 안전 검사후 예약
-	vecTexture.resize(iCntRange.second - iCntRange.first + 1U);
-	vecPath.resize(iCntRange.second - iCntRange.first + 1U);
-	vecAsync.reserve(iCntRange.second + 1U);
-	
-	for (_uint i = 0; i <= iCntRange.second; ++i)
+	_int iWidth = 0;
+	_int iHeight = 0;
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	textureDesc.Width = iWidth;
+	textureDesc.Height = iHeight;
+	textureDesc.MipLevels = 0;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+
+	ID3D11Texture2D* pTexture = nullptr;
+
+	FAILED_CHECK_RETURN(m_pDevice->CreateTexture2D(&textureDesc, NULL, &pTexture), E_FAIL);
+
+	_uint rowPitch = (iWidth * 4) * sizeof(_ubyte);
+
+	//m_pDeviceContext->UpdateSubresource(pTexture, 0, NULL, 소스, rowPitch, 0);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = -1;
+
+	ID3D11ShaderResourceView* pTextureView = nullptr;
+
+	FAILED_CHECK_RETURN(m_pDevice->CreateShaderResourceView(pTexture, &srvDesc, &pTextureView), E_FAIL);
+
+	m_pDeviceContext->GenerateMips(pTextureView);
+
+	// 로드하고 나면 로드한 파일은 해제할 것
+
+
+	// map에 추가
+	if (iter != m_mapTexture.end())
 	{
-		TCHAR	szFileName[256] = L"";
-		wsprintf(szFileName, pFilePath, i);
-		vecPath[i] = szFileName;
+		// Reserve 된 텍스처는 따로 Permanent를 설정하지 않는다.
+		(*iter).second->Load(pTexture, pTextureView);
 	}
-
-	for (_uint i = 0; i <= iCntRange.second; ++i)
+	else
 	{
-		vecAsync.push_back(async(launch::async, &CMultiStateTexture::Insert_TextureAsync, this, vecPath[i].c_str(), eType, ref(vecTexture), i));
+		m_mapTexture.emplace(strStateKey, FTextureData::Create(pTexture, pTextureView, bPermanent));
 	}
-
-	for (_uint i = 0; i <= iCntRange.second; ++i)
-	{
-		vecAsync[i].get();
-	}
-	vecAsync.clear();
-
-	/*CTextureMgr::GetInstance()->Get_Mutex()->lock();
-	m_mapMultiState.emplace(pStateKey, vecTexture);
-	CTextureMgr::GetInstance()->Get_Mutex()->unlock();*/
 
 	return S_OK;
 }
 
-HRESULT CMultiStateTexture::Insert_TextureAsync(const _tchar* pFilePath, TEXTUREID eType, vector<ID3D11Texture2D*>& vecTexture, _uint iIndex)
+void CMultiStateTexture::Transfer_Texture(ID3D11ShaderResourceView* pTexture, const string& strStateKey)
 {
-	//CTextureMgr::GetInstance()->Get_Mutex()->lock();
-	//OutputDebugString(L"LoadTexture : ");
-	//OutputDebugString(pFilePath);
-	//OutputDebugString(L"\n");
-	//CTextureMgr::GetInstance()->Get_Mutex()->unlock();
-
-	//switch (eType)
-	//{
-	//case TEX_NORMAL:
-	//{
-	//	//FAILED_CHECK_RETURN(D3DXCreateTextureFromFile(m_pGraphicDev, pFilePath, (LPDIRECT3DTEXTURE9*)&vecTexture[iIndex]), E_FAIL);
-	//	FAILED_CHECK_RETURN(D3DXCreateTextureFromFileEx(m_pGraphicDev, pFilePath, D3DX_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, D3DFMT_DXT1, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, 0, nullptr, nullptr, (LPDIRECT3DTEXTURE9*)&vecTexture[iIndex]), E_FAIL);
-	//	break;
-	//}
-	//case TEX_CUBE:
-	//{
-	//	FAILED_CHECK_RETURN(D3DXCreateCubeTextureFromFile(m_pGraphicDev, pFilePath, (LPDIRECT3DCUBETEXTURE9*)&vecTexture[iIndex]), E_FAIL);
-	//	break;
-	//}
-	//case TEX_VOLUME:
-	//{
-	//	FAILED_CHECK_RETURN(D3DXCreateVolumeTextureFromFile(m_pGraphicDev, pFilePath, (LPDIRECT3DVOLUMETEXTURE9*)&vecTexture[iIndex]), E_FAIL);
-	//	break;
-	//}
-	//}
-
-	return S_OK;
-}
-
-void CMultiStateTexture::Transfer_Texture(vector<ID3D11Texture2D*>* pVecTexture, const _tchar* pStateKey)
-{
-	if (m_mapMultiState.empty())
+	if (m_mapTexture.empty())
 		return;
 
-	auto iter = m_mapMultiState.find(pStateKey);
-
-	if (iter == m_mapMultiState.end())
+	auto iter = m_mapTexture.find(strStateKey);
+	if (iter == m_mapTexture.end())
 		return;
 
-	if (m_mapMultiState[pStateKey].size() > pVecTexture->size())
-	{
-		pVecTexture->reserve(m_mapMultiState[pStateKey].size());
-	}
-	(*pVecTexture) = m_mapMultiState[pStateKey];
-}
-
-void CMultiStateTexture::Transfer_Texture()
-{
+	pTexture = (*iter).second->Get_Texture();
 }

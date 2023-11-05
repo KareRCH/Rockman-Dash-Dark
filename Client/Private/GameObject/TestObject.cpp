@@ -48,9 +48,13 @@ void CTestObject::Render(ID3D11DeviceContext* const pDeviceContext)
 {
     SUPER::Render(pDeviceContext);
 
+
+    MATRIX_BUFFER_T matBuffer = { Get_Transform(),
+        GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0) };
+    LIGHT_BUFFER_T lightBuffer = {};
+
     m_pModelBufferComp->Render(pDeviceContext);
-    m_pModelShaderComp->Render(pDeviceContext, Get_Transform(),
-        GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0));
+    m_pModelShaderComp->Render(pDeviceContext, matBuffer, lightBuffer);
 }
 
 CTestObject* CTestObject::Create(ID3D11Device* const pDevice)
@@ -77,7 +81,7 @@ void CTestObject::Free()
 HRESULT CTestObject::Initialize_Component()
 {
     FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_pModelBufferComp = CModelBufferComp::Create(m_pDevice)), E_FAIL);
-    m_pModelBufferComp->Initialize("RockVolnut", "Legs");
+    m_pModelBufferComp->Initialize("RockVolnut", "Body");
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
     FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create(m_pDevice, g_hWnd)), E_FAIL);

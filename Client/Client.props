@@ -13,11 +13,11 @@ xcopy "$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\fmodstudioL
 xcopy "$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\assimp-vc143-mtd.dll" "$(OutDir)" /y</Command>
     </PostBuildEvent>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;Dwmapi.lib;Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Reference\Library\FMod\core\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\fsbank\$(PlatformTarget)\;$(SolutionDir)Reference\Library\FMod\studio\$(PlatformTarget)\;$(SolutionDir)Reference\Library\Assimp\$(PlatformTarget)\$(Configuration)\;$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\;$(SolutionDir)Reference\Library\BulletPhysics\$(PlatformTarget)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;dinput8.lib;fmodL_vc.lib;fmodstudioL_vc.lib;assimp-vc143-mtd.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;Dwmapi.lib;Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\Public\;.\Default\;$(SolutionDir)Reference\Header\Engine\;$(SolutionDir)Reference\Header\FMod\core\;$(SolutionDir)Reference\Header\FMod\fsbank\;$(SolutionDir)Reference\Header\FMod\studio\;$(SolutionDir)Reference\Header\Assimp\;$(SolutionDir)Reference\Header\RapidJson\;$(SolutionDir)Reference\Header\ImGui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Public\;.\Default\;$(SolutionDir)Reference\Header\Engine\;$(SolutionDir)Reference\Header\FMod\core\;$(SolutionDir)Reference\Header\FMod\fsbank\;$(SolutionDir)Reference\Header\FMod\studio\;$(SolutionDir)Reference\Header\Assimp\;$(SolutionDir)Reference\Header\RapidJson\;$(SolutionDir)Reference\Header\ImGui\;$(SolutionDir)Reference\Header\BulletPhysics\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

@@ -29,9 +29,9 @@ _int CModelShaderComp::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-void CModelShaderComp::Render(ID3D11DeviceContext* pDeviceContext, const _matrix& matWorld, const _matrix& matView, const _matrix& matProj)
+void CModelShaderComp::Render(ID3D11DeviceContext* pDeviceContext, const MATRIX_BUFFER_T& tMatrixBuf, const LIGHT_BUFFER_T& tLightBuf)
 {
-    if (Set_ShaderParameter(pDeviceContext, matWorld, matView, matProj) == E_FAIL)
+    if (Set_ShaderParameter(pDeviceContext, tMatrixBuf, tLightBuf) == E_FAIL)
     {
         return;
     }
@@ -145,16 +145,6 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     Safe_Release(pVertexShaderBuf);
     Safe_Release(pPixelShaderBuf);
 
-    D3D11_BUFFER_DESC tMatBufferDesc;
-    tMatBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    tMatBufferDesc.ByteWidth = sizeof(MATRIX_BUFFER_T);
-    tMatBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    tMatBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    tMatBufferDesc.MiscFlags = 0;
-    tMatBufferDesc.StructureByteStride = 0;
-
-    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&tMatBufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
-
 
     // 텍스처 샘플러 상태 구조체 생성
     D3D11_SAMPLER_DESC samplerDesc;
@@ -173,15 +163,40 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
 
     FAILED_CHECK_RETURN(m_pDevice->CreateSamplerState(&samplerDesc, &m_pSamplereState), E_FAIL);
 
+
+    // 정점 셰이더에 있는 행렬 상수 버퍼의 구조체를 작성
+    D3D11_BUFFER_DESC tMatBufferDesc;
+    tMatBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    tMatBufferDesc.ByteWidth = sizeof(MATRIX_BUFFER_T);
+    tMatBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    tMatBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    tMatBufferDesc.MiscFlags = 0;
+    tMatBufferDesc.StructureByteStride = 0;
+
+    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&tMatBufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
+
+
+    // 픽셀 쎄이더에 있는 광원 동적 상수 버퍼의 설명을 설정
+    // D3D11_BIND_CONSTANT_BUFFER를 사용시 ByteWidth가 16의 배수여야함. 아닐시 생성 실패
+    D3D11_BUFFER_DESC lightBufferDesc;
+    lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    lightBufferDesc.ByteWidth = sizeof(LIGHT_BUFFER_T);
+    lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    lightBufferDesc.MiscFlags = 0;
+    lightBufferDesc.StructureByteStride = 0;
+
+    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&lightBufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
+
     return S_OK;
 }
 
-HRESULT CModelShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContext, XMMATRIX matWorld, XMMATRIX matView, XMMATRIX matProj)
+HRESULT CModelShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContext, MATRIX_BUFFER_T tMatrixBuf, LIGHT_BUFFER_T tLightBuf)
 {
     // 전치 행렬로 바꾸어주어야함, 다렉 row우선, HLSL은 col우선 연산이라 그렇다고 한다.
-    matWorld = XMMatrixTranspose(matWorld);
-    matView = XMMatrixTranspose(matView);
-    matProj = XMMatrixTranspose(matProj);
+    tMatrixBuf.matWorld = XMMatrixTranspose(tMatrixBuf.matWorld);
+    tMatrixBuf.matView = XMMatrixTranspose(tMatrixBuf.matView);
+    tMatrixBuf.matProj = XMMatrixTranspose(tMatrixBuf.matProj);
 
     // 상수 버퍼의 내용을 쓸 수 있도록 잠금
     D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -191,9 +206,9 @@ HRESULT CModelShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContex
     MATRIX_BUFFER_T* pDataPtr = Cast<MATRIX_BUFFER_T*>(mappedResource.pData);
 
     // 상수 버퍼에 행렬 복사
-    pDataPtr->matWorld = matWorld;
-    pDataPtr->matView = matView;
-    pDataPtr->matProj = matProj;
+    pDataPtr->matWorld = tMatrixBuf.matWorld;
+    pDataPtr->matView = tMatrixBuf.matView;
+    pDataPtr->matProj = tMatrixBuf.matProj;
 
     // 상수 버퍼의 잠금 풀기
     pDeviceContext->Unmap(m_pMatrixBuffer, 0);
@@ -203,8 +218,25 @@ HRESULT CModelShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContex
 
     pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
 
+    pDeviceContext->PSSetShaderResources(0, 1, &m_pTexture);
+
+    //----------------------------------
+
+    // lightBuffer 버퍼 잠금
+    FAILED_CHECK_RETURN(pDeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+
+    LIGHT_BUFFER_T* dataPtr2 = Cast<LIGHT_BUFFER_T*>(mappedResource.pData);
+
+    dataPtr2->vDiffuseColor = tLightBuf.vDiffuseColor;
+    dataPtr2->vLightDirection = tLightBuf.vLightDirection;
+    dataPtr2->fPadding = 0.0f;
+
+    pDeviceContext->Unmap(m_pLightBuffer, 0);
+
+    iBufferNumber = 0;
+
     // 픽셀 셰이더에서 셰이더 텍스처 리소스 설정
-    //pDeviceContext->PSSetShaderResources(0, 1, &);
+    pDeviceContext->PSSetConstantBuffers(iBufferNumber, 1, &m_pLightBuffer);
 
     return S_OK;
 }
