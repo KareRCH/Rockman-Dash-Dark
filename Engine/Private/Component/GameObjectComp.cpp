@@ -1,7 +1,7 @@
 #include "Component/GameObjectComp.h"
 
-CGameObjectComp::CGameObjectComp(ID3D11Device* pDevice)
-    : Base(pDevice)
+CGameObjectComp::CGameObjectComp(const DX11DEVICE_T tDevice)
+    : Base(tDevice)
 {
 }
 

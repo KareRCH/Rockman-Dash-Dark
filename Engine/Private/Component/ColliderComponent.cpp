@@ -3,8 +3,8 @@
 #include "Physics/CollisionPrimitive.h"
 #include "Physics/Contact.h"
 
-CColliderComponent::CColliderComponent(ID3D11Device* pGraphicDev)
-    : Base(pGraphicDev)
+CColliderComponent::CColliderComponent(const DX11DEVICE_T tDevice)
+    : Base(tDevice)
     , m_iCollisionLayer_Flag(m_iCollisionLayer_Flag)
     , m_iCollisionMask_Flag(m_iCollisionMask_Flag)
 {
@@ -79,11 +79,11 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     // 이벤트 함수 클론 제외, 수동으로 외부에서 추가
 }
 
-CPrimitiveComponent* CColliderComponent::Create(ID3D11Device* pGraphicDev, ECOLLISION eType)
+CPrimitiveComponent* CColliderComponent::Create(const DX11DEVICE_T tDevice, ECOLLISION eType)
 {
-    ThisClass* pInstance = new ThisClass(pGraphicDev);
+    ThisClass* pInstance = new ThisClass(tDevice);
 
-    if (FAILED(pInstance->Initialize(pGraphicDev, eType)))
+    if (FAILED(pInstance->Initialize(eType)))
     {
         Safe_Release(pInstance);
 
@@ -94,7 +94,7 @@ CPrimitiveComponent* CColliderComponent::Create(ID3D11Device* pGraphicDev, ECOLL
     return pInstance;
 }
 
-CPrimitiveComponent* CColliderComponent::Clone()
+CPrimitiveComponent* CColliderComponent::Clone(void* Arg)
 {
     return new ThisClass(*this);
 }
@@ -108,7 +108,7 @@ void CColliderComponent::Free()
     Safe_Delete(m_pCollisionShape);
 }
 
-HRESULT CColliderComponent::Initialize(ID3D11Device* pGraphicDev, ECOLLISION eType)
+HRESULT CColliderComponent::Initialize(ECOLLISION eType)
 {
     switch (eType)
     {
@@ -149,10 +149,13 @@ HRESULT CColliderComponent::Initialize(ID3D11Device* pGraphicDev, ECOLLISION eTy
     return S_OK;
 }
 
+void CColliderComponent::PriorityTick()
+{
+}
+
 _int CColliderComponent::Tick(const _float& fTimeDelta)
 {
     OnCollisionExited();
-    SeeColliderFrame(m_pDevice);
     // Exited 초기화
     for (auto iter = m_listColliderObject.begin(); iter != m_listColliderObject.end(); ++iter)
         iter->second = false;
@@ -207,31 +210,6 @@ void CColliderComponent::OnCollision(CColliderComponent* pDst, const FContact* c
         }
     }
         
-}
-
-void CColliderComponent::SeeColliderFrame(ID3D11Device* pGraphicDev)
-{
-   // //소영 !!
-   // if (IsKey_Pressed(DIK_PERIOD)) // '.'키
-   // {    //갖고있는 충돌체 다 꺼내서 
-   //     //모양체크하고 그거대로 그리기 
-   //     if (m_pCollisionShape->Get_Type() == ECOLLISION::SPHERE)
-   //     {
-   //         FCollisionSphere* m_pShape = static_cast<FCollisionSphere*>(m_pCollisionShape);
-   //         D3DXCreateSphere(pGraphicDev, m_pShape->fRadius * 3.f, 32, 16, &m_Mesh, NULL);
-   //     }
-   //     else if (m_pCollisionShape->Get_Type() == ECOLLISION::BOX)
-   //     {
-   //         FCollisionBox* m_pShape = static_cast<FCollisionBox*>(m_pCollisionShape);
-   //         D3DXCreateBox(pGraphicDev, 
-   //                     m_pShape->vHalfSize.x, m_pShape->vHalfSize.y, m_pShape->vHalfSize.z,
-   //                     &m_Mesh, NULL);
-   //     }
-   //     else if (m_pCollisionShape->Get_Type() == ECOLLISION::CAPSULE)
-   //     {
-   //     }
-   // }
-   //
 }
 
 void CColliderComponent::OnCollisionEntered(CColliderComponent* pDst, const FContact* const pContact)

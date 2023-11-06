@@ -7,8 +7,8 @@
 
 #include "System/RenderMgr.h"
 
-CTestObject::CTestObject(ID3D11Device* const pDevice)
-    : Base(pDevice)
+CTestObject::CTestObject(const DX11DEVICE_T tDevice)
+    : Base(tDevice)
 {
     Set_Name(L"TestObject");
 }
@@ -24,6 +24,11 @@ HRESULT CTestObject::Initialize()
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 
     return S_OK;
+}
+
+void CTestObject::PriorityTick()
+{
+    SUPER::PriorityTick();
 }
 
 _int CTestObject::Tick(const _float& fTimeDelta)
@@ -44,22 +49,22 @@ void CTestObject::LateTick()
     SUPER::LateTick();
 }
 
-void CTestObject::Render(ID3D11DeviceContext* const pDeviceContext)
+void CTestObject::Render()
 {
-    SUPER::Render(pDeviceContext);
+    SUPER::Render();
 
 
     MATRIX_BUFFER_T matBuffer = { Get_Transform(),
         GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0) };
     LIGHT_BUFFER_T lightBuffer = {};
 
-    m_pModelBufferComp->Render(pDeviceContext);
-    m_pModelShaderComp->Render(pDeviceContext, matBuffer, lightBuffer);
+    m_pModelBufferComp->Render();
+    m_pModelShaderComp->Render(matBuffer, lightBuffer);
 }
 
-CTestObject* CTestObject::Create(ID3D11Device* const pDevice)
+CTestObject* CTestObject::Create(const DX11DEVICE_T tDevice)
 {
-    ThisClass* pInstance = new ThisClass(pDevice);
+    ThisClass* pInstance = new ThisClass(tDevice);
 
     if (FAILED(pInstance->Initialize()))
     {
@@ -80,11 +85,11 @@ void CTestObject::Free()
 
 HRESULT CTestObject::Initialize_Component()
 {
-    FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_pModelBufferComp = CModelBufferComp::Create(m_pDevice)), E_FAIL);
+    FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_pModelBufferComp = CModelBufferComp::Create({ m_pDevice, m_pDeviceContext })), E_FAIL);
     m_pModelBufferComp->Initialize("RockVolnut", "Body");
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create(m_pDevice, g_hWnd)), E_FAIL);
+    FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create({ m_pDevice, m_pDeviceContext }, g_hWnd)), E_FAIL);
     //m_ColorShaderComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
     m_pModelShaderComp->Set_IndexCount(m_pModelBufferComp->Get_IndexCount());
 

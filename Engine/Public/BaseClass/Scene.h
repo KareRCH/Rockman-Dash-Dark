@@ -8,23 +8,25 @@ class ENGINE_DLL CScene abstract : public CBase
 {
 	DERIVED_CLASS(CBase, CScene)
 protected:
-	explicit CScene(ID3D11Device* pGraphicDev);
+	explicit CScene(const DX11DEVICE_T tDevice);
 	explicit CScene(const CScene& rhs) = delete;
 	virtual ~CScene() = default;
 
 public:
 	virtual HRESULT		Initialize();
+	virtual void		PriorityTick();
 	virtual _int		Tick(const _float& fTimeDelta);
 	virtual void		LateTick();
-	virtual void		Render(ID3D11DeviceContext* const pDeviceContext);
+	virtual void		Render();
 
 	virtual HRESULT		InitializeLate_Scene();
 
 protected:
-	virtual void	Free();
+	virtual void		Free();
 
 protected:
-	ID3D11Device*		m_pDevice = nullptr;
+	ID3D11Device*			m_pDevice = nullptr;
+	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
 
 public:
 	CPrimitiveComponent*	Get_Component(COMPONENTID eID, const _tchar* pLayerTag, const _tchar* pObjTag, const _tchar* pComponentTag);

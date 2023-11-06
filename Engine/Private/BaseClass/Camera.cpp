@@ -1,7 +1,7 @@
 #include "BaseClass/Camera.h"
 
-CCamera::CCamera(ID3D11Device* const pDevice)
-    : Base(pDevice)
+CCamera::CCamera(const DX11DEVICE_T tDevice)
+    : Base(tDevice)
     , m_vAt(_float3(0.f, 0.f, 0.f)), m_vUp(_float3(0.f, 1.f, 0.f))
     , m_matPersView(XMMatrixIdentity()), m_matPersProj(XMMatrixIdentity())
 {
@@ -20,6 +20,11 @@ HRESULT CCamera::Initialize()
     return S_OK;
 }
 
+void CCamera::PriorityTick()
+{
+    SUPER::PriorityTick();
+}
+
 _int CCamera::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
@@ -33,9 +38,9 @@ void CCamera::LateTick()
 
 }
 
-void CCamera::Render(ID3D11DeviceContext* const pDeviceContext)
+void CCamera::Render()
 {
-    SUPER::Render(pDeviceContext);
+    SUPER::Render();
 
 
 }

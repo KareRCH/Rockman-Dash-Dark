@@ -1,15 +1,18 @@
 #include "System/GraphicDev.h"
 
+#include <d3d11sdklayers.h>
+#include <dxgidebug.h>
+
 CGraphicDev::CGraphicDev()
 {
 }
 
 HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
 {
-    _uint		iFlag = 0;
+    _uint		iFlag = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
 #ifdef _DEBUG
-    iFlag = D3D11_CREATE_DEVICE_DEBUG;
+    iFlag |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
     D3D_FEATURE_LEVEL			FeatureLV;
 
@@ -46,12 +49,6 @@ HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
     ViewPortDesc.MaxDepth = 1.f;
 
     m_pDeviceContext->RSSetViewports(1, &ViewPortDesc);
-
-    //*ppDeviceOut = m_pDevice;
-    //*ppDeviceContextOut = m_pDeviceContext;
-
-    Safe_AddRef(m_pDevice);
-    Safe_AddRef(m_pDeviceContext);
 
 	return S_OK;
 }
@@ -118,21 +115,59 @@ void CGraphicDev::Free()
     Safe_Release(m_pDepthStencilState);
     Safe_Release(m_pDethStencilBuffer);
     Safe_Release(m_pRenderTargetView);
-    Safe_Release(m_pDeviceContext);
-    Safe_Release(m_pDevice);
     Safe_Release(m_pSwapChain);
+    Safe_Release(m_pDeviceContext);
+
+
+
+    Safe_Release(m_pDevice);
+#ifdef _DEBUG
+    //m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+
+    //ID3D11InfoQueue* pInfoQueue = nullptr;
+    //m_pDebug->QueryInterface(__uuidof(ID3D11InfoQueue), (void**)&pInfoQueue);
+
+    //pInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, TRUE);
+    //pInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, TRUE);
+
+    //// 메세지 필터를 설정합니다. (예시: 무시할 경고의 종류)
+    //D3D11_MESSAGE_ID hide[] = {
+    //    D3D11_MESSAGE_ID_SETPRIVATEDATA_CHANGINGPARAMS,
+    //    // 추가적인 메세지 ID들을 여기에 추가할 수 있습니다.
+    //    //D3D11_MESSAGE_ID_
+    //};
+
+    //D3D11_INFO_QUEUE_FILTER filter = {};
+    //filter.DenyList.NumIDs = _countof(hide);
+    //filter.DenyList.pIDList = hide;
+
+    //pInfoQueue->AddRetrievalFilterEntries(&filter);
+
+    //Safe_Release(pInfoQueue);
+
+    Safe_Release(m_pDebug);
+#endif // _DEBUG
 }
 
 HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
 {
+#ifdef _DEBUG
+    m_pDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&m_pDebug);
+
+    //m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+#endif
     IDXGIDevice* pDevice = nullptr;
     m_pDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDevice);
+
+    _uint adapterIndex = 0;
 
     IDXGIAdapter* pAdapter = nullptr;
     pDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&pAdapter);
 
     IDXGIFactory* pFactory = nullptr;
     pAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&pFactory);
+
+    pFactory->EnumAdapters(adapterIndex, &pAdapter);
 
     /* 스왑체인을 생성한다. = 텍스쳐를 생성하는 행위 + 스왑하는 형태  */
     DXGI_SWAP_CHAIN_DESC		SwapChain;
@@ -163,11 +198,11 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
     if (FAILED(pFactory->CreateSwapChain(m_pDevice, &SwapChain, &m_pSwapChain)))
         return E_FAIL;
 
-
-
     Safe_Release(pFactory);
     Safe_Release(pAdapter);
     Safe_Release(pDevice);
+
+    
 
     return S_OK;
 }
@@ -176,8 +211,6 @@ HRESULT CGraphicDev::Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit)
 {
     if (nullptr == m_pDevice)
         return E_FAIL;
-
-
 
     /* 내가 앞으로 사용하기위한 용도의 텍스쳐를 생성하기위한 베이스 데이터를 가지고 있는 객체이다. */
     /* 내가 앞으로 사용하기위한 용도의 텍스쳐 : ID3D11RenderTargetView, ID3D11ShaderResoureView, ID3D11DepthStencilView */
@@ -189,8 +222,6 @@ HRESULT CGraphicDev::Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit)
 
     if (FAILED(m_pDevice->CreateRenderTargetView(pBackBufferTexture, nullptr, &m_pRenderTargetView)))
         return E_FAIL;
-
-
 
     Safe_Release(pBackBufferTexture);
 

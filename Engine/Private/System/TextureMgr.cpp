@@ -2,15 +2,18 @@
 
 #include "System/MultiStateTexture.h"
 
-CTextureMgr::CTextureMgr()
+CTextureMgr::CTextureMgr(const DX11DEVICE_T tDevice)
+	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 {
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
 }
 
-CTextureMgr* CTextureMgr::Create(ID3D11Device* pGraphicDev)
+CTextureMgr* CTextureMgr::Create(const DX11DEVICE_T tDevice)
 {
-	ThisClass* pInstance = new ThisClass();
+	ThisClass* pInstance = new ThisClass(tDevice);
 
-	if (FAILED(pInstance->Initialize(pGraphicDev)))
+	if (FAILED(pInstance->Initialize()))
 	{
 		MSG_BOX("TextureMgr Create Failed");
 		Engine::Safe_Release(pInstance);
@@ -23,15 +26,17 @@ CTextureMgr* CTextureMgr::Create(ID3D11Device* pGraphicDev)
 
 void CTextureMgr::Free()
 {
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pDeviceContext);
+
 	for (auto item : m_mapTexture)
 	{
 		Safe_Release(item.second);
 	}
 }
 
-HRESULT CTextureMgr::Initialize(ID3D11Device* pGraphicDev)
+HRESULT CTextureMgr::Initialize()
 {
-	m_pGraphicDev = pGraphicDev;
 
 	return S_OK;
 }
@@ -64,7 +69,7 @@ HRESULT CTextureMgr::Insert_Texture(const _tchar* pFilePath, TEXTUREID eType, co
 		// 텍스처가 없으니 새로만든다.
 		if (iter == m_mapTexture.end())
 		{
-			pTexture = CMultiStateTexture::Create(m_pGraphicDev);
+			pTexture = CMultiStateTexture::Create({ m_pDevice, m_pDeviceContext });
 			m_mapTexture.emplace(pTextureKey, pTexture);
 		}
 		// 텍스처가 있으니 기존에 것에 추가한다.

@@ -15,25 +15,27 @@ class ENGINE_DLL CPrimitiveComponent abstract : public CBase
 {
 	DERIVED_CLASS(CBase, CPrimitiveComponent)
 protected:
-	explicit CPrimitiveComponent(ID3D11Device* pDevice);
+	explicit CPrimitiveComponent(const DX11DEVICE_T tDevice);
 	explicit CPrimitiveComponent(const CPrimitiveComponent& rhs);
 	virtual ~CPrimitiveComponent() = default;
 
 public:
 	virtual HRESULT Initialize() PURE;
+	virtual void	PriorityTick() PURE;
 	virtual _int	Tick(const _float& fTimeDelta) PURE;
 	virtual void	LateTick() PURE;
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext) PURE;
+	virtual void	Render() PURE;
 
 public:
-	virtual CPrimitiveComponent*	Clone() PURE;
+	virtual CPrimitiveComponent*	Clone(void* Arg) PURE;
 
 protected:
 	virtual void					Free();
 
 protected:
-	ID3D11Device*		m_pDevice = nullptr;	// 렌더 장치
-	_bool				m_bClone;
+	ID3D11Device*			m_pDevice = nullptr;		// 렌더 장치
+	ID3D11DeviceContext*	m_pDeviceContext = nullptr;	// 렌더 장치 컨텍스트
+	_bool					m_bClone;
 
 public:
 	GETSET_1(wstring,	m_strName, Name, GET_C_REF)

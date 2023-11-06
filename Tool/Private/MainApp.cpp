@@ -54,20 +54,22 @@ HRESULT CMainApp::Initialize()
 	m_pDeviceContext = m_pGameInstance->Get_GraphicContext();
 	Safe_AddRef(m_pDeviceContext);
 
+	DX11DEVICE_T tDevice = { m_pDevice, m_pDeviceContext };
+
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_InputDev(g_hInst, g_hWnd), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_RenderMgr(), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_RenderMgr(tDevice), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_PhysicsMgr(1), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_SoundMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_FontMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"Font_Default", L"¹ÙÅÁ", 15, 20, FW_HEAVY), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"Font_Jinji", L"±Ã¼­", 30, 30, FW_THIN), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"Font_Thin_Jinji", L"±Ã¼­", 18, 30, FW_THIN), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(m_pDevice, L"MonsterUI", L"ÇÔÃÊ·Õ¹ÙÅÁ", 14, 25, FW_THIN), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_FontMgr(tDevice), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Default", L"¹ÙÅÁ", 15, 20, FW_HEAVY), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Jinji", L"±Ã¼­", 30, 30, FW_THIN), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Thin_Jinji", L"±Ã¼­", 18, 30, FW_THIN), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"MonsterUI", L"ÇÔÃÊ·Õ¹ÙÅÁ", 14, 25, FW_THIN), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(m_pDevice), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(tDevice), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ModelMgr("../Client/Resource/Model/"), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_KeyMgr(), E_FAIL);
@@ -81,7 +83,7 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_BlackBoardMgr(), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ProtoMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_Management(EMANAGE_SCENE::MULTI), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_Management(tDevice, EMANAGE_SCENE::MULTI), E_FAIL);
 
 	return S_OK;
 }
@@ -111,7 +113,7 @@ void CMainApp::Render()
 
 	m_pGameInstance->Clear_DepthStencil_View();
 
-	m_pGameInstance->Render(m_pDeviceContext);
+	m_pGameInstance->Render();
 
 #ifdef _DEBUG
 	//Render_FrameRate();

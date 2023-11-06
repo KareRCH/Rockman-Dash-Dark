@@ -8,15 +8,16 @@ class ENGINE_DLL CSceneComponent abstract : public CPrimitiveComponent
 {
 	DERIVED_CLASS(CPrimitiveComponent, CSceneComponent)
 protected:
-	explicit CSceneComponent(ID3D11Device* pGraphicDev);
+	explicit CSceneComponent(const DX11DEVICE_T tDevice);
 	explicit CSceneComponent(const CSceneComponent& rhs);
 	virtual ~CSceneComponent();
 
 public:
 	virtual HRESULT Initialize() PURE;
+	virtual void	PriorityTick() PURE;
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick() PURE;
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext) PURE;
+	virtual void	Render() PURE;
 
 protected:
 	virtual void	Free();

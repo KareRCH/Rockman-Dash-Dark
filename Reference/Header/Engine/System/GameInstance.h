@@ -44,9 +44,9 @@ public:		// 그래픽 디바이스
 	HRESULT					Present();
 	ID3D11Device*			Get_GraphicDev();
 	ID3D11DeviceContext*	Get_GraphicContext();
-	const _matrix& Get_GraphicDev_ProjectionMatrix();
-	const _matrix& Get_GraphicDev_WorldMatrix();
-	const _matrix& Get_GraphicDev_OrthoMatrix();
+	const _matrix*			Get_GraphicDev_ProjectionMatrix();
+	const _matrix*			Get_GraphicDev_WorldMatrix();
+	const _matrix*			Get_GraphicDev_OrthoMatrix();
 	
 
 
@@ -76,8 +76,8 @@ public:		// 사운드 매니저
 	HRESULT Initialize_SoundMgr();
 
 public:		// 폰트 매니저
-	HRESULT Initialize_FontMgr();
-	HRESULT Create_Font(ID3D11Device* pGraphicDev, const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight);
+	HRESULT Initialize_FontMgr(const DX11DEVICE_T tDevice);
+	HRESULT Create_Font(const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight);
 	void	Render_Font(const _tchar* pFontTag, const _tchar* pString, const _float2* pPos, D3DCOLOR Color);
 
 public:		// 프레임 매니저
@@ -93,24 +93,24 @@ public:		// 타이머 매니저
 	void	Tick_Timer(const _tchar* pTimeTag);
 
 public:		// 매니지먼트
-	HRESULT Initialize_Management(const EMANAGE_SCENE eManageSceneType);
+	HRESULT Initialize_Management(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eManageSceneType);
 	_int	Tick_Scene(const _float& fTimeDelta);
 	void	LateTick_Scene();
-	void	Render_Scene(ID3D11DeviceContext* const pDeviceContext);
+	void	Render_Scene();
 	HRESULT	Set_Scene(CScene* pScene);
 
 public:		// 블랙보드 매니저
 	HRESULT Initialize_BlackBoardMgr();
 
 public:		// 텍스처 매니저
-	HRESULT Initialize_TextureMgr(ID3D11Device* const pGraphicDev);
+	HRESULT Initialize_TextureMgr(const DX11DEVICE_T tDevice);
 
 public:		// 프로토 매니저
 	HRESULT Initialize_ProtoMgr();
 
 public:		// 렌더 매니저
-	HRESULT	Initialize_RenderMgr(const _uint iWidth = 1280U, const _uint iHeight = 720U);
-	void	Render(ID3D11DeviceContext* pDeviceContext);
+	HRESULT	Initialize_RenderMgr(const DX11DEVICE_T tDevice, const _uint iWidth = 1280U, const _uint iHeight = 720U);
+	void	Render();
 	void	Add_RenderGroup(ERENDER_TYPE eType, class CGameObject* pGameObject);
 	void	Clear_RenderGroup();
 	void			Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView);

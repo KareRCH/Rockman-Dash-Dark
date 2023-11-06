@@ -39,6 +39,37 @@ namespace Engine
 
 			if (0 == dwRefCnt)
 				pInstance = nullptr;
+			// IUnknown용 컴객체는 1일 때 연결을 끊는다.
+			else if (dwRefCnt == 1 && dynamic_cast<ID3D11Device*>(pInstance))
+			{
+				pInstance = nullptr;
+			}
+		}
+
+		return dwRefCnt;
+	}
+
+	// 완전해제 함수
+	template<typename T>
+	_uint Perfect_Release(T& pInstance)
+	{
+		_uint		dwRefCnt = 0;
+		
+		while (nullptr != pInstance)
+		{
+			dwRefCnt = static_cast<_uint>(pInstance->Release());
+
+			if (0 == dwRefCnt)
+			{
+				pInstance = nullptr;
+				break;
+			}
+			// IUnknown용 컴객체는 1일 때 연결을 끊는다.
+			else if (dwRefCnt == 1 && dynamic_cast<IUnknown*>(pInstance))
+			{
+				pInstance = nullptr;
+				break;
+			}
 		}
 
 		return dwRefCnt;

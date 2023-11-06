@@ -17,14 +17,14 @@ class CTextureMgr final : public CBase
 	DERIVED_CLASS(CBase, CTextureMgr)
 
 private:
-	explicit CTextureMgr();
+	explicit CTextureMgr(const DX11DEVICE_T tDevice);
 	virtual ~CTextureMgr() = default;
 
 public:
-	HRESULT			Initialize(ID3D11Device* pGraphicDev);
+	HRESULT			Initialize();
 
 public:
-	static CTextureMgr* Create(ID3D11Device* pGraphicDev);
+	static CTextureMgr* Create(const DX11DEVICE_T tDevice);
 
 private:
 	virtual void	Free();
@@ -38,7 +38,8 @@ public:
 	GETSET_1(mutex, m_mapMutex, Mutex, GET_PTR)
 
 private:
-	ID3D11Device*					m_pGraphicDev = nullptr;
+	ID3D11Device*					m_pDevice = nullptr;
+	ID3D11DeviceContext*			m_pDeviceContext = nullptr;
 	_unmap<wstring, CTexture*>		m_mapTexture;
 	mutex							m_mapMutex;				// 텍스처 객체 제조시 동기화
 

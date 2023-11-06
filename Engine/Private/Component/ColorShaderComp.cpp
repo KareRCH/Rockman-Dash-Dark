@@ -1,7 +1,7 @@
 #include "Component/ColorShaderComp.h"
 
-CColorShaderComp::CColorShaderComp(ID3D11Device* pGraphicDev)
-    : Base(pGraphicDev)
+CColorShaderComp::CColorShaderComp(const DX11DEVICE_T tDevice)
+    : Base(tDevice)
 {
     
 }
@@ -25,24 +25,28 @@ HRESULT CColorShaderComp::Initialize(HWND hWnd)
     return S_OK;
 }
 
+void CColorShaderComp::PriorityTick()
+{
+}
+
 _int CColorShaderComp::Tick(const _float& fTimeDelta)
 {
     return 0;
 }
 
-void CColorShaderComp::Render(ID3D11DeviceContext* pDeviceContext, const _matrix& matWorld, const _matrix& matView, const _matrix& matProj)
+void CColorShaderComp::Render(const _matrix& matWorld, const _matrix& matView, const _matrix& matProj)
 {
-    if (Set_ShaderParameter(pDeviceContext, matWorld, matView, matProj) == E_FAIL)
+    if (Set_ShaderParameter(matWorld, matView, matProj) == E_FAIL)
     {
         return;
     }
 
-    Render_Shader(pDeviceContext, m_iIndexCount);
+    Render_Shader(m_iIndexCount);
 }
 
-CColorShaderComp* CColorShaderComp::Create(ID3D11Device* pDevice, HWND hWnd)
+CColorShaderComp* CColorShaderComp::Create(const DX11DEVICE_T tDevice, HWND hWnd)
 {
-    ThisClass* pInstance = new ThisClass(pDevice);
+    ThisClass* pInstance = new ThisClass(tDevice);
 
     if (FAILED(pInstance->Initialize(hWnd)))
     {
@@ -56,7 +60,7 @@ CColorShaderComp* CColorShaderComp::Create(ID3D11Device* pDevice, HWND hWnd)
     return pInstance;
 }
 
-CPrimitiveComponent* CColorShaderComp::Clone()
+CPrimitiveComponent* CColorShaderComp::Clone(void* Arg)
 {
     return new ThisClass(*this);
 }
@@ -152,7 +156,7 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     return S_OK;
 }
 
-HRESULT CColorShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContext, XMMATRIX matWorld, XMMATRIX matView, XMMATRIX matProj)
+HRESULT CColorShaderComp::Set_ShaderParameter(XMMATRIX matWorld, XMMATRIX matView, XMMATRIX matProj)
 {
     // 전치 행렬로 바꾸어주어야함, 다렉 row우선, HLSL은 col우선 연산이라 그렇다고 한다.
     matWorld = XMMatrixTranspose(matWorld);
@@ -161,7 +165,7 @@ HRESULT CColorShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContex
 
     // 상수 버퍼의 내용을 쓸 수 있도록 잠금
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    FAILED_CHECK_RETURN(pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     // 상수 버퍼의 데이터에 대한 포인터를 가져옴
     MATRIX_BUFFER_T* pDataPtr = Cast<MATRIX_BUFFER_T*>(mappedResource.pData);
@@ -172,22 +176,22 @@ HRESULT CColorShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContex
     pDataPtr->matProj = matProj;
 
     // 상수 버퍼의 잠금 풀기
-    pDeviceContext->Unmap(m_pMatrixBuffer, 0);
+    m_pDeviceContext->Unmap(m_pMatrixBuffer, 0);
 
     // 정점 셰이더에서의 상수 버퍼의 위치를 설정
     _uint iBufferNumber = 0;
 
-    pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
+    m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
 
     return S_OK;
 }
 
-void CColorShaderComp::Render_Shader(ID3D11DeviceContext* pDeviceContext, _int iIndexCount)
+void CColorShaderComp::Render_Shader(_int iIndexCount)
 {
-    pDeviceContext->IASetInputLayout(m_pLayout);
+    m_pDeviceContext->IASetInputLayout(m_pLayout);
 
-    pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
-    pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
+    m_pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
+    m_pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
 
-    pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
+    m_pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
 }

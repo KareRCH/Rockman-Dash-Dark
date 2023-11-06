@@ -62,8 +62,8 @@ CPrimitiveComponent* CProtoMgr::Clone_Proto(const _tchar* pProtoTag)
     CPrimitiveComponent* pComponent = Find_Prototype(pProtoTag);
 
     NULL_CHECK_RETURN(pComponent, nullptr);
-
-    return pComponent->Clone();
+    _int t = 0;
+    return pComponent->Clone(&t);
 }
 
 CPrimitiveComponent* CProtoMgr::Clone_Proto(const _tchar* pProtoTag, CPrimitiveComponent*& prComponent)
@@ -72,8 +72,8 @@ CPrimitiveComponent* CProtoMgr::Clone_Proto(const _tchar* pProtoTag, CPrimitiveC
     prComponent = Find_Prototype(pProtoTag);
 
     NULL_CHECK_RETURN(prComponent, nullptr);
-
-    return prComponent->Clone();
+    _int t = 0;
+    return prComponent->Clone(&t);
 }
 
 CPrimitiveComponent* CProtoMgr::Find_Prototype(const _tchar* pProtoTag)

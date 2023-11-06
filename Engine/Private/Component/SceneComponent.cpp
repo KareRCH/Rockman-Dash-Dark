@@ -1,7 +1,7 @@
 #include "Component/SceneComponent.h"
 
-CSceneComponent::CSceneComponent(ID3D11Device* pGraphicDev)
-	: Base(pGraphicDev)
+CSceneComponent::CSceneComponent(const DX11DEVICE_T tDeivce)
+	: Base(tDeivce)
 	, m_vPosition(_float3()), m_vRotation(_float3()), m_vScale(_float3(1.f, 1.f, 1.f)), m_qtOrientation(_float4(1.f, 0.f, 0.f, 0.f))
 	, m_matTransform(XMMatrixIdentity())
 {

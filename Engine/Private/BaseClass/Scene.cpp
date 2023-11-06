@@ -2,15 +2,20 @@
 
 
 
-CScene::CScene(ID3D11Device* pGraphicDev)
-	: m_pDevice(pGraphicDev)
+CScene::CScene(const DX11DEVICE_T tDevice)
+	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 {
-	m_pDevice->AddRef();
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
 }
 
 HRESULT CScene::Initialize()
 {
 	return S_OK;
+}
+
+void CScene::PriorityTick()
+{
 }
 
 _int CScene::Tick(const _float& fTimeDelta)
@@ -51,7 +56,7 @@ void CScene::LateTick()
 	m_vecPriorityLayer.clear();
 }
 
-void CScene::Render(ID3D11DeviceContext* const pDeviceContext)
+void CScene::Render()
 {
 	// _DEBUG 용
 }
@@ -66,7 +71,8 @@ void CScene::Free()
 	}
 
 	// 레퍼런스 카운트 줄이기
-	Safe_Release(m_pDevice);
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
 }
 
 HRESULT CScene::InitializeLate_Scene()

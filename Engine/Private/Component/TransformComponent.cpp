@@ -1,7 +1,7 @@
 #include "Component/TransformComponent.h"
 
-CTransformComponent::CTransformComponent(ID3D11Device* pDevice)
-	: Base(pDevice)
+CTransformComponent::CTransformComponent(const DX11DEVICE_T tDevice)
+	: Base(tDevice)
 {
 }
 
@@ -16,6 +16,10 @@ HRESULT CTransformComponent::Initialize()
 	return S_OK;
 }
 
+void CTransformComponent::PriorityTick()
+{
+}
+
 _int CTransformComponent::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
@@ -28,14 +32,14 @@ void CTransformComponent::LateTick()
 
 }
 
-void CTransformComponent::Render(ID3D11DeviceContext* pDeviceContext)
+void CTransformComponent::Render()
 {
 
 }
 
-CTransformComponent* CTransformComponent::Create(ID3D11Device* m_pDevice)
+CTransformComponent* CTransformComponent::Create(const DX11DEVICE_T tDevice)
 {
-	ThisClass* pInstance = new ThisClass(m_pDevice);
+	ThisClass* pInstance = new ThisClass(tDevice);
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -49,7 +53,7 @@ CTransformComponent* CTransformComponent::Create(ID3D11Device* m_pDevice)
 	return pInstance;
 }
 
-CPrimitiveComponent* CTransformComponent::Clone()
+CPrimitiveComponent* CTransformComponent::Clone(void* Arg)
 {
 	return new ThisClass(*this);
 }

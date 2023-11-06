@@ -1,6 +1,14 @@
 #include "System/Texture.h"
 
-CTexture::CTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
-	: m_pDevice(pDevice), m_pDeviceContext(pDeviceContext)
+CTexture::CTexture(const DX11DEVICE_T tDevice)
+	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 {
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
+}
+
+void CTexture::Free()
+{
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pDeviceContext);
 }

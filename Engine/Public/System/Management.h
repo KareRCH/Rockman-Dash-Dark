@@ -17,17 +17,18 @@ class CManagement final : public CBase
 	DERIVED_CLASS(CBase, CManagement)
 
 private:
-	explicit CManagement();
+	explicit CManagement(const DX11DEVICE_T tDevice);
 	virtual ~CManagement() = default;
 
 public:
 	HRESULT				Initialize(const EMANAGE_SCENE eType);
+	void				PriorityTick();
 	_int				Tick(const _float& fTimeDelta);
 	void				LateTick();
-	void				Render(ID3D11DeviceContext* const pDeviceContext);
+	void				Render();
 
 public:
-	static CManagement* Create(const EMANAGE_SCENE eType);
+	static CManagement* Create(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eType);
 
 private:
 	virtual void		Free();
@@ -59,6 +60,9 @@ public:
 	// 씬 전체 삭제, 나중에 요소들 해제하는 것으로 변경
 	HRESULT			Delete_SceneAll();
 	
+private:
+	ID3D11Device*						m_pDevice = nullptr;
+	ID3D11DeviceContext*				m_pDeviceContext = nullptr;
 
 private:
 	CScene*								m_pScene_Reserve;

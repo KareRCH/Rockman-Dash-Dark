@@ -21,18 +21,19 @@ class CTestObject final : public CGameObject
 {
 	DERIVED_CLASS(CGameObject, CTestObject)
 protected:
-	explicit CTestObject(ID3D11Device* const pDevice);
+	explicit CTestObject(const DX11DEVICE_T tDevice);
 	explicit CTestObject(const CGameObject& rhs);
 	virtual ~CTestObject() = default;
 
 public:
 	virtual HRESULT Initialize();
+	virtual void	PriorityTick();
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick();
-	virtual void	Render(ID3D11DeviceContext* const pDeviceContext);
+	virtual void	Render();
 
 public:
-	static CTestObject* Create(ID3D11Device* const pDevice);
+	static CTestObject* Create(const DX11DEVICE_T tDevice);
 
 protected:
 	virtual void	Free();

@@ -22,6 +22,7 @@ private:
 
 public:
 	HRESULT	Initialize();
+	void	PriorityTick();
 	_int	Tick(const _float& fTimeDelta);
 	void	LateTick();
 	void	Render();

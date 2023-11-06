@@ -1,8 +1,11 @@
 #include "System/RenderMgr.h"
 
-CRenderMgr::CRenderMgr()
-	: m_hReadyResult(E_FAIL)
+CRenderMgr::CRenderMgr(const DX11DEVICE_T tDevice)
+	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext), m_hReadyResult(E_FAIL)
 {
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
+
 	for (_uint i = 0; i < Cast_EnumDef(EGCAMERA_INDEX::SIZE); i++)
 	{
 		m_matPersView[i] = XMMatrixIdentity();
@@ -38,19 +41,19 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	return m_hReadyResult = S_OK;
 }
 
-void CRenderMgr::Render(ID3D11DeviceContext* pGraphicDev)
+void CRenderMgr::Render()
 {
 	// 렌더처리를 하는 종류에 따라 따로 모아서 처리한다.
-	Render_Perspective(pGraphicDev);
-	Render_Orthogonal(pGraphicDev);
+	Render_Perspective();
+	Render_Orthogonal();
 
 	// 항상 처리 후 다음 프레임을 위해 초기화시킨다.
 	Clear_RenderGroup();
 }
 
-CRenderMgr* CRenderMgr::Create(const _uint iWidth, const _uint iHeight)
+CRenderMgr* CRenderMgr::Create(const DX11DEVICE_T tDevice, const _uint iWidth, const _uint iHeight)
 {
-	ThisClass* pInstance = new ThisClass();
+	ThisClass* pInstance = new ThisClass(tDevice);
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -67,6 +70,9 @@ CRenderMgr* CRenderMgr::Create(const _uint iWidth, const _uint iHeight)
 void CRenderMgr::Free()
 {
 	Clear_RenderGroup();
+
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pDeviceContext);
 }
 
 void CRenderMgr::Add_RenderGroup(ERENDER_T eType, CGameObject* pGameObject)
@@ -86,16 +92,16 @@ void CRenderMgr::Clear_RenderGroup()
 	}
 }
 
-void CRenderMgr::Render_Perspective(ID3D11DeviceContext* pGraphicDev)
+void CRenderMgr::Render_Perspective()
 {
 	for (auto& iter : m_RenderGroup[Cast_EnumDef(ERENDER_T::PERSPECTIVE)])
-		iter->Render(pGraphicDev);
+		iter->Render();
 }
 
-void CRenderMgr::Render_Orthogonal(ID3D11DeviceContext* pGraphicDev)
+void CRenderMgr::Render_Orthogonal()
 {
 	for (auto& iter : m_RenderGroup[Cast_EnumDef(ERENDER_T::ORTHOGONAL)])
-		iter->Render(pGraphicDev);
+		iter->Render();
 }
 
 void CRenderMgr::Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView)

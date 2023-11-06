@@ -3,8 +3,8 @@
 #include "GameObject/TestObject.h"
 #include "GameObject/DynamicCamera.h"
 
-CTestScene::CTestScene(ID3D11Device* pGraphicDev)
-    : Base(pGraphicDev)
+CTestScene::CTestScene(const DX11DEVICE_T tDevice)
+    : Base(tDevice)
 {
 }
 
@@ -17,12 +17,17 @@ HRESULT CTestScene::Initialize()
     CLayer* pLayer = CLayer::Create(0.f);
     Add_Layer(L"GameLogic", pLayer);
 
-    pLayer->Add_GameObject(CTestObject::Create(m_pDevice));
-    pLayer->Add_GameObject(CDynamicCamera::Create(m_pDevice));
+    pLayer->Add_GameObject(CTestObject::Create({ m_pDevice, m_pDeviceContext }));
+    pLayer->Add_GameObject(CDynamicCamera::Create({ m_pDevice, m_pDeviceContext }));
 
     
 
     return S_OK;
+}
+
+void CTestScene::PriorityTick()
+{
+    SUPER::PriorityTick();
 }
 
 _int CTestScene::Tick(const _float& fTimeDelta)
@@ -37,10 +42,9 @@ void CTestScene::LateTick()
     SUPER::LateTick();
 }
 
-void CTestScene::Render(ID3D11DeviceContext* const pDeviceContext)
+void CTestScene::Render()
 {
-    SUPER::Render(pDeviceContext);
-
+    SUPER::Render();
 }
 
 HRESULT CTestScene::InitializeLate_Scene()
@@ -50,9 +54,9 @@ HRESULT CTestScene::InitializeLate_Scene()
     return S_OK;
 }
 
-CTestScene* CTestScene::Create(ID3D11Device* const pGraphicDev)
+CTestScene* CTestScene::Create(const DX11DEVICE_T tDevice)
 {
-    ThisClass* pInstance = new ThisClass(pGraphicDev);
+    ThisClass* pInstance = new ThisClass(tDevice);
 
     if (FAILED(pInstance->Initialize()))
     {

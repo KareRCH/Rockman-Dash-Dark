@@ -50,8 +50,8 @@ public:
 	const _matrix& GetOrthoMatrix();
 
 public:
-	GETSET_1(ID3D11Device*, m_pDevice, Device, GET_REF)
-	GETSET_1(ID3D11DeviceContext*, m_pDeviceContext, DeviceContext, GET_REF)
+	GETSET_1(ID3D11Device*, m_pDevice, Device, GET__C)
+	GETSET_1(ID3D11DeviceContext*, m_pDeviceContext, DeviceContext, GET__C)
 
 private:
 	_bool	m_bVsync_Enabled = false;
@@ -66,6 +66,14 @@ private:
 	ID3D11DepthStencilState*	m_pDepthStencilState = nullptr;
 	ID3D11DepthStencilView*		m_pDepthStencilView = nullptr;
 	ID3D11RasterizerState*		m_pRasterState = nullptr;
+
+#ifdef _DEBUG
+public:
+	GETSET_1(ID3D11Debug*, m_pDebug, Debug, GET__C)
+
+private:
+	ID3D11Debug* m_pDebug = nullptr;
+#endif
 
 private:
 	XMMATRIX m_matProjection;

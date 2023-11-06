@@ -2,9 +2,12 @@
 
 #include "System/GameInstance.h"
 
-CManagement::CManagement()
-	: m_pScene_Current(nullptr), m_pScene_Reserve(nullptr)
+CManagement::CManagement(const DX11DEVICE_T tDevice)
+	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
+	, m_pScene_Current(nullptr), m_pScene_Reserve(nullptr)
 {
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
 }
 
 HRESULT CManagement::Initialize(const EMANAGE_SCENE eType)
@@ -12,6 +15,15 @@ HRESULT CManagement::Initialize(const EMANAGE_SCENE eType)
 	m_eSceneProcess = eType;
 
 	return S_OK;
+}
+
+void CManagement::PriorityTick()
+{
+	// ¾À ¾øÀ¸¸é ¿¹¿ÜÃ³¸®
+	if (nullptr == m_pScene_Current)
+		return;
+
+	m_pScene_Current->PriorityTick();
 }
 
 _int CManagement::Tick(const _float& fTimeDelta)
@@ -55,7 +67,7 @@ void CManagement::LateTick()
 	m_pScene_Current->LateTick();
 }
 
-void CManagement::Render(ID3D11DeviceContext* const pDeviceContext)
+void CManagement::Render()
 {
 	//GameInstance()->Render_GameObject(pGraphicDev);
 
@@ -63,12 +75,12 @@ void CManagement::Render(ID3D11DeviceContext* const pDeviceContext)
 	if (nullptr == m_pScene_Current)
 		return;
 
-	m_pScene_Current->Render(pDeviceContext);		// µð¹ö±ë¿ë
+	m_pScene_Current->Render();		// µð¹ö±ë¿ë
 }
 
-CManagement* CManagement::Create(const EMANAGE_SCENE eType)
+CManagement* CManagement::Create(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eType)
 {
-	ThisClass* pInstance = new ThisClass();
+	ThisClass* pInstance = new ThisClass(tDevice);
 
 	if (FAILED(pInstance->Initialize(eType)))
 	{
@@ -83,6 +95,9 @@ CManagement* CManagement::Create(const EMANAGE_SCENE eType)
 
 void CManagement::Free()
 {
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pDeviceContext);
+
 	switch (m_eSceneProcess)
 	{
 	case EMANAGE_SCENE::SINGLE:

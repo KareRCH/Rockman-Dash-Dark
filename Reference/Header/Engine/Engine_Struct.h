@@ -52,7 +52,11 @@ namespace Engine
 		_uint				iMaterIndex;
 	};
 
-	
+	struct DX11DEVICE_T
+	{
+		ID3D11Device* pDevice;
+		ID3D11DeviceContext* pDeviceContext;
+	};
 
 	//typedef struct tagVertexTexture
 	//{

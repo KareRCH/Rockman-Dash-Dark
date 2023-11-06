@@ -1,7 +1,7 @@
 #include "Component/TextureComponent.h"
 
-CTextureComponent::CTextureComponent(ID3D11Device* pDevice)
-    : Base(pDevice)
+CTextureComponent::CTextureComponent(const DX11DEVICE_T tDevice)
+    : Base(tDevice)
 {
 }
 
@@ -15,6 +15,10 @@ HRESULT CTextureComponent::Initialize()
     return S_OK;
 }
 
+void CTextureComponent::PriorityTick()
+{
+}
+
 _int CTextureComponent::Tick(const _float& fTimeDelta)
 {
     return 0;
@@ -24,13 +28,13 @@ void CTextureComponent::LateTick()
 {
 }
 
-void CTextureComponent::Render(ID3D11DeviceContext* pDeviceContext)
+void CTextureComponent::Render()
 {
 }
 
-CTextureComponent* CTextureComponent::Create(ID3D11Device* pDevice)
+CTextureComponent* CTextureComponent::Create(const DX11DEVICE_T tDevice)
 {
-	ThisClass* pInstance = new ThisClass(pDevice);
+	ThisClass* pInstance = new ThisClass(tDevice);
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -44,7 +48,7 @@ CTextureComponent* CTextureComponent::Create(ID3D11Device* pDevice)
 	return pInstance;
 }
 
-CPrimitiveComponent* CTextureComponent::Clone()
+CPrimitiveComponent* CTextureComponent::Clone(void* Arg)
 {
     return new ThisClass(*this);
 }

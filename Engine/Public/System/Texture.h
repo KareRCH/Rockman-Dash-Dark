@@ -11,6 +11,7 @@ class FTextureData final
 private:
 	explicit FTextureData() = default;
 	explicit FTextureData(const FTextureData& rhs) = default;
+public:
 	~FTextureData() = default;
 
 public:
@@ -21,7 +22,7 @@ public:
 
 		if (FAILED(pInstance->Load(pTexture, pTextureView)))
 		{
-			Safe_Release(pInstance);
+			Safe_Delete(pInstance);
 
 			MSG_BOX("Texture Create Failed");
 			return nullptr;
@@ -68,6 +69,8 @@ public:
 		// 둘중 하나가 nullptr이면 로드되지 않았음.
 		if (pTexture && pTextureView)
 			bLoaded = true;
+
+		return S_OK;
 	}
 
 	void Set_Permanent(const _bool value) { bPermanent = value; }
@@ -90,14 +93,14 @@ class CTexture abstract : public CBase
 	DERIVED_CLASS(CBase, CTexture)
 
 protected:
-	explicit CTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CTexture(const DX11DEVICE_T tDevice);
 	virtual ~CTexture() = default;
 
 public:
 	virtual HRESULT		Initialize() PURE;
 
-private:
-	virtual void		Free() PURE;
+protected:
+	virtual void		Free();
 
 protected:
 	virtual	HRESULT		Reserve(const string& strStateKey, _bool bPermanent) PURE;

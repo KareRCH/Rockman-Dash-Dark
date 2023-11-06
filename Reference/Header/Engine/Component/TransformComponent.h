@@ -12,25 +12,23 @@ class ENGINE_DLL CTransformComponent : public CSceneComponent
 {
 	DERIVED_CLASS(CSceneComponent, CTransformComponent)
 protected:
-	explicit CTransformComponent(ID3D11Device* pDevice);
+	explicit CTransformComponent(const DX11DEVICE_T tDeivce);
 	explicit CTransformComponent(const CTransformComponent& rhs);
 	virtual ~CTransformComponent() = default;
 
 public:
 	virtual HRESULT Initialize();
+	virtual void	PriorityTick();
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick();
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext);
+	virtual void	Render();
 
 public:
-	static	CTransformComponent* Create(ID3D11Device* m_pDevice);
-	virtual CPrimitiveComponent* Clone() override;
+	static	CTransformComponent* Create(const DX11DEVICE_T tDevice);
+	virtual CPrimitiveComponent* Clone(void* Arg) override;
 
 protected:
 	virtual void	Free();
-
-public:
-	
 
 };
 

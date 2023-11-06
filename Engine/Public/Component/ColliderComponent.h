@@ -18,21 +18,21 @@ class ENGINE_DLL CColliderComponent : public CSceneComponent
 	DERIVED_CLASS(CSceneComponent, CColliderComponent)
 
 protected:
-	explicit CColliderComponent(ID3D11Device* pGraphicDev);
+	explicit CColliderComponent(const DX11DEVICE_T tDevice);
 	explicit CColliderComponent(const CColliderComponent& rhs);
 	virtual ~CColliderComponent() = default;
 
 public:
-	static	CPrimitiveComponent*			Create(ID3D11Device* pGraphicDev, ECOLLISION eType);
-	virtual CPrimitiveComponent*			Clone();
-	
-
-public:
 	PRIVATE virtual HRESULT Initialize() { return S_OK; }
-	PUBLIC	virtual HRESULT Initialize(ID3D11Device* pGraphicDev, ECOLLISION eType);
+	PUBLIC	virtual HRESULT Initialize(ECOLLISION eType);
+	virtual void	PriorityTick();
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick() {}
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext) {}
+	virtual void	Render() {}
+
+public:
+	static	CPrimitiveComponent*			Create(const DX11DEVICE_T tDevice, ECOLLISION eType);
+	virtual CPrimitiveComponent*			Clone(void* Arg);
 
 protected:
 	virtual void				Free();
@@ -97,8 +97,6 @@ public:
 protected:
 	_uint				m_iCollisionLayer_Flag;			// 콜리전 레이어, 충돌체가 존재하는 층
 	_uint				m_iCollisionMask_Flag;				// 콜리전 마스크, 충돌체가 충돌하고 싶어하는 층
-
-	void SeeColliderFrame(ID3D11Device* pGraphicDev);
 };
 
 END

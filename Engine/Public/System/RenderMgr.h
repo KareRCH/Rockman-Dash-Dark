@@ -39,15 +39,15 @@ class CRenderMgr final : public CBase
 	DERIVED_CLASS(CBase, CRenderMgr)
 
 private:
-	explicit CRenderMgr();
+	explicit CRenderMgr(const DX11DEVICE_T tDevice);
 	virtual ~CRenderMgr() = default;
 
 public:
 	HRESULT			Initialize(const _uint iWidth = 1280U, const _uint iHeight = 720U);
-	void			Render(ID3D11DeviceContext* pGraphicDev);
+	void			Render();
 
 public:
-	static CRenderMgr* Create(const _uint iWidth = 1280U, const _uint iHeight = 720U);
+	static CRenderMgr* Create(const DX11DEVICE_T tDevice, const _uint iWidth = 1280U, const _uint iHeight = 720U);
 
 private:
 	virtual void	Free();
@@ -56,8 +56,8 @@ public:
 	void			Add_RenderGroup(ERENDER_T eType, CGameObject* pGameObject);
 	void			Clear_RenderGroup();
 
-	void			Render_Perspective(ID3D11DeviceContext* pGraphicDev);
-	void			Render_Orthogonal(ID3D11DeviceContext* pGraphicDev);
+	void			Render_Perspective();
+	void			Render_Orthogonal();
 
 
 
@@ -69,6 +69,10 @@ private:
 
 private:
 	list<CGameObject*>		m_RenderGroup[Cast_EnumDef(ERENDER_T::SIZE)];
+
+private:
+	ID3D11Device*				m_pDevice = nullptr;
+	ID3D11DeviceContext*		m_pDeviceContext = nullptr;
 
 public:		// 카메라 행렬저장용
 	void Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView);

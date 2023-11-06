@@ -9,26 +9,27 @@ class CTestScene : public CScene
 {
 	DERIVED_CLASS(CScene, CTestScene)
 protected:
-	explicit CTestScene(ID3D11Device* pGraphicDev);
+	explicit CTestScene(const DX11DEVICE_T tDevice);
 	explicit CTestScene(const CTestScene& rhs) = delete;
 	virtual ~CTestScene() = default;
 
 public:
 	virtual HRESULT		Initialize();
+	virtual void		PriorityTick();
 	virtual _int		Tick(const _float& fTimeDelta);
 	virtual void		LateTick();
-	virtual void		Render(ID3D11DeviceContext* const pDeviceContext);
+	virtual void		Render();
 
 	virtual HRESULT		InitializeLate_Scene();
 
 public:
-	static CTestScene* Create(ID3D11Device* const pGraphicDev);
+	static CTestScene*	Create(const DX11DEVICE_T tDevice);
 
 private:
-	virtual void	Free();
+	virtual void		Free();
 
 private:
-	virtual HRESULT Initialize_Layer_Completed() override;
+	virtual HRESULT		Initialize_Layer_Completed() override;
 };
 
 END

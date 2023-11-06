@@ -1,9 +1,10 @@
 #include "System/MyFont.h"
 
-CMyFont::CMyFont(ID3D11Device* pGraphicDev)
-	: m_pGraphicDev(pGraphicDev)
+CMyFont::CMyFont(const DX11DEVICE_T tDevice)
+	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 {
-	m_pGraphicDev->AddRef();
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
 }
 
 HRESULT CMyFont::Initialize(const _tchar* pFontType,
@@ -26,9 +27,9 @@ void CMyFont::Render(const _tchar* pString, const _float2* pPos, D3DCOLOR Color)
 	m_pSprite->End();*/
 }
 
-CMyFont* CMyFont::Create(ID3D11Device* pGraphicDev, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
+CMyFont* CMyFont::Create(const DX11DEVICE_T tDevice, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
 {
-	ThisClass* pInstance = new ThisClass(pGraphicDev);
+	ThisClass* pInstance = new ThisClass(tDevice);
 
 	if (FAILED(pInstance->Initialize(pFontType, iWidth, iHeight, iWeight)))
 	{
@@ -42,4 +43,6 @@ CMyFont* CMyFont::Create(ID3D11Device* pGraphicDev, const _tchar* pFontType, con
 
 void CMyFont::Free()
 {
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pDeviceContext);
 }

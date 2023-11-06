@@ -3,13 +3,18 @@
 #include "Component/PrimitiveComponent.h"
 
 
-CGameObject::CGameObject(ID3D11Device* const pDevice)
-	: m_pDevice(pDevice)
+CGameObject::CGameObject(const DX11DEVICE_T tDevice)
+	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 {
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
 }
 
 CGameObject::CGameObject(const CGameObject& rhs)
+	: m_pDevice(rhs.m_pDevice), m_pDeviceContext(rhs.m_pDeviceContext)
 {
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
 }
 
 HRESULT CGameObject::Initialize()
@@ -17,6 +22,10 @@ HRESULT CGameObject::Initialize()
 	FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 
 	return S_OK;
+}
+
+void CGameObject::PriorityTick()
+{
 }
 
 _int CGameObject::Tick(const _float& fTimeDelta)
@@ -39,17 +48,20 @@ void CGameObject::LateTick()
 	}
 }
 
-void CGameObject::Render(ID3D11DeviceContext* const pDeviceContext)
+void CGameObject::Render()
 {
 	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::RENDER)].begin();
 		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::RENDER)].end(); ++iter)
 	{
-		(*iter)->Render(pDeviceContext);
+		(*iter)->Render();
 	}
 }
 
 void CGameObject::Free()
 {
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pDeviceContext);
+
 	for (auto iter = m_vecComponent.begin(); iter != m_vecComponent.end(); ++iter)
 	{
 		Safe_Release((*iter));
@@ -188,7 +200,7 @@ void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, 
 
 HRESULT CGameObject::Initialize_Component()
 {
-	FAILED_CHECK_RETURN(Add_Component(L"Transform", m_pTransformComp = CTransformComponent::Create(m_pDevice)), E_FAIL);
+	FAILED_CHECK_RETURN(Add_Component(L"Transform", m_pTransformComp = CTransformComponent::Create({ m_pDevice, m_pDeviceContext })), E_FAIL);
 
 	return S_OK;
 }

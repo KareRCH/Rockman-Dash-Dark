@@ -1,7 +1,10 @@
 #include "System/FontMgr.h"
 
-CFontMgr::CFontMgr()
+CFontMgr::CFontMgr(const DX11DEVICE_T tDevice)
+	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 {
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pDeviceContext);
 }
 
 HRESULT CFontMgr::Initialize()
@@ -9,9 +12,9 @@ HRESULT CFontMgr::Initialize()
 	return S_OK;
 }
 
-CFontMgr* CFontMgr::Create()
+CFontMgr* CFontMgr::Create(const DX11DEVICE_T tDevice)
 {
-	ThisClass* pInstance = new ThisClass();
+	ThisClass* pInstance = new ThisClass(tDevice);
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -26,6 +29,9 @@ CFontMgr* CFontMgr::Create()
 
 void CFontMgr::Free()
 {
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pDeviceContext);
+
 	for (auto iter = m_mapFont.begin(); iter != m_mapFont.end(); ++iter)
 	{
 		Safe_Release((*iter).second);
@@ -33,7 +39,7 @@ void CFontMgr::Free()
 	m_mapFont.clear();
 }
 
-HRESULT CFontMgr::Create_Font(ID3D11Device* pGraphicDev, const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
+HRESULT CFontMgr::Create_Font(const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
 {
 	CMyFont* pMyFont = nullptr;
 
@@ -43,7 +49,7 @@ HRESULT CFontMgr::Create_Font(ID3D11Device* pGraphicDev, const _tchar* pFontTag,
 		return E_FAIL;
 
 	// 폰트 객체 생성하고 관리를 위해 map에 넣는다.
-	pMyFont = CMyFont::Create(pGraphicDev, pFontType, iWidth, iHeight, iWeight);
+	pMyFont = CMyFont::Create({m_pDevice, m_pDeviceContext}, pFontType, iWidth, iHeight, iWeight);
 	NULL_CHECK_RETURN(pMyFont, E_FAIL);
 
 	m_mapFont.emplace(pFontTag, pMyFont);

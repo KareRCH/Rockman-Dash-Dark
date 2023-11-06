@@ -13,14 +13,14 @@ class CMultiStateTexture final : public CTexture
 	DERIVED_CLASS(CTexture, CMultiStateTexture)
 
 private:
-	explicit CMultiStateTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	explicit CMultiStateTexture(const DX11DEVICE_T tDevice);
 	virtual ~CMultiStateTexture() = default;
 
 public:
 	virtual HRESULT				Initialize();
 
 public:
-	static CMultiStateTexture*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	static CMultiStateTexture*	Create(const DX11DEVICE_T tDevice);
 
 private:
 	virtual void				Free();

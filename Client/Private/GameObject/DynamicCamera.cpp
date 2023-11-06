@@ -1,7 +1,7 @@
 #include "GameObject/DynamicCamera.h"
 
-CDynamicCamera::CDynamicCamera(ID3D11Device* const pDevice)
-    : Base(pDevice)
+CDynamicCamera::CDynamicCamera(const DX11DEVICE_T tDevice)
+    : Base(tDevice)
 {
     Set_Name(L"DynamicCamera");
 }
@@ -16,6 +16,11 @@ HRESULT CDynamicCamera::Initialize()
     FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
 
     return S_OK;
+}
+
+void CDynamicCamera::PriorityTick()
+{
+    SUPER::PriorityTick();
 }
 
 _int CDynamicCamera::Tick(const _float& fTimeDelta)
@@ -47,14 +52,14 @@ void CDynamicCamera::LateTick()
     SUPER::LateTick();
 }
 
-void CDynamicCamera::Render(ID3D11DeviceContext* const pDeviceContext)
+void CDynamicCamera::Render()
 {
-    SUPER::Render(pDeviceContext);
+    SUPER::Render();
 }
 
-CDynamicCamera* CDynamicCamera::Create(ID3D11Device* const pDevice)
+CDynamicCamera* CDynamicCamera::Create(const DX11DEVICE_T tDevice)
 {
-    ThisClass* pInstance = new ThisClass(pDevice);
+    ThisClass* pInstance = new ThisClass(tDevice);
 
     if (FAILED(pInstance->Initialize()))
     {

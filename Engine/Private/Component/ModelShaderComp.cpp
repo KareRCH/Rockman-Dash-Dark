@@ -1,7 +1,7 @@
 #include "Component/ModelShaderComp.h"
 
-CModelShaderComp::CModelShaderComp(ID3D11Device* pDevice)
-    : Base(pDevice)
+CModelShaderComp::CModelShaderComp(const DX11DEVICE_T tDevice)
+    : Base(tDevice)
 {
 }
 
@@ -24,24 +24,28 @@ HRESULT CModelShaderComp::Initialize(HWND hWnd)
     return S_OK;
 }
 
+void CModelShaderComp::PriorityTick()
+{
+}
+
 _int CModelShaderComp::Tick(const _float& fTimeDelta)
 {
     return 0;
 }
 
-void CModelShaderComp::Render(ID3D11DeviceContext* pDeviceContext, const MATRIX_BUFFER_T& tMatrixBuf, const LIGHT_BUFFER_T& tLightBuf)
+void CModelShaderComp::Render(const MATRIX_BUFFER_T& tMatrixBuf, const LIGHT_BUFFER_T& tLightBuf)
 {
-    if (Set_ShaderParameter(pDeviceContext, tMatrixBuf, tLightBuf) == E_FAIL)
+    if (Set_ShaderParameter(tMatrixBuf, tLightBuf) == E_FAIL)
     {
         return;
     }
 
-    Render_Shader(pDeviceContext, m_iIndexCount);
+    Render_Shader(m_iIndexCount);
 }
 
-CModelShaderComp* CModelShaderComp::Create(ID3D11Device* pDevice, HWND hWnd)
+CModelShaderComp* CModelShaderComp::Create(const DX11DEVICE_T tDevice, HWND hWnd)
 {
-    ThisClass* pInstance = new ThisClass(pDevice);
+    ThisClass* pInstance = new ThisClass(tDevice);
 
     if (FAILED(pInstance->Initialize(hWnd)))
     {
@@ -55,7 +59,7 @@ CModelShaderComp* CModelShaderComp::Create(ID3D11Device* pDevice, HWND hWnd)
     return pInstance;
 }
 
-CPrimitiveComponent* CModelShaderComp::Clone()
+CPrimitiveComponent* CModelShaderComp::Clone(void* Arg)
 {
     return new ThisClass(*this);
 }
@@ -63,6 +67,9 @@ CPrimitiveComponent* CModelShaderComp::Clone()
 void CModelShaderComp::Free()
 {
     SUPER::Free();
+
+    Safe_Release(m_pSamplereState);
+    Safe_Release(m_pTexture);
 }
 
 HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName, const _tchar* psFileName)
@@ -144,7 +151,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
 
     Safe_Release(pVertexShaderBuf);
     Safe_Release(pPixelShaderBuf);
-
+    
 
     // 텍스처 샘플러 상태 구조체 생성
     D3D11_SAMPLER_DESC samplerDesc;
@@ -186,12 +193,12 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     lightBufferDesc.MiscFlags = 0;
     lightBufferDesc.StructureByteStride = 0;
 
-    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&lightBufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
+    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&lightBufferDesc, NULL, &m_pLightBuffer), E_FAIL);
 
     return S_OK;
 }
 
-HRESULT CModelShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContext, MATRIX_BUFFER_T tMatrixBuf, LIGHT_BUFFER_T tLightBuf)
+HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, LIGHT_BUFFER_T tLightBuf)
 {
     // 전치 행렬로 바꾸어주어야함, 다렉 row우선, HLSL은 col우선 연산이라 그렇다고 한다.
     tMatrixBuf.matWorld = XMMatrixTranspose(tMatrixBuf.matWorld);
@@ -200,7 +207,7 @@ HRESULT CModelShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContex
 
     // 상수 버퍼의 내용을 쓸 수 있도록 잠금
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    FAILED_CHECK_RETURN(pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     // 상수 버퍼의 데이터에 대한 포인터를 가져옴
     MATRIX_BUFFER_T* pDataPtr = Cast<MATRIX_BUFFER_T*>(mappedResource.pData);
@@ -211,19 +218,19 @@ HRESULT CModelShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContex
     pDataPtr->matProj = tMatrixBuf.matProj;
 
     // 상수 버퍼의 잠금 풀기
-    pDeviceContext->Unmap(m_pMatrixBuffer, 0);
+    m_pDeviceContext->Unmap(m_pMatrixBuffer, 0);
 
     // 정점 셰이더에서의 상수 버퍼의 위치를 설정
     _uint iBufferNumber = 0;
 
-    pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
+    m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
 
-    pDeviceContext->PSSetShaderResources(0, 1, &m_pTexture);
+    m_pDeviceContext->PSSetShaderResources(0, 1, &m_pTexture);
 
     //----------------------------------
 
     // lightBuffer 버퍼 잠금
-    FAILED_CHECK_RETURN(pDeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     LIGHT_BUFFER_T* dataPtr2 = Cast<LIGHT_BUFFER_T*>(mappedResource.pData);
 
@@ -231,24 +238,24 @@ HRESULT CModelShaderComp::Set_ShaderParameter(ID3D11DeviceContext* pDeviceContex
     dataPtr2->vLightDirection = tLightBuf.vLightDirection;
     dataPtr2->fPadding = 0.0f;
 
-    pDeviceContext->Unmap(m_pLightBuffer, 0);
+    m_pDeviceContext->Unmap(m_pLightBuffer, 0);
 
     iBufferNumber = 0;
 
     // 픽셀 셰이더에서 셰이더 텍스처 리소스 설정
-    pDeviceContext->PSSetConstantBuffers(iBufferNumber, 1, &m_pLightBuffer);
+    m_pDeviceContext->PSSetConstantBuffers(iBufferNumber, 1, &m_pLightBuffer);
 
     return S_OK;
 }
 
-void CModelShaderComp::Render_Shader(ID3D11DeviceContext* pDeviceContext, _int iIndexCount)
+void CModelShaderComp::Render_Shader(_int iIndexCount)
 {
-    pDeviceContext->IASetInputLayout(m_pLayout);
+    m_pDeviceContext->IASetInputLayout(m_pLayout);
 
-    pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
-    pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
+    m_pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
+    m_pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
 
-    pDeviceContext->PSSetSamplers(0, 1, &m_pSamplereState);
+    m_pDeviceContext->PSSetSamplers(0, 1, &m_pSamplereState);
 
-    pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
+    m_pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
 }

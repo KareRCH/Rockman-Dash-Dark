@@ -1,7 +1,7 @@
 #include "Component/VIBufferComp.h"
 
-CVIBufferComp::CVIBufferComp(ID3D11Device* pGraphicDev)
-	: Base(pGraphicDev)
+CVIBufferComp::CVIBufferComp(const DX11DEVICE_T tDevice)
+	: Base(tDevice)
 {
 }
 
@@ -19,4 +19,7 @@ _int CVIBufferComp::Tick(const _float& fTimeDelta)
 void CVIBufferComp::Free()
 {
 	SUPER::Free();
+
+	Safe_Release(m_pVtxBuffer);
+	Safe_Release(m_pIndexBuffer);
 }

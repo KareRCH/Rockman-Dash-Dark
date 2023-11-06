@@ -2,8 +2,8 @@
 
 #include "System/GameInstance.h"
 
-CModelBufferComp::CModelBufferComp(ID3D11Device* pGraphicDev)
-    : Base(pGraphicDev)
+CModelBufferComp::CModelBufferComp(const DX11DEVICE_T tDevice)
+    : Base(tDevice)
 {
 }
 
@@ -22,8 +22,8 @@ HRESULT CModelBufferComp::Initialize(const string& strGroupKey, const string& st
 {
 	const MESH* pMesh = GameInstance()->Get_Model(strGroupKey, strModelKey);
 
-	m_iVtxCount = pMesh->vecVertices.size();
-	m_iIndexCount = pMesh->vecIndices.size();
+	m_iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
+	m_iIndexCount = Cast<_uint>(pMesh->vecIndices.size());
 
 
 	VERTEX_MODEL* vertices = new VERTEX_MODEL[m_iVtxCount];
@@ -86,6 +86,10 @@ HRESULT CModelBufferComp::Initialize(const string& strGroupKey, const string& st
 	return S_OK;
 }
 
+void CModelBufferComp::PriorityTick()
+{
+}
+
 _int CModelBufferComp::Tick(const _float& fTimeDelta)
 {
     return 0;
@@ -95,25 +99,25 @@ void CModelBufferComp::LateTick()
 {
 }
 
-void CModelBufferComp::Render(ID3D11DeviceContext* pDeviceContext)
+void CModelBufferComp::Render()
 {
 	_uint iStride = sizeof(VERTEX_MODEL);
 	_uint iOffset = 0;
 
 	// 정점 버퍼 활성
-	pDeviceContext->IASetVertexBuffers(0, 1, &m_pVtxBuffer, &iStride, &iOffset);
+	m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVtxBuffer, &iStride, &iOffset);
 
 	// 인텍스 버퍼 활성
-	pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	// 정점 버퍼 삼각형 리스트
-	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 }
 
-CModelBufferComp* CModelBufferComp::Create(ID3D11Device* pGraphicDev)
+CModelBufferComp* CModelBufferComp::Create(const DX11DEVICE_T tDevice)
 {
-	ThisClass* pInstance = new ThisClass(pGraphicDev);
+	ThisClass* pInstance = new ThisClass(tDevice);
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -127,7 +131,7 @@ CModelBufferComp* CModelBufferComp::Create(ID3D11Device* pGraphicDev)
 	return pInstance;
 }
 
-CPrimitiveComponent* CModelBufferComp::Clone()
+CPrimitiveComponent* CModelBufferComp::Clone(void* Arg)
 {
     return new ThisClass(*this);
 }

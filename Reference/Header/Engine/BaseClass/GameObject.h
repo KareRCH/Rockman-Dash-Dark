@@ -23,15 +23,16 @@ class ENGINE_DLL CGameObject abstract : public CBase
 {
 	DERIVED_CLASS(CBase, CGameObject)
 protected:
-	explicit CGameObject(ID3D11Device* const pDevice);
+	explicit CGameObject(const DX11DEVICE_T tDevice);
 	explicit CGameObject(const CGameObject& rhs);
 	virtual ~CGameObject() = default;
 
 public:
 	virtual HRESULT Initialize();
+	virtual void	PriorityTick();
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick();
-	virtual void	Render(ID3D11DeviceContext* const pDeviceContext);
+	virtual void	Render();
 
 protected:
 	virtual void	Free();
@@ -58,6 +59,7 @@ private:	// 기본 속성
 
 protected:
 	ID3D11Device*				m_pDevice = nullptr;
+	ID3D11DeviceContext*		m_pDeviceContext = nullptr;
 
 public: // 각 오브젝트는 자식 오브젝트를 가질 수 있음
 	GETSET_2(CGameObject*, m_pOwner, Owner, GET_REF_C, SET__C)

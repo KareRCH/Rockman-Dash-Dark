@@ -13,18 +13,19 @@ class ENGINE_DLL CShaderComponent abstract : public CPrimitiveComponent
 {
 	DERIVED_CLASS(CPrimitiveComponent, CShaderComponent)
 protected:
-	explicit CShaderComponent(ID3D11Device* pDevice);
+	explicit CShaderComponent(const DX11DEVICE_T tDevice);
 	explicit CShaderComponent(const CShaderComponent& rhs);
 	virtual ~CShaderComponent() = default;
 
 public:
 	virtual HRESULT Initialize() PURE;
+	virtual void	PriorityTick() PURE;
 	virtual _int	Tick(const _float& fTimeDelta) PURE;
 	virtual void	LateTick() PURE;
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext) PURE;
+	virtual void	Render() PURE;
 
 protected:
-	virtual CPrimitiveComponent* Clone() PURE;
+	virtual CPrimitiveComponent* Clone(void* Arg) PURE;
 
 protected:
 	virtual void	Free();

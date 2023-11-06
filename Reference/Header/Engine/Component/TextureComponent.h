@@ -12,19 +12,20 @@ class ENGINE_DLL CTextureComponent : public CSceneComponent
 {
 	DERIVED_CLASS(CSceneComponent, CTextureComponent)
 protected:
-	explicit CTextureComponent(ID3D11Device* pDevice);
+	explicit CTextureComponent(const DX11DEVICE_T tDevice);
 	explicit CTextureComponent(const CTextureComponent& rhs);
 	virtual ~CTextureComponent() = default;
 
 public:
 	virtual HRESULT Initialize();
+	virtual void	PriorityTick();
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick();
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext);
+	virtual void	Render();
 
 public:
-	static CTextureComponent* Create(ID3D11Device* pDevice);
-	virtual CPrimitiveComponent* Clone();
+	static CTextureComponent* Create(const DX11DEVICE_T tDevice);
+	virtual CPrimitiveComponent* Clone(void* Arg);
 
 protected:
 	virtual void	Free();

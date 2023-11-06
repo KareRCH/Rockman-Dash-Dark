@@ -21,6 +21,8 @@ _uint Engine::CBase::Release()
 	if (0U == m_iRefCount)
 	{
 		Free();
+
+		//UnlockWeak();
 		
 		delete this;
 

@@ -11,32 +11,33 @@ class ENGINE_DLL CModelShaderComp final : public CShaderComponent
 {
 	DERIVED_CLASS(CShaderComponent, CModelShaderComp)
 protected:
-	explicit CModelShaderComp(ID3D11Device* pDevice);
+	explicit CModelShaderComp(const DX11DEVICE_T tDevice);
 	explicit CModelShaderComp(const CModelShaderComp& rhs);
 	virtual ~CModelShaderComp() = default;
 
 public:
 	virtual HRESULT Initialize();
 	virtual HRESULT	Initialize(HWND hWnd);
+	virtual void	PriorityTick();
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	LateTick() {}
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext) {}
-	virtual void	Render(ID3D11DeviceContext* pDeviceContext, const MATRIX_BUFFER_T& tMatrixBuf, const LIGHT_BUFFER_T& tLightBuf);
+	virtual void	Render() {}
+	virtual void	Render(const MATRIX_BUFFER_T& tMatrixBuf, const LIGHT_BUFFER_T& tLightBuf);
 
 public:
-	static CModelShaderComp* Create(ID3D11Device* pDevice, HWND hWnd);
-	virtual CPrimitiveComponent* Clone();
+	static CModelShaderComp* Create(const DX11DEVICE_T tDevice, HWND hWnd);
+	virtual CPrimitiveComponent* Clone(void* Arg);
 
 protected:
 	virtual void	Free();
 
 public:
 	HRESULT Initialize_Shader(HWND hWnd, const _tchar* vsFileName, const _tchar* psFileName);
-	HRESULT	Set_ShaderParameter(ID3D11DeviceContext* pDeviceContext, MATRIX_BUFFER_T tMatrixBuf, LIGHT_BUFFER_T tLightBuf);
-	void	Render_Shader(ID3D11DeviceContext* pDeviceContext, _int iIndexCount);
+	HRESULT	Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, LIGHT_BUFFER_T tLightBuf);
+	void	Render_Shader(_int iIndexCount);
 
 public:
-	GETSET_1(ID3D11ShaderResourceView*, m_pTexture, Texture, SET_REF_C)
+	GETSET_1(ID3D11ShaderResourceView*, m_pTexture, Texture, SET__C)
 
 private:
 	ID3D11SamplerState* m_pSamplereState = nullptr;

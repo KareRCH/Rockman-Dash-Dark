@@ -8,7 +8,7 @@ class ENGINE_DLL_DBG CMyFont final : public CBase
 {
 	DERIVED_CLASS(CBase, CMyFont)
 private:
-	explicit CMyFont(ID3D11Device* pGraphicDev);
+	explicit CMyFont(const DX11DEVICE_T tDevice);
 	virtual ~CMyFont() = default;
 
 public:
@@ -22,7 +22,7 @@ public:
 							D3DCOLOR Color);
 
 public:
-	static CMyFont* Create(ID3D11Device* pGraphicDev,
+	static CMyFont* Create(const DX11DEVICE_T tDevice,
 							const _tchar* pFontType,
 							const _uint& iWidth,
 							const _uint& iHeight,
@@ -32,7 +32,8 @@ private:
 	virtual void		Free();
 
 private:
-	ID3D11Device* m_pGraphicDev;
+	ID3D11Device*			m_pDevice = nullptr;
+	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
 	/*ID3D11Sprite*				m_pSprite;
 	LPD3DXFONT					m_pFont;*/
 

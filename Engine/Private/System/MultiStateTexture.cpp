@@ -5,8 +5,8 @@
 
 
 
-CMultiStateTexture::CMultiStateTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
-	: Base(pDevice, pDeviceContext)
+CMultiStateTexture::CMultiStateTexture(const DX11DEVICE_T tDevice)
+	: Base(tDevice)
 {
 }
 
@@ -15,9 +15,9 @@ HRESULT CMultiStateTexture::Initialize()
 	return S_OK;
 }
 
-CMultiStateTexture* CMultiStateTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
+CMultiStateTexture* CMultiStateTexture::Create(const DX11DEVICE_T tDevice)
 {
-	ThisClass* pInstance = new ThisClass(pDevice, pDeviceContext);
+	ThisClass* pInstance = new ThisClass(tDevice);
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -32,6 +32,8 @@ CMultiStateTexture* CMultiStateTexture::Create(ID3D11Device* pDevice, ID3D11Devi
 
 void CMultiStateTexture::Free()
 {
+	SUPER::Free();
+
 	for (auto item : m_mapTexture)
 	{
 		item.second->Free();
@@ -64,7 +66,7 @@ HRESULT CMultiStateTexture::Insert_Texture(const string& strFilePath, const stri
 
 	// 파일 존재여부 확인, 특히 사이즈에 해당하는 카운트 값이 존재하는지 확인, 잘못된 경로가 있다면 오류 반환
 	_char szFileName[256] = "";
-	sprintf(szFileName, strFilePath.c_str());
+	sprintf_s(szFileName, strFilePath.c_str());
 
 	ifstream file(szFileName);
 	FALSE_CHECK_RETURN(file.good(), E_FAIL);

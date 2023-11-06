@@ -1,7 +1,7 @@
 #include "Component/ShaderComponent.h"
 
-CShaderComponent::CShaderComponent(ID3D11Device* pDevice)
-	: Base(pDevice)
+CShaderComponent::CShaderComponent(const DX11DEVICE_T tDevice)
+	: Base(tDevice)
 {
 }
 
@@ -18,6 +18,7 @@ void CShaderComponent::Free()
 	Safe_Release(m_pPixelShader);
 	Safe_Release(m_pLayout);
 	Safe_Release(m_pMatrixBuffer);
+	Safe_Release(m_pLightBuffer);
 }
 
 void CShaderComponent::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hWnd, const _tchar* pShaderFileName)

@@ -29,20 +29,23 @@ HRESULT CGameInstance::Initialize()
 
 void CGameInstance::Free()
 {
-	Safe_Release(m_pGraphicDev);
-	Safe_Release(m_pInputDev);
 	Safe_Release(m_pKeyMgr);
 	Safe_Release(m_pPhysicsMgr);
 	Safe_Release(m_pSoundMgr);
-	Safe_Release(m_pFontMgr);
 	Safe_Release(m_pFrameMgr);
 	Safe_Release(m_pTimerMgr);
 	Safe_Release(m_pManagement);
 	Safe_Release(m_pBlackBoardMgr);
-	Safe_Release(m_pTextureMgr);
+	
 	Safe_Release(m_pProtoMgr);
 	Safe_Release(m_pRenderMgr);
+
 	Safe_Release(m_pModelMgr);
+	Safe_Release(m_pTextureMgr);
+	Safe_Release(m_pFontMgr);
+	Safe_Release(m_pInputDev);
+
+	Safe_Release(m_pGraphicDev);
 }
 
 
@@ -103,28 +106,28 @@ ID3D11DeviceContext* CGameInstance::Get_GraphicContext()
 	return m_pGraphicDev->Get_DeviceContext();
 }
 
-const _matrix& CGameInstance::Get_GraphicDev_ProjectionMatrix()
+const _matrix* CGameInstance::Get_GraphicDev_ProjectionMatrix()
 {
 	if (nullptr == m_pGraphicDev)
-		return _matrix();
+		return nullptr;
 
-	return m_pGraphicDev->GetProjectionMatrix();
+	return &m_pGraphicDev->GetProjectionMatrix();
 }
 
-const _matrix& CGameInstance::Get_GraphicDev_WorldMatrix()
+const _matrix* CGameInstance::Get_GraphicDev_WorldMatrix()
 {
 	if (nullptr == m_pGraphicDev)
-		return _matrix();
+		return nullptr;
 
-	return m_pGraphicDev->GetWorldMatrix();
+	return &m_pGraphicDev->GetWorldMatrix();
 }
 
-const _matrix& CGameInstance::Get_GraphicDev_OrthoMatrix()
+const _matrix* CGameInstance::Get_GraphicDev_OrthoMatrix()
 {
 	if (nullptr == m_pGraphicDev)
-		return _matrix();
+		return nullptr;
 
-	return m_pGraphicDev->GetOrthoMatrix();
+	return &m_pGraphicDev->GetOrthoMatrix();
 }
 
 
@@ -312,22 +315,22 @@ HRESULT CGameInstance::Initialize_SoundMgr()
 
 #pragma region 폰트 매니저
 
-HRESULT CGameInstance::Initialize_FontMgr()
+HRESULT CGameInstance::Initialize_FontMgr(const DX11DEVICE_T tDevice)
 {
 	if (nullptr != m_pFontMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pFontMgr = CFontMgr::Create(), E_FAIL);
+	NULL_CHECK_RETURN(m_pFontMgr = CFontMgr::Create(tDevice), E_FAIL);
 
 	return S_OK;
 }
 
-HRESULT CGameInstance::Create_Font(ID3D11Device* pGraphicDev, const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
+HRESULT CGameInstance::Create_Font(const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
 {
 	if (nullptr == m_pFontMgr)
 		return E_FAIL;
 
-	FAILED_CHECK_RETURN(m_pFontMgr->Create_Font(pGraphicDev, pFontTag, pFontType, iWidth, iHeight, iWeight), E_FAIL);
+	FAILED_CHECK_RETURN(m_pFontMgr->Create_Font(pFontTag, pFontType, iWidth, iHeight, iWeight), E_FAIL);
 
 	return S_OK;
 }
@@ -440,12 +443,12 @@ void CGameInstance::Tick_Timer(const _tchar* pTimerTag)
 
 #pragma region 매니지먼트
 
-HRESULT CGameInstance::Initialize_Management(const EMANAGE_SCENE eManageSceneType)
+HRESULT CGameInstance::Initialize_Management(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eManageSceneType)
 {
 	if (nullptr != m_pManagement)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pManagement = CManagement::Create(eManageSceneType), E_FAIL);
+	NULL_CHECK_RETURN(m_pManagement = CManagement::Create(tDevice, eManageSceneType), E_FAIL);
 
 	return S_OK;
 }
@@ -468,12 +471,12 @@ void CGameInstance::LateTick_Scene()
 	m_pManagement->LateTick();
 }
 
-void CGameInstance::Render_Scene(ID3D11DeviceContext* const pDeviceContext)
+void CGameInstance::Render_Scene()
 {
 	if (nullptr == m_pManagement)
 		return;
 
-	m_pManagement->Render(pDeviceContext);
+	m_pManagement->Render();
 }
 
 HRESULT CGameInstance::Set_Scene(CScene* pScene)
@@ -513,12 +516,12 @@ HRESULT CGameInstance::Initialize_BlackBoardMgr()
 
 #pragma region 텍스처 매니저
 
-HRESULT CGameInstance::Initialize_TextureMgr(ID3D11Device* const pGraphicDev)
+HRESULT CGameInstance::Initialize_TextureMgr(const DX11DEVICE_T tDevice)
 {
 	if (nullptr != m_pTextureMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pTextureMgr = CTextureMgr::Create(pGraphicDev), E_FAIL);
+	NULL_CHECK_RETURN(m_pTextureMgr = CTextureMgr::Create(tDevice), E_FAIL);
 
 	return S_OK;
 }
@@ -551,22 +554,22 @@ HRESULT CGameInstance::Initialize_ProtoMgr()
 
 #pragma region 렌더 매니저
 
-HRESULT CGameInstance::Initialize_RenderMgr(const _uint iWidth, const _uint iHeight)
+HRESULT CGameInstance::Initialize_RenderMgr(const DX11DEVICE_T tDevice, const _uint iWidth, const _uint iHeight)
 {
 	if (nullptr != m_pRenderMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pRenderMgr = CRenderMgr::Create(), E_FAIL);
+	NULL_CHECK_RETURN(m_pRenderMgr = CRenderMgr::Create(tDevice), E_FAIL);
 
 	return S_OK;
 }
 
-void CGameInstance::Render(ID3D11DeviceContext* pDeviceContext)
+void CGameInstance::Render()
 {
 	if (nullptr == m_pRenderMgr)
 		return;
 
-	m_pRenderMgr->Render(pDeviceContext);
+	m_pRenderMgr->Render();
 }
 
 void CGameInstance::Add_RenderGroup(ERENDER_TYPE eType, CGameObject* pGameObject)
