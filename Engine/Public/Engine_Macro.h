@@ -25,6 +25,9 @@
 // 빌드 옵션 매크로
 #ifdef	ENGINE_EXPORTS
 #define ENGINE_DLL		_declspec(dllexport)
+#else
+#define ENGINE_DLL		_declspec(dllimport)
+#endif
 
 // 디버그용 구현 코드 바이너리화 매크로, 호출스택에서 보이지 않는 문제를 디버그 모드에서만 해결한다.
 #ifdef _DEBUG
@@ -33,19 +36,12 @@
 #else 
 #define ENGINE_DLL_DBG
 #endif
-#endif
-
 #else
-#define ENGINE_DLL		_declspec(dllimport)
-
-#ifdef _DEBUG
 #ifdef _DEBUG_DLL
 #define ENGINE_DLL_DBG	_declspec(dllimport)
 #else 
 #define ENGINE_DLL_DBG
 #endif
-#endif
-
 #endif
 
 

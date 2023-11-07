@@ -115,12 +115,10 @@ void CGraphicDev::Free()
     Safe_Release(m_pDepthStencilState);
     Safe_Release(m_pDethStencilBuffer);
     Safe_Release(m_pRenderTargetView);
-    Safe_Release(m_pSwapChain);
-    Safe_Release(m_pDeviceContext);
+    Perfect_Release(m_pSwapChain);
+    Perfect_Release(m_pDeviceContext);
 
-
-
-    Safe_Release(m_pDevice);
+    Perfect_Release(m_pDevice);
 #ifdef _DEBUG
     //m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 
@@ -168,6 +166,12 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
     pAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&pFactory);
 
     pFactory->EnumAdapters(adapterIndex, &pAdapter);
+
+    /*IDXGIDebug* pGxDebug = nullptr;
+    pDevice->QueryInterface(__uuidof(IDXGIDebug), (void**)&pGxDebug);
+
+    pGxDebug->ReportLiveObjects()*/
+        
 
     /* 스왑체인을 생성한다. = 텍스쳐를 생성하는 행위 + 스왑하는 형태  */
     DXGI_SWAP_CHAIN_DESC		SwapChain;
