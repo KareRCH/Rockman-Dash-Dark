@@ -142,6 +142,9 @@
     <Filter Include="01. System\01. Manager\14. ImGuiMgr">
       <UniqueIdentifier>{c873a54f-a8d7-4a42-ae22-e612778fd043}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. System\01. Manager\15. ObjectMgr">
+      <UniqueIdentifier>{44e32fab-7877-41ac-bf4a-1e9efb522ea0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -327,6 +330,7 @@
     <ClInclude Include="Public\System\JobMgr.h">
       <Filter>01. System\01. Manager\12. JobQueue</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\ObjectMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -479,6 +483,7 @@
     <ClCompile Include="Private\System\GraphicDev.cpp">
       <Filter>01. System\01. Manager\01. GraphicDev</Filter>
     </ClCompile>
+    <ClCompile Include="Private\System\ObjectMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\PS_Test1.hlsl">

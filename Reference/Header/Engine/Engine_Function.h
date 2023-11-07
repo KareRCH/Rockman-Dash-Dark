@@ -88,6 +88,16 @@ namespace Engine
 		return dwRefCnt;
 	}
 
+	/// <summary>
+	/// string to wstring 업그레이드 함수
+	/// </summary>
+	/// <param name="str">string</param>
+	/// <returns></returns>
+	wstring Make_Wstring(const string& str)
+	{
+		return wstring(str.begin(), str.end());
+	}
+
 	inline POINT Get_MousePos_Client(const HWND& hWnd)
 	{
 		POINT mouse;

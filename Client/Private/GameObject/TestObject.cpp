@@ -78,6 +78,24 @@ CTestObject* CTestObject::Create(const DX11DEVICE_T tDevice)
     return pInstance;
 }
 
+CGameObject* CTestObject::Clone(void* Arg)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize()))
+    {
+        Engine::Safe_Release(pInstance);
+
+        MSG_BOX("TestObject Create Failed");
+
+        return nullptr;
+    }
+
+    /* Arg에서 넘겨받은 데이터 적용하기 */
+
+    return Cast<CGameObject*>(pInstance);
+}
+
 void CTestObject::Free()
 {
     SUPER::Free();

@@ -106,19 +106,6 @@ CGraphicDev* CGraphicDev::Create(const FDEVICE_INIT& tInit)
 
 void CGraphicDev::Free()
 {
-    if (m_pSwapChain)
-    {
-        m_pSwapChain->SetFullscreenState(false, NULL);
-    }
-    Safe_Release(m_pRasterState);
-    Safe_Release(m_pDepthStencilView);
-    Safe_Release(m_pDepthStencilState);
-    Safe_Release(m_pDethStencilBuffer);
-    Safe_Release(m_pRenderTargetView);
-    Perfect_Release(m_pSwapChain);
-    Perfect_Release(m_pDeviceContext);
-
-    Perfect_Release(m_pDevice);
 #ifdef _DEBUG
     //m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 
@@ -145,6 +132,20 @@ void CGraphicDev::Free()
 
     Safe_Release(m_pDebug);
 #endif // _DEBUG
+
+    if (m_pSwapChain)
+    {
+        m_pSwapChain->SetFullscreenState(false, NULL);
+    }
+    Safe_Release(m_pRasterState);
+    Safe_Release(m_pDepthStencilView);
+    Safe_Release(m_pDepthStencilState);
+    Safe_Release(m_pDethStencilBuffer);
+    Safe_Release(m_pRenderTargetView);
+    Perfect_Release(m_pSwapChain);
+    Perfect_Release(m_pDeviceContext);
+    Perfect_Release(m_pDevice);
+
 }
 
 HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)

@@ -45,6 +45,8 @@
 #include <rapidjson/stringbuffer.h>
 
 
+// 루아 라이브러리
+#include <lua.hpp>
 
 
 //----------------STD---------------------

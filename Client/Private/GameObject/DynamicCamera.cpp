@@ -73,6 +73,24 @@ CDynamicCamera* CDynamicCamera::Create(const DX11DEVICE_T tDevice)
     return pInstance;
 }
 
+CGameObject* CDynamicCamera::Clone(void* Arg)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize()))
+    {
+        Engine::Safe_Release(pInstance);
+
+        MSG_BOX("DynamicCamera Create Failed");
+
+        return nullptr;
+    }
+
+    /* Arg Ã³¸® */
+
+    return Cast<CGameObject*>(pInstance);
+}
+
 void CDynamicCamera::Free()
 {
     SUPER::Free();

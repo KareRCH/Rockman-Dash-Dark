@@ -25,6 +25,7 @@ public:
 
 public:
 	static CDynamicCamera* Create(const DX11DEVICE_T tDevice);
+	CGameObject* Clone(void* Arg);
 
 protected:
 	virtual void	Free();

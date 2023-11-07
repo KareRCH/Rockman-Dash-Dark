@@ -34,6 +34,9 @@ public:
 	virtual void	LateTick();
 	virtual void	Render();
 
+public:
+	virtual CGameObject* Clone(void* Arg) PURE;
+
 protected:
 	virtual void	Free();
 
@@ -45,7 +48,6 @@ public:
 
 	_bool		IsDead() { return m_iStateFlag & Cast_EnumDef(EGOBJ_STATE::DEAD); }
 	void		Set_Dead() { m_iStateFlag |= Cast_EnumDef(EGOBJ_STATE::DEAD); }
-	
 	
 	_float		Get_Priority(_uint iIndex) { return m_fPriority[iIndex]; }
 
@@ -96,22 +98,22 @@ private:	// 컴포넌트 속성
 
 public:		// 트랜스폼 컴포넌트에 대한 함수 정의
 	const _float3	Get_Position() const { return m_pTransformComp->Get_Position(); }
-	void		Set_Position(const _float3& value) { m_pTransformComp->Set_Position(value); }
+	void			Set_Position(const _float3& value) { m_pTransformComp->Set_Position(value); }
 
 	const _float3	Get_Rotation() const { return m_pTransformComp->Get_Rotation(); }
-	void		Set_Rotation(const _float3& value) { m_pTransformComp->Set_Rotation(value); }
+	void			Set_Rotation(const _float3& value) { m_pTransformComp->Set_Rotation(value); }
 
 	const _float3	Get_Scale() const { return m_pTransformComp->Get_Scale(); }
-	void		Set_Scale(const _float3& value) { m_pTransformComp->Set_Scale(value); }
+	void			Set_Scale(const _float3& value) { m_pTransformComp->Set_Scale(value); }
 
-	void		Calculate_Transform() { m_pTransformComp->Calculate_Transform(); }
-	void		Calculate_TransformFromParent(const _matrix& matTransform) 
+	void			Calculate_Transform() { m_pTransformComp->Calculate_Transform(); }
+	void			Calculate_TransformFromParent(const _matrix& matTransform) 
 					{ m_pTransformComp->Calculate_TransformFromParent(matTransform); }
-	const _matrix& Get_Transform() const { return m_pTransformComp->Get_Transform(); }
+	const _matrix&	Get_Transform() const { return m_pTransformComp->Get_Transform(); }
 
-	const _float3 Get_RightFromTransform() const { return m_pTransformComp->Get_RightFromTransform(); }
-	const _float3 Get_UpFromTransform() const { return m_pTransformComp->Get_UpFromTransform(); }
-	const _float3 Get_LookFromTransform() const { return m_pTransformComp->Get_LookFromTransform(); }
+	const _float3	Get_RightFromTransform() const { return m_pTransformComp->Get_RightFromTransform(); }
+	const _float3	Get_UpFromTransform() const { return m_pTransformComp->Get_UpFromTransform(); }
+	const _float3	Get_LookFromTransform() const { return m_pTransformComp->Get_LookFromTransform(); }
 
 private:	// 게임 오브젝트 기본 정의 컴포넌트
 	CTransformComponent*					m_pTransformComp = nullptr;

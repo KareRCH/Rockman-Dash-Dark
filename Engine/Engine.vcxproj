@@ -125,6 +125,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>rttr_core_d.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent />
     <FxCompile>
@@ -142,6 +143,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>rttr_core_d.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent />
     <FxCompile>
@@ -163,6 +165,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>rttr_core.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent />
     <FxCompile>
@@ -180,6 +183,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>rttr_core_d.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent />
     <FxCompile>
@@ -197,6 +201,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>rttr_core_d.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent />
     <FxCompile>
@@ -218,6 +223,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>rttr_core.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent />
     <FxCompile>
@@ -272,6 +278,7 @@
     <ClInclude Include="Public\System\ModelMgr.h" />
     <ClInclude Include="Public\System\MultiStateTexture.h" />
     <ClInclude Include="Public\System\MyFont.h" />
+    <ClInclude Include="Public\System\ObjectMgr.h" />
     <ClInclude Include="Public\System\PhysicsMgr.h" />
     <ClInclude Include="Public\Physics\PhysicsPrecision.h" />
     <ClInclude Include="Public\Physics\PhysicsWorld3D.h" />
@@ -322,6 +329,7 @@
     <ClCompile Include="Private\System\ModelMgr.cpp" />
     <ClCompile Include="Private\System\MultiStateTexture.cpp" />
     <ClCompile Include="Private\System\MyFont.cpp" />
+    <ClCompile Include="Private\System\ObjectMgr.cpp" />
     <ClCompile Include="Private\System\PhysicsMgr.cpp" />
     <ClCompile Include="Private\Physics\PhysicsWorld3D.cpp" />
     <ClCompile Include="Private\Physics\RigidBody.cpp" />
