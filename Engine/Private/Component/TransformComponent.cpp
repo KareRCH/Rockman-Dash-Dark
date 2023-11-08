@@ -16,7 +16,7 @@ HRESULT CTransformComponent::Initialize()
 	return S_OK;
 }
 
-void CTransformComponent::PriorityTick()
+void CTransformComponent::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
@@ -27,7 +27,7 @@ _int CTransformComponent::Tick(const _float& fTimeDelta)
 	return 0;
 }
 
-void CTransformComponent::LateTick()
+void CTransformComponent::Late_Tick(const _float& fTimeDelta)
 {
 
 }

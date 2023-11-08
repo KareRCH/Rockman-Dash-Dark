@@ -149,7 +149,7 @@ HRESULT CColliderComponent::Initialize(ECOLLISION eType)
     return S_OK;
 }
 
-void CColliderComponent::PriorityTick()
+void CColliderComponent::Priority_Tick(const _float& fTimeDelta)
 {
 }
 

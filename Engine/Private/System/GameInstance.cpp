@@ -8,13 +8,14 @@
 #include "System/FrameMgr.h"
 #include "System/TimerMgr.h"
 #include "System/FontMgr.h"
-#include "System/Management.h"
+#include "System/ObjectMgr.h"
 #include "System/BlackBoardMgr.h"
 #include "System/TextureMgr.h"
 #include "System/ProtoMgr.h"
 #include "System/RenderMgr.h"
 #include "BaseClass/GameObject.h"
 #include "System/ModelMgr.h"
+#include "System/ShaderMgr.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -40,6 +41,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pProtoMgr);
 	Safe_Release(m_pRenderMgr);
 
+	Safe_Release(m_pShaderMgr);
 	Safe_Release(m_pModelMgr);
 	Safe_Release(m_pTextureMgr);
 	Safe_Release(m_pFontMgr);
@@ -209,12 +211,12 @@ void CGameInstance::Tick_KeyMgr()
 	m_pKeyMgr->Tick();
 }
 
-void CGameInstance::LateTick_KeyMgr()
+void CGameInstance::Late_Tick_KeyMgr()
 {
 	if (nullptr == m_pKeyMgr)
 		return;
 
-	m_pKeyMgr->LateTick();
+	m_pKeyMgr->Late_Tick();
 }
 
 #pragma endregion
@@ -443,14 +445,22 @@ void CGameInstance::Tick_Timer(const _tchar* pTimerTag)
 
 #pragma region 매니지먼트
 
-HRESULT CGameInstance::Initialize_Management(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eManageSceneType)
+HRESULT CGameInstance::Initialize_ObjectMgr(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eManageSceneType)
 {
 	if (nullptr != m_pManagement)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pManagement = CManagement::Create(tDevice, eManageSceneType), E_FAIL);
+	NULL_CHECK_RETURN(m_pManagement = CObjectMgr::Create(tDevice, eManageSceneType), E_FAIL);
 
 	return S_OK;
+}
+
+void CGameInstance::Priority_Tick_Scene(const _float& fTimeDelta)
+{
+	if (nullptr == m_pManagement)
+		return;
+
+	m_pManagement->Priority_Tick(fTimeDelta);
 }
 
 _int CGameInstance::Tick_Scene(const _float& fTimeDelta)
@@ -463,12 +473,12 @@ _int CGameInstance::Tick_Scene(const _float& fTimeDelta)
 	return 0;
 }
 
-void CGameInstance::LateTick_Scene()
+void CGameInstance::Late_Tick_Scene(const _float& fTimeDelta)
 {
 	if (nullptr == m_pManagement)
 		return;
 
-	m_pManagement->LateTick();
+	m_pManagement->Late_Tick(fTimeDelta);
 }
 
 void CGameInstance::Render_Scene()
@@ -516,14 +526,30 @@ HRESULT CGameInstance::Initialize_BlackBoardMgr()
 
 #pragma region 텍스처 매니저
 
-HRESULT CGameInstance::Initialize_TextureMgr(const DX11DEVICE_T tDevice)
+HRESULT CGameInstance::Initialize_TextureMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)
 {
 	if (nullptr != m_pTextureMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pTextureMgr = CTextureMgr::Create(tDevice), E_FAIL);
+	NULL_CHECK_RETURN(m_pTextureMgr = CTextureMgr::Create(tDevice, strMainPath), E_FAIL);
 
 	return S_OK;
+}
+
+HRESULT CGameInstance::Load_Texture(const wstring& strFileName, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent)
+{
+	if (nullptr == m_pTextureMgr)
+		return E_FAIL;
+
+	return m_pTextureMgr->Load_Texture(strFileName, strGroupKey, strTextureKey, bPermanent);
+}
+
+ID3D11ShaderResourceView* CGameInstance::Get_Texture(const wstring& strGroupKey, const wstring& strTextureKey)
+{
+	if (nullptr == m_pTextureMgr)
+		return nullptr;
+
+	return m_pTextureMgr->Get_Texture(strGroupKey, strTextureKey);
 }
 
 #pragma endregion
@@ -664,19 +690,45 @@ HRESULT CGameInstance::Initialize_ModelMgr(const string& strMainPath)
 	return S_OK;
 }
 
-void CGameInstance::Load_Model(const string& strFileName, const string& strGroupName)
+void CGameInstance::Load_Model(const string& strFileName, const wstring& strGroupKey)
 {
 	if (nullptr == m_pModelMgr)
 		return;
 
-	m_pModelMgr->Load_Model(strFileName, strGroupName);
+	m_pModelMgr->Load_Model(strFileName, strGroupKey);
 }
 
-const MESH* const CGameInstance::Get_Model(const string& strGroupName, const string& strModelName)
+const MESH* const CGameInstance::Get_Model(const wstring& strGroupKey, const wstring& strModelKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
-	return m_pModelMgr->Get_Model(strGroupName, strModelName);
+	return m_pModelMgr->Get_Model(strGroupKey, strModelKey);
+}
+
+HRESULT CGameInstance::Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)
+{
+	if (nullptr != m_pShaderMgr)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(m_pShaderMgr = CShaderMgr::Create(tDevice, strMainPath), E_FAIL);
+
+	return S_OK;
+}
+
+HRESULT CGameInstance::Load_Shader(const wstring& strFileName, const wstring& strKey)
+{
+	if (nullptr == m_pShaderMgr)
+		return E_POINTER;
+
+	return m_pShaderMgr->Load_Shader(strFileName, strKey);
+}
+
+ID3DBlob* CGameInstance::Get_Shader(const wstring& strKey)
+{
+	if (nullptr == m_pShaderMgr)
+		return nullptr;
+
+	return m_pShaderMgr->Get_Shader(strKey);
 }
 

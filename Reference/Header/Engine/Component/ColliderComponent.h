@@ -25,9 +25,9 @@ protected:
 public:
 	PRIVATE virtual HRESULT Initialize() { return S_OK; }
 	PUBLIC	virtual HRESULT Initialize(ECOLLISION eType);
-	virtual void	PriorityTick();
+	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual _int	Tick(const _float& fTimeDelta);
-	virtual void	LateTick() {}
+	virtual void	Late_Tick(const _float& fTimeDelta) {}
 	virtual void	Render() {}
 
 public:

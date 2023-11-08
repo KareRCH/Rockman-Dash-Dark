@@ -26,9 +26,9 @@ HRESULT CTestObject::Initialize()
     return S_OK;
 }
 
-void CTestObject::PriorityTick()
+void CTestObject::Priority_Tick(const _float& fTimeDelta)
 {
-    SUPER::PriorityTick();
+    SUPER::Priority_Tick(fTimeDelta);
 }
 
 _int CTestObject::Tick(const _float& fTimeDelta)
@@ -44,9 +44,9 @@ _int CTestObject::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-void CTestObject::LateTick()
+void CTestObject::Late_Tick(const _float& fTimeDelta)
 {
-    SUPER::LateTick();
+    SUPER::Late_Tick(fTimeDelta);
 }
 
 void CTestObject::Render()
@@ -104,7 +104,7 @@ void CTestObject::Free()
 HRESULT CTestObject::Initialize_Component()
 {
     FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_pModelBufferComp = CModelBufferComp::Create({ m_pDevice, m_pDeviceContext })), E_FAIL);
-    m_pModelBufferComp->Initialize("RockVolnut", "Body");
+    m_pModelBufferComp->Initialize(L"RockVolnutt", L"Body");
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
     FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create({ m_pDevice, m_pDeviceContext }, g_hWnd)), E_FAIL);

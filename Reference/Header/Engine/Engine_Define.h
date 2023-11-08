@@ -24,6 +24,7 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
+#include <wrl/client.h>
 
 
 // 사운드 라이브러리
@@ -125,6 +126,7 @@
 
 using namespace std;
 using namespace DirectX;
+using namespace Microsoft::WRL;
 using namespace Engine;
 
 extern HWND			g_hWnd;

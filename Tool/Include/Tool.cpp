@@ -102,7 +102,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
                 // 틱 함수
                 pMainApp->Tick(fTimeDelta);
-                pMainApp->LateTick();
+                pMainApp->Late_Tick(const _float& fTimeDelta);
                 pMainApp->Render();
             }
         }

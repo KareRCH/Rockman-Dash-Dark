@@ -14,7 +14,7 @@ HRESULT CScene::Initialize()
 	return S_OK;
 }
 
-void CScene::PriorityTick()
+void CScene::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
@@ -38,7 +38,7 @@ _int CScene::Tick(const _float& fTimeDelta)
 	_int	iResult = 0;
 	for (auto& iter : m_vecPriorityLayer)
 	{
-		iResult = iter->Update_Layer(fTimeDelta);
+		iResult = iter->Tick(fTimeDelta);
 
 		if (iResult & 0x80000000)
 			return iResult;
@@ -47,10 +47,10 @@ _int CScene::Tick(const _float& fTimeDelta)
 	return iResult;
 }
 
-void CScene::LateTick()
+void CScene::Late_Tick(const _float& fTimeDelta)
 {
 	for (auto& iter : m_vecPriorityLayer)
-		iter->LateUpdate_Layer();
+		iter->Late_Tick(fTimeDelta);
 
 	// 우선도 벡터 초기화
 	m_vecPriorityLayer.clear();
@@ -80,7 +80,7 @@ HRESULT CScene::InitializeLate_Scene()
 	return S_OK;
 }
 
-CPrimitiveComponent* CScene::Get_Component(COMPONENTID eID, const _tchar* pLayerTag, const _tchar* pObjTag, const _tchar* pComponentTag)
+CPrimitiveComponent* CScene::Get_Component(COMPONENTID eID, const wstring& pLayerTag, const wstring& pObjTag, const wstring& pComponentTag)
 {
 	// 씬 -> 레이어 -> 오브젝트 -> 컴포넌트
 	//auto	iter = find_if(m_mapLayer.begin(), m_mapLayer.end(), CTag_Finder(pLayerTag));
@@ -92,7 +92,7 @@ CPrimitiveComponent* CScene::Get_Component(COMPONENTID eID, const _tchar* pLayer
 	return iter->second->Get_Component(eID, pObjTag, pComponentTag);
 }
 
-CGameObject* CScene::Get_GameObject(const _tchar* pLayerTag, const _tchar* pObjTag)
+CGameObject* CScene::Get_GameObject(const wstring& pLayerTag, const wstring& pObjTag)
 {
 	CLayer* pLayer = m_mapLayer[pLayerTag];
 	NULL_CHECK_RETURN(pLayer, nullptr);
@@ -102,7 +102,7 @@ CGameObject* CScene::Get_GameObject(const _tchar* pLayerTag, const _tchar* pObjT
 	return pObj;
 }
 
-void CScene::Add_GameObject(const _tchar* pLayerTag, CGameObject* pObj)
+void CScene::Add_GameObject(const wstring& pLayerTag, CGameObject* pObj)
 {
 	auto iter = m_mapLayer.find(pLayerTag);
 	if (iter == m_mapLayer.end())
@@ -115,7 +115,7 @@ void CScene::Add_GameObject(const _tchar* pLayerTag, CGameObject* pObj)
 	(*iter).second->Add_GameObject(pObj);
 }
 
-void CScene::Add_GameObject(const _tchar* pLayerTag, const _tchar* pObjTag, CGameObject* pObj)
+void CScene::Add_GameObject(const wstring& pLayerTag, const wstring& pObjTag, CGameObject* pObj)
 {
 	auto iter = m_mapLayer.find(pLayerTag);
 	if (iter == m_mapLayer.end())
@@ -128,7 +128,7 @@ void CScene::Add_GameObject(const _tchar* pLayerTag, const _tchar* pObjTag, CGam
 	(*iter).second->Add_GameObject(pObjTag, pObj);
 }
 
-HRESULT CScene::Add_Layer(const _tchar* pLayerTag, CLayer* pLayer)
+HRESULT CScene::Add_Layer(const wstring& pLayerTag, CLayer* pLayer)
 {
 	NULL_CHECK_RETURN(pLayer, E_FAIL);
 	m_mapLayer.emplace(pLayerTag, pLayer);

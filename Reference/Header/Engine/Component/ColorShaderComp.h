@@ -15,9 +15,9 @@ protected:
 public:
 	virtual HRESULT Initialize();
 	virtual HRESULT	Initialize(HWND hWnd);
-	virtual void	PriorityTick();
+	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual _int	Tick(const _float& fTimeDelta);
-	virtual void	LateTick() {}
+	virtual void	Late_Tick(const _float& fTimeDelta) {}
 	virtual void	Render() {}
 	virtual void	Render(const _matrix& matWorld, const _matrix& matView, const _matrix& matProj);
 

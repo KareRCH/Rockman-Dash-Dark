@@ -20,9 +20,9 @@ HRESULT CCamera::Initialize()
     return S_OK;
 }
 
-void CCamera::PriorityTick()
+void CCamera::Priority_Tick(const _float& fTimeDelta)
 {
-    SUPER::PriorityTick();
+    SUPER::Priority_Tick(fTimeDelta);
 }
 
 _int CCamera::Tick(const _float& fTimeDelta)
@@ -32,9 +32,9 @@ _int CCamera::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-void CCamera::LateTick()
+void CCamera::Late_Tick(const _float& fTimeDelta)
 {
-    SUPER::LateTick();
+    SUPER::Late_Tick(fTimeDelta);
 
 }
 

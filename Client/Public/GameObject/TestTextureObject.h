@@ -22,7 +22,7 @@ protected:
 public:
 	virtual HRESULT Initialize();
 	virtual _int	Tick(const _float& fTimeDelta);
-	virtual void	LateTick();
+	virtual void	Late_Tick(const _float& fTimeDelta);
 	virtual void	Render(ID3D11DeviceContext* const pDeviceContext);
 
 public:

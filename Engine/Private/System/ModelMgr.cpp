@@ -36,7 +36,7 @@ void CModelMgr::Free()
 	m_mapModelGroup.clear();
 }
 
-void CModelMgr::Load_Model(const string& strFileName, const string& strGroupKey)
+void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey)
 {
 	Assimp::Importer importer;
 
@@ -128,18 +128,20 @@ void CModelMgr::Load_Model(const string& strFileName, const string& strGroupKey)
 		if (iter == m_mapModelGroup.end())
 		{
 			FModelGroup* pGroup = FModelGroup::Create(false, true);
-			pGroup->mapMesh.emplace(pMesh->mName.C_Str(), m_vecMesh[i]);
+			wstring Convert(Make_Wstring(pMesh->mName.C_Str()));
+			pGroup->mapMesh.emplace(Convert, m_vecMesh[i]);
 			m_mapModelGroup.emplace(strGroupKey, pGroup);
 		}
 		else
 		{
-			(*iter).second->mapMesh.emplace(pMesh->mName.C_Str(), m_vecMesh[i]);
+			wstring Convert(Make_Wstring(pMesh->mName.C_Str()));
+			(*iter).second->mapMesh.emplace(Convert, m_vecMesh[i]);
 		}
 	}
 	int t = 0;
 }
 
-const MESH* const CModelMgr::Get_Model(const string& strGroupKey, const string& strModelKey)
+const MESH* const CModelMgr::Get_Model(const wstring& strGroupKey, const wstring& strModelKey)
 {
 	auto iter = m_mapModelGroup.find(strGroupKey);
 	if (iter == m_mapModelGroup.end())

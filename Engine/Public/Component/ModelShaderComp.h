@@ -18,9 +18,9 @@ protected:
 public:
 	virtual HRESULT Initialize();
 	virtual HRESULT	Initialize(HWND hWnd);
-	virtual void	PriorityTick();
+	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual _int	Tick(const _float& fTimeDelta);
-	virtual void	LateTick() {}
+	virtual void	Late_Tick(const _float& fTimeDelta) {}
 	virtual void	Render() {}
 	virtual void	Render(const MATRIX_BUFFER_T& tMatrixBuf, const LIGHT_BUFFER_T& tLightBuf);
 

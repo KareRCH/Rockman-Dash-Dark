@@ -25,7 +25,7 @@ HRESULT CColorShaderComp::Initialize(HWND hWnd)
     return S_OK;
 }
 
-void CColorShaderComp::PriorityTick()
+void CColorShaderComp::Priority_Tick(const _float& fTimeDelta)
 {
 }
 

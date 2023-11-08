@@ -24,7 +24,7 @@ HRESULT CModelShaderComp::Initialize(HWND hWnd)
     return S_OK;
 }
 
-void CModelShaderComp::PriorityTick()
+void CModelShaderComp::Priority_Tick(const _float& fTimeDelta)
 {
 }
 

@@ -70,18 +70,6 @@
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Model">
       <UniqueIdentifier>{283a955c-0e99-4937-a06b-3036fbda9927}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Utility\02. Component\01. SceneComponent\04. ShaderComponent">
-      <UniqueIdentifier>{530a3b69-f0fc-49cf-8049-d7cfe931e9e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\02. Component\01. SceneComponent\04. ShaderComponent\01. ColorShaderComp">
-      <UniqueIdentifier>{98ac80ab-e878-4a3d-a709-0f8ddf19540e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\02. Component\01. SceneComponent\04. ShaderComponent\02. ModelShaderComp">
-      <UniqueIdentifier>{45f8fbc5-e422-45fd-8e94-29ceb43c9020}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\02. Component\01. SceneComponent\05. TextureComponent">
-      <UniqueIdentifier>{e944931a-4f57-4403-9301-a8b715b47b9f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. System\01. Manager">
       <UniqueIdentifier>{fa594517-3c84-4988-9229-35314eab8809}</UniqueIdentifier>
     </Filter>
@@ -136,13 +124,43 @@
     <Filter Include="01. System\01. Manager\13. BlackBoard">
       <UniqueIdentifier>{5538bfdf-d833-40e1-88ba-f9c4510f0d7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. System\01. Manager\13. LevelManage">
-      <UniqueIdentifier>{7cbcff4a-8bed-4d2f-b78e-f1a7368cb647}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. System\01. Manager\14. ImGuiMgr">
       <UniqueIdentifier>{c873a54f-a8d7-4a42-ae22-e612778fd043}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. System\01. Manager\15. ObjectMgr">
+    <Filter Include="02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent">
+      <UniqueIdentifier>{530a3b69-f0fc-49cf-8049-d7cfe931e9e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\01. ColorShaderComp">
+      <UniqueIdentifier>{98ac80ab-e878-4a3d-a709-0f8ddf19540e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\02. ModelShaderComp">
+      <UniqueIdentifier>{45f8fbc5-e422-45fd-8e94-29ceb43c9020}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. GameObjectComp\02. AinmationComponent">
+      <UniqueIdentifier>{3f9b0e47-2da7-4cfb-88ed-ad2ad60e3b90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\04. TextureComponent">
+      <UniqueIdentifier>{e944931a-4f57-4403-9301-a8b715b47b9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Shader\99. Test">
+      <UniqueIdentifier>{6616dfa3-5f18-4ba8-8c68-5c84ac7edcc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Shader\99. Test\ModelTest">
+      <UniqueIdentifier>{4032150e-332a-4c97-a68c-f38046acb7b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Shader\99. Test\Test1">
+      <UniqueIdentifier>{98cd46d6-9b59-4cb4-a7ef-a234c27a796c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Shader\99. Test\Texture">
+      <UniqueIdentifier>{357fe1e0-dab1-4ad0-8d47-88afeee70c0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\13. ObjectMgr">
+      <UniqueIdentifier>{7cbcff4a-8bed-4d2f-b78e-f1a7368cb647}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\15. ShaderMgr">
+      <UniqueIdentifier>{b07dd1c6-4e7a-4b28-8233-159e007fc41a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\16. AnimationMgr">
       <UniqueIdentifier>{44e32fab-7877-41ac-bf4a-1e9efb522ea0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -252,8 +270,8 @@
     <ClInclude Include="Public\System\ProtoMgr.h">
       <Filter>01. System\01. Manager\03. Proto</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System\Management.h">
-      <Filter>01. System\01. Manager\13. LevelManage</Filter>
+    <ClInclude Include="Public\System\ObjectMgr.h">
+      <Filter>01. System\01. Manager\13. ObjectMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\MultiStateTexture.h">
       <Filter>01. System\01. Manager\06. Texture</Filter>
@@ -262,10 +280,10 @@
       <Filter>01. System\01. Manager\06. Texture</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\ShaderComponent.h">
-      <Filter>02. Utility\02. Component\01. SceneComponent\04. ShaderComponent</Filter>
+      <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\ColorShaderComp.h">
-      <Filter>02. Utility\02. Component\01. SceneComponent\04. ShaderComponent\01. ColorShaderComp</Filter>
+      <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\01. ColorShaderComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\VIBufferComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent</Filter>
@@ -286,10 +304,10 @@
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Model</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\ModelShaderComp.h">
-      <Filter>02. Utility\02. Component\01. SceneComponent\04. ShaderComponent\02. ModelShaderComp</Filter>
+      <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\02. ModelShaderComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\TextureComponent.h">
-      <Filter>02. Utility\02. Component\01. SceneComponent\05. TextureComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\04. TextureComponent</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\GameObjectComp.h">
       <Filter>02. Utility\02. Component\02. GameObjectComp</Filter>
@@ -330,7 +348,10 @@
     <ClInclude Include="Public\System\JobMgr.h">
       <Filter>01. System\01. Manager\12. JobQueue</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System\ObjectMgr.h" />
+    <ClInclude Include="Public\System\ShaderMgr.h">
+      <Filter>01. System\01. Manager\15. ShaderMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\AnimationMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -408,8 +429,8 @@
     <ClCompile Include="Private\System\ProtoMgr.cpp">
       <Filter>01. System\01. Manager\03. Proto</Filter>
     </ClCompile>
-    <ClCompile Include="Private\System\Management.cpp">
-      <Filter>01. System\01. Manager\13. LevelManage</Filter>
+    <ClCompile Include="Private\System\ObjectMgr.cpp">
+      <Filter>01. System\01. Manager\13. ObjectMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\MultiStateTexture.cpp">
       <Filter>01. System\01. Manager\06. Texture</Filter>
@@ -418,10 +439,10 @@
       <Filter>01. System\01. Manager\06. Texture</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\ShaderComponent.cpp">
-      <Filter>02. Utility\02. Component\01. SceneComponent\04. ShaderComponent</Filter>
+      <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\ColorShaderComp.cpp">
-      <Filter>02. Utility\02. Component\01. SceneComponent\04. ShaderComponent\01. ColorShaderComp</Filter>
+      <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\01. ColorShaderComp</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\VIBufferComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent</Filter>
@@ -439,10 +460,10 @@
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Model</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\ModelShaderComp.cpp">
-      <Filter>02. Utility\02. Component\01. SceneComponent\04. ShaderComponent\02. ModelShaderComp</Filter>
+      <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\02. ModelShaderComp</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\TextureComponent.cpp">
-      <Filter>02. Utility\02. Component\01. SceneComponent\05. TextureComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\04. TextureComponent</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\GameObjectComp.cpp">
       <Filter>02. Utility\02. Component\02. GameObjectComp</Filter>
@@ -483,26 +504,29 @@
     <ClCompile Include="Private\System\GraphicDev.cpp">
       <Filter>01. System\01. Manager\01. GraphicDev</Filter>
     </ClCompile>
-    <ClCompile Include="Private\System\ObjectMgr.cpp" />
+    <ClCompile Include="Private\System\ShaderMgr.cpp">
+      <Filter>01. System\01. Manager\15. ShaderMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\AnimationMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resource\Shader\PS_Test1.hlsl">
-      <Filter>03. Shader</Filter>
+    <FxCompile Include="Resource\Shader\PS_ModelTest.hlsl">
+      <Filter>03. Shader\99. Test\ModelTest</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\VS_ModelTest.hlsl">
+      <Filter>03. Shader\99. Test\ModelTest</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\VS_Test1.hlsl">
-      <Filter>03. Shader</Filter>
+      <Filter>03. Shader\99. Test\Test1</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\PS_Test1.hlsl">
+      <Filter>03. Shader\99. Test\Test1</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\VS_Texture.hlsl">
-      <Filter>03. Shader</Filter>
+      <Filter>03. Shader\99. Test\Texture</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Shader\PS_Texture.hlsl">
-      <Filter>03. Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\ModelTest.ps">
-      <Filter>03. Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Resource\Shader\ModelTest.vs">
-      <Filter>03. Shader</Filter>
+      <Filter>03. Shader\99. Test\Texture</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

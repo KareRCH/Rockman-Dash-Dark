@@ -33,7 +33,7 @@ void CKeyMgr::Tick()
 	//Engine::Update_InputDev();		// 다이렉트 인풋 업데이트를 키 매니저에서 해주어 일관성을 유지한다.
 }
 
-void CKeyMgr::LateTick()
+void CKeyMgr::Late_Tick()
 {
 	//for (int i = 0; i < m_vInputKeys.size(); ++i)
 	//{

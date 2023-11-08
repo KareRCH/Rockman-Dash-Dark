@@ -18,13 +18,12 @@ HRESULT CModelBufferComp::Initialize()
     return S_OK;
 }
 
-HRESULT CModelBufferComp::Initialize(const string& strGroupKey, const string& strModelKey)
+HRESULT CModelBufferComp::Initialize(const wstring& strGroupKey, const wstring& strModelKey)
 {
 	const MESH* pMesh = GameInstance()->Get_Model(strGroupKey, strModelKey);
 
 	m_iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
 	m_iIndexCount = Cast<_uint>(pMesh->vecIndices.size());
-
 
 	VERTEX_MODEL* vertices = new VERTEX_MODEL[m_iVtxCount];
 	if (!vertices)
@@ -86,7 +85,7 @@ HRESULT CModelBufferComp::Initialize(const string& strGroupKey, const string& st
 	return S_OK;
 }
 
-void CModelBufferComp::PriorityTick()
+void CModelBufferComp::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
@@ -95,7 +94,7 @@ _int CModelBufferComp::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-void CModelBufferComp::LateTick()
+void CModelBufferComp::Late_Tick(const _float& fTimeDelta)
 {
 }
 

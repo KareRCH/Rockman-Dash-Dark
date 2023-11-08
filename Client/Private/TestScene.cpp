@@ -12,7 +12,11 @@ HRESULT CTestScene::Initialize()
 {
     FAILED_CHECK_RETURN(SUPER::Initialize(), E_FAIL);
 
-    GameInstance()->Load_Model("Character/RockVolnut/Test.fbx", "RockVolnut");
+    GameInstance()->Load_Texture(L"Model/Character/RockVolnutt/Body.png", L"RockVolnutt", L"Body-BaseColor", true);
+    GameInstance()->Load_Texture(L"Model/Character/RockVolnutt/Head.png", L"RockVolnutt", L"Head-BaseColor", true);
+    GameInstance()->Load_Model("Character/RockVolnutt/Test.fbx", L"RockVolnutt");
+    GameInstance()->Load_Shader(L"PS_ModelTest", L"PS_ModelTest.cso");
+    GameInstance()->Load_Shader(L"VS_ModelTest", L"VS_ModelTest.cso");
 
     CLayer* pLayer = CLayer::Create(0.f);
     Add_Layer(L"GameLogic", pLayer);
@@ -20,14 +24,12 @@ HRESULT CTestScene::Initialize()
     pLayer->Add_GameObject(CTestObject::Create({ m_pDevice, m_pDeviceContext }));
     pLayer->Add_GameObject(CDynamicCamera::Create({ m_pDevice, m_pDeviceContext }));
 
-    
-
     return S_OK;
 }
 
-void CTestScene::PriorityTick()
+void CTestScene::Priority_Tick(const _float& fTimeDelta)
 {
-    SUPER::PriorityTick();
+    SUPER::Priority_Tick(fTimeDelta);
 }
 
 _int CTestScene::Tick(const _float& fTimeDelta)
@@ -37,9 +39,9 @@ _int CTestScene::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-void CTestScene::LateTick()
+void CTestScene::Late_Tick(const _float& fTimeDelta)
 {
-    SUPER::LateTick();
+    SUPER::Late_Tick(fTimeDelta);
 }
 
 void CTestScene::Render()

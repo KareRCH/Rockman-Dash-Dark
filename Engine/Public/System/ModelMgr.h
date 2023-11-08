@@ -43,7 +43,7 @@ public:
 public:
 	_bool bPermanent = false;		// 영구적으로 로드되는 데이터 인가
 	_bool bLoaded = false;			// 로드 되었는가
-	_unmap<string, MESH> mapMesh;	// 메시 저장 맵
+	_unmap<wstring, MESH> mapMesh;	// 메시 저장 맵
 };
 
 /// <summary>
@@ -70,8 +70,8 @@ private:
 	string	m_strMainDir = "";			// 참조할 메인 디렉터리
 
 public:
-	void				Load_Model(const string& strFileName, const string& strGroupKey);
-	const MESH* const	Get_Model(const string& strGroupKey, const string& strModelKey);
+	void				Load_Model(const string& strFileName, const wstring& strGroupKey);
+	const MESH* const	Get_Model(const wstring& strGroupKey, const wstring& strModelKey);
 
 private:
 	const aiScene*	m_pScene = nullptr;
@@ -80,7 +80,7 @@ private:
 	_uint			m_iBoneCount = 0U;
 
 private:
-	_unmap<string, FModelGroup*>	m_mapModelGroup;
+	_unmap<wstring, FModelGroup*>	m_mapModelGroup;
 };
 
 END

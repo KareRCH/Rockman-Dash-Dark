@@ -12,23 +12,23 @@ enum class EMANAGE_SCENE : _uint
 	MULTI
 };
 
-class CManagement final : public CBase
+class CObjectMgr final : public CBase
 {
-	DERIVED_CLASS(CBase, CManagement)
+	DERIVED_CLASS(CBase, CObjectMgr)
 
 private:
-	explicit CManagement(const DX11DEVICE_T tDevice);
-	virtual ~CManagement() = default;
+	explicit CObjectMgr(const DX11DEVICE_T tDevice);
+	virtual ~CObjectMgr() = default;
 
 public:
 	HRESULT				Initialize(const EMANAGE_SCENE eType);
-	void				PriorityTick();
+	void				Priority_Tick(const _float& fTimeDelta);
 	_int				Tick(const _float& fTimeDelta);
-	void				LateTick();
+	void				Late_Tick(const _float& fTimeDelta);
 	void				Render();
 
 public:
-	static CManagement* Create(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eType);
+	static CObjectMgr* Create(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eType);
 
 private:
 	virtual void		Free();

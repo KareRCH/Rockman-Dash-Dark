@@ -93,7 +93,7 @@ public:
 	HRESULT			Initialize();
 	void			Tick();
 	// LateUpdate에 배치할 것.
-	void			LateTick();
+	void			Late_Tick();
 
 public:
 	static CKeyMgr* Create();
