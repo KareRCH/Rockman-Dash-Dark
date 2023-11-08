@@ -68,9 +68,9 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Thin_Jinji", L"±Ã¼­", 18, 30, FW_THIN), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"MonsterUI", L"ÇÔÃÊ·Õ¹ÙÅÁ", 14, 25, FW_THIN), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(tDevice), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ModelMgr("./Resource/Model/"), E_FAIL);
-
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(tDevice, L"Resource/"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ModelMgr("Resource/Model/"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
 	
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_KeyMgr(), E_FAIL);
@@ -86,14 +86,14 @@ HRESULT CMainApp::Initialize()
 	
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ProtoMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_Management(tDevice, EMANAGE_SCENE::SINGLE), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(tDevice, EMANAGE_SCENE::SINGLE), E_FAIL);
 	m_pGameInstance->Set_Scene(CTestScene::Create(tDevice));
 	
 
 	return S_OK;
 }
 
-void CMainApp::PriorityTick()
+void CMainApp::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
@@ -110,10 +110,10 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 	return 0;
 }
 
-void CMainApp::LateTick()
+void CMainApp::Late_Tick(const _float& fTimeDelta)
 {
-	m_pGameInstance->LateTick_Scene();
-	m_pGameInstance->LateTick_KeyMgr();
+	m_pGameInstance->Late_Tick_Scene(fTimeDelta);
+	m_pGameInstance->Late_Tick_KeyMgr();
 }
 
 void CMainApp::Render()

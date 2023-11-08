@@ -18,9 +18,9 @@ HRESULT CDynamicCamera::Initialize()
     return S_OK;
 }
 
-void CDynamicCamera::PriorityTick()
+void CDynamicCamera::Priority_Tick(const _float& fTimeDelta)
 {
-    SUPER::PriorityTick();
+    SUPER::Priority_Tick(fTimeDelta);
 }
 
 _int CDynamicCamera::Tick(const _float& fTimeDelta)
@@ -47,9 +47,9 @@ _int CDynamicCamera::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-void CDynamicCamera::LateTick()
+void CDynamicCamera::Late_Tick(const _float& fTimeDelta)
 {
-    SUPER::LateTick();
+    SUPER::Late_Tick(fTimeDelta);
 }
 
 void CDynamicCamera::Render()

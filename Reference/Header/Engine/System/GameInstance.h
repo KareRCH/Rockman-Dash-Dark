@@ -61,7 +61,7 @@ public:		// 인풋 디바이스
 public:		// 키 매니저
 	HRESULT Initialize_KeyMgr();
 	void	Tick_KeyMgr();
-	void	LateTick_KeyMgr();
+	void	Late_Tick_KeyMgr();
 
 public:		// 피직스 매니저
 	HRESULT				Initialize_PhysicsMgr(_uint iPhysicsWorldCount = 1);
@@ -93,9 +93,10 @@ public:		// 타이머 매니저
 	void	Tick_Timer(const _tchar* pTimeTag);
 
 public:		// 매니지먼트
-	HRESULT Initialize_Management(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eManageSceneType);
+	HRESULT Initialize_ObjectMgr(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eManageSceneType);
+	void	Priority_Tick_Scene(const _float& fTimeDelta);
 	_int	Tick_Scene(const _float& fTimeDelta);
-	void	LateTick_Scene();
+	void	Late_Tick_Scene(const _float& fTimeDelta);
 	void	Render_Scene();
 	HRESULT	Set_Scene(CScene* pScene);
 
@@ -103,7 +104,10 @@ public:		// 블랙보드 매니저
 	HRESULT Initialize_BlackBoardMgr();
 
 public:		// 텍스처 매니저
-	HRESULT Initialize_TextureMgr(const DX11DEVICE_T tDevice);
+	HRESULT Initialize_TextureMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
+	HRESULT Load_Texture(const wstring& strFileName, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent);
+	ID3D11ShaderResourceView* Get_Texture(const wstring& strGroupKey, const wstring& strTextureKey);
+
 
 public:		// 프로토 매니저
 	HRESULT Initialize_ProtoMgr();
@@ -124,8 +128,13 @@ public:		// 렌더 매니저
 
 public:
 	HRESULT	Initialize_ModelMgr(const string& strMainPath);
-	void	Load_Model(const string& strFileName, const string& strGroupName);
-	const MESH* const Get_Model(const string& strGroupName, const string& strModelName);
+	void	Load_Model(const string& strFileName, const wstring& strGroupKey);
+	const MESH* const Get_Model(const wstring& strGroupKey, const wstring& strModelKey);
+
+public:		// 셰이더 매니저
+	HRESULT Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
+	HRESULT	Load_Shader(const wstring& strFileName, const wstring& strKey);
+	ID3DBlob* Get_Shader(const wstring& strKey);
 
 private:
 	class CGraphicDev*		m_pGraphicDev = nullptr;
@@ -136,12 +145,13 @@ private:
 	class CFontMgr*			m_pFontMgr = nullptr;
 	class CFrameMgr*		m_pFrameMgr = nullptr;
 	class CTimerMgr*		m_pTimerMgr = nullptr;
-	class CManagement*		m_pManagement = nullptr;
+	class CObjectMgr*		m_pManagement = nullptr;
 	class CBlackBoardMgr*	m_pBlackBoardMgr = nullptr;
 	class CTextureMgr*		m_pTextureMgr = nullptr;
 	class CProtoMgr*		m_pProtoMgr = nullptr;
 	class CRenderMgr*		m_pRenderMgr = nullptr;
 	class CModelMgr*		m_pModelMgr = nullptr;
+	class CShaderMgr*		m_pShaderMgr = nullptr;
 };
 
 inline CGameInstance* GameInstance()

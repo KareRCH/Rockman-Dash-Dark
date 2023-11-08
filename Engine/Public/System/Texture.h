@@ -94,6 +94,7 @@ class CTexture abstract : public CBase
 
 protected:
 	explicit CTexture(const DX11DEVICE_T tDevice);
+	explicit CTexture(const CTexture& rhs) = delete;
 	virtual ~CTexture() = default;
 
 public:
@@ -102,14 +103,15 @@ public:
 protected:
 	virtual void		Free();
 
-protected:
-	virtual	HRESULT		Reserve(const string& strStateKey, _bool bPermanent) PURE;
-	virtual HRESULT		Insert_Texture(const string& strFilePath, const string& strStateKey, const _bool bPermanent) PURE;
-	virtual void		Transfer_Texture() PURE;
+public:
+	virtual	HRESULT						Reserve(const wstring& strTextureKey, _bool bPermanent) PURE;
+	virtual HRESULT						Insert_Texture(const wstring& strFilePath, const wstring& strTextureKey, const _bool bPermanent) PURE;
+	virtual ID3D11ShaderResourceView*	Get_Texture(const wstring& strTextureKey) PURE;
+	virtual void						Transfer_Texture() PURE;
 
 protected:
-	ID3D11Device*			m_pDevice = nullptr;					// 장치
-	ID3D11DeviceContext*	m_pDeviceContext = nullptr;				// 장치 컨텍스트
+	ID3D11Device*				m_pDevice = nullptr;					// 장치
+	ID3D11DeviceContext*		m_pDeviceContext = nullptr;				// 장치 컨텍스트
 
 };
 

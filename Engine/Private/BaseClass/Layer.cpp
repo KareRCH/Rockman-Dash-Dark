@@ -12,7 +12,7 @@ CLayer* CLayer::Create(_float fPriority)
 {
 	CLayer* pLayer = new CLayer;
 
-	if (FAILED(pLayer->Ready_Layer(fPriority)))
+	if (FAILED(pLayer->Initialize(fPriority)))
 	{
 		Safe_Release(pLayer);
 
@@ -33,14 +33,18 @@ void CLayer::Free()
 	}
 }
 
-HRESULT CLayer::Ready_Layer(_float fPriority)
+HRESULT CLayer::Initialize(_float fPriority)
 {
 	m_fPriority = fPriority;
 
 	return S_OK;
 }
 
-_int CLayer::Update_Layer(const _float& fTimeDelta)
+void CLayer::Priority_Tick(const _float& fTimeDelta)
+{
+}
+
+_int CLayer::Tick(const _float& fTimeDelta)
 {
 	// Set Dead로 설정된 객체를 삭제시킨다.
 	for (auto iter = m_mapObject.begin(); iter != m_mapObject.end();)
@@ -87,18 +91,18 @@ _int CLayer::Update_Layer(const _float& fTimeDelta)
 	return iResult;
 }
 
-void CLayer::LateUpdate_Layer()
+void CLayer::Late_Tick(const _float& fTimeDelta)
 {
 	for (auto& gameObj : m_arrvecPriorityObject[Cast_EnumDef(EUPDATE_T::LATE)])
 	{
-		gameObj->LateTick();
+		gameObj->Late_Tick(fTimeDelta);
 	}
 
 	// 쓰고 나면 클리어
 	m_arrvecPriorityObject[Cast_EnumDef(EUPDATE_T::LATE)].clear();
 }
 
-CPrimitiveComponent* CLayer::Get_Component(COMPONENTID eID, const _tchar* pObjTag, const _tchar* pComponentTag)
+CPrimitiveComponent* CLayer::Get_Component(COMPONENTID eID, const wstring& pObjTag, const wstring& pComponentTag)
 {
 	// 레이어 -> 오브젝트 -> 컴포넌트
 	//auto	iter = find_if(m_mapObject.begin(), m_mapObject.end(), CTag_Finder(pObjTag));
@@ -147,7 +151,7 @@ HRESULT CLayer::Add_GameObject(CGameObject* pGameObject)
 }
 
 // 씬 레디 전용
-HRESULT CLayer::Add_GameObject(const wstring pObjTag, CGameObject* pGameObject)
+HRESULT CLayer::Add_GameObject(const wstring& pObjTag, CGameObject* pGameObject)
 {
 	// 이 레이어에 게임 오브젝트를 적재한다.
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
@@ -185,7 +189,7 @@ HRESULT CLayer::Add_GameObject(const wstring pObjTag, CGameObject* pGameObject)
 	return S_OK;
 }
 
-CGameObject* CLayer::Get_GameObject(const wstring pObjTag)
+CGameObject* CLayer::Get_GameObject(const wstring& pObjTag)
 {
 	auto iter = m_mapObject.find(pObjTag);
 	if (iter != m_mapObject.end())

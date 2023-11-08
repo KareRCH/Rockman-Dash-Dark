@@ -266,6 +266,7 @@
     <ClInclude Include="Public\Physics\ContactGen_Joint.h" />
     <ClInclude Include="Public\Physics\ForceGenerator.h" />
     <ClInclude Include="Public\Physics\PhysicsCore.h" />
+    <ClInclude Include="Public\System\AnimationMgr.h" />
     <ClInclude Include="Public\System\BlackBoardMgr.h" />
     <ClInclude Include="Public\System\BlackBoardPtr.h" />
     <ClInclude Include="Public\System\FontMgr.h" />
@@ -274,11 +275,10 @@
     <ClInclude Include="Public\System\ImGuiMgr.h" />
     <ClInclude Include="Public\System\JobMgr.h" />
     <ClInclude Include="Public\System\KeyMgr.h" />
-    <ClInclude Include="Public\System\Management.h" />
+    <ClInclude Include="Public\System\ObjectMgr.h" />
     <ClInclude Include="Public\System\ModelMgr.h" />
     <ClInclude Include="Public\System\MultiStateTexture.h" />
     <ClInclude Include="Public\System\MyFont.h" />
-    <ClInclude Include="Public\System\ObjectMgr.h" />
     <ClInclude Include="Public\System\PhysicsMgr.h" />
     <ClInclude Include="Public\Physics\PhysicsPrecision.h" />
     <ClInclude Include="Public\Physics\PhysicsWorld3D.h" />
@@ -288,6 +288,7 @@
     <ClInclude Include="Public\System\InputDev.h" />
     <ClInclude Include="Public\System\ProtoMgr.h" />
     <ClInclude Include="Public\System\RenderMgr.h" />
+    <ClInclude Include="Public\System\ShaderMgr.h" />
     <ClInclude Include="Public\System\SoundMgr.h" />
     <ClInclude Include="Public\System\Texture.h" />
     <ClInclude Include="Public\System\TextureMgr.h" />
@@ -317,6 +318,7 @@
     <ClCompile Include="Private\Physics\ContactGen_Joint.cpp" />
     <ClCompile Include="Private\Physics\ForceGenerator.cpp" />
     <ClCompile Include="Private\Physics\PhysicsCore.cpp" />
+    <ClCompile Include="Private\System\AnimationMgr.cpp" />
     <ClCompile Include="Private\System\BlackBoardMgr.cpp" />
     <ClCompile Include="Private\System\BlackBoardPtr.cpp" />
     <ClCompile Include="Private\System\FontMgr.cpp" />
@@ -325,11 +327,10 @@
     <ClCompile Include="Private\System\ImGuiMgr.cpp" />
     <ClCompile Include="Private\System\JobMgr.cpp" />
     <ClCompile Include="Private\System\KeyMgr.cpp" />
-    <ClCompile Include="Private\System\Management.cpp" />
+    <ClCompile Include="Private\System\ObjectMgr.cpp" />
     <ClCompile Include="Private\System\ModelMgr.cpp" />
     <ClCompile Include="Private\System\MultiStateTexture.cpp" />
     <ClCompile Include="Private\System\MyFont.cpp" />
-    <ClCompile Include="Private\System\ObjectMgr.cpp" />
     <ClCompile Include="Private\System\PhysicsMgr.cpp" />
     <ClCompile Include="Private\Physics\PhysicsWorld3D.cpp" />
     <ClCompile Include="Private\Physics\RigidBody.cpp" />
@@ -338,6 +339,7 @@
     <ClCompile Include="Private\System\InputDev.cpp" />
     <ClCompile Include="Private\System\ProtoMgr.cpp" />
     <ClCompile Include="Private\System\RenderMgr.cpp" />
+    <ClCompile Include="Private\System\ShaderMgr.cpp" />
     <ClCompile Include="Private\System\SoundMgr.cpp" />
     <ClCompile Include="Private\System\Texture.cpp" />
     <ClCompile Include="Private\System\TextureMgr.cpp" />
@@ -382,7 +384,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resource\Shader\ModelTest.ps">
+    <FxCompile Include="Resource\Shader\PS_ModelTest.hlsl">
       <FileType>Document</FileType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -391,7 +393,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\ModelTest.vs">
+    <FxCompile Include="Resource\Shader\VS_ModelTest.hlsl">
       <FileType>Document</FileType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>

@@ -14,9 +14,9 @@ protected:
 
 public:
 	virtual HRESULT		Initialize();
-	virtual void		PriorityTick();
+	virtual void		Priority_Tick(const _float& fTimeDelta);
 	virtual _int		Tick(const _float& fTimeDelta);
-	virtual void		LateTick();
+	virtual void		Late_Tick(const _float& fTimeDelta);
 	virtual void		Render();
 
 	virtual HRESULT		InitializeLate_Scene();
@@ -29,13 +29,13 @@ protected:
 	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
 
 public:
-	CPrimitiveComponent*	Get_Component(COMPONENTID eID, const _tchar* pLayerTag, const _tchar* pObjTag, const _tchar* pComponentTag);
-	CGameObject*			Get_GameObject(const _tchar* pLayerTag, const _tchar* pObjTag);
-	void					Add_GameObject(const _tchar* pLayerTag, CGameObject* const pObj);
-	void					Add_GameObject(const _tchar* pLayerTag, const _tchar* pObjTag, CGameObject* pObj);
+	CPrimitiveComponent*	Get_Component(COMPONENTID eID, const wstring& pLayerTag, const wstring& pObjTag, const wstring& pComponentTag);
+	CGameObject*			Get_GameObject(const wstring&, const wstring& pObjTag);
+	void					Add_GameObject(const wstring&, CGameObject* const pObj);
+	void					Add_GameObject(const wstring&, const wstring& pObjTag, CGameObject* pObj);
 
-	CLayer*					Get_Layer(const _tchar* pLayerTag) { return m_mapLayer[pLayerTag]; }
-	HRESULT					Add_Layer(const _tchar* pLayerTag, CLayer* pLayer);
+	CLayer*					Get_Layer(const wstring& pLayerTag) { return m_mapLayer[pLayerTag]; }
+	HRESULT					Add_Layer(const wstring& pLayerTag, CLayer* pLayer);
 
 	HRESULT					Delete_LayerAll();
 

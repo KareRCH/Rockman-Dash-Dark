@@ -15,7 +15,7 @@ HRESULT CTextureComponent::Initialize()
     return S_OK;
 }
 
-void CTextureComponent::PriorityTick()
+void CTextureComponent::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
@@ -24,7 +24,7 @@ _int CTextureComponent::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-void CTextureComponent::LateTick()
+void CTextureComponent::Late_Tick(const _float& fTimeDelta)
 {
 }
 

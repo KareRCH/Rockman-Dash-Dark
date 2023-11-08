@@ -82,7 +82,7 @@ HRESULT CTriBufferComp::Initialize()
 	return S_OK;
 }
 
-void CTriBufferComp::PriorityTick()
+void CTriBufferComp::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
@@ -91,7 +91,7 @@ _int CTriBufferComp::Tick(const _float& fTimeDelta)
 	return 0;
 }
 
-void CTriBufferComp::LateTick()
+void CTriBufferComp::Late_Tick(const _float& fTimeDelta)
 {
 }
 

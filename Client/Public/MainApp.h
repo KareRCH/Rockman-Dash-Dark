@@ -22,9 +22,9 @@ private:
 
 public:
 	HRESULT	Initialize();
-	void	PriorityTick();
+	void	Priority_Tick(const _float& fTimeDelta);
 	_int	Tick(const _float& fTimeDelta);
-	void	LateTick();
+	void	Late_Tick(const _float& fTimeDelta);
 	void	Render();
 
 public:

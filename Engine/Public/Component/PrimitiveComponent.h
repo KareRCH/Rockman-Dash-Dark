@@ -21,9 +21,9 @@ protected:
 
 public:
 	virtual HRESULT Initialize() PURE;
-	virtual void	PriorityTick() PURE;
+	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
 	virtual _int	Tick(const _float& fTimeDelta) PURE;
-	virtual void	LateTick() PURE;
+	virtual void	Late_Tick(const _float& fTimeDelta) PURE;
 	virtual void	Render() PURE;
 
 public:

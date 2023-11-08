@@ -24,7 +24,7 @@ HRESULT CGameObject::Initialize()
 	return S_OK;
 }
 
-void CGameObject::PriorityTick()
+void CGameObject::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
@@ -39,12 +39,12 @@ _int CGameObject::Tick(const _float& fTimeDelta)
 	return 0;
 }
 
-void CGameObject::LateTick()
+void CGameObject::Late_Tick(const _float& fTimeDelta)
 {
 	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::LATE)].begin(); 
 		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::LATE)].end(); ++iter)
 	{
-		(*iter)->LateTick();
+		(*iter)->Late_Tick(fTimeDelta);
 	}
 }
 

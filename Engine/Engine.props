@@ -21,10 +21,13 @@ xcopy ".\Public\*.*" "$(SolutionDir)Reference\Header\$(TargetName)\" /y /e
 attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
 xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
 xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Client\Resource\" /y /e
+xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\Shader\" /y /e
 xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Tool\Bin\$(PlatformTarget)\$(Configuration)\" /y
-xcopy "$(ProjectDir)Resource\*.*" "$(SolutionDir)Tool\Resource\" /y /e</Command>
+xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)Tool\Bin\$(PlatformTarget)\$(Configuration)\Shader\" /y /e</Command>
     </PostBuildEvent>
+    <FxCompile>
+      <ObjectFileOutput>$(OutDir)\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

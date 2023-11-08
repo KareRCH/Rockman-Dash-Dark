@@ -117,9 +117,8 @@ namespace Engine
 
 	// 다이나믹 캐스트 버전
 	template<typename Return, typename T>
-	Return DynCast(T value)
+	constexpr Return DynCast(T value)
 	{
-		static_assert(is_base_of<Return, T>::value, "Return should be a base class of T");
 		return dynamic_cast<Return>(value);
 	}
 

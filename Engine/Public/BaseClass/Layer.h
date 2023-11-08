@@ -17,27 +17,30 @@ private:
 	explicit CLayer();
 	virtual ~CLayer() = default;
 
+
+
 public:
-	static CLayer*	Create(_float fPriority);
+	HRESULT			Initialize(_float fPriority);
+	void			Priority_Tick(const _float& fTimeDelta);
+	_int			Tick(const _float& fTimeDelta);
+	void			Late_Tick(const _float& fTimeDelta);
+	//void			Render_Layer(); 앞으로는 Renderer에서 대신 렌더링을 수행한다.
+
+public:
+	static CLayer* Create(_float fPriority);
 
 private:
 	virtual void	Free();
 
 public:
-	HRESULT			Ready_Layer(_float fPriority);
-	_int			Update_Layer(const _float& fTimeDelta);
-	void			LateUpdate_Layer();
-	//void			Render_Layer(); 앞으로는 Renderer에서 대신 렌더링을 수행한다.
-
-public:
-	CPrimitiveComponent*		Get_Component(COMPONENTID eID, const _tchar* pObjTag, const _tchar* pComponentTag);
+	CPrimitiveComponent*		Get_Component(COMPONENTID eID, const wstring& pObjTag, const wstring& pComponentTag);
 
 	
 
 public:
 	HRESULT			Add_GameObject(CGameObject* pGameObject);
-	HRESULT			Add_GameObject(const wstring pObjTag, CGameObject* pGameObject);
-	CGameObject*	Get_GameObject(const wstring pObjTag);
+	HRESULT			Add_GameObject(const wstring& pObjTag, CGameObject* pGameObject);
+	CGameObject*	Get_GameObject(const wstring& pObjTag);
 
 private:
 	_unmap<wstring, CGameObject*>	m_mapObject;

@@ -19,7 +19,7 @@ private:
 public:
 	HRESULT	Initialize();
 	_int	Tick(const _float& fTimeDelta);
-	void	LateTick();
+	void	Late_Tick(const _float& fTimeDelta);
 	void	Render();
 
 public:

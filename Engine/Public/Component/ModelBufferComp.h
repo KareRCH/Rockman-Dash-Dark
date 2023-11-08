@@ -18,10 +18,10 @@ protected:
 
 public:
 	virtual HRESULT Initialize() override;
-	virtual HRESULT Initialize(const string& strGroupKey, const string& strModelKey);
-	virtual void	PriorityTick() override;
+	virtual HRESULT Initialize(const wstring& strGroupKey, const wstring& strModelKey);
+	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual _int	Tick(const _float& fTimeDelta) override;
-	virtual void	LateTick() override;
+	virtual void	Late_Tick(const _float& fTimeDelta) override;
 	virtual void	Render() override;
 
 public:
