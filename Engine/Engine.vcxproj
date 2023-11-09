@@ -289,6 +289,7 @@
     <ClInclude Include="Public\System\ProtoMgr.h" />
     <ClInclude Include="Public\System\RenderMgr.h" />
     <ClInclude Include="Public\System\ShaderMgr.h" />
+    <ClInclude Include="Public\System\ShaderMgr_Enum.h" />
     <ClInclude Include="Public\System\SoundMgr.h" />
     <ClInclude Include="Public\System\Texture.h" />
     <ClInclude Include="Public\System\TextureMgr.h" />

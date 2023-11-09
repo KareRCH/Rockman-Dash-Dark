@@ -27,6 +27,7 @@ namespace Engine
 
 	struct LIGHT_BUFFER_T
 	{
+		_float4		vAmbientColor;
 		_float4		vDiffuseColor;
 		_float3		vLightDirection;
 		_float		fPadding;		// 메모리가 16의 배수가 되도록 설정한 변수

@@ -15,8 +15,6 @@ HRESULT CTestScene::Initialize()
     GameInstance()->Load_Texture(L"Model/Character/RockVolnutt/Body.png", L"RockVolnutt", L"Body-BaseColor", true);
     GameInstance()->Load_Texture(L"Model/Character/RockVolnutt/Head.png", L"RockVolnutt", L"Head-BaseColor", true);
     GameInstance()->Load_Model("Character/RockVolnutt/Test.fbx", L"RockVolnutt");
-    GameInstance()->Load_Shader(L"PS_ModelTest", L"PS_ModelTest.cso");
-    GameInstance()->Load_Shader(L"VS_ModelTest", L"VS_ModelTest.cso");
 
     CLayer* pLayer = CLayer::Create(0.f);
     Add_Layer(L"GameLogic", pLayer);

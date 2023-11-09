@@ -53,7 +53,11 @@ HRESULT CMultiStateTexture::Reserve(const wstring& strTextureKey, _bool bPermane
 
 ID3D11ShaderResourceView* CMultiStateTexture::Get_Texture(const wstring& strTextureKey)
 {
-	return nullptr;
+	auto iter = m_mapTexture.find(strTextureKey);
+	if (iter == m_mapTexture.end())
+		return nullptr;
+
+	return (*iter).second->Get_Texture();
 }
 
 HRESULT CMultiStateTexture::Insert_Texture(const wstring& strFilePath, const wstring& strTextureKey, const _bool bPermanent)

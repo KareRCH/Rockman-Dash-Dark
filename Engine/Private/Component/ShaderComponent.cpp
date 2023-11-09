@@ -14,8 +14,6 @@ void CShaderComponent::Free()
 {
 	SUPER::Free();
 
-	Safe_Release(m_pVertexShader);
-	Safe_Release(m_pPixelShader);
 	Safe_Release(m_pLayout);
 	Safe_Release(m_pMatrixBuffer);
 	Safe_Release(m_pLightBuffer);

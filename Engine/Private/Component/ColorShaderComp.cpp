@@ -190,8 +190,8 @@ void CColorShaderComp::Render_Shader(_int iIndexCount)
 {
     m_pDeviceContext->IASetInputLayout(m_pLayout);
 
-    m_pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
-    m_pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
+    m_pDeviceContext->VSSetShader(m_pVertexShader.Get(), NULL, 0);
+    m_pDeviceContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
 
     m_pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
 }

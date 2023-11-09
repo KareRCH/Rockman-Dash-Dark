@@ -37,11 +37,11 @@ public:
 	GETSET_1(_uint, m_iIndexCount, IndexCount, SET_C)
 
 protected:
-	ID3D11VertexShader* m_pVertexShader = nullptr;
-	ID3D11PixelShader*	m_pPixelShader = nullptr;
-	ID3D11InputLayout*	m_pLayout = nullptr;
-	ID3D11Buffer*		m_pMatrixBuffer = nullptr;
-	ID3D11Buffer*		m_pLightBuffer = nullptr;
+	ComPtr<ID3D11VertexShader> m_pVertexShader = nullptr;
+	ComPtr<ID3D11PixelShader>	m_pPixelShader = nullptr;
+	ID3D11InputLayout*			m_pLayout = nullptr;
+	ID3D11Buffer*				m_pMatrixBuffer = nullptr;
+	ID3D11Buffer*				m_pLightBuffer = nullptr;
 	_uint m_iIndexCount = 0;
 
 };
