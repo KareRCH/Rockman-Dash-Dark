@@ -15,7 +15,7 @@
 #include "System/RenderMgr.h"
 #include "BaseClass/GameObject.h"
 #include "System/ModelMgr.h"
-#include "System/ShaderMgr.h"
+
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -716,19 +716,20 @@ HRESULT CGameInstance::Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const ws
 	return S_OK;
 }
 
-HRESULT CGameInstance::Load_Shader(const wstring& strFileName, const wstring& strKey)
+HRESULT CGameInstance::Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey)
 {
 	if (nullptr == m_pShaderMgr)
 		return E_POINTER;
 
-	return m_pShaderMgr->Load_Shader(strFileName, strKey);
+	return m_pShaderMgr->Load_Shader(strFileName, eType, strKey);
 }
 
-ID3DBlob* CGameInstance::Get_Shader(const wstring& strKey)
+
+inline ID3DBlob* const CGameInstance::Get_ShaderByte(const EShaderType eType, const wstring& strKey)
 {
 	if (nullptr == m_pShaderMgr)
 		return nullptr;
 
-	return m_pShaderMgr->Get_Shader(strKey);
+	return m_pShaderMgr->Get_ShaderByte(eType, strKey);
 }
 

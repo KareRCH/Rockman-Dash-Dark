@@ -32,7 +32,7 @@ protected:
 	virtual void	Free();
 
 public:
-	HRESULT Initialize_Shader(HWND hWnd, const _tchar* vsFileName, const _tchar* psFileName);
+	HRESULT Initialize_Shader(HWND hWnd, const wstring& strVertexShaderKey, const wstring& strPixelShaderKey);
 	HRESULT	Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, LIGHT_BUFFER_T tLightBuf);
 	void	Render_Shader(_int iIndexCount);
 
@@ -40,8 +40,8 @@ public:
 	GETSET_1(ID3D11ShaderResourceView*, m_pTexture, Texture, SET__C)
 
 private:
-	ID3D11SamplerState* m_pSamplereState = nullptr;
-	ID3D11ShaderResourceView* m_pTexture = nullptr;
+	ComPtr<ID3D11SamplerState> m_pSamplereState = nullptr;
+	ComPtr<ID3D11ShaderResourceView> m_pTexture = { nullptr };
 };
 
 

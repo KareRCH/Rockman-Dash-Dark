@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Base.h"
 #include "TextureMgr.h"
 
 BEGIN(Engine)

@@ -28,7 +28,7 @@ _int CDynamicCamera::Tick(const _float& fTimeDelta)
     SUPER::Tick(fTimeDelta);
 
 
-    Set_Position(_float3(5.f, 5.f, 5.f));
+    Set_Position(_float3(10.f, 10.f, 10.f));
     Calculate_Transform();
 
     _float3 vPos, vUp, vAt;

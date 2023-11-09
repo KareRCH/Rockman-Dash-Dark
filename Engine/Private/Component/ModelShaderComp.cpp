@@ -1,5 +1,7 @@
 #include "Component/ModelShaderComp.h"
 
+#include "System/GameInstance.h"
+
 CModelShaderComp::CModelShaderComp(const DX11DEVICE_T tDevice)
     : Base(tDevice)
 {
@@ -19,7 +21,7 @@ HRESULT CModelShaderComp::Initialize(HWND hWnd)
 {
     FAILED_CHECK_RETURN(Initialize(), E_FAIL);
 
-    FAILED_CHECK_RETURN(Initialize_Shader(hWnd, L"./Resource/Shader/ModelTest.vs", L"./Resource/Shader/ModelTest.ps"), E_FAIL);
+    FAILED_CHECK_RETURN(Initialize_Shader(hWnd, L"VS_ModelTest", L"PS_ModelTest"), E_FAIL);
 
     return S_OK;
 }
@@ -67,56 +69,33 @@ CPrimitiveComponent* CModelShaderComp::Clone(void* Arg)
 void CModelShaderComp::Free()
 {
     SUPER::Free();
-
-    Safe_Release(m_pSamplereState);
-    Safe_Release(m_pTexture);
 }
 
-HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName, const _tchar* psFileName)
+HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexShaderKey, const wstring& strPixelShaderKey)
 {
-    ID3DBlob* errorMessage = nullptr;
+    ID3DBlob* pVertexShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Vertex, strVertexShaderKey);
+    if (nullptr == pVertexShaderBuf)
+        return E_FAIL;
 
-    // 정점 셰이더 컴파일
-    ID3DBlob* pVertexShaderBuf = nullptr;
-    if (FAILED(D3DCompileFromFile(vsFileName, NULL, NULL, "main", "vs_5_0", 0, 0,
-        &pVertexShaderBuf, &errorMessage)))
+    ID3DBlob* pPixelShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Pixel, strPixelShaderKey);
+    if (nullptr == pPixelShaderBuf)
+        return E_FAIL;
+
+    // 셰이더 매니저로 부터 정점 셰이더 얻어오기
+    m_pVertexShader = GameInstance()->Get_ShaderBuffer<EShaderType::Vertex>(strVertexShaderKey);
+    if (nullptr == m_pVertexShader)
     {
-        if (errorMessage)
-        {
-            OutputShaderErrorMessage(errorMessage, hWnd, vsFileName);
-        }
-        else
-        {
-            MessageBox(hWnd, vsFileName, L"파일 없음", MB_OK);
-        }
-
+        MessageBox(hWnd, strVertexShaderKey.c_str(), L"셰이더 없음", MB_OK);
         return E_FAIL;
     }
 
-    // 픽셀 셰이더 컴파일
-    ID3DBlob* pPixelShaderBuf = nullptr;
-    if (FAILED(D3DCompileFromFile(psFileName, NULL, NULL, "main", "ps_5_0", 0, 0,
-        &pPixelShaderBuf, &errorMessage)))
+    // 셰이더 매니저로 부터 픽셀 셰이더 얻어오기
+    m_pPixelShader = GameInstance()->Get_ShaderBuffer<EShaderType::Pixel>(strPixelShaderKey);
+    if (nullptr == m_pPixelShader)
     {
-        if (errorMessage)
-        {
-            OutputShaderErrorMessage(errorMessage, hWnd, psFileName);
-        }
-        else
-        {
-            MessageBox(hWnd, psFileName, L"파일 없음", MB_OK);
-        }
-
+        MessageBox(hWnd, strPixelShaderKey.c_str(), L"셰이더 없음", MB_OK);
         return E_FAIL;
     }
-
-    // 버퍼로부터 정점 셰이더를 생성
-    FAILED_CHECK_RETURN(m_pDevice->CreateVertexShader(pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(),
-        NULL, &m_pVertexShader), E_FAIL);
-
-    // 버퍼로부터 픽셀 셰이더를 생성
-    FAILED_CHECK_RETURN(m_pDevice->CreatePixelShader(pPixelShaderBuf->GetBufferPointer(), pPixelShaderBuf->GetBufferSize(),
-        NULL, &m_pPixelShader), E_FAIL);
 
     D3D11_INPUT_ELEMENT_DESC tPolygonLayout[3];
     tPolygonLayout[0].SemanticName = "POSITION";
@@ -148,9 +127,6 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
 
     FAILED_CHECK_RETURN(m_pDevice->CreateInputLayout(tPolygonLayout, iNumElements,
         pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(), &m_pLayout), E_FAIL);
-
-    Safe_Release(pVertexShaderBuf);
-    Safe_Release(pPixelShaderBuf);
     
 
     // 텍스처 샘플러 상태 구조체 생성
@@ -165,6 +141,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     samplerDesc.BorderColor[1] = 0;
     samplerDesc.BorderColor[2] = 0;
     samplerDesc.BorderColor[3] = 0;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
     samplerDesc.MinLOD = 0;
     samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
@@ -225,7 +202,8 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, LIGHT_
 
     m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
 
-    m_pDeviceContext->PSSetShaderResources(0, 1, &m_pTexture);
+    ID3D11ShaderResourceView* pTexture = m_pTexture.Get();
+    m_pDeviceContext->PSSetShaderResources(0, 1, &pTexture);
 
     //----------------------------------
 
@@ -234,6 +212,7 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, LIGHT_
 
     LIGHT_BUFFER_T* dataPtr2 = Cast<LIGHT_BUFFER_T*>(mappedResource.pData);
 
+    dataPtr2->vAmbientColor = tLightBuf.vAmbientColor;
     dataPtr2->vDiffuseColor = tLightBuf.vDiffuseColor;
     dataPtr2->vLightDirection = tLightBuf.vLightDirection;
     dataPtr2->fPadding = 0.0f;
@@ -252,10 +231,10 @@ void CModelShaderComp::Render_Shader(_int iIndexCount)
 {
     m_pDeviceContext->IASetInputLayout(m_pLayout);
 
-    m_pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
-    m_pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
+    m_pDeviceContext->VSSetShader(m_pVertexShader.Get(), NULL, 0);
+    m_pDeviceContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
 
-    m_pDeviceContext->PSSetSamplers(0, 1, &m_pSamplereState);
+    m_pDeviceContext->PSSetSamplers(0, 1, m_pSamplereState.GetAddressOf());
 
     m_pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
 }

@@ -6,6 +6,7 @@
 #include "System/Management.h"
 #include "TestScene.h"
 #include "System/GraphicDev.h"
+#include "System/ShaderMgr_Enum.h"
 
 IMPLEMENT_SINGLETON(CMainApp)
 
@@ -71,6 +72,8 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(tDevice, L"Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ModelMgr("Resource/Model/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
+	GameInstance()->Load_Shader(L"PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
+	GameInstance()->Load_Shader(L"VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
 	
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_KeyMgr(), E_FAIL);

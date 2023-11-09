@@ -56,7 +56,7 @@ void CTestObject::Render()
 
     MATRIX_BUFFER_T matBuffer = { Get_Transform(),
         GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0) };
-    LIGHT_BUFFER_T lightBuffer = {};
+    LIGHT_BUFFER_T lightBuffer = { _float4(0.2f, 0.2f, 0.2f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float3(1.f, -1.f, -1.f) };
 
     m_pModelBufferComp->Render();
     m_pModelShaderComp->Render(matBuffer, lightBuffer);
@@ -110,6 +110,8 @@ HRESULT CTestObject::Initialize_Component()
     FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create({ m_pDevice, m_pDeviceContext }, g_hWnd)), E_FAIL);
     //m_ColorShaderComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
     m_pModelShaderComp->Set_IndexCount(m_pModelBufferComp->Get_IndexCount());
+    ID3D11ShaderResourceView* pTest= GameInstance()->Get_Texture(L"RockVolnutt", L"Body-BaseColor");
+    m_pModelShaderComp->Set_Texture(pTest);
 
     return S_OK;
 }

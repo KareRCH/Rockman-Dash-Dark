@@ -4,6 +4,7 @@
 #include "Base.h"
 
 #include "Physics/PhysicsPrecision.h"
+#include "System/ShaderMgr.h"
 
 BEGIN(Engine)
 
@@ -133,8 +134,10 @@ public:
 
 public:		// 셰이더 매니저
 	HRESULT Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
-	HRESULT	Load_Shader(const wstring& strFileName, const wstring& strKey);
-	ID3DBlob* Get_Shader(const wstring& strKey);
+	HRESULT	Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey);
+	inline ID3DBlob* const Get_ShaderByte(const EShaderType eType, const wstring& strKey);
+	template<EShaderType Type>
+	inline ShaderType<Type> Get_ShaderBuffer(const wstring& strKey);
 
 private:
 	class CGraphicDev*		m_pGraphicDev = nullptr;
@@ -162,6 +165,15 @@ inline CGameInstance* GameInstance()
 inline _uint Release_GameInstance()
 {
 	return CGameInstance::GetInstance()->DestroyInstance();
+}
+
+template<EShaderType Type>
+inline ShaderType<Type> CGameInstance::Get_ShaderBuffer(const wstring& strKey)
+{
+	if (nullptr == m_pShaderMgr)
+		return nullptr;
+
+	return m_pShaderMgr->Get_ShaderBuffer<Type>(strKey);
 }
 
 END
