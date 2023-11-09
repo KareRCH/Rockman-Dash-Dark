@@ -16,6 +16,7 @@ void CShaderComponent::Free()
 
 	Safe_Release(m_pLayout);
 	Safe_Release(m_pMatrixBuffer);
+	Safe_Release(m_pCameraBuffer);
 	Safe_Release(m_pLightBuffer);
 }
 

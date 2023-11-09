@@ -41,6 +41,7 @@ protected:
 	ComPtr<ID3D11PixelShader>	m_pPixelShader = nullptr;
 	ID3D11InputLayout*			m_pLayout = nullptr;
 	ID3D11Buffer*				m_pMatrixBuffer = nullptr;
+	ID3D11Buffer*				m_pCameraBuffer = nullptr;
 	ID3D11Buffer*				m_pLightBuffer = nullptr;
 	_uint m_iIndexCount = 0;
 

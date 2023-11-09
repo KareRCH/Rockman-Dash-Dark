@@ -27,10 +27,17 @@ namespace Engine
 
 	struct LIGHT_BUFFER_T
 	{
-		_float4		vAmbientColor;
-		_float4		vDiffuseColor;
+		_float4		vAmbientColor;		// 주변광
+		_float4		vDiffuseColor;		// 난반사
 		_float3		vLightDirection;
-		_float		fPadding;		// 메모리가 16의 배수가 되도록 설정한 변수
+		_float		fSpecularPower;
+		_float4		vSpecularColor;		// 정반사
+	};
+
+	struct CAMERA_BUFFER_T
+	{
+		_float3		vPosition;
+		_float		fPadding;
 	};
 
 	struct VERTEX_TEXTURE
