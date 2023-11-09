@@ -35,9 +35,9 @@ _int CModelShaderComp::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-void CModelShaderComp::Render(const MATRIX_BUFFER_T& tMatrixBuf, const LIGHT_BUFFER_T& tLightBuf)
+void CModelShaderComp::Render(const MATRIX_BUFFER_T& tMatrixBuf, const CAMERA_BUFFER_T tCameraBuf, const LIGHT_BUFFER_T& tLightBuf)
 {
-    if (Set_ShaderParameter(tMatrixBuf, tLightBuf) == E_FAIL)
+    if (Set_ShaderParameter(tMatrixBuf, tCameraBuf, tLightBuf) == E_FAIL)
     {
         return;
     }
@@ -69,6 +69,8 @@ CPrimitiveComponent* CModelShaderComp::Clone(void* Arg)
 void CModelShaderComp::Free()
 {
     SUPER::Free();
+
+    
 }
 
 HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexShaderKey, const wstring& strPixelShaderKey)
@@ -148,6 +150,9 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     FAILED_CHECK_RETURN(m_pDevice->CreateSamplerState(&samplerDesc, &m_pSamplereState), E_FAIL);
 
 
+    /***********
+    * 행렬 버퍼
+    ************/
     // 정점 셰이더에 있는 행렬 상수 버퍼의 구조체를 작성
     D3D11_BUFFER_DESC tMatBufferDesc;
     tMatBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -159,6 +164,25 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
 
     FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&tMatBufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
 
+
+
+    /*************
+    * 카메라 버퍼
+    **************/
+    D3D11_BUFFER_DESC cameraBufferDesc;
+    cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    cameraBufferDesc.ByteWidth = sizeof(CAMERA_BUFFER_T);
+    cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    cameraBufferDesc.MiscFlags = 0;
+    cameraBufferDesc.StructureByteStride = 0;
+
+    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&cameraBufferDesc, NULL, &m_pCameraBuffer), E_FAIL);
+
+
+    /*********
+    * 빛 버퍼
+    ***********/
 
     // 픽셀 쎄이더에 있는 광원 동적 상수 버퍼의 설명을 설정
     // D3D11_BIND_CONSTANT_BUFFER를 사용시 ByteWidth가 16의 배수여야함. 아닐시 생성 실패
@@ -175,7 +199,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     return S_OK;
 }
 
-HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, LIGHT_BUFFER_T tLightBuf)
+HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA_BUFFER_T tCameraBuf, LIGHT_BUFFER_T tLightBuf)
 {
     // 전치 행렬로 바꾸어주어야함, 다렉 row우선, HLSL은 col우선 연산이라 그렇다고 한다.
     tMatrixBuf.matWorld = XMMatrixTranspose(tMatrixBuf.matWorld);
@@ -184,6 +208,11 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, LIGHT_
 
     // 상수 버퍼의 내용을 쓸 수 있도록 잠금
     D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+
+    /***********
+    * 행렬 버퍼
+    ************/
     FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     // 상수 버퍼의 데이터에 대한 포인터를 가져옴
@@ -202,12 +231,27 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, LIGHT_
 
     m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
 
-    ID3D11ShaderResourceView* pTexture = m_pTexture.Get();
-    m_pDeviceContext->PSSetShaderResources(0, 1, &pTexture);
+    
+    /*************
+    * 카메라 버퍼
+    **************/
+    FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pCameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    CAMERA_BUFFER_T* dataPtr3 = Cast<CAMERA_BUFFER_T*>(mappedResource.pData);
 
-    //----------------------------------
+    dataPtr3->vPosition = tCameraBuf.vPosition;
+    dataPtr3->fPadding = 0.f;
 
-    // lightBuffer 버퍼 잠금
+    m_pDeviceContext->Unmap(m_pCameraBuffer, 0);
+
+    iBufferNumber = 1;
+
+    m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pCameraBuffer);
+
+    m_pDeviceContext->PSSetShaderResources(0, 1, m_pTexture.GetAddressOf());
+
+    /*********
+    * 빛 버퍼
+    ***********/
     FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     LIGHT_BUFFER_T* dataPtr2 = Cast<LIGHT_BUFFER_T*>(mappedResource.pData);
@@ -215,7 +259,8 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, LIGHT_
     dataPtr2->vAmbientColor = tLightBuf.vAmbientColor;
     dataPtr2->vDiffuseColor = tLightBuf.vDiffuseColor;
     dataPtr2->vLightDirection = tLightBuf.vLightDirection;
-    dataPtr2->fPadding = 0.0f;
+    dataPtr2->fSpecularPower = tLightBuf.fSpecularPower;
+    dataPtr2->vSpecularColor = tLightBuf.vSpecularColor;
 
     m_pDeviceContext->Unmap(m_pLightBuffer, 0);
 

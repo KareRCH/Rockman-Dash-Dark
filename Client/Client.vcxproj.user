@@ -4,14 +4,12 @@
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerEnvironment>.\
-.\Bin\$(PlatformTarget)\$(Configuration)\
+    <LocalDebuggerEnvironment>.\Bin\$(PlatformTarget)\$(Configuration)\
 $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerEnvironment>.\
-.\Bin\$(PlatformTarget)\$(Configuration)\
+    <LocalDebuggerEnvironment>.\Bin\$(PlatformTarget)\$(Configuration)\
 $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>

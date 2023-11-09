@@ -53,13 +53,14 @@ void CTestObject::Render()
 {
     SUPER::Render();
 
-
     MATRIX_BUFFER_T matBuffer = { Get_Transform(),
         GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0) };
-    LIGHT_BUFFER_T lightBuffer = { _float4(0.2f, 0.2f, 0.2f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float3(1.f, -1.f, -1.f) };
+    CAMERA_BUFFER_T cameraBuffer = { _float3(10.f, 10.f, 10.f) };
+    LIGHT_BUFFER_T lightBuffer = { _float4(0.2f, 0.2f, 0.2f, 1.f), _float4(0.2f, 0.2f, 0.2f, 1.f), _float3(-1.f, 0.f, 0.f),
+                                    _float(2.f), _float4(1.f, 0.2f, 0.2f, 1.f)};
 
     m_pModelBufferComp->Render();
-    m_pModelShaderComp->Render(matBuffer, lightBuffer);
+    m_pModelShaderComp->Render(matBuffer, cameraBuffer, lightBuffer);
 }
 
 CTestObject* CTestObject::Create(const DX11DEVICE_T tDevice)
