@@ -155,6 +155,7 @@ private:
 	class CRenderMgr*		m_pRenderMgr = nullptr;
 	class CModelMgr*		m_pModelMgr = nullptr;
 	class CShaderMgr*		m_pShaderMgr = nullptr;
+	class CParticleMgr*		m_pParticleMgr = nullptr;
 };
 
 inline CGameInstance* GameInstance()

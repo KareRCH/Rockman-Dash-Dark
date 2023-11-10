@@ -279,6 +279,7 @@
     <ClInclude Include="Public\System\ModelMgr.h" />
     <ClInclude Include="Public\System\MultiStateTexture.h" />
     <ClInclude Include="Public\System\MyFont.h" />
+    <ClInclude Include="Public\System\ParticleMgr.h" />
     <ClInclude Include="Public\System\PhysicsMgr.h" />
     <ClInclude Include="Public\Physics\PhysicsPrecision.h" />
     <ClInclude Include="Public\Physics\PhysicsWorld3D.h" />
@@ -332,6 +333,7 @@
     <ClCompile Include="Private\System\ModelMgr.cpp" />
     <ClCompile Include="Private\System\MultiStateTexture.cpp" />
     <ClCompile Include="Private\System\MyFont.cpp" />
+    <ClCompile Include="Private\System\ParticleMgr.cpp" />
     <ClCompile Include="Private\System\PhysicsMgr.cpp" />
     <ClCompile Include="Private\Physics\PhysicsWorld3D.cpp" />
     <ClCompile Include="Private\Physics\RigidBody.cpp" />

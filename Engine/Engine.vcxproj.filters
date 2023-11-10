@@ -163,6 +163,9 @@
     <Filter Include="01. System\01. Manager\16. ShaderMgr">
       <UniqueIdentifier>{b07dd1c6-4e7a-4b28-8233-159e007fc41a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. System\01. Manager\18. ParticleMgr">
+      <UniqueIdentifier>{ad0f9a93-ff98-4c18-a854-be503d85f43e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -357,6 +360,9 @@
     <ClInclude Include="Public\System\ShaderMgr_Enum.h">
       <Filter>01. System\01. Manager\16. ShaderMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\ParticleMgr.h">
+      <Filter>01. System\01. Manager\18. ParticleMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -514,6 +520,9 @@
     </ClCompile>
     <ClCompile Include="Private\System\AnimationMgr.cpp">
       <Filter>01. System\01. Manager\17. AnimationMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\ParticleMgr.cpp">
+      <Filter>01. System\01. Manager\18. ParticleMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
