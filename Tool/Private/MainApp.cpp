@@ -69,7 +69,7 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Thin_Jinji", L"±Ã¼­", 18, 30, FW_THIN), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"MonsterUI", L"ÇÔÃÊ·Õ¹ÙÅÁ", 14, 25, FW_THIN), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(tDevice), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(tDevice, L"../Client/Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ModelMgr("../Client/Resource/Model/"), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_KeyMgr(), E_FAIL);
@@ -103,8 +103,8 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 
 void CMainApp::Late_Tick(const _float& fTimeDelta)
 {
-	m_pGameInstance->Late_Tick(const _float& fTimeDelta)_Scene();
-	m_pGameInstance->Late_Tick(const _float& fTimeDelta)_KeyMgr();
+	m_pGameInstance->Late_Tick_Scene(fTimeDelta);
+	m_pGameInstance->Late_Tick_KeyMgr();
 }
 
 void CMainApp::Render()
