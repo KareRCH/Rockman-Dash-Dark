@@ -22,7 +22,7 @@ struct VS_INPUT
 
 struct PS_OUTPUT
 {
-    float4 vPosition : SV_POSITION;
+    float4 vPosition : SV_POSITION0;
     float3 vNormal : NORMAL;
     float2 vTexCoord : TEXCOORD0;
     float3 vViewDirection : TEXCOORD1;

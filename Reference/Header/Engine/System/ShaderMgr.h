@@ -11,7 +11,10 @@ class FShaderData final
 private:
 	FShaderData() = default;
 public:
-	~FShaderData() = default;
+	~FShaderData()
+	{
+		int t = 0;
+	}
 
 public:
 	HRESULT Initialize()

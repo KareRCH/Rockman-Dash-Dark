@@ -73,17 +73,17 @@ HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eT
 	}
 
 	// 여기서 셰이더 컴파일 혹은 컴파일된 셰이더 코드를 가지고 Blob에 저장한다.
-	ID3DBlob* pBlob = Read_ShaderBinary(m_strMainPath + strFileName);
+	ComPtr<ID3DBlob> pBlob = Read_ShaderBinary(m_strMainPath + strFileName);
 	if (nullptr == pBlob)
 		return E_FAIL;
 
 
-	ID3D11DeviceChild* pShaderBuffer = { nullptr };
+	ComPtr<ID3D11DeviceChild> pShaderBuffer = { nullptr };
 	switch (eType)
 	{
 	case Engine::EShaderType::Vertex:
 	{
-		ID3D11VertexShader* pShader = Cast<ID3D11VertexShader*>(pShaderBuffer);
+		ID3D11VertexShader* pShader = Cast<ID3D11VertexShader*>(pShaderBuffer.Get());
 		if (FAILED(m_pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pShader)))
 			return E_FAIL;
 		pShaderBuffer = Cast<ID3D11DeviceChild*>(pShader);
@@ -91,7 +91,7 @@ HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eT
 	}
 	case Engine::EShaderType::Pixel:
 	{
-		ID3D11PixelShader* pShader = Cast<ID3D11PixelShader*>(pShaderBuffer);
+		ID3D11PixelShader* pShader = Cast<ID3D11PixelShader*>(pShaderBuffer.Get());
 		if (FAILED(m_pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pShader)))
 			return E_FAIL;
 		pShaderBuffer = Cast<ID3D11DeviceChild*>(pShader);
@@ -99,7 +99,7 @@ HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eT
 	}
 	case Engine::EShaderType::Geometry:
 	{
-		ID3D11GeometryShader* pShader = Cast<ID3D11GeometryShader*>(pShaderBuffer);
+		ID3D11GeometryShader* pShader = Cast<ID3D11GeometryShader*>(pShaderBuffer.Get());
 		if (FAILED(m_pDevice->CreateGeometryShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pShader)))
 			return E_FAIL;
 		pShaderBuffer = Cast<ID3D11DeviceChild*>(pShader);
@@ -107,7 +107,7 @@ HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eT
 	}
 	case Engine::EShaderType::Hull:
 	{
-		ID3D11HullShader* pShader = Cast<ID3D11HullShader*>(pShaderBuffer);
+		ID3D11HullShader* pShader = Cast<ID3D11HullShader*>(pShaderBuffer.Get());
 		if (FAILED(m_pDevice->CreateHullShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pShader)))
 			return E_FAIL;
 		pShaderBuffer = Cast<ID3D11DeviceChild*>(pShader);
@@ -115,7 +115,7 @@ HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eT
 	}
 	case Engine::EShaderType::Domain:
 	{
-		ID3D11DomainShader* pShader = Cast<ID3D11DomainShader*>(pShaderBuffer);
+		ID3D11DomainShader* pShader = Cast<ID3D11DomainShader*>(pShaderBuffer.Get());
 		if (FAILED(m_pDevice->CreateDomainShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pShader)))
 			return E_FAIL;
 		pShaderBuffer = Cast<ID3D11DeviceChild*>(pShader);
@@ -123,7 +123,7 @@ HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eT
 	}
 	case Engine::EShaderType::Compute:
 	{
-		ID3D11ComputeShader* pShader = Cast<ID3D11ComputeShader*>(pShaderBuffer);
+		ID3D11ComputeShader* pShader = Cast<ID3D11ComputeShader*>(pShaderBuffer.Get());
 		if (FAILED(m_pDevice->CreateComputeShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pShader)))
 			return E_FAIL;
 		pShaderBuffer = Cast<ID3D11DeviceChild*>(pShader);
@@ -133,7 +133,7 @@ HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eT
 		break;
 	}
 
-	pData->Set_Shader(strFileName, pBlob, pShaderBuffer);
+	pData->Set_Shader(strFileName, pBlob.Get(), pShaderBuffer.Get());
 
 	return S_OK;
 }

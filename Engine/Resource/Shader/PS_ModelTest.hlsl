@@ -13,14 +13,22 @@ cbuffer LightBuffer
 
 struct PS_INPUT
 {
-    float4 vPosition : SV_POSITION;
+    float4 vPosition : SV_POSITION0;
     float3 vNormal : NORMAL;
     float2 vTexCoord : TEXCOORD0;
     float3 vViewDirection : TEXCOORD1;
 };
 
-float4 main(PS_INPUT input) : SV_TARGET
+struct PS_OUTPUT
+{
+    float4 Color : SV_TARGET0;
+    float4 Normal : SV_TARGET1;
+};
+
+PS_OUTPUT main(PS_INPUT input)
 {    
+    PS_OUTPUT output;
+    
     // 베이스 컬러 세팅
     float4 textureColor = shaderTexture.Sample(SampleType, input.vTexCoord);
     
@@ -50,7 +58,8 @@ float4 main(PS_INPUT input) : SV_TARGET
     
     color = color * textureColor;
     
-    color = saturate(color + specular);
+    output.Color = saturate(color + specular);
+    output.Normal = float4(input.vNormal, 1.f);
     
-    return color;
+    return output;
 }

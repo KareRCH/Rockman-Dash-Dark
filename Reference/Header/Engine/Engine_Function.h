@@ -39,11 +39,6 @@ namespace Engine
 
 			if (0 == dwRefCnt)
 				pInstance = nullptr;
-			// IUnknown용 컴객체는 1일 때 연결을 끊는다.
-			else if (dwRefCnt == 1 && dynamic_cast<ID3D11Device*>(pInstance))
-			{
-				pInstance = nullptr;
-			}
 		}
 
 		return dwRefCnt;
