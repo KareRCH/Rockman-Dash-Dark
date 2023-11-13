@@ -75,30 +75,27 @@ void CModelShaderComp::Free()
 
 HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexShaderKey, const wstring& strPixelShaderKey)
 {
-    ID3DBlob* pVertexShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Vertex, strVertexShaderKey);
-    if (nullptr == pVertexShaderBuf)
-        return E_FAIL;
-
-    ID3DBlob* pPixelShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Pixel, strPixelShaderKey);
-    if (nullptr == pPixelShaderBuf)
-        return E_FAIL;
-
     // 셰이더 매니저로 부터 정점 셰이더 얻어오기
+    ID3DBlob* pVertexShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Vertex, strVertexShaderKey);
     m_pVertexShader = GameInstance()->Get_ShaderBuffer<EShaderType::Vertex>(strVertexShaderKey);
-    if (nullptr == m_pVertexShader)
+    if (nullptr == m_pVertexShader || nullptr == pVertexShaderBuf)
     {
         MessageBox(hWnd, strVertexShaderKey.c_str(), L"셰이더 없음", MB_OK);
         return E_FAIL;
     }
 
     // 셰이더 매니저로 부터 픽셀 셰이더 얻어오기
+    ID3DBlob* pPixelShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Pixel, strPixelShaderKey);
     m_pPixelShader = GameInstance()->Get_ShaderBuffer<EShaderType::Pixel>(strPixelShaderKey);
-    if (nullptr == m_pPixelShader)
+    if (nullptr == m_pPixelShader || nullptr == pPixelShaderBuf)
     {
         MessageBox(hWnd, strPixelShaderKey.c_str(), L"셰이더 없음", MB_OK);
         return E_FAIL;
     }
 
+    /***************
+    * 레이아웃 구성 (시맨틱 전달자)
+    ***************/
     D3D11_INPUT_ELEMENT_DESC tPolygonLayout[3];
     tPolygonLayout[0].SemanticName = "POSITION";
     tPolygonLayout[0].SemanticIndex = 0;
@@ -107,7 +104,6 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     tPolygonLayout[0].AlignedByteOffset = 0;
     tPolygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     tPolygonLayout[0].InstanceDataStepRate = 0;
-
 
     tPolygonLayout[1].SemanticName = "NORMAL";
     tPolygonLayout[1].SemanticIndex = 0;
@@ -124,7 +120,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     tPolygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
     tPolygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     tPolygonLayout[2].InstanceDataStepRate = 0;
-
+    
     _uint iNumElements = sizeof(tPolygonLayout) / sizeof(tPolygonLayout[0]);
 
     FAILED_CHECK_RETURN(m_pDevice->CreateInputLayout(tPolygonLayout, iNumElements,
@@ -148,7 +144,6 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
     FAILED_CHECK_RETURN(m_pDevice->CreateSamplerState(&samplerDesc, &m_pSamplereState), E_FAIL);
-
 
     /***********
     * 행렬 버퍼
@@ -183,7 +178,6 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     /*********
     * 빛 버퍼
     ***********/
-
     // 픽셀 쎄이더에 있는 광원 동적 상수 버퍼의 설명을 설정
     // D3D11_BIND_CONSTANT_BUFFER를 사용시 ByteWidth가 16의 배수여야함. 아닐시 생성 실패
     D3D11_BUFFER_DESC lightBufferDesc;

@@ -31,24 +31,19 @@ HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
 
     /* 장치에 바인드해놓을 렌더타겟들과 뎁스스텐실뷰를 셋팅한다. */
     /* 장치는 최대 8개의 렌더타겟을 동시에 들고 있을 수 있다. */
-    ID3D11RenderTargetView* pRTVs[1] = {
-        m_pRenderTargetView,
+    m_vecRTV.reserve(6);
+    m_vecRTV.clear();
+    m_vecRTV.push_back(m_pRTV_SwapChain);
+    m_vecRTV.push_back(m_pRTV_PBR[Cast_EnumDef(ERenderTarget_PBR::Albedo)]);
+    m_vecRTV.push_back(m_pRTV_PBR[Cast_EnumDef(ERenderTarget_PBR::Normal)]);
+    m_vecRTV.push_back(m_pRTV_PBR[Cast_EnumDef(ERenderTarget_PBR::Metallic)]);
+    m_vecRTV.push_back(m_pRTV_PBR[Cast_EnumDef(ERenderTarget_PBR::Roughness)]);
+    m_vecRTV.push_back(m_pRTV_PBR[Cast_EnumDef(ERenderTarget_Common::Emission)]);
 
-    };
+    ID3D11RenderTargetView* pRTV[] = { m_vecRTV[0].Get(), m_vecRTV[1].Get(), m_vecRTV[2].Get(), m_vecRTV[3].Get(), m_vecRTV[4].Get() };
 
-    m_pDeviceContext->OMSetRenderTargets(1, pRTVs,
-        m_pDepthStencilView);
-
-    D3D11_VIEWPORT			ViewPortDesc;
-    ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
-    ViewPortDesc.TopLeftX = 0;
-    ViewPortDesc.TopLeftY = 0;
-    ViewPortDesc.Width = (_float)tInit.iScreenWidth;
-    ViewPortDesc.Height = (_float)tInit.iScreenHeight;
-    ViewPortDesc.MinDepth = 0.f;
-    ViewPortDesc.MaxDepth = 1.f;
-
-    m_pDeviceContext->RSSetViewports(1, &ViewPortDesc);
+    //m_pDeviceContext->OMSetRenderTargets(m_vecRTV.size(), m_vecRTV[0].GetAddressOf(), m_pDepthStencilView);
+    m_pDeviceContext->OMSetRenderTargets(2, pRTV, m_pDepthStencilView);
 
 	return S_OK;
 }
@@ -58,7 +53,11 @@ HRESULT CGraphicDev::Clear_BackBuffer_View(_float4 vClearColor)
     _float color[4] = { vClearColor.x, vClearColor.y, vClearColor.z, vClearColor.w };
 
     // 백버퍼 지우기
-    m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+    for (auto& item : m_vecRTV)
+    {
+        auto pRTV = item.Get();
+        m_pDeviceContext->ClearRenderTargetView(pRTV, color);
+    }
 
     return S_OK;
 }
@@ -106,8 +105,20 @@ CGraphicDev* CGraphicDev::Create(const FDEVICE_INIT& tInit)
 
 void CGraphicDev::Free()
 {
+    if (m_pSwapChain)
+    {
+        m_pSwapChain->SetFullscreenState(false, NULL);
+    }
+    Safe_Release(m_pRasterState);
+    Safe_Release(m_pDepthStencilView);
+    Safe_Release(m_pDepthStencilState);
+    Safe_Release(m_pDethStencilBuffer);
+    Safe_Release(m_pSwapChain);
+    Safe_Release(m_pDeviceContext);
+    Safe_Release(m_pDevice);
+
 #ifdef _DEBUG
-    //m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+    m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 
     //ID3D11InfoQueue* pInfoQueue = nullptr;
     //m_pDebug->QueryInterface(__uuidof(ID3D11InfoQueue), (void**)&pInfoQueue);
@@ -132,20 +143,6 @@ void CGraphicDev::Free()
 
     Safe_Release(m_pDebug);
 #endif // _DEBUG
-
-    if (m_pSwapChain)
-    {
-        m_pSwapChain->SetFullscreenState(false, NULL);
-    }
-    Safe_Release(m_pRasterState);
-    Safe_Release(m_pDepthStencilView);
-    Safe_Release(m_pDepthStencilState);
-    Safe_Release(m_pDethStencilBuffer);
-    Safe_Release(m_pRenderTargetView);
-    Perfect_Release(m_pSwapChain);
-    Perfect_Release(m_pDeviceContext);
-    Perfect_Release(m_pDevice);
-
 }
 
 HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
@@ -155,16 +152,16 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
 
     //m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 #endif
-    IDXGIDevice* pDevice = nullptr;
-    m_pDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDevice);
+    ComPtr<IDXGIDevice> pDevice = nullptr;
+    m_pDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)pDevice.GetAddressOf());
 
     _uint adapterIndex = 0;
 
-    IDXGIAdapter* pAdapter = nullptr;
-    pDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&pAdapter);
+    ComPtr<IDXGIAdapter> pAdapter = nullptr;
+    pDevice->GetParent(__uuidof(IDXGIAdapter), (void**)pAdapter.GetAddressOf());
 
-    IDXGIFactory* pFactory = nullptr;
-    pAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&pFactory);
+    ComPtr<IDXGIFactory> pFactory = nullptr;
+    pAdapter->GetParent(__uuidof(IDXGIFactory), (void**)pFactory.GetAddressOf());
 
     pFactory->EnumAdapters(adapterIndex, &pAdapter);
 
@@ -172,42 +169,35 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
     pDevice->QueryInterface(__uuidof(IDXGIDebug), (void**)&pGxDebug);
 
     pGxDebug->ReportLiveObjects()*/
-        
-
+    
     /* 스왑체인을 생성한다. = 텍스쳐를 생성하는 행위 + 스왑하는 형태  */
-    DXGI_SWAP_CHAIN_DESC		SwapChain;
-    ZeroMemory(&SwapChain, sizeof(DXGI_SWAP_CHAIN_DESC));
+    DXGI_SWAP_CHAIN_DESC		SwapChainDesc;
+    ZeroMemory(&SwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 
     /*텍스쳐(백버퍼)를 생성하는 행위*/
-    SwapChain.BufferDesc.Width = tInit.iScreenWidth;
-    SwapChain.BufferDesc.Height = tInit.iScreenHeight;
+    SwapChainDesc.BufferDesc.Width = tInit.iScreenWidth;
+    SwapChainDesc.BufferDesc.Height = tInit.iScreenHeight;
 
 
-    SwapChain.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    SwapChain.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-    SwapChain.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-    SwapChain.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    SwapChain.BufferCount = 1;
+    SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    SwapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+    SwapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+    SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    SwapChainDesc.BufferCount = 1;
 
     /*스왑하는 형태*/
-    SwapChain.BufferDesc.RefreshRate.Numerator = 60;
-    SwapChain.BufferDesc.RefreshRate.Denominator = 1;
-    SwapChain.SampleDesc.Quality = 0;
-    SwapChain.SampleDesc.Count = 1;
+    SwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
+    SwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+    SwapChainDesc.SampleDesc.Quality = 0;
+    SwapChainDesc.SampleDesc.Count = 1;
 
-    SwapChain.OutputWindow = tInit.hWnd;
-    SwapChain.Windowed = !tInit.bFullScreen;
-    SwapChain.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+    SwapChainDesc.OutputWindow = tInit.hWnd;
+    SwapChainDesc.Windowed = !tInit.bFullScreen;
+    SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
     /* 백버퍼라는 텍스쳐를 생성했다. */
-    if (FAILED(pFactory->CreateSwapChain(m_pDevice, &SwapChain, &m_pSwapChain)))
+    if (FAILED(pFactory->CreateSwapChain(m_pDevice, &SwapChainDesc, &m_pSwapChain)))
         return E_FAIL;
-
-    Safe_Release(pFactory);
-    Safe_Release(pAdapter);
-    Safe_Release(pDevice);
-
-    
 
     return S_OK;
 }
@@ -219,16 +209,71 @@ HRESULT CGraphicDev::Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit)
 
     /* 내가 앞으로 사용하기위한 용도의 텍스쳐를 생성하기위한 베이스 데이터를 가지고 있는 객체이다. */
     /* 내가 앞으로 사용하기위한 용도의 텍스쳐 : ID3D11RenderTargetView, ID3D11ShaderResoureView, ID3D11DepthStencilView */
-    ID3D11Texture2D* pBackBufferTexture = nullptr;
+    ComPtr<ID3D11Texture2D> pBackBufferTexture = { nullptr };
+    ComPtr<ID3D11Texture2D> pTexture = { nullptr };
+    D3D11_TEXTURE2D_DESC textureDesc = {};
+    D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 
     /* 스왑체인이 들고있던 텍스처를 가져와봐. */
-    if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBufferTexture)))
+    if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), ReCast<void**>(pBackBufferTexture.GetAddressOf()))))
         return E_FAIL;
 
-    if (FAILED(m_pDevice->CreateRenderTargetView(pBackBufferTexture, nullptr, &m_pRenderTargetView)))
+    ComPtr<ID3D11RenderTargetView> pRTV = { nullptr };
+    if (FAILED(m_pDevice->CreateRenderTargetView(pBackBufferTexture.Get(), nullptr, pRTV.GetAddressOf())))
         return E_FAIL;
 
-    Safe_Release(pBackBufferTexture);
+    pBackBufferTexture->GetDesc(&textureDesc);
+    pRTV->GetDesc(&rtvDesc);
+
+    m_pTexture_SwapChain = pBackBufferTexture;
+    pBackBufferTexture.Reset();
+    m_pRTV_SwapChain = pRTV;
+    pRTV.Reset();
+
+    // PBR 렌더타깃 생성
+    for (_uint i = 0; i < Cast_EnumDef(ERenderTarget_Legacy::Size); i++)
+    {
+        if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
+            return E_FAIL;
+
+        if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &rtvDesc, pRTV.GetAddressOf())))
+            return E_FAIL;
+
+        m_pTexture_LGC[i] = pTexture;
+        pTexture.Reset();
+        m_pRTV_LGC[i] = pRTV;
+        pRTV.Reset();
+    }
+
+    // PBR 렌더타깃 생성
+    for (_uint i = 0; i < Cast_EnumDef(ERenderTarget_PBR::Size); i++)
+    {
+        if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
+            return E_FAIL;
+
+        if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &rtvDesc, pRTV.GetAddressOf())))
+            return E_FAIL;
+
+        m_pTexture_PBR[i] = pTexture;
+        pTexture.Reset();
+        m_pRTV_PBR[i] = pRTV;
+        pRTV.Reset();
+    }
+
+    // Emission, SSAO
+    for (_uint i = 0; i < Cast_EnumDef(ERenderTarget_Common::Size); i++)
+    {
+        if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
+            return E_FAIL;
+
+        if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &rtvDesc, pRTV.GetAddressOf())))
+            return E_FAIL;
+
+        m_pTexture_Common[i] = pTexture;
+        pTexture.Reset();
+        m_pRTV_Common[i] = pRTV;
+        pRTV.Reset();
+    }
 
     return S_OK;
 }
@@ -238,7 +283,7 @@ HRESULT CGraphicDev::Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tIni
     if (nullptr == m_pDevice)
         return E_FAIL;
 
-    ID3D11Texture2D* pDepthStencilTexture = nullptr;
+    ComPtr<ID3D11Texture2D> pDepthStencilTexture = nullptr;
 
     D3D11_TEXTURE2D_DESC	TextureDesc;
     ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -258,19 +303,15 @@ HRESULT CGraphicDev::Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tIni
     TextureDesc.CPUAccessFlags = 0;
     TextureDesc.MiscFlags = 0;
 
-    if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr,
-        &pDepthStencilTexture)))
+    if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, pDepthStencilTexture.GetAddressOf())))
         return E_FAIL;
 
     /* RenderTarget */
     /* ShaderResource */
     /* DepthStencil */
 
-    if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr,
-        &m_pDepthStencilView)))
+    if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture.Get(), nullptr, &m_pDepthStencilView)))
         return E_FAIL;
-
-    Safe_Release(pDepthStencilTexture);
 
     return S_OK;
 }

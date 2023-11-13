@@ -163,6 +163,15 @@
     <Filter Include="01. System\01. Manager\16. ShaderMgr">
       <UniqueIdentifier>{b07dd1c6-4e7a-4b28-8233-159e007fc41a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Shader\02. DeferredShading">
+      <UniqueIdentifier>{4a9b8166-0cec-45e0-95b7-53b3de1f8f17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Shader\01. ForwardShading">
+      <UniqueIdentifier>{2ee62cbf-431b-4a0f-9046-99cdf7f4cb9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Shader\02. DeferredShading\01. GBuffer">
+      <UniqueIdentifier>{f6a8962c-b852-4855-a50c-a5b154bccb40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -357,6 +366,9 @@
     <ClInclude Include="Public\System\ShaderMgr_Enum.h">
       <Filter>01. System\01. Manager\16. ShaderMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\GraphicDev_Include.h">
+      <Filter>01. System\01. Manager\01. GraphicDev</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -534,6 +546,12 @@
     </FxCompile>
     <FxCompile Include="Resource\Shader\PS_Texture.hlsl">
       <Filter>03. Shader\99. Test\Texture</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\Shader\VS_Deferred_GBuffer.hlsl">
+      <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\PS_Deferred_GBuffer.hlsl">
+      <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
