@@ -172,6 +172,9 @@
     <Filter Include="03. Shader\02. DeferredShading\01. GBuffer">
       <UniqueIdentifier>{f6a8962c-b852-4855-a50c-a5b154bccb40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. System\01. Manager\18. ParticleMgr">
+      <UniqueIdentifier>{ad0f9a93-ff98-4c18-a854-be503d85f43e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -369,6 +372,9 @@
     <ClInclude Include="Public\System\GraphicDev_Include.h">
       <Filter>01. System\01. Manager\01. GraphicDev</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\ParticleMgr.h">
+      <Filter>01. System\01. Manager\18. ParticleMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -526,6 +532,9 @@
     </ClCompile>
     <ClCompile Include="Private\System\AnimationMgr.cpp">
       <Filter>01. System\01. Manager\17. AnimationMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\ParticleMgr.cpp">
+      <Filter>01. System\01. Manager\18. ParticleMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
