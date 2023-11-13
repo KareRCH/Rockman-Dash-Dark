@@ -3,9 +3,6 @@
 CRenderMgr::CRenderMgr(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext), m_hReadyResult(E_FAIL)
 {
-	Safe_AddRef(m_pDevice);
-	Safe_AddRef(m_pDeviceContext);
-
 	for (_uint i = 0; i < Cast_EnumDef(EGCAMERA_INDEX::SIZE); i++)
 	{
 		m_matPersView[i] = XMMatrixIdentity();
@@ -13,7 +10,6 @@ CRenderMgr::CRenderMgr(const DX11DEVICE_T tDevice)
 		m_matOrthoView[i] = XMMatrixIdentity();
 		m_matOrthoProj[i] = XMMatrixIdentity();
 	}
-	
 }
 
 HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
@@ -70,9 +66,6 @@ CRenderMgr* CRenderMgr::Create(const DX11DEVICE_T tDevice, const _uint iWidth, c
 void CRenderMgr::Free()
 {
 	Clear_RenderGroup();
-
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pDeviceContext);
 }
 
 void CRenderMgr::Add_RenderGroup(ERENDER_T eType, CGameObject* pGameObject)

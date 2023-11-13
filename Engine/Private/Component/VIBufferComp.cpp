@@ -19,7 +19,4 @@ _int CVIBufferComp::Tick(const _float& fTimeDelta)
 void CVIBufferComp::Free()
 {
 	SUPER::Free();
-
-	Safe_Release(m_pVtxBuffer);
-	Safe_Release(m_pIndexBuffer);
 }

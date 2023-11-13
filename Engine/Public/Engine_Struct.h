@@ -2,6 +2,9 @@
 #define Engine_Struct_h__
 
 #include "Engine_Typedef.h"
+#include <wrl/client.h>
+
+using namespace Microsoft::WRL;
 
 using namespace std;
 class unorded_map;
@@ -40,10 +43,10 @@ namespace Engine
 		_float		fPadding;
 	};
 
-	struct VERTEX_TEXTURE
+	struct VERTEX_TEXTURE_T
 	{
 		_float3		vPosition;
-		_float2		vTexture;
+		_float2		vTexCoord;
 	};
 
 	struct VERTEX_MODEL
@@ -62,8 +65,8 @@ namespace Engine
 
 	struct DX11DEVICE_T
 	{
-		ID3D11Device* pDevice;
-		ID3D11DeviceContext* pDeviceContext;
+		ComPtr<ID3D11Device> pDevice;
+		ComPtr<ID3D11DeviceContext> pDeviceContext;
 	};
 
 	//typedef struct tagVertexTexture

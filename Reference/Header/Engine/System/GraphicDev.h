@@ -46,25 +46,29 @@ private:
 	HRESULT		Ready_Viewport(const FDEVICE_INIT& tInit);
 
 public:
+	void TurnOnZBuffer();
+	void TurnOffZBuffer();
+
+public:
 	const _matrix& GetProjectionMatrix();
 	const _matrix& GetWorldMatrix();
 	const _matrix& GetOrthoMatrix();
 
 public:
-	GETSET_1(ID3D11Device*, m_pDevice, Device, GET__C)
-	GETSET_1(ID3D11DeviceContext*, m_pDeviceContext, DeviceContext, GET__C)
+	GETSET_1(ComPtr<ID3D11Device>, m_pDevice, Device, GET_C_REF)
+	GETSET_1(ComPtr<ID3D11DeviceContext>, m_pDeviceContext, DeviceContext, GET_C_REF)
 
 private:
 	_bool	m_bVsync_Enabled = false;
 	_int	m_iVideoCardMemory = 0;
 	_char	m_cVideoCardDescription[128] = {0};
 
-	ID3D11Device*					m_pDevice = nullptr;
-	ID3D11DeviceContext*			m_pDeviceContext = nullptr;
+	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
+	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
 
-	IDXGISwapChain*					m_pSwapChain = nullptr;
-	ComPtr<ID3D11Texture2D>			m_pTexture_Main = { nullptr };		// 메인 렌더 타겟 텍스처, Deferred의 경우 포지션이 저장됨
-	ComPtr<ID3D11RenderTargetView>	m_pRTV_Main = { nullptr };			// 메인 렌더 타겟
+	ComPtr<IDXGISwapChain>			m_pSwapChain = { nullptr };
+	ComPtr<ID3D11Texture2D>			m_pTexture_SwapChain = { nullptr };		// 메인 렌더 타겟 텍스처, Deferred의 경우 포지션이 저장됨
+	ComPtr<ID3D11RenderTargetView>	m_pRTV_SwapChain = { nullptr };			// 메인 렌더 타겟
 	
 	// 아래는 디퍼드용 GBuffer 렌더타깃
 	ComPtr<ID3D11Texture2D>			m_pTexture_LGC[Cast_EnumDef(ERenderTarget_Legacy::Size)] = { nullptr };
@@ -82,18 +86,19 @@ private:
 	using vector_RTV = vector<ComPtr<ID3D11RenderTargetView>>;
 	vector_RTV					m_vecRTV;							// 실제 할당되는 렌더타깃의 벡터
 
-	ID3D11Texture2D*			m_pDethStencilBuffer = nullptr;		// CPU용 깊이 버퍼
-	ID3D11DepthStencilState*	m_pDepthStencilState = nullptr;		// 깊이 스텐실 상태
-	ID3D11DepthStencilView*		m_pDepthStencilView = nullptr;		// 깊이 스텐실 뷰
+	ComPtr<ID3D11Texture2D>			m_pDethStencilBuffer = nullptr;				// CPU용 깊이 버퍼
+	ComPtr<ID3D11DepthStencilState>	m_pDepthStencilState = nullptr;				// 깊이 스텐실 상태
+	ComPtr<ID3D11DepthStencilState>	m_pDepthDisabledStencilState = nullptr;		// Z버퍼 Off한 스텐실 상태
+	ComPtr<ID3D11DepthStencilView>	m_pDepthStencilView = nullptr;				// 깊이 스텐실 뷰
 
-	ID3D11RasterizerState*		m_pRasterState = nullptr;			// 래스터라이즈 상태 설정
+	ComPtr<ID3D11RasterizerState>	m_pRasterState = { nullptr };			// 래스터라이즈 상태 설정
 
 #ifdef _DEBUG
 public:
-	GETSET_1(ID3D11Debug*, m_pDebug, Debug, GET__C)
+	GETSET_1(ID3D11Debug*, m_pDebug.Get(), Debug, GET__C)
 
 private:
-	ID3D11Debug* m_pDebug = nullptr;
+	ComPtr<ID3D11Debug> m_pDebug = { nullptr };
 #endif
 
 private:

@@ -71,8 +71,8 @@ private:
 	list<CGameObject*>		m_RenderGroup[Cast_EnumDef(ERENDER_T::SIZE)];
 
 private:
-	ID3D11Device*				m_pDevice = nullptr;
-	ID3D11DeviceContext*		m_pDeviceContext = nullptr;
+	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
+	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
 
 public:		// 카메라 행렬저장용
 	void Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView);

@@ -28,6 +28,4 @@ CParticleMgr* CParticleMgr::Create(const DX11DEVICE_T tDevice)
 
 void CParticleMgr::Free()
 {
-    Safe_Release(m_pDevice);
-    Safe_Release(m_pDeviceContext);
 }

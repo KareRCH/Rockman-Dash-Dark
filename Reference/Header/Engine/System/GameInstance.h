@@ -39,15 +39,17 @@ private:
 	virtual void Free() override;
 
 public:		// 그래픽 디바이스
-	HRESULT					Initialize_GraphicDev(const FDEVICE_INIT& tInit);
-	HRESULT					Clear_BackBuffer_View(_float4 vClearColor);
-	HRESULT					Clear_DepthStencil_View();
-	HRESULT					Present();
-	ID3D11Device*			Get_GraphicDev();
-	ID3D11DeviceContext*	Get_GraphicContext();
-	const _matrix*			Get_GraphicDev_ProjectionMatrix();
-	const _matrix*			Get_GraphicDev_WorldMatrix();
-	const _matrix*			Get_GraphicDev_OrthoMatrix();
+	HRESULT							Initialize_GraphicDev(const FDEVICE_INIT& tInit);
+	HRESULT							Clear_BackBuffer_View(_float4 vClearColor);
+	HRESULT							Clear_DepthStencil_View();
+	HRESULT							Present();
+	ComPtr<ID3D11Device>			Get_GraphicDev();
+	ComPtr<ID3D11DeviceContext>		Get_GraphicContext();
+	void							TurnOnZBuffer();
+	void							TrunOffZBuffer();
+	const _matrix*					Get_GraphicDev_ProjectionMatrix();
+	const _matrix*					Get_GraphicDev_WorldMatrix();
+	const _matrix*					Get_GraphicDev_OrthoMatrix();
 	
 
 
@@ -135,9 +137,9 @@ public:
 public:		// 셰이더 매니저
 	HRESULT Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
 	HRESULT	Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey);
-	inline ID3DBlob* const Get_ShaderByte(const EShaderType eType, const wstring& strKey);
+	const ComPtr<ID3DBlob>& Get_ShaderByte(const EShaderType eType, const wstring& strKey);
 	template<EShaderType Type>
-	inline ShaderType<Type> Get_ShaderBuffer(const wstring& strKey);
+	inline ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strKey);
 
 private:
 	class CGraphicDev*		m_pGraphicDev = nullptr;
@@ -155,6 +157,7 @@ private:
 	class CRenderMgr*		m_pRenderMgr = nullptr;
 	class CModelMgr*		m_pModelMgr = nullptr;
 	class CShaderMgr*		m_pShaderMgr = nullptr;
+	class CParticleMgr*		m_pParticleMgr = nullptr;
 };
 
 inline CGameInstance* GameInstance()
@@ -168,7 +171,7 @@ inline _uint Release_GameInstance()
 }
 
 template<EShaderType Type>
-inline ShaderType<Type> CGameInstance::Get_ShaderBuffer(const wstring& strKey)
+inline ComPtr<ShaderType<Type>> CGameInstance::Get_ShaderBuffer(const wstring& strKey)
 {
 	if (nullptr == m_pShaderMgr)
 		return nullptr;

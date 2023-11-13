@@ -30,8 +30,8 @@ public:
 	GETSET_1(_uint, m_iIndexCount, IndexCount, GET_C_REF)
 
 protected:
-	ID3D11Buffer* m_pVtxBuffer = nullptr;
-	ID3D11Buffer* m_pIndexBuffer = nullptr;
+	ComPtr<ID3D11Buffer> m_pVtxBuffer = { nullptr };
+	ComPtr<ID3D11Buffer> m_pIndexBuffer = { nullptr };
 	_uint m_iVtxCount = 0;
 	_uint m_iIndexCount = 0;
 };

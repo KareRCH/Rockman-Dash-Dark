@@ -60,8 +60,8 @@ private:	// 기본 속성
 	_float						m_fPriority[Cast_EnumDef(EUPDATE_T::SIZE)];	// 우선도
 
 protected:
-	ID3D11Device*				m_pDevice = nullptr;
-	ID3D11DeviceContext*		m_pDeviceContext = nullptr;
+	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
+	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
 
 public: // 각 오브젝트는 자식 오브젝트를 가질 수 있음
 	GETSET_2(CGameObject*, m_pOwner, Owner, GET_REF_C, SET__C)

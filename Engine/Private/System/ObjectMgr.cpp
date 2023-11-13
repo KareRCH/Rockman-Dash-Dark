@@ -6,8 +6,6 @@ CObjectMgr::CObjectMgr(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 	, m_pScene_Current(nullptr), m_pScene_Reserve(nullptr)
 {
-	Safe_AddRef(m_pDevice);
-	Safe_AddRef(m_pDeviceContext);
 }
 
 HRESULT CObjectMgr::Initialize(const EMANAGE_SCENE eType)
@@ -95,9 +93,6 @@ CObjectMgr* CObjectMgr::Create(const DX11DEVICE_T tDevice, const EMANAGE_SCENE e
 
 void CObjectMgr::Free()
 {
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pDeviceContext);
-
 	switch (m_eSceneProcess)
 	{
 	case EMANAGE_SCENE::SINGLE:

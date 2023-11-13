@@ -3,8 +3,6 @@
 CShaderMgr::CShaderMgr(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 {
-	Safe_AddRef(m_pDevice);
-	Safe_AddRef(m_pDeviceContext);
 }
 
 HRESULT CShaderMgr::Initialize(const wstring& strMainPath)
@@ -32,9 +30,6 @@ CShaderMgr* CShaderMgr::Create(const DX11DEVICE_T tDevice, const wstring& strMai
 
 void CShaderMgr::Free()
 {
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pDeviceContext);
-
 	// 셰이더 코드 해제
 	for (size_t i = 0; i < Cast_EnumDef(EShaderType::Size); i++)
 	{
@@ -159,7 +154,7 @@ ID3DBlob* CShaderMgr::Read_ShaderBinary(const wstring& strFile)
 }
 
 
-ID3DBlob* const CShaderMgr::Get_ShaderByte(const EShaderType eType, const wstring& strName) const
+const ComPtr<ID3DBlob>& CShaderMgr::Get_ShaderByte(const EShaderType eType, const wstring& strName) const
 {
 	_uint iIndex = Cast_EnumDef(eType);
 

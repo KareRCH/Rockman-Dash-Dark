@@ -247,6 +247,7 @@
     <ClInclude Include="Public\Component\ModelBufferComp.h" />
     <ClInclude Include="Public\Component\ModelShaderComp.h" />
     <ClInclude Include="Public\Component\PrimitiveComponent.h" />
+    <ClInclude Include="Public\Component\RectBufferComp.h" />
     <ClInclude Include="Public\Component\SceneComponent.h" />
     <ClInclude Include="Public\Component\ShaderComponent.h" />
     <ClInclude Include="Public\Component\TextureComponent.h" />
@@ -309,6 +310,7 @@
     <ClCompile Include="Private\Component\GameObjectComp.cpp" />
     <ClCompile Include="Private\Component\ModelBufferComp.cpp" />
     <ClCompile Include="Private\Component\ModelShaderComp.cpp" />
+    <ClCompile Include="Private\Component\RectBufferComp.cpp" />
     <ClCompile Include="Private\Component\SceneComponent.cpp" />
     <ClCompile Include="Private\Component\ShaderComponent.cpp" />
     <ClCompile Include="Private\Component\TextureComponent.cpp" />

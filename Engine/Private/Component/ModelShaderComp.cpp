@@ -76,7 +76,7 @@ void CModelShaderComp::Free()
 HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexShaderKey, const wstring& strPixelShaderKey)
 {
     // 셰이더 매니저로 부터 정점 셰이더 얻어오기
-    ID3DBlob* pVertexShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Vertex, strVertexShaderKey);
+    ComPtr<ID3DBlob> pVertexShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Vertex, strVertexShaderKey);
     m_pVertexShader = GameInstance()->Get_ShaderBuffer<EShaderType::Vertex>(strVertexShaderKey);
     if (nullptr == m_pVertexShader || nullptr == pVertexShaderBuf)
     {
@@ -85,7 +85,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     }
 
     // 셰이더 매니저로 부터 픽셀 셰이더 얻어오기
-    ID3DBlob* pPixelShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Pixel, strPixelShaderKey);
+    ComPtr<ID3DBlob> pPixelShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Pixel, strPixelShaderKey);
     m_pPixelShader = GameInstance()->Get_ShaderBuffer<EShaderType::Pixel>(strPixelShaderKey);
     if (nullptr == m_pPixelShader || nullptr == pPixelShaderBuf)
     {

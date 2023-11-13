@@ -7,8 +7,6 @@
 CTextureMgr::CTextureMgr(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 {
-	Safe_AddRef(m_pDevice);
-	Safe_AddRef(m_pDeviceContext);
 }
 
 CTextureMgr* CTextureMgr::Create(const DX11DEVICE_T tDevice, const wstring& strMainPath)
@@ -28,9 +26,6 @@ CTextureMgr* CTextureMgr::Create(const DX11DEVICE_T tDevice, const wstring& strM
 
 void CTextureMgr::Free()
 {
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pDeviceContext);
-
 	for (auto item : m_mapTextureGroup)
 	{
 		Safe_Release(item.second);

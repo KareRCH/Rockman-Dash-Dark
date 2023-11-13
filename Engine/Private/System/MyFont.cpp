@@ -3,8 +3,6 @@
 CMyFont::CMyFont(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 {
-	Safe_AddRef(m_pDevice);
-	Safe_AddRef(m_pDeviceContext);
 }
 
 HRESULT CMyFont::Initialize(const _tchar* pFontType,
@@ -43,6 +41,4 @@ CMyFont* CMyFont::Create(const DX11DEVICE_T tDevice, const _tchar* pFontType, co
 
 void CMyFont::Free()
 {
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pDeviceContext);
 }

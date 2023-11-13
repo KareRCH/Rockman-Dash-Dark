@@ -94,7 +94,7 @@ HRESULT CGameInstance::Present()
 	return m_pGraphicDev->Present();
 }
 
-ID3D11Device* CGameInstance::Get_GraphicDev()
+ComPtr<ID3D11Device> CGameInstance::Get_GraphicDev()
 {
 	if (nullptr == m_pGraphicDev)
 		return nullptr;
@@ -102,12 +102,28 @@ ID3D11Device* CGameInstance::Get_GraphicDev()
 	return m_pGraphicDev->Get_Device();
 }
 
-ID3D11DeviceContext* CGameInstance::Get_GraphicContext()
+ComPtr<ID3D11DeviceContext> CGameInstance::Get_GraphicContext()
 {
 	if (nullptr == m_pGraphicDev)
 		return nullptr;
 
 	return m_pGraphicDev->Get_DeviceContext();
+}
+
+void CGameInstance::TurnOnZBuffer()
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	m_pGraphicDev->TurnOnZBuffer();
+}
+
+void CGameInstance::TrunOffZBuffer()
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	m_pGraphicDev->TurnOffZBuffer();
 }
 
 const _matrix* CGameInstance::Get_GraphicDev_ProjectionMatrix()
@@ -727,7 +743,7 @@ HRESULT CGameInstance::Load_Shader(const wstring& strFileName, const EShaderType
 }
 
 
-inline ID3DBlob* const CGameInstance::Get_ShaderByte(const EShaderType eType, const wstring& strKey)
+const ComPtr<ID3DBlob>& CGameInstance::Get_ShaderByte(const EShaderType eType, const wstring& strKey)
 {
 	if (nullptr == m_pShaderMgr)
 		return nullptr;
