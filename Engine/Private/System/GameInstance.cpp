@@ -15,6 +15,7 @@
 #include "System/RenderMgr.h"
 #include "BaseClass/GameObject.h"
 #include "System/ModelMgr.h"
+#include "System/ParticleMgr.h"
 
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -41,6 +42,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pProtoMgr);
 	Safe_Release(m_pRenderMgr);
 
+	Safe_Release(m_pParticleMgr);
 	Safe_Release(m_pShaderMgr);
 	Safe_Release(m_pModelMgr);
 	Safe_Release(m_pTextureMgr);
