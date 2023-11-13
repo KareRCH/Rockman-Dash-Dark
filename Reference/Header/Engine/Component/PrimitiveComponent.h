@@ -33,9 +33,9 @@ protected:
 	virtual void					Free();
 
 protected:
-	ID3D11Device*			m_pDevice = nullptr;		// 렌더 장치
-	ID3D11DeviceContext*	m_pDeviceContext = nullptr;	// 렌더 장치 컨텍스트
-	_bool					m_bClone;
+	ComPtr<ID3D11Device>			m_pDevice = { nullptr };		// 렌더 장치
+	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };	// 렌더 장치 컨텍스트
+	_bool							m_bClone;
 
 public:
 	GETSET_1(wstring,	m_strName, Name, GET_C_REF)

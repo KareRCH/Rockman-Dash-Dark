@@ -42,7 +42,7 @@ PS_OUTPUT main(PS_INPUT input)
 	return output;
 }
 
-PS_INPUT LightingPS(PS_INPUT input)
+PS_OUTPUT LightingPS(PS_INPUT input)
 {
     PS_OUTPUT output;
     float3 normal = gTexNormal.Sample(gSampler, input.Tex).rgb;

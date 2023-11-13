@@ -67,9 +67,6 @@
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. BufferComponent\01. Tri">
       <UniqueIdentifier>{d64ffa75-e403-4388-ac72-b6fff7601d92}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Model">
-      <UniqueIdentifier>{283a955c-0e99-4937-a06b-3036fbda9927}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. System\01. Manager">
       <UniqueIdentifier>{fa594517-3c84-4988-9229-35314eab8809}</UniqueIdentifier>
     </Filter>
@@ -174,6 +171,12 @@
     </Filter>
     <Filter Include="01. System\01. Manager\18. ParticleMgr">
       <UniqueIdentifier>{ad0f9a93-ff98-4c18-a854-be503d85f43e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Rect">
+      <UniqueIdentifier>{916a8f6e-f3cb-4531-921e-d2f12799ac4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. BufferComponent\03. Model">
+      <UniqueIdentifier>{283a955c-0e99-4937-a06b-3036fbda9927}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -313,7 +316,7 @@
       <Filter>02. Utility\06. LogicDevice</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\ModelBufferComp.h">
-      <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Model</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\03. Model</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\ModelShaderComp.h">
       <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\02. ModelShaderComp</Filter>
@@ -374,6 +377,9 @@
     </ClInclude>
     <ClInclude Include="Public\System\ParticleMgr.h">
       <Filter>01. System\01. Manager\18. ParticleMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\RectBufferComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Rect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -480,10 +486,7 @@
       <Filter>02. Utility\01. BaseClass\05. Camera</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\ModelBufferComp.cpp">
-      <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Model</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Component\ModelShaderComp.cpp">
-      <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\02. ModelShaderComp</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\03. Model</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\TextureComponent.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\04. TextureComponent</Filter>
@@ -535,6 +538,12 @@
     </ClCompile>
     <ClCompile Include="Private\System\ParticleMgr.cpp">
       <Filter>01. System\01. Manager\18. ParticleMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\RectBufferComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\ModelShaderComp.cpp">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\02. ModelShaderComp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

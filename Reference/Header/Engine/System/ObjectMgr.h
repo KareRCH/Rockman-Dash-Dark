@@ -59,8 +59,8 @@ public:
 	HRESULT			Delete_SceneAll();
 	
 private:
-	ID3D11Device*						m_pDevice = { nullptr };
-	ID3D11DeviceContext*				m_pDeviceContext = { nullptr };
+	ComPtr<ID3D11Device>					m_pDevice = { nullptr };
+	ComPtr<ID3D11DeviceContext>				m_pDeviceContext = { nullptr };
 
 private:
 	CScene*								m_pScene_Reserve;

@@ -6,15 +6,11 @@
 CGameObject::CGameObject(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
 {
-	Safe_AddRef(m_pDevice);
-	Safe_AddRef(m_pDeviceContext);
 }
 
 CGameObject::CGameObject(const CGameObject& rhs)
 	: m_pDevice(rhs.m_pDevice), m_pDeviceContext(rhs.m_pDeviceContext)
 {
-	Safe_AddRef(m_pDevice);
-	Safe_AddRef(m_pDeviceContext);
 }
 
 HRESULT CGameObject::Initialize()
@@ -59,9 +55,6 @@ void CGameObject::Render()
 
 void CGameObject::Free()
 {
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pDeviceContext);
-
 	for (auto iter = m_vecComponent.begin(); iter != m_vecComponent.end(); ++iter)
 	{
 		Safe_Release((*iter));
@@ -200,7 +193,7 @@ void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, 
 
 HRESULT CGameObject::Initialize_Component()
 {
-	FAILED_CHECK_RETURN(Add_Component(L"Transform", m_pTransformComp = CTransformComponent::Create({ m_pDevice, m_pDeviceContext })), E_FAIL);
+	FAILED_CHECK_RETURN(Add_Component(L"Transform", m_pTransformComp = CTransformComponent::Create({ m_pDevice.Get(), m_pDeviceContext.Get()})), E_FAIL);
 
 	return S_OK;
 }

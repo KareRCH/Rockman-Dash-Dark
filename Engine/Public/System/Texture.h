@@ -109,8 +109,8 @@ public:
 	virtual void						Transfer_Texture() PURE;
 
 protected:
-	ID3D11Device*				m_pDevice = nullptr;					// 장치
-	ID3D11DeviceContext*		m_pDeviceContext = nullptr;				// 장치 컨텍스트
+	ComPtr<ID3D11Device>				m_pDevice = { nullptr };					// 장치
+	ComPtr<ID3D11DeviceContext>			m_pDeviceContext = { nullptr };				// 장치 컨텍스트
 
 };
 

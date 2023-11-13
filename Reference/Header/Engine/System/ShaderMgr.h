@@ -55,9 +55,9 @@ public:
 	}
 
 public:
-	ID3DBlob* const				Get_ShaderByte() const { return pShaderByte.Get(); }
-	ID3D11DeviceChild* const	Get_ShaderBuffer() const { return pShaderBuffer.Get(); }
-	const _bool					IsLoaded() const { return bLoaded; }
+	const ComPtr<ID3DBlob>&				Get_ShaderByte() const { return pShaderByte; }
+	const ComPtr<ID3D11DeviceChild>&	Get_ShaderBuffer() const { return pShaderBuffer; }
+	const _bool							IsLoaded() const { return bLoaded; }
 
 private:
 	wstring							strFileName = L"";				// 로드할 셰이더 코드, 파일 링크용
@@ -88,17 +88,17 @@ private:
 	virtual void		Free() override;
 
 private:
-	ID3D11Device*			m_pDevice = { nullptr };
-	ID3D11DeviceContext*	m_pDeviceContext = { nullptr };
+	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
+	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
 
 
 public:
 	// 파일이름을 통해 셰이더를 로드
 	HRESULT	Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey);
 	// 로드된 셰이더가 있다면 그 값을 반환한다.
-	ID3DBlob* const Get_ShaderByte(const EShaderType eType, const wstring& strName) const;
+	const ComPtr<ID3DBlob>& Get_ShaderByte(const EShaderType eType, const wstring& strName) const;
 	template <EShaderType Type>
-	ShaderType<Type> Get_ShaderBuffer(const wstring& strName) const;
+	ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strName) const;
 
 private:
 	ID3DBlob* Read_ShaderBinary(const wstring& strFile);
@@ -112,7 +112,7 @@ private:
 #pragma region Get Shader 템플릿
 
 template <EShaderType Type>
-ShaderType<Type> CShaderMgr::Get_ShaderBuffer(const wstring& strName) const
+ComPtr<ShaderType<Type>> CShaderMgr::Get_ShaderBuffer(const wstring& strName) const
 {
 	constexpr _uint iIndex = Cast_EnumDef(Type);
 
@@ -120,12 +120,10 @@ ShaderType<Type> CShaderMgr::Get_ShaderBuffer(const wstring& strName) const
 	if (iter == m_mapShaderData[iIndex].end() || !(*iter).second->IsLoaded())
 		return nullptr;
 
-	ID3D11DeviceChild* pShaderBuffer = (*iter).second->Get_ShaderBuffer();
+	ID3D11DeviceChild* pShaderBuffer = (*iter).second->Get_ShaderBuffer().Get();
 
-	return Cast<ShaderType<Type>>(pShaderBuffer);
+	return ComPtr<ShaderType<Type>>(Cast<ShaderType<Type>*>(pShaderBuffer));
 }
-
-
 
 #pragma endregion
 

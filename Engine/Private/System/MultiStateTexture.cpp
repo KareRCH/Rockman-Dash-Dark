@@ -113,7 +113,7 @@ HRESULT CMultiStateTexture::Insert_Texture(const wstring& strFilePath, const wst
 	m_pDeviceContext->UpdateSubresource(pTexture, 0, nullptr, texData->pixels, Cast<_uint>(texData->rowPitch), 0);
 
 	ID3D11ShaderResourceView* pTextureView = nullptr;
-	hr = CreateShaderResourceView(m_pDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pTextureView);
+	hr = CreateShaderResourceView(m_pDevice.Get(), image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pTextureView);
 	if (FAILED(hr))
 	{
 		Safe_Release(pTextureView);

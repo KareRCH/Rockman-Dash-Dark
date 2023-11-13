@@ -104,11 +104,11 @@ void CTestObject::Free()
 
 HRESULT CTestObject::Initialize_Component()
 {
-    FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_pModelBufferComp = CModelBufferComp::Create({ m_pDevice, m_pDeviceContext })), E_FAIL);
+    FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_pModelBufferComp = CModelBufferComp::Create({ m_pDevice.Get(), m_pDeviceContext.Get()})), E_FAIL);
     m_pModelBufferComp->Initialize(L"RockVolnutt", L"Body");
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create({ m_pDevice, m_pDeviceContext }, g_hWnd)), E_FAIL);
+    FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create({ m_pDevice.Get(), m_pDeviceContext.Get()}, g_hWnd)), E_FAIL);
     //m_ColorShaderComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
     m_pModelShaderComp->Set_IndexCount(m_pModelBufferComp->Get_IndexCount());
     ID3D11ShaderResourceView* pTest= GameInstance()->Get_Texture(L"RockVolnutt", L"Body-BaseColor");

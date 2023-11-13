@@ -54,7 +54,7 @@ HRESULT CModelBufferComp::Initialize(const wstring& strGroupKey, const wstring& 
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVtxBuffer), E_FAIL);
+	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVtxBuffer.GetAddressOf()), E_FAIL);
 
 	// 인덱스 버퍼 제작
 	for (_uint i = 0; i < m_iIndexCount; i++)
@@ -77,7 +77,7 @@ HRESULT CModelBufferComp::Initialize(const wstring& strGroupKey, const wstring& 
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_pIndexBuffer), E_FAIL);
+	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&indexBufferDesc, &indexData, m_pIndexBuffer.GetAddressOf()), E_FAIL);
 
 	Safe_Delete_Array(vertices);
 	Safe_Delete_Array(indices);
@@ -104,10 +104,10 @@ void CModelBufferComp::Render()
 	_uint iOffset = 0;
 
 	// 정점 버퍼 활성
-	m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVtxBuffer, &iStride, &iOffset);
+	m_pDeviceContext->IASetVertexBuffers(0, 1, m_pVtxBuffer.GetAddressOf(), &iStride, &iOffset);
 
 	// 인텍스 버퍼 활성
-	m_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// 정점 버퍼 삼각형 리스트
 	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

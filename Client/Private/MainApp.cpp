@@ -49,12 +49,8 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_GraphicDev(tDeviceInit), E_FAIL);
 
 	m_pDevice = m_pGameInstance->Get_GraphicDev();
-	Safe_AddRef(m_pDevice);
-
 	m_pDeviceContext = m_pGameInstance->Get_GraphicContext();
-	Safe_AddRef(m_pDeviceContext);
-
-	DX11DEVICE_T tDevice = { m_pDevice, m_pDeviceContext };
+	DX11DEVICE_T tDevice = { m_pDevice.Get(), m_pDeviceContext.Get()};
 
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_InputDev(g_hInst, g_hWnd), E_FAIL);
@@ -139,10 +135,6 @@ void CMainApp::Render()
 
 void CMainApp::Free()
 {
-	// ¿Âƒ° ¡¶∞≈
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pDeviceContext);
-
 	// dll ΩÃ±€≈Ê ¡¶∞≈
 	Safe_Release(m_pGameInstance);
 }

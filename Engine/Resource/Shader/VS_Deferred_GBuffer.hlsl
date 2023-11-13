@@ -46,7 +46,7 @@ VS_OUTPUT LightingVS(VS_INPUT input)
 {
     VS_OUTPUT output;
     
-    output.LocalPos = float4(input.position, 1.0f);
+    output.LocalPos = float4(input.Position, 1.0f);
     output.Position = output.LocalPos;
     output.Tex = input.Tex;
 

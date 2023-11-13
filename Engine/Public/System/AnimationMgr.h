@@ -25,8 +25,8 @@ private:
 	virtual void			Free() override;
 
 private:
-	ID3D11Device* m_pDevice = { nullptr };
-	ID3D11DeviceContext* m_pDeviceContext = { nullptr };
+	ComPtr<ID3D11Device>		m_pDevice = { nullptr };
+	ComPtr<ID3D11DeviceContext> m_pDeviceContext = { nullptr };
 };
 
 END
