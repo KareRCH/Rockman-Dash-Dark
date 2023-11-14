@@ -33,7 +33,7 @@ _int CDynamicCamera::Tick(const _float& fTimeDelta)
 
     _float3 vPos, vUp, vAt;
     vPos = Get_Position();
-    vAt = _float3(0.f, 0.f, 10.f);
+    vAt = _float3(0.f, 0.f, 0.f);
     vUp = _float3(0.f, 1.f, 0.f);
 
     m_matPersView = XMMatrixLookAtLH(XMLoadFloat3(&vPos),

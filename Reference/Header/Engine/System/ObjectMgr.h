@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseClass/Scene.h"
+#include "BaseClass/Level.h"
 
 BEGIN(Engine)
 
@@ -44,11 +44,11 @@ public:
 
 public:
 	// 씬 생성해서 바로 집어넣는 방식
-	HRESULT			Set_Scene(CScene* pScene);
+	HRESULT			Set_Scene(CLevel* pScene);
 	// 생성된 씬을 돌려쓰는 방식
 	HRESULT			Set_Scene(wstring strSceneName);
 	// 씬 추가, 이름과 함께
-	HRESULT			Add_Scene(CScene* pScene, wstring strSceneName);
+	HRESULT			Add_Scene(CLevel* pScene, wstring strSceneName);
 	// 현재씬에 요소들만 삭제 (레이어, 오브젝트)
 	HRESULT			Clear_CurrentScene();
 	// 모든씬에 요소들만 삭제 (레이어, 오브젝트)
@@ -63,9 +63,9 @@ private:
 	ComPtr<ID3D11DeviceContext>				m_pDeviceContext = { nullptr };
 
 private:
-	CScene*								m_pScene_Reserve;
-	CScene*								m_pScene_Current;
-	_unmap<wstring, CScene*>			m_mapScene;
+	CLevel*								m_pScene_Reserve;
+	CLevel*								m_pScene_Current;
+	_unmap<wstring, CLevel*>			m_mapScene;
 	EMANAGE_SCENE						m_eSceneProcess;
 
 

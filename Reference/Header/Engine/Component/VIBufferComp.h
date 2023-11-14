@@ -1,12 +1,12 @@
 #pragma once
 
-#include "PrimitiveComponent.h"
+#include "SceneComponent.h"
 
 BEGIN(Engine)
 
-class ENGINE_DLL CVIBufferComp abstract : public CPrimitiveComponent
+class ENGINE_DLL CVIBufferComp abstract : public CSceneComponent
 {
-	DERIVED_CLASS(CPrimitiveComponent, CVIBufferComp)
+	DERIVED_CLASS(CSceneComponent, CVIBufferComp)
 protected:
 	explicit CVIBufferComp(const DX11DEVICE_T tDevice);
 	explicit CVIBufferComp(const CVIBufferComp& rhs);

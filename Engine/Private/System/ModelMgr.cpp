@@ -39,6 +39,7 @@ void CModelMgr::Free()
 void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey)
 {
 	Assimp::Importer importer;
+	FModelGroup* pModelGroup = Add_ModelGroup(strGroupKey);	// 모델 그룹 로드, 없으면 추가후 로드
 
 	_uint iFlag;
 	iFlag = aiProcess_JoinIdenticalVertices |   // 동일한 꼭지점 결합, 인덱싱 최적화
@@ -67,14 +68,49 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 	}
 
 	m_vecMesh.resize(m_pScene->mNumMeshes);
+	for (size_t i = 0; i < m_vecMesh.size(); i++)
+	{
+		m_vecMesh[i] = FMeshData::Create();
+	}
 	m_iMaterialCount = m_pScene->mNumMaterials;
 	m_iBoneCount = 0;
-
+	_float4x4 matTransformTest = {};
 	aiNode* pRootNode = m_pScene->mRootNode;
+	for (_uint i = 0; i < m_pScene->mMetaData->mNumProperties; i++)
+	{
+		aiMetadata* pMeta = m_pScene->mMetaData;
+		aiString* str = &pMeta->mKeys[i];
+		aiMetadataEntry* pEntry = &pMeta->mValues[i];
+		int t = 0;
+	}
+	for (_uint i = 0; i < pRootNode->mNumChildren; i++)
+	{
+		aiNode* pChildNode = pRootNode->mChildren[i];
+		aiMatrix4x4 aiTransform = pChildNode->mTransformation;
+		matTransformTest = _float4x4(
+			aiTransform.a1, aiTransform.a2, aiTransform.a3, aiTransform.a4,
+			aiTransform.b1, aiTransform.b2, aiTransform.b3, aiTransform.b4,
+			aiTransform.c1, aiTransform.c2, aiTransform.c3, aiTransform.c4,
+			aiTransform.d1, aiTransform.d2, aiTransform.d3, aiTransform.d4
+		);
+	}
 	for (_uint i = 0; i < m_pScene->mNumMeshes; i++)
 	{
 		aiNode* pChildNode = pRootNode->mChildren[i];
 		aiMesh* pMesh = m_pScene->mMeshes[i];
+		
+		// 트랜스폼 저장
+		aiMatrix4x4 aiTransform = pChildNode->mTransformation;
+		_float4x4 matTransform = _float4x4(
+			aiTransform.a1, aiTransform.a2, aiTransform.a3, aiTransform.a4,
+			aiTransform.b1, aiTransform.b2, aiTransform.b3, aiTransform.b4,
+			aiTransform.c1, aiTransform.c2, aiTransform.c3, aiTransform.c4,
+			aiTransform.d1, aiTransform.d2, aiTransform.d3, aiTransform.d4
+		);
+		//m_vecMesh[i].matTransform = matTransform;
+		m_vecMesh[i]->matTransform = matTransform;
+		//_matrix matTransform = XMLoadFloat4x4( );
+
 
 		// 점
 		for (_uint j = 0; j < pMesh->mNumVertices; j++)
@@ -88,30 +124,27 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 				vTexCoord = _float2(0.f, 0.f);
 
 			VERTEX_MODEL vData = { vPos, vNormal, vTexCoord };
-			m_vecMesh[i].vecVertices.push_back(vData);
+			m_vecMesh[i]->vecVertices.push_back(vData);
 		}
 
 		// 면 (인덱싱)
 		for (_uint j = 0; j < pMesh->mNumFaces; j++)
 		{
 			aiFace& face = pMesh->mFaces[j];
-			m_vecMesh[i].vecIndices.push_back(face.mIndices[0]);
-			m_vecMesh[i].vecIndices.push_back(face.mIndices[1]);
-			m_vecMesh[i].vecIndices.push_back(face.mIndices[2]);
+			m_vecMesh[i]->vecIndices.push_back(face.mIndices[0]);
+			m_vecMesh[i]->vecIndices.push_back(face.mIndices[1]);
+			m_vecMesh[i]->vecIndices.push_back(face.mIndices[2]);
 		}
 		
 		// 뼈
 		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
 			aiBone* pBone = pMesh->mBones[j];
+			wstring strName = wstring(Make_Wstring(pBone->mName.C_Str()));
 			
 		}
 
-		// 애니메이션
-		for (_uint j = 0; j < m_pScene->mNumAnimations; j++)
-		{
-			aiAnimation* pAnim = m_pScene->mAnimations[j];
-		}
+		
 
 		// 머터리얼
 		for (_uint j = 0; j < m_pScene->mNumMaterials; j++)
@@ -124,32 +157,98 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 		}
 
 		// 파싱데이터 임포트
-		auto iter = m_mapModelGroup.find(strGroupKey);
-		if (iter == m_mapModelGroup.end())
 		{
-			FModelGroup* pGroup = FModelGroup::Create(false, true);
-			wstring Convert(Make_Wstring(pMesh->mName.C_Str()));
-			pGroup->mapMesh.emplace(Convert, m_vecMesh[i]);
-			m_mapModelGroup.emplace(strGroupKey, pGroup);
-		}
-		else
-		{
-			wstring Convert(Make_Wstring(pMesh->mName.C_Str()));
-			(*iter).second->mapMesh.emplace(Convert, m_vecMesh[i]);
+			// 메쉬 저장
+			FMeshGroup* pMeshGroup = pModelGroup->pMeshGroup;
+
+			// MeshKey 설정 및 저장
+			pMeshGroup->Add_Mesh(Make_Wstring(pMesh->mName.C_Str()), m_vecMesh[i]->Clone());
 		}
 	}
+
+	// 애니메이션
+	FAnimGroup* pAnimGroup = pModelGroup->pAnimGroup;
+	for (_uint i = 0; i < m_pScene->mNumAnimations; i++)
+	{
+		aiAnimation* pAnimAI = m_pScene->mAnimations[i];
+		FAnimData* pAnim = FAnimData::Create();
+
+		for (_uint j = 0; j < pAnimAI->mNumChannels; j++)
+		{
+			aiNodeAnim* pNodeAnimAI = pAnimAI->mChannels[j];
+			int tt = 0;
+		}
+
+		//pAnim->strName = Make_Wstring(pAnimAI->mName.C_Str());
+		//pAnim->vecPositions = pAnimAI->
+	}
+	
+	for (auto& item : m_vecMesh)
+	{
+		item->Free();
+	}
+	m_vecMesh.clear();
+
 	int t = 0;
 }
 
-const MESH* const CModelMgr::Get_Model(const wstring& strGroupKey, const wstring& strModelKey)
+const FMeshData* const CModelMgr::Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey)
 {
 	auto iter = m_mapModelGroup.find(strGroupKey);
 	if (iter == m_mapModelGroup.end())
 		return nullptr;
 
-	auto iterModel = (*iter).second->mapMesh.find(strModelKey);
-	if (iterModel == (*iter).second->mapMesh.end())
+	return (*iter).second->pMeshGroup->Get_Mesh(strMeshKey);
+}
+
+FModelGroup* CModelMgr::Get_ModelGroup(const wstring& strGroupKey)
+{
+	auto iter = m_mapModelGroup.find(strGroupKey);
+	if (iter == m_mapModelGroup.end())
 		return nullptr;
 
-	return &(*iterModel).second;
+	return (*iter).second;
+}
+
+FModelGroup* CModelMgr::Add_ModelGroup(const wstring& strGroupKey)
+{
+	auto iter = m_mapModelGroup.find(strGroupKey);
+	if (iter != m_mapModelGroup.end())
+		return (*iter).second;
+
+	FModelGroup* pGroup = FModelGroup::Create(false, false);
+	m_mapModelGroup.emplace(strGroupKey, pGroup);
+
+	pGroup->pMeshGroup = FMeshGroup::Create();
+	pGroup->pBoneGroup = FBoneGroup::Create();
+	pGroup->pAnimGroup = FAnimGroup::Create();
+
+	return pGroup;
+}
+
+FMeshGroup* CModelMgr::Get_MeshGroup(const wstring& strGroupKey)
+{
+	auto iter = m_mapModelGroup.find(strGroupKey);
+	if (iter == m_mapModelGroup.end())
+		return nullptr;
+
+	return (*iter).second->pMeshGroup;
+}
+
+FBoneGroup* CModelMgr::Get_BoneGroup(const wstring& strGroupKey)
+{
+	auto iter = m_mapModelGroup.find(strGroupKey);
+	if (iter == m_mapModelGroup.end())
+		return nullptr;
+
+	return (*iter).second->pBoneGroup;
+}
+
+FAnimGroup* CModelMgr::Get_AnimGroup(const wstring& strGroupKey)
+{
+	auto iter = m_mapModelGroup.find(strGroupKey);
+	if (iter == m_mapModelGroup.end())
+		return nullptr;
+
+	return (*iter).second->pAnimGroup;
 }

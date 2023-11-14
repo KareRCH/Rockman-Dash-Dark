@@ -10,9 +10,10 @@ BEGIN(Engine)
 
 struct FDEVICE_INIT;
 enum class EMANAGE_SCENE : _uint;
-enum class ERENDER_TYPE : _uint;
+enum class ERenderGroup : _uint;
+class FMeshData;
 
-class CScene;
+class CLevel;
 class FCollisionPrimitive;
 
 /// <summary>
@@ -45,8 +46,10 @@ public:		// 그래픽 디바이스
 	HRESULT							Present();
 	ComPtr<ID3D11Device>			Get_GraphicDev();
 	ComPtr<ID3D11DeviceContext>		Get_GraphicContext();
-	void							TurnOnZBuffer();
-	void							TrunOffZBuffer();
+	void							TurnOn_ZBuffer();
+	void							TurnOff_ZBuffer();
+	void							TurnOn_Cull();
+	void							TurnOff_Cull();
 	const _matrix*					Get_GraphicDev_ProjectionMatrix();
 	const _matrix*					Get_GraphicDev_WorldMatrix();
 	const _matrix*					Get_GraphicDev_OrthoMatrix();
@@ -65,6 +68,14 @@ public:		// 키 매니저
 	HRESULT Initialize_KeyMgr();
 	void	Tick_KeyMgr();
 	void	Late_Tick_KeyMgr();
+	// 키 입력
+	inline _bool		IsKey_Pressing(const int& iKey);
+	inline _bool		IsKey_Pressed(const int& iKey);
+	inline _bool		IsKey_Released(const int& iKey);
+	// 마우스 입력
+	inline _bool		IsMouse_Pressing(const MOUSEKEYSTATE& iMouse);
+	inline _bool		IsMouse_Pressed(const MOUSEKEYSTATE& iMouse);
+	inline _bool		IsMouse_Released(const MOUSEKEYSTATE& iMouse);
 
 public:		// 피직스 매니저
 	HRESULT				Initialize_PhysicsMgr(_uint iPhysicsWorldCount = 1);
@@ -101,7 +112,7 @@ public:		// 매니지먼트
 	_int	Tick_Scene(const _float& fTimeDelta);
 	void	Late_Tick_Scene(const _float& fTimeDelta);
 	void	Render_Scene();
-	HRESULT	Set_Scene(CScene* pScene);
+	HRESULT	Set_Scene(CLevel* pScene);
 
 public:		// 블랙보드 매니저
 	HRESULT Initialize_BlackBoardMgr();
@@ -118,7 +129,7 @@ public:		// 프로토 매니저
 public:		// 렌더 매니저
 	HRESULT	Initialize_RenderMgr(const DX11DEVICE_T tDevice, const _uint iWidth = 1280U, const _uint iHeight = 720U);
 	void	Render();
-	void	Add_RenderGroup(ERENDER_TYPE eType, class CGameObject* pGameObject);
+	void	Add_RenderGroup(ERenderGroup eType, class CGameObject* pGameObject);
 	void	Clear_RenderGroup();
 	void			Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView);
 	const _matrix 	Get_PerspectiveViewMatrix(const _uint iCam) const;
@@ -132,7 +143,7 @@ public:		// 렌더 매니저
 public:
 	HRESULT	Initialize_ModelMgr(const string& strMainPath);
 	void	Load_Model(const string& strFileName, const wstring& strGroupKey);
-	const MESH* const Get_Model(const wstring& strGroupKey, const wstring& strModelKey);
+	const FMeshData* const Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey);
 
 public:		// 셰이더 매니저
 	HRESULT Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);

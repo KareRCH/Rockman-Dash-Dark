@@ -236,13 +236,14 @@
     <ClInclude Include="Public\BaseClass\BlackBoard.h" />
     <ClInclude Include="Public\BaseClass\Camera.h" />
     <ClInclude Include="Public\BaseClass\GameObject.h" />
-    <ClInclude Include="Public\BaseClass\GameObject_Enum.h" />
+    <ClInclude Include="Public\BaseClass\GameObject_Define.h" />
     <ClInclude Include="Public\BaseClass\ImGuiWin.h" />
     <ClInclude Include="Public\BaseClass\Layer.h" />
-    <ClInclude Include="Public\BaseClass\Scene.h" />
+    <ClInclude Include="Public\BaseClass\Level.h" />
+    <ClInclude Include="Public\Component\BoxBufferComp.h" />
     <ClInclude Include="Public\Component\ColliderComponent.h" />
     <ClInclude Include="Public\Component\ColorShaderComp.h" />
-    <ClInclude Include="Public\Component\Component_Enum.h" />
+    <ClInclude Include="Public\Component\Component_Define.h" />
     <ClInclude Include="Public\Component\GameObjectComp.h" />
     <ClInclude Include="Public\Component\ModelBufferComp.h" />
     <ClInclude Include="Public\Component\ModelShaderComp.h" />
@@ -304,7 +305,8 @@
     <ClCompile Include="Private\BaseClass\Camera.cpp" />
     <ClCompile Include="Private\BaseClass\ImGuiWin.cpp" />
     <ClCompile Include="Private\BaseClass\Layer.cpp" />
-    <ClCompile Include="Private\BaseClass\Scene.cpp" />
+    <ClCompile Include="Private\BaseClass\Level.cpp" />
+    <ClCompile Include="Private\Component\BoxBufferComp.cpp" />
     <ClCompile Include="Private\Component\ColliderComponent.cpp" />
     <ClCompile Include="Private\Component\ColorShaderComp.cpp" />
     <ClCompile Include="Private\Component\GameObjectComp.cpp" />

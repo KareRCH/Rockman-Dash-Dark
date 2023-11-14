@@ -178,6 +178,9 @@
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. BufferComponent\03. Model">
       <UniqueIdentifier>{283a955c-0e99-4937-a06b-3036fbda9927}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. BufferComponent\04. Box">
+      <UniqueIdentifier>{b9e6f23c-a1ee-4bb0-a401-369969820f9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -216,11 +219,8 @@
     <ClInclude Include="Public\BaseClass\GameObject.h">
       <Filter>02. Utility\01. BaseClass\01. GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Public\BaseClass\GameObject_Enum.h">
+    <ClInclude Include="Public\BaseClass\GameObject_Define.h">
       <Filter>02. Utility\01. BaseClass\01. GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Component\Component_Enum.h">
-      <Filter>02. Utility\02. Component</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\PhysicsMgr.h">
       <Filter>01. System\01. Manager\04. Physics</Filter>
@@ -279,7 +279,7 @@
     <ClInclude Include="Public\BaseClass\Layer.h">
       <Filter>02. Utility\01. BaseClass\04. Layer</Filter>
     </ClInclude>
-    <ClInclude Include="Public\BaseClass\Scene.h">
+    <ClInclude Include="Public\BaseClass\Level.h">
       <Filter>02. Utility\01. BaseClass\03. Scene</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\ProtoMgr.h">
@@ -381,6 +381,12 @@
     <ClInclude Include="Public\Component\RectBufferComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Rect</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\Component_Define.h">
+      <Filter>02. Utility\02. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\BoxBufferComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\04. Box</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -449,7 +455,7 @@
     <ClCompile Include="Private\System\TextureMgr.cpp">
       <Filter>01. System\01. Manager\06. Texture</Filter>
     </ClCompile>
-    <ClCompile Include="Private\BaseClass\Scene.cpp">
+    <ClCompile Include="Private\BaseClass\Level.cpp">
       <Filter>02. Utility\01. BaseClass\03. Scene</Filter>
     </ClCompile>
     <ClCompile Include="Private\BaseClass\Layer.cpp">
@@ -544,6 +550,9 @@
     </ClCompile>
     <ClCompile Include="Private\Component\ModelShaderComp.cpp">
       <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\02. ModelShaderComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\BoxBufferComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\04. Box</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

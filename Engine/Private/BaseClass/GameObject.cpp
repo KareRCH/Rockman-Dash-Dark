@@ -22,12 +22,22 @@ HRESULT CGameObject::Initialize()
 
 void CGameObject::Priority_Tick(const _float& fTimeDelta)
 {
+	_uint iIndex = Cast_EnumDef(ECompTickType::Priority);
+
+	if (m_listUpdateComp[iIndex].empty())
+		return;
+
+	for (auto iter = m_listUpdateComp[iIndex].begin(); iter != m_listUpdateComp[iIndex].end(); ++iter)
+	{
+		(*iter)->Tick(fTimeDelta);
+	}
 }
 
 _int CGameObject::Tick(const _float& fTimeDelta)
 {
-	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::UPDATE)].begin();
-		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::UPDATE)].end(); ++iter)
+	_uint iIndex = Cast_EnumDef(ECompTickType::Tick);
+
+	for (auto iter = m_listUpdateComp[iIndex].begin(); iter != m_listUpdateComp[iIndex].end(); ++iter)
 	{
 		(*iter)->Tick(fTimeDelta);
 	}
@@ -37,8 +47,9 @@ _int CGameObject::Tick(const _float& fTimeDelta)
 
 void CGameObject::Late_Tick(const _float& fTimeDelta)
 {
-	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::LATE)].begin(); 
-		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::LATE)].end(); ++iter)
+	_uint iIndex = Cast_EnumDef(ECompTickType::Late);
+
+	for (auto iter = m_listUpdateComp[iIndex].begin(); iter != m_listUpdateComp[iIndex].end(); ++iter)
 	{
 		(*iter)->Late_Tick(fTimeDelta);
 	}
@@ -46,8 +57,8 @@ void CGameObject::Late_Tick(const _float& fTimeDelta)
 
 void CGameObject::Render()
 {
-	for (auto iter = m_listUpdateComp[Cast_Uint(EUPDATE_T::RENDER)].begin();
-		iter != m_listUpdateComp[Cast_Uint(EUPDATE_T::RENDER)].end(); ++iter)
+	for (auto iter = m_listUpdateComp[Cast_EnumDef(ECompTickType::Render)].begin();
+		iter != m_listUpdateComp[Cast_EnumDef(ECompTickType::Render)].end(); ++iter)
 	{
 		(*iter)->Render();
 	}
@@ -126,9 +137,9 @@ CPrimitiveComponent* CGameObject::Get_Component(const wstring& strName)
 
 
 
-void CGameObject::OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue)
+void CGameObject::OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue)
 {
-	_uint iIndex = Cast_EnumDef(EUPDATE_T::UPDATE);
+	_uint iIndex = Cast_EnumDef(ECompTickType::Tick);
 
 	auto iter = find_if(m_listUpdateComp[iIndex].begin(), m_listUpdateComp[iIndex].end(),
 		[&pComp](CPrimitiveComponent* _pComp) {
@@ -137,19 +148,19 @@ void CGameObject::OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, 
 
 	if (iter != m_listUpdateComp[iIndex].end())
 	{
-		if (bValue == ECOMP_UPDATE_TYPE::MANUAL)
+		if (bValue == ECompTickAuto::Manual)
 			m_listUpdateComp[iIndex].erase(iter);
 	}
 	else
 	{
-		if (bValue == ECOMP_UPDATE_TYPE::SEMI_AUTO)
+		if (bValue == ECompTickAuto::SemiAuto)
 			m_listUpdateComp[iIndex].push_back(const_cast<CPrimitiveComponent*>(pComp));
 	}
 }
 
-void CGameObject::OnStateLateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue)
+void CGameObject::OnStateLateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue)
 {
-	_uint iIndex = Cast_EnumDef(EUPDATE_T::LATE);
+	_uint iIndex = Cast_EnumDef(ECompTickType::Late);
 
 	auto iter = find_if(m_listUpdateComp[iIndex].begin(),
 		m_listUpdateComp[iIndex].end(),
@@ -159,19 +170,19 @@ void CGameObject::OnStateLateUpdate_Updated(const CPrimitiveComponent* const pCo
 
 	if (iter != m_listUpdateComp[iIndex].end())
 	{
-		if (bValue == ECOMP_UPDATE_TYPE::MANUAL)
+		if (bValue == ECompTickAuto::Manual)
 			m_listUpdateComp[iIndex].erase(iter);
 	}
 	else
 	{
-		if (bValue == ECOMP_UPDATE_TYPE::SEMI_AUTO)
+		if (bValue == ECompTickAuto::SemiAuto)
 			m_listUpdateComp[iIndex].push_back(const_cast<CPrimitiveComponent*>(pComp));
 	}
 }
 
-void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue)
+void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue)
 {
-	constexpr _uint iIndex = Cast_EnumDef(EUPDATE_T::RENDER);
+	constexpr _uint iIndex = Cast_EnumDef(ECompTickType::Render);
 
 	auto iter = find_if(m_listUpdateComp[0].begin(),
 		m_listUpdateComp[0].end(),
@@ -181,12 +192,12 @@ void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, 
 
 	if (iter != m_listUpdateComp[0].end())
 	{
-		if (bValue == ECOMP_UPDATE_TYPE::MANUAL)
+		if (bValue == ECompTickAuto::Manual)
 			m_listUpdateComp[0].erase(iter);
 	}
 	else
 	{
-		if (bValue == ECOMP_UPDATE_TYPE::SEMI_AUTO)
+		if (bValue == ECompTickAuto::SemiAuto)
 			m_listUpdateComp[0].push_back(const_cast<CPrimitiveComponent*>(pComp));
 	}
 }

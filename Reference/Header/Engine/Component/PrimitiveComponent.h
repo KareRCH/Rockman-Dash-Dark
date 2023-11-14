@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Base.h"
-#include "BaseClass/GameObject_Enum.h"
-#include "Component/Component_Enum.h"
+#include "BaseClass/GameObject_Define.h"
+#include "Component/Component_Define.h"
 
 BEGIN(Engine)
 
@@ -41,8 +41,8 @@ public:
 	GETSET_1(wstring,	m_strName, Name, GET_C_REF)
 
 private:	// 기본 속성
-	wstring				m_strName;										// 컴포넌트 이름
-	_float				m_fPriority[Cast_EnumDef(EUPDATE_TYPE::SIZE)];	// 우선도
+	wstring				m_strName;											// 컴포넌트 이름
+	_float				m_fPriority[Cast_EnumDef(ECompTickType::Size)];	// 우선도
 
 public:
 	// 외부에서는 포인터 변경 불가를 조건으로 주소를 얻음
@@ -54,66 +54,67 @@ private:
 public:
 	template<typename T, typename = enable_if_t<is_class<T>::value>>
 	inline void Set_StateUpdate_Event(T* pObj, 
-		function<void(T*, const CPrimitiveComponent* const, const ECOMP_UPDATE_TYPE&)> fn)
+		function<void(T*, const CPrimitiveComponent* const, const ECompTickAuto&)> fn)
 	{
-		m_fnStateUpdate_Updated = [&fn, &pObj, this](const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_TYPE& bValue) {
+		m_fnStateUpdate_Updated = [&fn, &pObj, this](const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue) {
 			fn(pObj, this, bValue);
 		};
 	}
 
 	template<typename T, typename = enable_if_t<is_class<T>::value>>
 	inline void Set_StateLateUpdate_Event(T* pObj,
-		function<void(T*, const CPrimitiveComponent* const, const ECOMP_UPDATE_TYPE&)> fn)
+		function<void(T*, const CPrimitiveComponent* const, const ECompTickAuto&)> fn)
 	{
-		m_fnStateLateUpdate_Updated = [&fn, &pObj, this](const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_TYPE& bValue) {
+		m_fnStateLateUpdate_Updated = [&fn, &pObj, this](const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue) {
 			fn(pObj, this, bValue);
 		};
 	}
 
 	template<typename T, typename = enable_if_t<is_class<T>::value>>
 	inline void Set_StateRender_Event(T* pObj,
-		function<void(T*, const CPrimitiveComponent* const, const ECOMP_UPDATE_TYPE&)> fn)
+		function<void(T*, const CPrimitiveComponent* const, const ECompTickAuto&)> fn)
 	{
-		m_fnStateRender_Updated = [&fn, &pObj, this](const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_TYPE bValue) {
+		m_fnStateRender_Updated = [&fn, &pObj, this](const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue) {
 			fn(pObj, this, bValue);
 		};
 	}
 
 private:
-	function<void(const CPrimitiveComponent* const, const ECOMP_UPDATE_TYPE)>		m_fnStateUpdate_Updated;
-	function<void(const CPrimitiveComponent* const, const ECOMP_UPDATE_TYPE)>		m_fnStateLateUpdate_Updated;
-	function<void(const CPrimitiveComponent* const, const ECOMP_UPDATE_TYPE)>		m_fnStateRender_Updated;
+	function<void(const CPrimitiveComponent* const, const ECompTickAuto)>		m_fnStateUpdate_Updated;
+	function<void(const CPrimitiveComponent* const, const ECompTickAuto)>		m_fnStateLateUpdate_Updated;
+	function<void(const CPrimitiveComponent* const, const ECompTickAuto)>		m_fnStateRender_Updated;
 
 public:
-	inline void Set_StateUpdate(const ECOMP_UPDATE_TYPE value);
-	inline void Set_StateLateUpdate(const ECOMP_UPDATE_TYPE value);
-	inline void Set_StateRender(const ECOMP_UPDATE_TYPE value);
+	inline void Set_StateTick(const ECompTickAuto value);
+	inline void Set_StateLateTick(const ECompTickAuto value);
+	inline void Set_StateRender(const ECompTickAuto value);
 
 private:
-	ECOMP_UPDATE_TYPE	m_eStateUpdate		= ECOMP_UPDATE_TYPE::MANUAL;
-	ECOMP_UPDATE_TYPE	m_eStateLateUpdate	= ECOMP_UPDATE_TYPE::MANUAL;
-	ECOMP_UPDATE_TYPE	m_eStateRender		= ECOMP_UPDATE_TYPE::MANUAL;
+	ECompTickAuto	m_eStatePriorityTick		= ECompTickAuto::Manual;
+	ECompTickAuto	m_eStateTick				= ECompTickAuto::Manual;
+	ECompTickAuto	m_eStateLateTick			= ECompTickAuto::Manual;
+	ECompTickAuto	m_eStateRender				= ECompTickAuto::Manual;
 };
 
 
 
-inline void CPrimitiveComponent::Set_StateUpdate(const ECOMP_UPDATE_TYPE value)
+inline void CPrimitiveComponent::Set_StateTick(const ECompTickAuto value)
 {
-	m_eStateUpdate = value;
+	m_eStateTick = value;
 
 	if (m_fnStateUpdate_Updated)
-		m_fnStateUpdate_Updated(this, m_eStateUpdate);
+		m_fnStateUpdate_Updated(this, m_eStateTick);
 }
 
-inline void CPrimitiveComponent::Set_StateLateUpdate(const ECOMP_UPDATE_TYPE value)
+inline void CPrimitiveComponent::Set_StateLateTick(const ECompTickAuto value)
 {
-	m_eStateLateUpdate = value;
+	m_eStateLateTick = value;
 
 	if (m_fnStateLateUpdate_Updated)
-		m_fnStateLateUpdate_Updated(this, m_eStateLateUpdate);
+		m_fnStateLateUpdate_Updated(this, m_eStateLateTick);
 }
 
-inline void CPrimitiveComponent::Set_StateRender(const ECOMP_UPDATE_TYPE value)
+inline void CPrimitiveComponent::Set_StateRender(const ECompTickAuto value)
 {
 	m_eStateRender = value;
 

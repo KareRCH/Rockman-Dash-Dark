@@ -5,21 +5,21 @@
 #include "System/GameInstance.h"
 #include "System/InputDev.h"
 
-BEGIN(Engine)
-
 #define MAX_DINPUT_KEY 256
 #define MAX_DINPUT_MOUSE DIM_END
+
+BEGIN(Engine)
 
 /// <summary>
 /// 키 상태에 대한 구조체
 /// </summary>
-typedef enum class _EINPUT_KEY_STATE : int
+enum class EInputKeyState : int
 {
 	RELEASED,       // 뗌
 	NUETRAL,        // 중립
 	PRESSING,       // 누름
 	PRESSED,        // 한번만 눌림
-}EINPUT_KEY_STATE, EINPUT_MOUSE_STATE;
+};
 
 /// <summary>
 /// 입력 데이터를 저장하는 구조체
@@ -27,7 +27,7 @@ typedef enum class _EINPUT_KEY_STATE : int
 typedef struct _INPUT_KEY_INFO
 {
 	const TCHAR* const						sKeyName;			// 전용키 이름, 이 이름을 통해 키를 탐색
-	vector<tuple<int, EINPUT_KEY_STATE>>	vKeys;				// 다중 키 입력 지원, 상태 저장
+	vector<tuple<int, EInputKeyState>>		vKeys;				// 다중 키 입력 지원, 상태 저장
 
 public:
 	_INPUT_KEY_INFO(const TCHAR* sKeyName)
@@ -43,7 +43,7 @@ public:
 		if (!vKeys.empty())
 		{
 			bool bExists = true;
-			for_each(vKeys.begin(), vKeys.end(), [key = _iKey, &bExists](const tuple<int, EINPUT_KEY_STATE>& _tKey) {
+			for_each(vKeys.begin(), vKeys.end(), [key = _iKey, &bExists](const tuple<int, EInputKeyState>& _tKey) {
 				if (key == get<0>(_tKey))
 					bExists = false;
 				});
@@ -53,7 +53,7 @@ public:
 				return;
 		}
 		else
-			vKeys.push_back(make_tuple(_iKey, EINPUT_KEY_STATE::NUETRAL));
+			vKeys.push_back(make_tuple(_iKey, EInputKeyState::NUETRAL));
 	}
 
 	template<typename T>
@@ -155,7 +155,7 @@ public:
 
 		for (auto iter = pKey->vKeys.begin(); iter != pKey->vKeys.end(); ++iter)
 		{
-			if (EINPUT_KEY_STATE::PRESSED == get<1>(*iter))
+			if (EInputKeyState::PRESSED == get<1>(*iter))
 				return true;
 		}
 
@@ -169,7 +169,7 @@ public:
 
 		for (auto iter = pKey->vKeys.begin(); iter != pKey->vKeys.end(); ++iter)
 		{
-			if (EINPUT_KEY_STATE::PRESSING <= get<1>(*iter))
+			if (EInputKeyState::PRESSING <= get<1>(*iter))
 				return true;
 		}
 
@@ -183,7 +183,7 @@ public:
 
 		for (auto iter = pKey->vKeys.begin(); iter != pKey->vKeys.end(); ++iter)
 		{
-			if (EINPUT_KEY_STATE::RELEASED == get<1>(*iter))
+			if (EInputKeyState::RELEASED == get<1>(*iter))
 				return true;
 		}
 

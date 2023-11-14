@@ -315,7 +315,7 @@ HRESULT CGraphicDev::Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tIni
     depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
     depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
     depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_NEVER;
 
     // Z¹öÆÛ¿ë
     if (FAILED(m_pDevice->CreateDepthStencilState(&depthStencilDesc, m_pDepthStencilState.GetAddressOf())))
@@ -330,7 +330,6 @@ HRESULT CGraphicDev::Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tIni
     m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState.Get(), 1);
 
 
-
     /***********************
     * ±íÀÌ ½ºÅÙ½Ç ºä Á¤ÀÇ
     ************************/
@@ -342,6 +341,36 @@ HRESULT CGraphicDev::Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tIni
     // ±íÀÌ ½ºÅÙ½Ç ºä »ý¼º
     if (FAILED(m_pDevice->CreateDepthStencilView(m_pDethStencilBuffer.Get(), &depthStencilViewDesc, m_pDepthStencilView.GetAddressOf())))
         return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CGraphicDev::Ready_RasterizeState(const FDEVICE_INIT& tInit)
+{
+    if (m_pDevice == nullptr)
+        return E_FAIL;
+
+    // ·¡½ºÅÍ¶óÀÌÁî ¼³Á¤
+    D3D11_RASTERIZER_DESC rasterDesc;
+    rasterDesc.AntialiasedLineEnable = false;
+    rasterDesc.CullMode = D3D11_CULL_BACK;
+    rasterDesc.DepthBias = 0;
+    rasterDesc.DepthBiasClamp = 0.f;
+    rasterDesc.DepthClipEnable = true;
+    rasterDesc.FillMode = D3D11_FILL_SOLID;
+    rasterDesc.FrontCounterClockwise = false;
+    rasterDesc.MultisampleEnable = false;
+    rasterDesc.ScissorEnable = false;
+    rasterDesc.SlopeScaledDepthBias = 0.f;
+
+    if (FAILED(m_pDevice->CreateRasterizerState(&rasterDesc, m_pRasterState.GetAddressOf())))
+        return E_FAIL;
+
+    rasterDesc.CullMode = D3D11_CULL_NONE;
+    if (FAILED(m_pDevice->CreateRasterizerState(&rasterDesc, m_pRasterCullNoneState.GetAddressOf())))
+        return E_FAIL;
+
+    m_pDeviceContext->RSSetState(m_pRasterState.Get());
 
     return S_OK;
 }
@@ -388,14 +417,24 @@ HRESULT CGraphicDev::Ready_Viewport(const FDEVICE_INIT& tInit)
     return S_OK;
 }
 
-void CGraphicDev::TurnOnZBuffer()
+void CGraphicDev::TurnOn_ZBuffer()
 {
     m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState.Get(), 1);
 }
 
-void CGraphicDev::TurnOffZBuffer()
+void CGraphicDev::TurnOff_ZBuffer()
 {
     m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState.Get(), 1);
+}
+
+void CGraphicDev::TurnOn_Cull()
+{
+    m_pDeviceContext->RSSetState(m_pRasterState.Get());
+}
+
+void CGraphicDev::TurnOff_Cull()
+{
+    m_pDeviceContext->RSSetState(m_pRasterCullNoneState.Get());
 }
 
 const _matrix& CGraphicDev::GetProjectionMatrix()

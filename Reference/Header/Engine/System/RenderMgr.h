@@ -4,35 +4,39 @@
 
 BEGIN(Engine)
 
-enum class EGCAMERA_INDEX : _uint
+enum class ECameraIndex : _uint
 {
-	ONE, TWO, THREE, FOUR, SIZE
+	One, Two, Three, Four, Size
 };
 
 // 렌더타겟용 뷰포트 열거체
-enum class EVIEWPORT : _uint
+enum class EViewportIndex : _uint
 {
-	ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, SIZE
+	One, Two, Three, Four, Five, Six, Seven, Eight, Size
 };
 
 // 렌더타겟용 뷰포트 열거체
-enum class EVIEWPORT_RT : _uint
+enum class EViewportRT : _uint
 {
-	NORMAL, DEPTH, HEIGHT, SIZE
+	Normal, Depth, Height, Size
 };
 
-enum class ERENDER_TYPE : _uint
+enum class ERenderGroup : _uint
 {
-	PERSPECTIVE,
-	ORTHOGONAL,
-	SIZE
+	Priority,		// 버퍼 없이 가장 먼저 렌더링 되는 그룹
+	Alpha,			// 알파 그룹
+	NonAlpha,		// 알파 필요없는 디퍼드 그룹
+	UI,				// UI 그룹
+	PostProcess,	// 후처리 그룹
+	Size
 };
-using ERENDER_T = ERENDER_TYPE;
 
 /// <summary>
 /// 렌더러는 기존 레이어의 Rendering 역할을 부여받은 클래스로
 /// 렌더링 목적에 따라 처리 함수를 달리하여 수행한다.
 /// 매 프레임마다 렌더그룹에 추가해주어야 합니다.
+/// 
+/// 개별적으로 카메라 행렬과 뷰포트를 가짐
 /// </summary>
 class CRenderMgr final : public CBase
 {
@@ -40,6 +44,7 @@ class CRenderMgr final : public CBase
 
 private:
 	explicit CRenderMgr(const DX11DEVICE_T tDevice);
+	explicit CRenderMgr(const CRenderMgr& rhs) = delete;
 	virtual ~CRenderMgr() = default;
 
 public:
@@ -53,13 +58,14 @@ private:
 	virtual void	Free();
 
 public:
-	void			Add_RenderGroup(ERENDER_T eType, CGameObject* pGameObject);
+	void			Add_RenderGroup(ERenderGroup eType, CGameObject* pGameObject);
 	void			Clear_RenderGroup();
 
-	void			Render_Perspective();
-	void			Render_Orthogonal();
-
-
+	void			Render_Priority();
+	void			Render_Alpha();
+	void			Render_NonAlpha();
+	void			Render_UI();
+	void			Render_PostProcess();
 
 public:
 	GETSET_1(HRESULT, m_hReadyResult, ReadyResult, GET_C_REF)
@@ -68,7 +74,7 @@ private:
 	HRESULT			m_hReadyResult;
 
 private:
-	list<CGameObject*>		m_RenderGroup[Cast_EnumDef(ERENDER_T::SIZE)];
+	list<CGameObject*>		m_RenderGroup[Cast_EnumDef(ERenderGroup::Size)];
 
 private:
 	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
@@ -88,16 +94,16 @@ public:		// 카메라 행렬저장용
 	const _matrix& Get_OrthogonalProjMatrix(const _uint iCam) const { return m_matOrthoProj[iCam]; }
 
 private:	// 렌더러의 위치 속성은 뷰를 기반으로
-	_matrix		m_matPersView[Cast_EnumDef(EGCAMERA_INDEX::SIZE)];			// 원근용 뷰 행렬
-	_matrix		m_matPersProj[Cast_EnumDef(EGCAMERA_INDEX::SIZE)];			// 원근용 투영 행렬
-	_matrix		m_matOrthoView[Cast_EnumDef(EGCAMERA_INDEX::SIZE)];			// 직교용 뷰 행렬
-	_matrix		m_matOrthoProj[Cast_EnumDef(EGCAMERA_INDEX::SIZE)];			// UI용 직교투영 범위
+	_matrix		m_matPersView[Cast_EnumDef(ECameraIndex::Size)];			// 원근용 뷰 행렬
+	_matrix		m_matPersProj[Cast_EnumDef(ECameraIndex::Size)];			// 원근용 투영 행렬
+	_matrix		m_matOrthoView[Cast_EnumDef(ECameraIndex::Size)];			// 직교용 뷰 행렬
+	_matrix		m_matOrthoProj[Cast_EnumDef(ECameraIndex::Size)];			// UI용 직교투영 범위
 
 public:
-	GETSET_1(vector<D3D11_VIEWPORT>,	m_vecViewport,		VecViewport,				GET_REF)
+	GETSET_1(vector<D3D11_VIEWPORT>, m_vecViewport,	VecViewport, GET_REF)
 	D3D11_VIEWPORT&	Get_Viewport(_uint value) { return m_vecViewport[value]; }
 
-	GETSET_1(vector<D3D11_VIEWPORT>,	m_vecViewport_RT,	VecViewport_RenderTarget,	GET_REF)
+	GETSET_1(vector<D3D11_VIEWPORT>, m_vecViewport_RT, VecViewport_RenderTarget, GET_REF)
 
 private:
 	vector<D3D11_VIEWPORT>		m_vecViewport;			// 일반 뷰포트 세팅

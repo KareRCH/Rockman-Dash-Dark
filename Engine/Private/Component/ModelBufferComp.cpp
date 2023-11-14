@@ -1,6 +1,7 @@
 #include "Component/ModelBufferComp.h"
 
 #include "System/GameInstance.h"
+#include "System/ModelMgr.h"
 
 CModelBufferComp::CModelBufferComp(const DX11DEVICE_T tDevice)
     : Base(tDevice)
@@ -20,10 +21,11 @@ HRESULT CModelBufferComp::Initialize()
 
 HRESULT CModelBufferComp::Initialize(const wstring& strGroupKey, const wstring& strModelKey)
 {
-	const MESH* pMesh = GameInstance()->Get_Model(strGroupKey, strModelKey);
+	const FMeshData* pMesh = GameInstance()->Get_Mesh(strGroupKey, strModelKey);
 
 	m_iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
 	m_iIndexCount = Cast<_uint>(pMesh->vecIndices.size());
+	Set_Transform(XMLoadFloat4x4(&pMesh->matTransform));
 
 	VERTEX_MODEL* vertices = new VERTEX_MODEL[m_iVtxCount];
 	if (!vertices)

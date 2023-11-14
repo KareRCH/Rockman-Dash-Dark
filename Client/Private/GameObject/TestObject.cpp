@@ -23,6 +23,19 @@ HRESULT CTestObject::Initialize()
     FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 
+    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
+    TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
+    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
+
+    return S_OK;
+}
+
+HRESULT CTestObject::Initialize(const _float3 vPos)
+{
+    FAILED_CHECK_RETURN(Initialize(), E_FAIL);
+
+    Set_Position(vPos);
+
     return S_OK;
 }
 
@@ -35,11 +48,14 @@ _int CTestObject::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
-    Set_Position(_float3(0.f, 0.f, 10.f));
-    //Set_Scale(_float3(5.f, 5.f, 5.f));
+    if (GameInstance()->IsKey_Pressing(DIK_W))
+        Set_Position(_float3(Get_Position().x, Get_Position().y, Get_Position().z + 5.f * fTimeDelta));
+    else if (GameInstance()->IsKey_Pressing(DIK_S))
+        Set_Position(_float3(Get_Position().x, Get_Position().y, Get_Position().z - 5.f * fTimeDelta));
+    
+    Set_Scale(_float3(1.f, 1.f, 1.f));
     Calculate_Transform();
-
-    GameInstance()->Add_RenderGroup(ERENDER_T::PERSPECTIVE, this);
+    //m_pModelBufferComp->Calculate_TransformFromParent();
 
     return 0;
 }
@@ -53,7 +69,7 @@ void CTestObject::Render()
 {
     SUPER::Render();
 
-    MATRIX_BUFFER_T matBuffer = { Get_Transform(),
+    MATRIX_BUFFER_T matBuffer = { Get_Transform(),// * m_pModelBufferComp->Get_Transform(),
         GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0) };
     CAMERA_BUFFER_T cameraBuffer = { _float3(10.f, 10.f, 10.f) };
     LIGHT_BUFFER_T lightBuffer = { _float4(0.2f, 0.2f, 0.2f, 1.f), _float4(0.2f, 0.2f, 0.2f, 1.f), _float3(-1.f, 0.f, 0.f),
@@ -68,6 +84,22 @@ CTestObject* CTestObject::Create(const DX11DEVICE_T tDevice)
     ThisClass* pInstance = new ThisClass(tDevice);
 
     if (FAILED(pInstance->Initialize()))
+    {
+        Engine::Safe_Release(pInstance);
+
+        MSG_BOX("TestObject Create Failed");
+
+        return nullptr;
+    }
+
+    return pInstance;
+}
+
+CTestObject* CTestObject::Create(const DX11DEVICE_T tDevice, const _float3 vPos)
+{
+    ThisClass* pInstance = new ThisClass(tDevice);
+
+    if (FAILED(pInstance->Initialize(vPos)))
     {
         Engine::Safe_Release(pInstance);
 

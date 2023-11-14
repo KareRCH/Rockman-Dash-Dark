@@ -1,8 +1,6 @@
 #pragma once
 
-#include "GameObject.h"
-
-#include "BaseClass/GameObject_Enum.h"
+#include "BaseClass/GameObject.h"
 
 BEGIN(Engine)
 
@@ -17,14 +15,11 @@ private:
 	explicit CLayer();
 	virtual ~CLayer() = default;
 
-
-
 public:
 	HRESULT			Initialize(_float fPriority);
 	void			Priority_Tick(const _float& fTimeDelta);
 	_int			Tick(const _float& fTimeDelta);
 	void			Late_Tick(const _float& fTimeDelta);
-	//void			Render_Layer(); 앞으로는 Renderer에서 대신 렌더링을 수행한다.
 
 public:
 	static CLayer* Create(_float fPriority);
@@ -35,8 +30,6 @@ private:
 public:
 	CPrimitiveComponent*		Get_Component(COMPONENTID eID, const wstring& pObjTag, const wstring& pComponentTag);
 
-	
-
 public:
 	HRESULT			Add_GameObject(CGameObject* pGameObject);
 	HRESULT			Add_GameObject(const wstring& pObjTag, CGameObject* pGameObject);
@@ -45,7 +38,7 @@ public:
 private:
 	_unmap<wstring, CGameObject*>	m_mapObject;
 	// 렌더는 렌더러에서 해줘서 필요없음! 그래서 사이즈를 렌더로 설정
-	vector<CGameObject*>			m_arrvecPriorityObject[Cast_EnumDef(EUPDATE_T::RENDER)];
+	list<CGameObject*>				m_listPriorityObject;		// Tick 순서 하나로 통일
 
 public:
 	GETSET_1(_float, m_fPriority, Priority, GET_C_REF)
