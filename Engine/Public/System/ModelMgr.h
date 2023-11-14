@@ -221,6 +221,8 @@ public:
 	_unmap<wstring, FBoneData*> mapBoneData;	// 뼈 저장 맵
 };
 
+
+
 /// <summary>
 /// 어떤 모델에 대한 그룹
 /// </summary>
@@ -258,10 +260,29 @@ public:
 	}
 
 public:
-	wstring					strName = { L"" };	// 애니메이션이 작동되는 객체 이름
-	vector<_float3>			vecPositions;
-	vector<_float4>			vecRotations;
-	vector<_float3>			vecScales;
+	struct FAnimPosition
+	{
+		_float vTime;
+		_float3 vPos;
+	};
+
+	struct FAnimRotation
+	{
+		_float vTime;
+		_float4 qtRot;
+	};
+
+	struct FAnimScale
+	{
+		_float vTime;
+		_float3 vScale;
+	};
+
+public:
+	wstring						strName = { L"" };	// 애니메이션이 작동되는 객체 이름
+	vector<FAnimPosition>		vecPositions;
+	vector<FAnimRotation>		vecRotations;
+	vector<FAnimScale>			vecScales;
 };
 
 /// <summary>
@@ -347,13 +368,22 @@ public:
 	}
 
 public:
-	const FAnimData* const	Get_Anim(const wstring& strAnimKey)
+	const FAnimData* const	Get_AnimData(const wstring& strAnimKey)
 	{
 		auto iter = mapAnimData.find(strAnimKey);
 		if (iter == mapAnimData.end())
 			return nullptr;
 
 		return (*iter).second;
+	}
+
+	void Add_AnimData(const wstring& strAnimKey, FAnimData* const pAnimData)
+	{
+		auto iter = mapAnimData.find(strAnimKey);
+		if (iter == mapAnimData.end())
+			return;
+
+		mapAnimData.emplace(strAnimKey, pAnimData);
 	}
 
 public:
@@ -437,7 +467,12 @@ private:
 	string	m_strMainDir = "";			// 참조할 메인 디렉터리
 
 public:
-	void					Load_Model(const string& strFileName, const wstring& strGroupKey);
+	void	Load_Model(const string& strFileName, const wstring& strGroupKey);
+	void	Load_MeshBoneMaterial(FModelGroup* pModelGroup);
+	void	Load_Anim(FAnimGroup* pAnimGroup);
+	void	Load_Hierarchi(FModelGroup* pModelGroup);
+
+
 	const FMeshData* const	Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey);
 
 private:
