@@ -94,14 +94,14 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Priority_Tick(const _float& fTimeDelta)
 {
+	m_pGameInstance->Tick_KeyMgr();
+	m_pGameInstance->StartFrame_PhysicsMgr();
+
+	m_pGameInstance->Priority_Tick_Scene(fTimeDelta);
 }
 
 _int CMainApp::Tick(const _float& fTimeDelta)
 {
-	m_pGameInstance->Tick_KeyMgr();
-
-	m_pGameInstance->StartFrame_PhysicsMgr();
-
 	m_pGameInstance->Tick_Scene(fTimeDelta);
 
 	m_pGameInstance->Tick_PhysicsMgr(fTimeDelta);

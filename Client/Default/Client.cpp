@@ -104,6 +104,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 _float	fTimeDelta = ::GameInstance()->Get_TimerDelta(L"Timer_FPS");
 
                 // 틱 함수
+                pMainApp->Priority_Tick(fTimeDelta);
                 pMainApp->Tick(fTimeDelta);
                 pMainApp->Late_Tick(fTimeDelta);
                 pMainApp->Render();

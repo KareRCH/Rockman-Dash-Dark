@@ -19,7 +19,8 @@ HRESULT CTestScene::Initialize()
     CLayer* pLayer = CLayer::Create(0.f);
     Add_Layer(L"GameLogic", pLayer);
 
-    pLayer->Add_GameObject(CTestObject::Create({ m_pDevice, m_pDeviceContext }));
+    pLayer->Add_GameObject(CTestObject::Create({ m_pDevice, m_pDeviceContext }, _float3(0.f, 0.f, 10.f)));
+    pLayer->Add_GameObject(CTestObject::Create({ m_pDevice, m_pDeviceContext }, _float3(0.f, 0.f, 9.f)));
     pLayer->Add_GameObject(CDynamicCamera::Create({ m_pDevice, m_pDeviceContext }));
 
     return S_OK;

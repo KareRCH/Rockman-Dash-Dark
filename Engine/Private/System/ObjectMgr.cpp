@@ -146,7 +146,7 @@ void CObjectMgr::Add_Layer(const wstring& pLayerTag, CLayer* const pLayer)
 
 
 
-HRESULT CObjectMgr::Set_Scene(CScene* pScene)
+HRESULT CObjectMgr::Set_Scene(CLevel* pScene)
 {
 	if (m_eSceneProcess != EMANAGE_SCENE::SINGLE)
 		return E_FAIL;
@@ -185,7 +185,7 @@ HRESULT CObjectMgr::Set_Scene(wstring strSceneName)
 	return S_OK;
 }
 
-HRESULT CObjectMgr::Add_Scene(CScene* pScene, wstring strSceneName)
+HRESULT CObjectMgr::Add_Scene(CLevel* pScene, wstring strSceneName)
 {
 	m_mapScene.emplace(strSceneName, pScene);
 

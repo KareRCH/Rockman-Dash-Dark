@@ -110,20 +110,36 @@ ComPtr<ID3D11DeviceContext> CGameInstance::Get_GraphicContext()
 	return m_pGraphicDev->Get_DeviceContext();
 }
 
-void CGameInstance::TurnOnZBuffer()
+void CGameInstance::TurnOn_ZBuffer()
 {
 	if (nullptr == m_pGraphicDev)
 		return;
 
-	m_pGraphicDev->TurnOnZBuffer();
+	m_pGraphicDev->TurnOn_ZBuffer();
 }
 
-void CGameInstance::TrunOffZBuffer()
+void CGameInstance::TurnOff_ZBuffer()
 {
 	if (nullptr == m_pGraphicDev)
 		return;
 
-	m_pGraphicDev->TurnOffZBuffer();
+	m_pGraphicDev->TurnOff_ZBuffer();
+}
+
+void CGameInstance::TurnOn_Cull()
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	m_pGraphicDev->TurnOn_Cull();
+}
+
+void CGameInstance::TurnOff_Cull()
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	m_pGraphicDev->TurnOff_Cull();
 }
 
 const _matrix* CGameInstance::Get_GraphicDev_ProjectionMatrix()
@@ -235,6 +251,54 @@ void CGameInstance::Late_Tick_KeyMgr()
 		return;
 
 	m_pKeyMgr->Late_Tick();
+}
+
+inline _bool CGameInstance::IsKey_Pressing(const int& iKey)
+{
+	if (nullptr == m_pKeyMgr)
+		return false;
+
+	return m_pKeyMgr->Key_Pressing(iKey);
+}
+
+inline _bool CGameInstance::IsKey_Pressed(const int& iKey)
+{
+	if (nullptr == m_pKeyMgr)
+		return false;
+
+	return m_pKeyMgr->Key_Down(iKey);
+}
+
+inline _bool CGameInstance::IsKey_Released(const int& iKey)
+{
+	if (nullptr == m_pKeyMgr)
+		return false;
+
+	return m_pKeyMgr->Key_Up(iKey);
+}
+
+inline _bool CGameInstance::IsMouse_Pressing(const MOUSEKEYSTATE& iMouse)
+{
+	if (nullptr == m_pKeyMgr)
+		return false;
+
+	return m_pKeyMgr->Mouse_Pressing(iMouse);
+}
+
+inline _bool CGameInstance::IsMouse_Pressed(const MOUSEKEYSTATE& iMouse)
+{
+	if (nullptr == m_pKeyMgr)
+		return false;
+
+	return m_pKeyMgr->Mouse_Down(iMouse);
+}
+
+inline _bool CGameInstance::IsMouse_Released(const MOUSEKEYSTATE& iMouse)
+{
+	if (nullptr == m_pKeyMgr)
+		return false;
+
+	return m_pKeyMgr->Mouse_Up(iMouse);
 }
 
 #pragma endregion
@@ -507,7 +571,7 @@ void CGameInstance::Render_Scene()
 	m_pManagement->Render();
 }
 
-HRESULT CGameInstance::Set_Scene(CScene* pScene)
+HRESULT CGameInstance::Set_Scene(CLevel* pScene)
 {
 	if (nullptr == m_pManagement)
 		return E_FAIL;
@@ -616,7 +680,7 @@ void CGameInstance::Render()
 	m_pRenderMgr->Render();
 }
 
-void CGameInstance::Add_RenderGroup(ERENDER_TYPE eType, CGameObject* pGameObject)
+void CGameInstance::Add_RenderGroup(ERenderGroup eType, CGameObject* pGameObject)
 {
 	if (nullptr == m_pRenderMgr)
 		return;
@@ -716,12 +780,12 @@ void CGameInstance::Load_Model(const string& strFileName, const wstring& strGrou
 	m_pModelMgr->Load_Model(strFileName, strGroupKey);
 }
 
-const MESH* const CGameInstance::Get_Model(const wstring& strGroupKey, const wstring& strModelKey)
+const FMeshData* const CGameInstance::Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
-	return m_pModelMgr->Get_Model(strGroupKey, strModelKey);
+	return m_pModelMgr->Get_Mesh(strGroupKey, strMeshKey);
 }
 
 HRESULT CGameInstance::Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)

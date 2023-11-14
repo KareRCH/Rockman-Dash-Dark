@@ -1,13 +1,13 @@
 #pragma once
 
-#include "BaseClass/Scene.h"
+#include "BaseClass/Level.h"
 #include "Client_Define.h"
 
 BEGIN(Client)
 
-class CTestScene : public CScene
+class CTestScene : public CLevel
 {
-	DERIVED_CLASS(CScene, CTestScene)
+	DERIVED_CLASS(CLevel, CTestScene)
 protected:
 	explicit CTestScene(const DX11DEVICE_T tDevice);
 	explicit CTestScene(const CTestScene& rhs) = delete;

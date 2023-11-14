@@ -43,11 +43,14 @@ private:
 	HRESULT		Ready_SwapChain(const FDEVICE_INIT& tInit);
 	HRESULT		Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit);
 	HRESULT		Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tInit);
+	HRESULT		Ready_RasterizeState(const FDEVICE_INIT& tInit);
 	HRESULT		Ready_Viewport(const FDEVICE_INIT& tInit);
 
 public:
-	void TurnOnZBuffer();
-	void TurnOffZBuffer();
+	void TurnOn_ZBuffer();
+	void TurnOff_ZBuffer();
+	void TurnOn_Cull();
+	void TurnOff_Cull();
 
 public:
 	const _matrix& GetProjectionMatrix();
@@ -91,7 +94,8 @@ private:
 	ComPtr<ID3D11DepthStencilState>	m_pDepthDisabledStencilState = nullptr;		// Z버퍼 Off한 스텐실 상태
 	ComPtr<ID3D11DepthStencilView>	m_pDepthStencilView = nullptr;				// 깊이 스텐실 뷰
 
-	ComPtr<ID3D11RasterizerState>	m_pRasterState = { nullptr };			// 래스터라이즈 상태 설정
+	ComPtr<ID3D11RasterizerState>	m_pRasterState = { nullptr };				// 래스터라이즈 상태 설정
+	ComPtr<ID3D11RasterizerState>	m_pRasterCullNoneState = { nullptr };		// 컬을 하지 않는 래스터라이즈
 
 #ifdef _DEBUG
 public:

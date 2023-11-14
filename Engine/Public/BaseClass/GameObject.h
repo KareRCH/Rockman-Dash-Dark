@@ -2,18 +2,12 @@
 
 #include "Base.h"
 #include "Component/TransformComponent.h"
+#include "BaseClass/GameObject_Define.h"
+#include "Component/Component_Define.h"
 
 BEGIN(Engine)
 
 class CPrimitiveComponent;
-
-enum class EGOBJECT_STATE : _uint
-{
-	DEAD		= EBIT_FLAG32_0,
-	PAUSE		= EBIT_FLAG32_1,
-	RENDER		= EBIT_FLAG32_2,
-};
-using EGOBJ_STATE = EGOBJECT_STATE;
 
 /// <summary>
 /// 씬에 추가되어 사용되는 좌표를 기본적으로 탑재하는 오브젝트 클래스
@@ -46,10 +40,15 @@ public:
 	void		Add_Tag(const wstring& strTag) { m_setTag.emplace(strTag); }
 	void		Delete_Tag(const wstring& strTag);
 
-	_bool		IsDead() { return m_iStateFlag & Cast_EnumDef(EGOBJ_STATE::DEAD); }
-	void		Set_Dead() { m_iStateFlag |= Cast_EnumDef(EGOBJ_STATE::DEAD); }
+	_bool		IsDead() { return m_iStateFlag & Cast_EnumDef(EGObjectState::Dead); }
+	void		Set_Dead() { m_iStateFlag |= Cast_EnumDef(EGObjectState::Dead); }
 	
 	_float		Get_Priority(_uint iIndex) { return m_fPriority[iIndex]; }
+
+	void		TurnOn_State(const EGObjectState value) { m_iStateFlag |= Cast_EnumDef(value); }
+	void		TurnOff_State(const EGObjectState value) { m_iStateFlag &= ~Cast_EnumDef(value); }
+	void		Toggle_State(const EGObjectState value) { m_iStateFlag ^= Cast_EnumDef(value); }
+	_bool		IsState(const EGObjectState value) { return (m_iStateFlag & Cast_EnumDef(value)); }
 
 private:	// 기본 속성
 	_uint_64					m_iID = 0ULL;			// 식별용 ID
@@ -57,7 +56,7 @@ private:	// 기본 속성
 	_unset<wstring>				m_setTag;				// 분류, 제어용 태그
 	_uint						m_iStateFlag = 0U;		// 상태 플래그
 	
-	_float						m_fPriority[Cast_EnumDef(EUPDATE_T::SIZE)];	// 우선도
+	_float						m_fPriority[Cast_EnumDef(EGObjTickPriority::Size)];	// 우선도
 
 protected:
 	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
@@ -85,15 +84,15 @@ private:
 	HRESULT Initialize_Component();
 
 public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
-	void OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue);
-	void OnStateLateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue);
-	void OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECOMP_UPDATE_T& bValue);
+	void OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue);
+	void OnStateLateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue);
+	void OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue);
 
 private:	// 컴포넌트 속성
 	vector<CPrimitiveComponent*>			m_vecComponent;				// 컴포넌트 관리 컨테이너
 
 	using list_comp =						list<CPrimitiveComponent*>;
-	list_comp								m_listUpdateComp[Cast_EnumDef(EUPDATE_T::SIZE)];	// 컴포넌트 업데이트 관리 리소스
+	list_comp								m_listUpdateComp[Cast_EnumDef(ECompTickType::Size)];	// 컴포넌트 업데이트 관리 리소스
 
 
 public:		// 트랜스폼 컴포넌트에 대한 함수 정의

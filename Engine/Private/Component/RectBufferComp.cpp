@@ -103,7 +103,7 @@ void CRectBufferComp::Late_Tick(const _float& fTimeDelta)
 
 void CRectBufferComp::Render()
 {
-	_uint iStride = sizeof(VTXCOL);
+	_uint iStride = sizeof(VERTEX_TEXTURE_T);
 	_uint iOffset = 0;
 
 	// 렌더링 할 수 있도록 입력 어셈블러에서 정점 버퍼를 활성으로 설정

@@ -61,6 +61,7 @@ namespace Engine
 		vector<VERTEX_MODEL> vecVertices;
 		vector<_uint>		vecIndices;
 		_uint				iMaterIndex;
+		_float4x4			matTransform;
 	};
 
 	struct DX11DEVICE_T

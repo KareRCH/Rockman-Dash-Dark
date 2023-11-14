@@ -6,7 +6,7 @@ CPrimitiveComponent::CPrimitiveComponent(const DX11DEVICE_T tDevice)
 }
 
 CPrimitiveComponent::CPrimitiveComponent(const CPrimitiveComponent& rhs)
-	: m_pDevice(rhs.m_pDevice), m_bClone(true)
+	: m_pDevice(rhs.m_pDevice), m_pDeviceContext(rhs.m_pDeviceContext), m_bClone(true)
 {
 }
 

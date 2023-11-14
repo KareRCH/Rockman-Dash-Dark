@@ -27,6 +27,7 @@ protected:
 
 public:
 	virtual HRESULT Initialize();
+	virtual HRESULT Initialize(const _float3 vPos);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
@@ -34,6 +35,7 @@ public:
 
 public:
 	static CTestObject* Create(const DX11DEVICE_T tDevice);
+	static CTestObject* Create(const DX11DEVICE_T tDevice, const _float3 vPos);
 	CGameObject* Clone(void* Arg);
 
 protected:
