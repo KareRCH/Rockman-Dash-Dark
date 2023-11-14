@@ -39,8 +39,7 @@ void CModelMgr::Free()
 void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey)
 {
 	Assimp::Importer importer;
-	FModelGroup* pModelGroup = Add_ModelGroup(strGroupKey);	// 모델 그룹 로드, 없으면 추가후 로드
-
+	
 	_uint iFlag;
 	iFlag = aiProcess_JoinIdenticalVertices |   // 동일한 꼭지점 결합, 인덱싱 최적화
 		aiProcess_ValidateDataStructure |       // 로더의 출력을 검증
@@ -67,38 +66,65 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 		return;
 	}
 
+	FModelGroup* pModelGroup = Add_ModelGroup(strGroupKey);	// 모델 그룹 로드, 없으면 추가후 로드
+	
+	// 메쉬, 뼈, 재질 로드
+	Load_MeshBoneMaterial(pModelGroup);
+
+	// 애니메이션 로드
+	Load_Anim(pModelGroup->pAnimGroup);
+
+	// 계층 로드
+	Load_Hierarchi(pModelGroup);
+}
+
+void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
+{
+	// 임시 메쉬 벡터
 	m_vecMesh.resize(m_pScene->mNumMeshes);
 	for (size_t i = 0; i < m_vecMesh.size(); i++)
-	{
 		m_vecMesh[i] = FMeshData::Create();
-	}
+
 	m_iMaterialCount = m_pScene->mNumMaterials;
 	m_iBoneCount = 0;
+
+	FMeshGroup* pMeshGroup = pModelGroup->pMeshGroup;
+	FBoneGroup* pBoneGroup = pModelGroup->pBoneGroup;
+
 	_float4x4 matTransformTest = {};
 	aiNode* pRootNode = m_pScene->mRootNode;
+
+	// 테스트용 메타데이터
+	vector<pair<aiString*, aiMetadataEntry*>> pMetaDatas;
+	pMetaDatas.reserve(m_pScene->mMetaData->mNumProperties);
 	for (_uint i = 0; i < m_pScene->mMetaData->mNumProperties; i++)
 	{
 		aiMetadata* pMeta = m_pScene->mMetaData;
 		aiString* str = &pMeta->mKeys[i];
 		aiMetadataEntry* pEntry = &pMeta->mValues[i];
-		int t = 0;
+		pMetaDatas.push_back({ str, pEntry });
 	}
+
+	// 블렌더에서는 행렬이 변환되어 나오기 때문에 부모가 되는 Skeletal의 행렬은 쓰지 않는다.
+	vector<_float4x4> vecMatrixTest;
+	vecMatrixTest.reserve(pRootNode->mNumChildren);
 	for (_uint i = 0; i < pRootNode->mNumChildren; i++)
 	{
 		aiNode* pChildNode = pRootNode->mChildren[i];
 		aiMatrix4x4 aiTransform = pChildNode->mTransformation;
-		matTransformTest = _float4x4(
+		vecMatrixTest.push_back(_float4x4(
 			aiTransform.a1, aiTransform.a2, aiTransform.a3, aiTransform.a4,
 			aiTransform.b1, aiTransform.b2, aiTransform.b3, aiTransform.b4,
 			aiTransform.c1, aiTransform.c2, aiTransform.c3, aiTransform.c4,
 			aiTransform.d1, aiTransform.d2, aiTransform.d3, aiTransform.d4
-		);
+		));
 	}
+
 	for (_uint i = 0; i < m_pScene->mNumMeshes; i++)
 	{
 		aiNode* pChildNode = pRootNode->mChildren[i];
 		aiMesh* pMesh = m_pScene->mMeshes[i];
-		
+
 		// 트랜스폼 저장
 		aiMatrix4x4 aiTransform = pChildNode->mTransformation;
 		_float4x4 matTransform = _float4x4(
@@ -107,10 +133,8 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 			aiTransform.c1, aiTransform.c2, aiTransform.c3, aiTransform.c4,
 			aiTransform.d1, aiTransform.d2, aiTransform.d3, aiTransform.d4
 		);
-		//m_vecMesh[i].matTransform = matTransform;
 		m_vecMesh[i]->matTransform = matTransform;
-		//_matrix matTransform = XMLoadFloat4x4( );
-
+		//m_vecMesh[i]->matTransform = matTransform;
 
 		// 점
 		for (_uint j = 0; j < pMesh->mNumVertices; j++)
@@ -135,16 +159,14 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 			m_vecMesh[i]->vecIndices.push_back(face.mIndices[1]);
 			m_vecMesh[i]->vecIndices.push_back(face.mIndices[2]);
 		}
-		
+
 		// 뼈
 		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
 			aiBone* pBone = pMesh->mBones[j];
-			wstring strName = wstring(Make_Wstring(pBone->mName.C_Str()));
-			
-		}
+			wstring strName = Make_Wstring(pBone->mName.C_Str());
 
-		
+		}
 
 		// 머터리얼
 		for (_uint j = 0; j < m_pScene->mNumMaterials; j++)
@@ -163,33 +185,81 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 
 			// MeshKey 설정 및 저장
 			pMeshGroup->Add_Mesh(Make_Wstring(pMesh->mName.C_Str()), m_vecMesh[i]->Clone());
+
+			pBoneGroup->Add_Bone(Make_Wstring(pBone))
 		}
 	}
 
+	// 임시 메쉬 해제
+	for (auto& item : m_vecMesh)
+		item->Free();
+	m_vecMesh.clear();
+}
+
+void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
+{
+	if (!pAnimGroup)
+		return;
+
 	// 애니메이션
-	FAnimGroup* pAnimGroup = pModelGroup->pAnimGroup;
 	for (_uint i = 0; i < m_pScene->mNumAnimations; i++)
 	{
 		aiAnimation* pAnimAI = m_pScene->mAnimations[i];
-		FAnimData* pAnim = FAnimData::Create();
+		FAnimData* pAnimData = FAnimData::Create();
+		pAnimData->vecNodeAnim.reserve(pAnimAI->mNumChannels);
 
 		for (_uint j = 0; j < pAnimAI->mNumChannels; j++)
 		{
 			aiNodeAnim* pNodeAnimAI = pAnimAI->mChannels[j];
-			int tt = 0;
+			FAnimNodeData* pAnimNodeData = FAnimNodeData::Create();
+
+			pAnimNodeData->strName = Make_Wstring(pNodeAnimAI->mNodeName.C_Str());
+			pAnimNodeData->vecPositions.reserve(pNodeAnimAI->mNumPositionKeys);
+			pAnimNodeData->vecRotations.reserve(pNodeAnimAI->mNumRotationKeys);
+			pAnimNodeData->vecScales.reserve(pNodeAnimAI->mNumScalingKeys);
+
+			for (_uint k = 0; k < pNodeAnimAI->mNumPositionKeys; k++)
+			{
+				auto fTime = pNodeAnimAI->mPositionKeys[k].mTime;
+				auto vPos = pNodeAnimAI->mPositionKeys[k].mValue;
+				FAnimNodeData::FAnimPosition tPosition = {
+					Cast<_float>(fTime),
+					{ vPos.x, vPos.y, vPos.z }
+				};
+				pAnimNodeData->vecPositions.push_back(tPosition);
+			}
+
+			for (_uint k = 0; k < pNodeAnimAI->mNumRotationKeys; k++)
+			{
+				auto fTime = pNodeAnimAI->mRotationKeys[k].mTime;
+				auto vRot = pNodeAnimAI->mRotationKeys[k].mValue;
+				FAnimNodeData::FAnimRotation tRotation = {
+					Cast<_float>(fTime),
+					{ vRot.w, vRot.x, vRot.y, vRot.z }
+				};
+				pAnimNodeData->vecRotations.push_back(tRotation);
+			}
+
+			for (_uint k = 0; k < pNodeAnimAI->mNumScalingKeys; k++)
+			{
+				auto fTime = pNodeAnimAI->mScalingKeys[k].mTime;
+				auto vScale = pNodeAnimAI->mScalingKeys[k].mValue;
+				FAnimNodeData::FAnimScale tScale = {
+					Cast<_float>(fTime),
+					{ vScale.x, vScale.y, vScale.z }
+				};
+				pAnimNodeData->vecScales.push_back(tScale);
+			}
+
+			pAnimData->vecNodeAnim.push_back(pAnimNodeData);
 		}
 
-		//pAnim->strName = Make_Wstring(pAnimAI->mName.C_Str());
-		//pAnim->vecPositions = pAnimAI->
+		pAnimGroup->Add_AnimData(Make_Wstring(pAnimAI->mName.C_Str()), pAnimData);
 	}
-	
-	for (auto& item : m_vecMesh)
-	{
-		item->Free();
-	}
-	m_vecMesh.clear();
+}
 
-	int t = 0;
+void CModelMgr::Load_Hierarchi(FModelGroup* pModelGroup)
+{
 }
 
 const FMeshData* const CModelMgr::Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey)
