@@ -35,7 +35,6 @@ PS_OUTPUT main(VS_INPUT input)
     output.vPosition = mul(float4(input.vPosition.xyz, 1.f), matWorld);
     output.vPosition = mul(output.vPosition, matView);
     output.vPosition = mul(output.vPosition, matProj);
-    output.vPosition = float4(output.vPosition.xyz / output.vPosition.w, 1.f);
     
     output.vNormal = mul(input.vNormal, (float3x3) matWorld);
     output.vNormal = normalize(output.vNormal);
