@@ -181,6 +181,9 @@
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. BufferComponent\04. Box">
       <UniqueIdentifier>{b9e6f23c-a1ee-4bb0-a401-369969820f9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. System\01. Manager\09. ModelMgr\Data">
+      <UniqueIdentifier>{b95d51cb-99c3-40e5-9182-22ebae9c741e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -387,6 +390,15 @@
     <ClInclude Include="Public\Component\BoxBufferComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\04. Box</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\Data\AnimData.h">
+      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\Data\BoneData.h">
+      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\Data\MeshData.h">
+      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -553,6 +565,15 @@
     </ClCompile>
     <ClCompile Include="Private\Component\BoxBufferComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\04. Box</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\Data\AnimData.cpp">
+      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\Data\BoneData.cpp">
+      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\Data\MeshData.cpp">
+      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

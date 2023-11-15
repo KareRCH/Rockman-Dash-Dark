@@ -1,5 +1,33 @@
 #include "System/ModelMgr.h"
 
+FModelGroup* FModelGroup::Create(const _bool bPermanent, const _bool bLoaded)
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (!pInstance)
+	{
+		Safe_Release(pInstance);
+
+		MSG_BOX("FModelGroup Create Failed");
+
+		return nullptr;
+	}
+
+	pInstance->bPermanent = bPermanent;
+	pInstance->bLoaded = bLoaded;
+
+	return pInstance;
+}
+
+void FModelGroup::Free()
+{
+	Safe_Release(pMeshGroup);
+	Safe_Release(pBoneGroup);
+	Safe_Release(pAnimGroup);
+}
+
+// ----------------------- ModelMgr ---------------------
+
 CModelMgr::CModelMgr()
 {
 }
@@ -31,7 +59,7 @@ void CModelMgr::Free()
 {
 	for (auto& Pair : m_mapModelGroup)
 	{
-		Pair.second->Free();
+		Safe_Release(Pair.second);
 	}
 	m_mapModelGroup.clear();
 }
@@ -133,7 +161,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			aiTransform.c1, aiTransform.c2, aiTransform.c3, aiTransform.c4,
 			aiTransform.d1, aiTransform.d2, aiTransform.d3, aiTransform.d4
 		);
-		m_vecMesh[i]->matTransform = matTransform;
+		m_vecMesh[i]->matTransform = XMLoadFloat4x4(&matTransform);
 		//m_vecMesh[i]->matTransform = matTransform;
 
 		// 점
@@ -206,15 +234,13 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			FMeshGroup* pMeshGroup = pModelGroup->pMeshGroup;
 
 			// MeshKey 설정 및 저장
-			pMeshGroup->Add_Mesh(Make_Wstring(pMesh->mName.C_Str()), m_vecMesh[i]->Clone());
+			pMeshGroup->Add_Mesh(Make_Wstring(pMesh->mName.C_Str()), m_vecMesh[i]);
 
 			//pBoneGroup->Add_Bone(Make_Wstring(pBone))
 		}
 	}
 
 	// 임시 메쉬 해제
-	for (auto& item : m_vecMesh)
-		item->Free();
 	m_vecMesh.clear();
 }
 
@@ -227,19 +253,24 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 	for (_uint i = 0; i < m_pScene->mNumAnimations; i++)
 	{
 		aiAnimation* pAnimAI = m_pScene->mAnimations[i];
+		// 애님 데이터 생성
 		FAnimData* pAnimData = FAnimData::Create();
-		pAnimData->vecNodeAnim.reserve(pAnimAI->mNumChannels);
+		wstring AnimNameWithTK = Make_Wstring(pAnimAI->mName.C_Str());
+		// 애니메이션 이름 추출
+		size_t iTokkenInd = AnimNameWithTK.find_first_of(L'|') + Cast<size_t>(1);
+		wstring AnimName = AnimNameWithTK.substr(iTokkenInd);
 
 		for (_uint j = 0; j < pAnimAI->mNumChannels; j++)
 		{
 			aiNodeAnim* pNodeAnimAI = pAnimAI->mChannels[j];
 			FAnimNodeData* pAnimNodeData = FAnimNodeData::Create();
+			wstring AnimNodeName = Make_Wstring(pNodeAnimAI->mNodeName.C_Str());
 
-			pAnimNodeData->strName = Make_Wstring(pNodeAnimAI->mNodeName.C_Str());
 			pAnimNodeData->vecPositions.reserve(pNodeAnimAI->mNumPositionKeys);
 			pAnimNodeData->vecRotations.reserve(pNodeAnimAI->mNumRotationKeys);
 			pAnimNodeData->vecScales.reserve(pNodeAnimAI->mNumScalingKeys);
 
+			// Pos 값 추출
 			for (_uint k = 0; k < pNodeAnimAI->mNumPositionKeys; k++)
 			{
 				auto fTime = pNodeAnimAI->mPositionKeys[k].mTime;
@@ -251,6 +282,7 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 				pAnimNodeData->vecPositions.push_back(tPosition);
 			}
 
+			// Rot 값 추출 (쿼터니언)
 			for (_uint k = 0; k < pNodeAnimAI->mNumRotationKeys; k++)
 			{
 				auto fTime = pNodeAnimAI->mRotationKeys[k].mTime;
@@ -262,6 +294,7 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 				pAnimNodeData->vecRotations.push_back(tRotation);
 			}
 
+			// Scale 값 추출
 			for (_uint k = 0; k < pNodeAnimAI->mNumScalingKeys; k++)
 			{
 				auto fTime = pNodeAnimAI->mScalingKeys[k].mTime;
@@ -273,10 +306,11 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 				pAnimNodeData->vecScales.push_back(tScale);
 			}
 
-			pAnimData->vecNodeAnim.push_back(pAnimNodeData);
+			pAnimData->Add_AnimNodeData(AnimNodeName, pAnimNodeData);
 		}
+		pAnimGroup->Add_AnimData(AnimName, pAnimData);
 
-		pAnimGroup->Add_AnimData(Make_Wstring(pAnimAI->mName.C_Str()), pAnimData);
+		int t = 1;
 	}
 }
 
@@ -344,3 +378,5 @@ FAnimGroup* CModelMgr::Get_AnimGroup(const wstring& strGroupKey)
 
 	return (*iter).second->pAnimGroup;
 }
+
+

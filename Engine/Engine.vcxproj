@@ -271,6 +271,9 @@
     <ClInclude Include="Public\System\AnimationMgr.h" />
     <ClInclude Include="Public\System\BlackBoardMgr.h" />
     <ClInclude Include="Public\System\BlackBoardPtr.h" />
+    <ClInclude Include="Public\System\Data\AnimData.h" />
+    <ClInclude Include="Public\System\Data\BoneData.h" />
+    <ClInclude Include="Public\System\Data\MeshData.h" />
     <ClInclude Include="Public\System\FontMgr.h" />
     <ClInclude Include="Public\System\Frame.h" />
     <ClInclude Include="Public\System\FrameMgr.h" />
@@ -328,6 +331,9 @@
     <ClCompile Include="Private\System\AnimationMgr.cpp" />
     <ClCompile Include="Private\System\BlackBoardMgr.cpp" />
     <ClCompile Include="Private\System\BlackBoardPtr.cpp" />
+    <ClCompile Include="Private\System\Data\AnimData.cpp" />
+    <ClCompile Include="Private\System\Data\BoneData.cpp" />
+    <ClCompile Include="Private\System\Data\MeshData.cpp" />
     <ClCompile Include="Private\System\FontMgr.cpp" />
     <ClCompile Include="Private\System\Frame.cpp" />
     <ClCompile Include="Private\System\FrameMgr.cpp" />
