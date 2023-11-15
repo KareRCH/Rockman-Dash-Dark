@@ -5,6 +5,15 @@
 
 BEGIN(Engine)
 
+struct FMeshVertexData
+{
+	_float3		vPosition;
+	_float3		vNormal;
+	_float2		vTexCoord;
+	vector<_int>	vecBoneID;
+	vector<_float>	vecWeights;
+};
+
 /// <summary>
 /// 어떤 모델에 대한 그룹
 /// </summary>
@@ -22,18 +31,8 @@ public:
 	virtual void Free() override;
 	
 public:
-	struct FVertexBoneData
-	{
-		wstring			strName;
-		vector<_uint>	vecVtxID;
-		vector<_float>	vecWeights;
-	};
-
-public:
-	vector<VERTEX_MODEL>		vecVertices;
+	vector<FMeshVertexData>		vecVertices;
 	vector<_uint>				vecIndices;
-	vector<FVertexBoneData>		vecBone;
-	_uint						iMaterIndex;
 	_matrix						matTransform;
 };
 

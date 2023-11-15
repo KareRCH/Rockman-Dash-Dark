@@ -24,6 +24,11 @@ void FModelGroup::Free()
 	Safe_Release(pMeshGroup);
 	Safe_Release(pBoneGroup);
 	Safe_Release(pAnimGroup);
+	for (auto& item : vecArmatures)
+	{
+		Safe_Release(item);
+	}
+	vecArmatures.clear();
 }
 
 // ----------------------- ModelMgr ---------------------
@@ -82,6 +87,7 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 		aiProcess_SplitLargeMeshes |			// 거대한 하나의 매쉬를 하위매쉬들로 분활(나눔)
 		aiProcess_Triangulate |                 // 3개 이상의 모서리를 가진 다각형 면을 삼각형으로 만듬(나눔)
 		aiProcess_ConvertToLeftHanded |         // D3D의 왼손좌표계로 변환
+		aiProcess_PopulateArmatureData | 
 		aiProcess_SortByPType;					// 단일타입의 프리미티브로 구성된 '깨끗한' 매쉬를 만듬
 	
 	m_pScene = importer.ReadFile((m_strMainDir + strFileName).c_str(), iFlag);
@@ -103,7 +109,7 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 	Load_Anim(pModelGroup->pAnimGroup);
 
 	// 계층 로드
-	Load_Hierarchi(pModelGroup);
+	Load_Hierarchi(pModelGroup, m_pRootArmature);
 }
 
 void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
@@ -162,11 +168,13 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			aiTransform.d1, aiTransform.d2, aiTransform.d3, aiTransform.d4
 		);
 		m_vecMesh[i]->matTransform = XMLoadFloat4x4(&matTransform);
-		//m_vecMesh[i]->matTransform = matTransform;
 
 		// 점
+		vector<FMeshVertexData>& pVecVertices = m_vecMesh[i]->vecVertices;
 		for (_uint j = 0; j < pMesh->mNumVertices; j++)
 		{
+			_uint iVertexIndex = j;
+
 			_float3 vPos(&pMesh->mVertices[j].x);
 			_float3 vNormal(&pMesh->mNormals[j].x);
 			_float2 vTexCoord;
@@ -175,8 +183,49 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			else
 				vTexCoord = _float2(0.f, 0.f);
 
-			VERTEX_MODEL vData = { vPos, vNormal, vTexCoord };
-			m_vecMesh[i]->vecVertices.push_back(vData);
+			FMeshVertexData tData = { vPos, vNormal, vTexCoord };
+			m_vecMesh[i]->vecVertices.push_back(tData);
+
+			// 뼈 정보를 위해 공간 확보
+			pVecVertices[iVertexIndex].vecBoneID.resize(8, -1);
+			pVecVertices[iVertexIndex].vecWeights.resize(8);
+		}
+
+		// 점
+		for (_uint j = 0; j < pMesh->mNumVertices; j++)
+		{
+			_uint iVertexIndex = j;
+
+			// 정점에 대한 뼈정보 로드
+			for (_uint k = 0; k < pMesh->mNumBones; k++)
+			{
+				_int iBoneID = k;
+				
+				aiBone* pBone = pMesh->mBones[k];
+				//FBoneData* pBoneData = FBoneData::Create();
+
+				pVecVertices[iVertexIndex].vecBoneID[iBoneID] = iBoneID;
+
+				for (_uint l = 0; l < pBone->mNumWeights; l++)
+				{
+					_uint iVertexID = pBone->mWeights[l].mVertexId;
+					_float fWeight = pBone->mWeights[l].mWeight;
+
+					// 정점 데이터에 뼈ID와 무게 정보 등록
+					pVecVertices[iVertexID].vecWeights[iBoneID] = fWeight;
+
+					//pBoneData->vecVtxIndex.push_back(iBoneID);
+					//pBoneData->vecVtxWeights.push_back(fWeight);
+				}
+
+				//pBoneGroup->Add_Bone(Make_Wstring(pBone->mName.C_Str()), pBoneData);
+				int ttt = 0;
+			}
+		}
+
+		if (pMesh->HasBones())
+		{
+			m_pRootArmature = pMesh->mBones[0]->mArmature;
 		}
 
 		// 면 (인덱싱)
@@ -188,37 +237,11 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			m_vecMesh[i]->vecIndices.push_back(face.mIndices[2]);
 		}
 
-		// 뼈
-		m_vecMesh[i]->vecBone.reserve(pMesh->mNumBones);
-		for (_uint j = 0; j < pMesh->mNumBones; j++)
-		{
-			aiBone* pBone = pMesh->mBones[j];
-			FBoneData* pBoneData = FBoneData::Create();
-			FMeshData::FVertexBoneData tVtxBoneData = {};
-
-			pBoneData->strName = tVtxBoneData.strName = Make_Wstring(pBone->mName.C_Str());
-			tVtxBoneData.vecVtxID.reserve(pBone->mNumWeights);
-			tVtxBoneData.vecWeights.reserve(pBone->mNumWeights);
-
-			for (_uint k = 0; k < pBone->mNumWeights; k++)
-			{
-				tVtxBoneData.vecVtxID.push_back(pBone->mWeights[k].mVertexId);
-				tVtxBoneData.vecWeights.push_back(pBone->mWeights[k].mWeight);
-
-				pBoneData->vecVtxIndex.push_back(pBone->mWeights[k].mVertexId);
-				pBoneData->vecVtxWeights.push_back(pBone->mWeights[k].mWeight);
-			}
-			
-			m_vecMesh[i]->vecBone.push_back(tVtxBoneData);
-			pBoneGroup->Add_Bone(Make_Wstring(pBone->mName.C_Str()), pBoneData);
-			int ttt = 0;
-		}
-
 		// 머터리얼
 		for (_uint j = 0; j < m_pScene->mNumMaterials; j++)
 		{
 			aiMaterial* pMater = m_pScene->mMaterials[j];
-			vector< aiMaterialProperty*> vecProp;
+			vector<aiMaterialProperty*> vecProp;
 			vecProp.reserve(pMater->mNumProperties);
 
 			for (_uint k = 0; k < pMater->mNumProperties; k++)
@@ -228,9 +251,6 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 				vecProp.push_back(pProp);
 			}
 			_uint tt = pMater->GetTextureCount(aiTextureType_DIFFUSE);
-			//pMater->GetTexture(aiTextureType_DIFFUSE, )
-			//string strTest = pMater->GetName().C_Str();
-			//tt = -1;
 		}
 
 		// 파싱데이터 임포트
@@ -240,8 +260,6 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 
 			// MeshKey 설정 및 저장
 			pMeshGroup->Add_Mesh(Make_Wstring(pMesh->mName.C_Str()), m_vecMesh[i]);
-
-			//pBoneGroup->Add_Bone(Make_Wstring(pBone))
 		}
 	}
 
@@ -258,13 +276,16 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 	for (_uint i = 0; i < m_pScene->mNumAnimations; i++)
 	{
 		aiAnimation* pAnimAI = m_pScene->mAnimations[i];
+
 		// 애님 데이터 생성
 		FAnimData* pAnimData = FAnimData::Create();
 		wstring AnimNameWithTK = Make_Wstring(pAnimAI->mName.C_Str());
+
 		// 애니메이션 이름 추출
 		size_t iTokkenInd = AnimNameWithTK.find_first_of(L'|') + Cast<size_t>(1);
 		wstring AnimName = AnimNameWithTK.substr(iTokkenInd);
 
+		// 애니메이션 채널
 		for (_uint j = 0; j < pAnimAI->mNumChannels; j++)
 		{
 			aiNodeAnim* pNodeAnimAI = pAnimAI->mChannels[j];
@@ -319,8 +340,41 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 	}
 }
 
-void CModelMgr::Load_Hierarchi(FModelGroup* pModelGroup)
+void CModelMgr::Load_Hierarchi(FModelGroup* pModelGroup, aiNode* pArmatureNode)
 {
+	if (pArmatureNode)
+	{
+		FModelRootNodeData* pRootNodeData = FModelRootNodeData::Create();
+		pRootNodeData->strname = Make_Wstring(pArmatureNode->mName.C_Str());
+		pRootNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pArmatureNode->mTransformation);
+		pRootNodeData->matTransform = pRootNodeData->matOffset;
+		pModelGroup->vecArmatures.push_back(pRootNodeData);
+
+		for (_uint i = 0; i < pArmatureNode->mNumChildren; i++)
+		{
+			Load_HierarchiNode(pModelGroup, pArmatureNode->mChildren[i], pRootNodeData);
+		}
+		
+	}
+
+	m_pRootArmature = nullptr;
+}
+
+void CModelMgr::Load_HierarchiNode(FModelGroup* pModelGroup, aiNode* pBoneNode, FModelNodeBaseData* pRootNode)
+{
+	if (pBoneNode)
+	{
+		FModelNodeData* pRootNodeData = FModelNodeData::Create();
+		pRootNodeData->strname = Make_Wstring(pBoneNode->mName.C_Str());
+		pRootNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);
+		pRootNodeData->matTransform = pRootNodeData->matOffset;
+		pRootNode->vecChildren.push_back(pRootNodeData);
+
+		for (_uint i = 0; i < pBoneNode->mNumChildren; i++)
+		{
+			Load_HierarchiNode(pModelGroup, pBoneNode->mChildren[i], pRootNodeData);
+		}
+	}
 }
 
 const FMeshData* const CModelMgr::Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey)
@@ -382,6 +436,18 @@ FAnimGroup* CModelMgr::Get_AnimGroup(const wstring& strGroupKey)
 		return nullptr;
 
 	return (*iter).second->pAnimGroup;
+}
+
+_matrix CModelMgr::ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix)
+{
+	_float4x4	matOffsetTG = _float4x4(
+		matrix.a1, matrix.a2, matrix.a3, matrix.a4,
+		matrix.b1, matrix.b2, matrix.b3, matrix.b4,
+		matrix.c1, matrix.c2, matrix.c3, matrix.c4,
+		matrix.d1, matrix.d2, matrix.d3, matrix.d4
+	);
+
+	return XMLoadFloat4x4(&matOffsetTG);
 }
 
 
