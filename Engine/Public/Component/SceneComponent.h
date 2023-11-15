@@ -23,6 +23,17 @@ protected:
 	virtual void	Free();
 
 public:
+	GETSET_1(CSceneComponent*, m_pParentComp, ParentComp, GET)
+	CSceneComponent*	Get_FirstChildComp();
+	CSceneComponent*	Get_ChildComp(_uint iIndex);
+	void				Add_Child(CSceneComponent* const pComp);
+	_bool				Insert_Child(_uint iIndex, CSceneComponent* const pComp);
+
+protected:
+	CSceneComponent*			m_pParentComp = { nullptr };		// 부모 컴포넌트
+	list<CSceneComponent*>		m_listChildrenComp;					// 자식 컴포넌트
+
+public:
 	GETSET_2(_float3, m_vPosition, Position, GET_C_REF, SET_C_REF)
 	void Set_Position(const _float x, const _float y, const _float z)
 	{
@@ -41,9 +52,9 @@ public:
 		m_vRotation.y = y;
 		m_vRotation.z = z;
 	}
-	void Set_RotationX(const _float value) { m_vRotation.x = value; }
-	void Set_RotationY(const _float value) { m_vRotation.y = value; }
-	void Set_RotationZ(const _float value) { m_vRotation.z = value; }
+	void Set_RotX(const _float value) { m_vRotation.x = value; }
+	void Set_RotY(const _float value) { m_vRotation.y = value; }
+	void Set_RotZ(const _float value) { m_vRotation.z = value; }
 
 	GETSET_2(_float3, m_vScale, Scale, GET_C_REF, SET_C_REF)
 	void Set_Scale(const _float x, const _float y, const _float z)

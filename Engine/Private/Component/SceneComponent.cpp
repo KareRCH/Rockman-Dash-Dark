@@ -28,3 +28,56 @@ void CSceneComponent::Free()
 {
 	SUPER::Free();
 }
+
+CSceneComponent* CSceneComponent::Get_FirstChildComp()
+{
+	if (m_listChildrenComp.empty())
+		return nullptr;
+
+	return m_listChildrenComp.front();
+}
+
+CSceneComponent* CSceneComponent::Get_ChildComp(_uint iIndex)
+{
+	if (m_listChildrenComp.empty())
+		return nullptr;
+
+	_uint i = 0;
+	for (auto iter = m_listChildrenComp.begin(); iter != m_listChildrenComp.end(); iter++)
+	{
+		if (i == iIndex)
+			return (*iter);
+		++i;
+	}
+
+	return nullptr;
+}
+
+void CSceneComponent::Add_Child(CSceneComponent* const pComp)
+{
+	if (nullptr == pComp)
+		return;
+
+	m_listChildrenComp.push_back(pComp);
+}
+
+_bool CSceneComponent::Insert_Child(_uint iIndex, CSceneComponent* const pComp)
+{
+	if (nullptr == pComp)
+		return false;
+
+	_uint i = 0;
+	auto iter = m_listChildrenComp.begin();
+	for (; iter != m_listChildrenComp.end(); iter++)
+	{
+		if (i == iIndex)
+			break;
+		++i;
+	}
+	if (iter != m_listChildrenComp.end())
+		m_listChildrenComp.insert(iter, pComp);
+	else
+		return false;
+
+	return true;
+}

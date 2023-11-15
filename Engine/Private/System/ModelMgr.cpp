@@ -161,17 +161,39 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 		}
 
 		// 뼈
+		m_vecMesh[i]->vecBone.reserve(pMesh->mNumBones);
 		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
 			aiBone* pBone = pMesh->mBones[j];
-			wstring strName = Make_Wstring(pBone->mName.C_Str());
+			FMeshData::FVertexBoneData tVtxBoneData = {};
 
+			tVtxBoneData.strName = Make_Wstring(pBone->mName.C_Str());
+			tVtxBoneData.vecVtxID.reserve(pBone->mNumWeights);
+			tVtxBoneData.vecWeights.reserve(pBone->mNumWeights);
+
+			for (_uint k = 0; k < pBone->mNumWeights; k++)
+			{
+				tVtxBoneData.vecVtxID.push_back(pBone->mWeights[k].mVertexId);
+				tVtxBoneData.vecWeights.push_back(pBone->mWeights[k].mWeight);
+			}
+			
+			m_vecMesh[i]->vecBone.push_back(tVtxBoneData);
+			int ttt = 0;
 		}
 
 		// 머터리얼
 		for (_uint j = 0; j < m_pScene->mNumMaterials; j++)
 		{
 			aiMaterial* pMater = m_pScene->mMaterials[j];
+			vector< aiMaterialProperty*> vecProp;
+			vecProp.reserve(pMater->mNumProperties);
+
+			for (_uint k = 0; k < pMater->mNumProperties; k++)
+			{
+				aiMaterialProperty* pProp = pMater->mProperties[k];
+				wstring strN = Make_Wstring(pProp->mData);
+				vecProp.push_back(pProp);
+			}
 			_uint tt = pMater->GetTextureCount(aiTextureType_DIFFUSE);
 			//pMater->GetTexture(aiTextureType_DIFFUSE, )
 			//string strTest = pMater->GetName().C_Str();
@@ -186,7 +208,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			// MeshKey 설정 및 저장
 			pMeshGroup->Add_Mesh(Make_Wstring(pMesh->mName.C_Str()), m_vecMesh[i]->Clone());
 
-			pBoneGroup->Add_Bone(Make_Wstring(pBone))
+			//pBoneGroup->Add_Bone(Make_Wstring(pBone))
 		}
 	}
 

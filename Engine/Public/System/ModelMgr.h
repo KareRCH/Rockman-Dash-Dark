@@ -13,7 +13,7 @@ class FMeshData final
 private:
 	explicit FMeshData() {}
 	explicit FMeshData(const FMeshData& rhs)
-		: vecVertices(rhs.vecVertices), vecIndices(rhs.vecIndices), vecBoneName(rhs.vecBoneName)
+		: vecVertices(rhs.vecVertices), vecIndices(rhs.vecIndices), vecBone(rhs.vecBone)
 		, iMaterIndex(rhs.iMaterIndex), matTransform(rhs.matTransform)
 	{
 	}
@@ -57,16 +57,24 @@ public:
 	{
 		vecVertices.clear();
 		vecIndices.clear();
-		vecBoneName.clear();
+		vecBone.clear();
 		delete this;
 	}
 
 public:
-	vector<VERTEX_MODEL>	vecVertices;
-	vector<_uint>			vecIndices;
-	vector<wstring>			vecBoneName;
-	_uint					iMaterIndex;
-	_float4x4				matTransform;
+	struct FVertexBoneData
+	{
+		wstring			strName;
+		vector<_uint>	vecVtxID;
+		vector<_float>	vecWeights;
+	};
+
+public:
+	vector<VERTEX_MODEL>		vecVertices;
+	vector<_uint>				vecIndices;
+	vector<FVertexBoneData>		vecBone;
+	_uint						iMaterIndex;
+	_float4x4					matTransform;
 };
 
 /// <summary>
@@ -215,6 +223,15 @@ public:
 			return nullptr;
 
 		return (*iter).second;
+	}
+
+	void Add_Bone(const wstring& strBoneKey, FBoneData* const pBoneData)
+	{
+		auto iter = mapBoneData.find(strBoneKey);
+		if (iter != mapBoneData.end())
+			return;
+
+
 	}
 
 public:
