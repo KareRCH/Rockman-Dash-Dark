@@ -193,9 +193,10 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
 			aiBone* pBone = pMesh->mBones[j];
+			FBoneData* pBoneData = FBoneData::Create();
 			FMeshData::FVertexBoneData tVtxBoneData = {};
 
-			tVtxBoneData.strName = Make_Wstring(pBone->mName.C_Str());
+			pBoneData->strName = tVtxBoneData.strName = Make_Wstring(pBone->mName.C_Str());
 			tVtxBoneData.vecVtxID.reserve(pBone->mNumWeights);
 			tVtxBoneData.vecWeights.reserve(pBone->mNumWeights);
 
@@ -203,9 +204,13 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			{
 				tVtxBoneData.vecVtxID.push_back(pBone->mWeights[k].mVertexId);
 				tVtxBoneData.vecWeights.push_back(pBone->mWeights[k].mWeight);
+
+				pBoneData->vecVtxIndex.push_back(pBone->mWeights[k].mVertexId);
+				pBoneData->vecVtxWeights.push_back(pBone->mWeights[k].mWeight);
 			}
 			
 			m_vecMesh[i]->vecBone.push_back(tVtxBoneData);
+			pBoneGroup->Add_Bone(Make_Wstring(pBone->mName.C_Str()), pBoneData);
 			int ttt = 0;
 		}
 

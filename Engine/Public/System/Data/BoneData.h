@@ -41,7 +41,7 @@ public:
 
 public:
 	const FBoneData* const	Get_Bone(const wstring& strBoneKey);
-	void Add_Bone(const wstring& strBoneKey, FBoneData* const pBoneData);
+	void Add_Bone(const wstring& strBoneKey, FBoneData* pBoneData);
 	
 
 public:
