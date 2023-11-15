@@ -20,7 +20,6 @@ void FMeshData::Free()
 {
 	vecVertices.clear();
 	vecIndices.clear();
-	vecBone.clear();
 }
 
 

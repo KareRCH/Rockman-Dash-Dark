@@ -399,6 +399,9 @@
     <ClInclude Include="Public\System\Data\MeshData.h">
       <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\Data\ModelNodeData.h">
+      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -573,6 +576,9 @@
       <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Data\MeshData.cpp">
+      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\Data\ModelNodeData.cpp">
       <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
     </ClCompile>
   </ItemGroup>

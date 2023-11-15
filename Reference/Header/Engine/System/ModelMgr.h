@@ -3,6 +3,7 @@
 #include "System/Data/MeshData.h"
 #include "System/Data/BoneData.h"
 #include "System/Data/AnimData.h"
+#include "System/Data/ModelNodeData.h"
 
 BEGIN(Engine)
 
@@ -11,7 +12,7 @@ BEGIN(Engine)
 /// </summary>
 class FModelGroup final : public CBase
 {
-	THIS_CLASS(FModelGroup)
+	DERIVED_CLASS(CBase, FModelGroup)
 private:
 	explicit FModelGroup() {}
 	virtual ~FModelGroup() = default;
@@ -33,6 +34,8 @@ public:
 	FMeshGroup* pMeshGroup = { nullptr };
 	FBoneGroup* pBoneGroup = { nullptr };
 	FAnimGroup* pAnimGroup = { nullptr };
+
+	vector<FModelRootNodeData*>	vecArmatures;	// 아마추어 루트 노드들
 };
 
 /// <summary>
@@ -63,7 +66,8 @@ public:
 	void	Load_Model(const string& strFileName, const wstring& strGroupKey);
 	void	Load_MeshBoneMaterial(FModelGroup* pModelGroup);
 	void	Load_Anim(FAnimGroup* pAnimGroup);
-	void	Load_Hierarchi(FModelGroup* pModelGroup);
+	void	Load_Hierarchi(FModelGroup* pModelGroup, aiNode* pArmatureNode);
+	void	Load_HierarchiNode(FModelGroup* pModelGroup, aiNode* pBoneNode, FModelNodeBaseData* pRootNode);
 
 
 	const FMeshData* const	Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey);
@@ -77,8 +81,12 @@ private:
 	FAnimGroup* Get_AnimGroup(const wstring& strGroupKey);
 
 private:
+	_matrix ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);
+
+private:
 	const aiScene*		m_pScene = nullptr;				// 내부 통신용 씬 저장변수
 	vector<FMeshData*>	m_vecMesh;						// 내부 통신용 메쉬 저장변수
+	aiNode*				m_pRootArmature;				// 내부용, 아마추어 노드
 	_uint				m_iMaterialCount = 0U;
 	_uint				m_iBoneCount = 0U;
 
