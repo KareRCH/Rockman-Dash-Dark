@@ -25,7 +25,7 @@ HRESULT CModelBufferComp::Initialize(const wstring& strGroupKey, const wstring& 
 
 	m_iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
 	m_iIndexCount = Cast<_uint>(pMesh->vecIndices.size());
-	Set_Transform(XMLoadFloat4x4(&pMesh->matTransform));
+	Set_Transform(pMesh->matTransform);
 
 	VERTEX_MODEL* vertices = new VERTEX_MODEL[m_iVtxCount];
 	if (!vertices)
