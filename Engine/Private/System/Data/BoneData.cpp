@@ -57,11 +57,14 @@ const FBoneData* const FBoneGroup::Get_Bone(const wstring& strBoneKey)
 	return (*iter).second;
 }
 
-void FBoneGroup::Add_Bone(const wstring& strBoneKey, FBoneData* const pBoneData)
+void FBoneGroup::Add_Bone(const wstring& strBoneKey, FBoneData* pBoneData)
 {
 	auto iter = mapBoneData.find(strBoneKey);
 	if (iter != mapBoneData.end())
+	{
+		Safe_Release(pBoneData);
 		return;
+	}
 
-
+	mapBoneData.emplace(strBoneKey, pBoneData);
 }
