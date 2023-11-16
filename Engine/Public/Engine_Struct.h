@@ -70,6 +70,11 @@ namespace Engine
 		ComPtr<ID3D11DeviceContext> pDeviceContext;
 	};
 
+	struct Test
+	{
+		static constexpr D3D11_INPUT_ELEMENT_DESC Test2[] = { {}, {} };
+	};
+
 	//typedef struct tagVertexTexture
 	//{
 	//	_float3		vPosition;

@@ -328,6 +328,8 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 		}
 		pAnimGroup->Add_AnimData(AnimName, pAnimData);
 
+		D3D11_INPUT_ELEMENT_DESC Test = Test::Test2[1];
+
 		int t = 1;
 	}
 }
