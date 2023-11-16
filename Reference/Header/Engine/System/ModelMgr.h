@@ -67,7 +67,7 @@ public:
 	void	Load_MeshBoneMaterial(FModelGroup* pModelGroup);
 	void	Load_Anim(FAnimGroup* pAnimGroup);
 	void	Load_Hierarchi(FModelGroup* pModelGroup, aiNode* pArmatureNode);
-	void	Load_HierarchiNode(FModelGroup* pModelGroup, aiNode* pBoneNode, FModelNodeBaseData* pRootNode);
+	void	Load_HierarchiNode(aiNode* pBoneNode, FModelNodeBaseData* pRootNode);
 
 
 	const FMeshData* const	Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey);

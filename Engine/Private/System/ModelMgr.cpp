@@ -140,18 +140,15 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 	}
 
 	// 블렌더에서는 행렬이 변환되어 나오기 때문에 부모가 되는 Skeletal의 행렬은 쓰지 않는다.
-	vector<_float4x4> vecMatrixTest;
+	vector<_matrix> vecMatrixTest;
+	_matrix matTest = {};
 	vecMatrixTest.reserve(pRootNode->mNumChildren);
 	for (_uint i = 0; i < pRootNode->mNumChildren; i++)
 	{
 		aiNode* pChildNode = pRootNode->mChildren[i];
 		aiMatrix4x4 aiTransform = pChildNode->mTransformation;
-		vecMatrixTest.push_back(_float4x4(
-			aiTransform.a1, aiTransform.a2, aiTransform.a3, aiTransform.a4,
-			aiTransform.b1, aiTransform.b2, aiTransform.b3, aiTransform.b4,
-			aiTransform.c1, aiTransform.c2, aiTransform.c3, aiTransform.c4,
-			aiTransform.d1, aiTransform.d2, aiTransform.d3, aiTransform.d4
-		));
+		vecMatrixTest.push_back(ConvertAiMatrix_ToDXMatrix(aiTransform));
+		matTest = ConvertAiMatrix_ToDXMatrix(aiTransform);
 	}
 
 	for (_uint i = 0; i < m_pScene->mNumMeshes; i++)
@@ -161,16 +158,11 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 
 		// 트랜스폼 저장
 		aiMatrix4x4 aiTransform = pChildNode->mTransformation;
-		_float4x4 matTransform = _float4x4(
-			aiTransform.a1, aiTransform.a2, aiTransform.a3, aiTransform.a4,
-			aiTransform.b1, aiTransform.b2, aiTransform.b3, aiTransform.b4,
-			aiTransform.c1, aiTransform.c2, aiTransform.c3, aiTransform.c4,
-			aiTransform.d1, aiTransform.d2, aiTransform.d3, aiTransform.d4
-		);
-		m_vecMesh[i]->matTransform = XMLoadFloat4x4(&matTransform);
+		m_vecMesh[i]->matTransform = matTest;//ConvertAiMatrix_ToDXMatrix(aiTransform);
 
 		// 점
 		vector<FMeshVertexData>& pVecVertices = m_vecMesh[i]->vecVertices;
+		pVecVertices.resize(pMesh->mNumVertices);
 		for (_uint j = 0; j < pMesh->mNumVertices; j++)
 		{
 			_uint iVertexIndex = j;
@@ -178,20 +170,19 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			_float3 vPos(&pMesh->mVertices[j].x);
 			_float3 vNormal(&pMesh->mNormals[j].x);
 			_float2 vTexCoord;
+
 			if (pMesh->HasTextureCoords(0))
 				vTexCoord = _float2(&pMesh->mTextureCoords[0][j].x);
 			else
 				vTexCoord = _float2(0.f, 0.f);
 
-			FMeshVertexData tData = { vPos, vNormal, vTexCoord };
-			m_vecMesh[i]->vecVertices.push_back(tData);
+			m_vecMesh[i]->vecVertices[iVertexIndex] = { vPos, vNormal, vTexCoord };
 
 			// 뼈 정보를 위해 공간 확보
 			pVecVertices[iVertexIndex].vecBoneID.resize(8, -1);
 			pVecVertices[iVertexIndex].vecWeights.resize(8);
 		}
 
-		// 점
 		for (_uint j = 0; j < pMesh->mNumVertices; j++)
 		{
 			_uint iVertexIndex = j;
@@ -200,7 +191,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			for (_uint k = 0; k < pMesh->mNumBones; k++)
 			{
 				_int iBoneID = k;
-				
+
 				aiBone* pBone = pMesh->mBones[k];
 				//FBoneData* pBoneData = FBoneData::Create();
 
@@ -223,6 +214,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			}
 		}
 
+		// 뼈가 있을 때 루트 노드를 설정한다. 나중에 계층을 로드하는데 쓰인다.
 		if (pMesh->HasBones())
 		{
 			m_pRootArmature = pMesh->mBones[0]->mArmature;
@@ -352,15 +344,14 @@ void CModelMgr::Load_Hierarchi(FModelGroup* pModelGroup, aiNode* pArmatureNode)
 
 		for (_uint i = 0; i < pArmatureNode->mNumChildren; i++)
 		{
-			Load_HierarchiNode(pModelGroup, pArmatureNode->mChildren[i], pRootNodeData);
+			Load_HierarchiNode(pArmatureNode->mChildren[i], pRootNodeData);
 		}
-		
 	}
 
 	m_pRootArmature = nullptr;
 }
 
-void CModelMgr::Load_HierarchiNode(FModelGroup* pModelGroup, aiNode* pBoneNode, FModelNodeBaseData* pRootNode)
+void CModelMgr::Load_HierarchiNode(aiNode* pBoneNode, FModelNodeBaseData* pRootNode)
 {
 	if (pBoneNode)
 	{
@@ -372,7 +363,7 @@ void CModelMgr::Load_HierarchiNode(FModelGroup* pModelGroup, aiNode* pBoneNode, 
 
 		for (_uint i = 0; i < pBoneNode->mNumChildren; i++)
 		{
-			Load_HierarchiNode(pModelGroup, pBoneNode->mChildren[i], pRootNodeData);
+			Load_HierarchiNode(pBoneNode->mChildren[i], pRootNodeData);
 		}
 	}
 }
@@ -448,6 +439,13 @@ _matrix CModelMgr::ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix)
 	);
 
 	return XMLoadFloat4x4(&matOffsetTG);
+}
+
+_float3 CModelMgr::Calculate_InterpolatedFloat3(_float fAnimTime, const _int iNumKeys, const _vec vVectorKey)
+{
+
+
+	return _float3();
 }
 
 
