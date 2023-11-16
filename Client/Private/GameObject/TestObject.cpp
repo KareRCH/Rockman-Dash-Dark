@@ -69,9 +69,9 @@ void CTestObject::Render()
 {
     SUPER::Render();
 
-    MATRIX_BUFFER_T matBuffer = { Get_Transform(),// * m_pModelBufferComp->Get_Transform(),
+    MATRIX_BUFFER_T matBuffer = { m_pModelBufferComp->Get_Transform() * Get_Transform(),
         GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0) };
-    CAMERA_BUFFER_T cameraBuffer = { _float3(10.f, 10.f, 10.f) };
+    CAMERA_BUFFER_T cameraBuffer = { _float3(6.f, 6.f, 6.f) };
     LIGHT_BUFFER_T lightBuffer = { _float4(0.2f, 0.2f, 0.2f, 1.f), _float4(0.2f, 0.2f, 0.2f, 1.f), _float3(-1.f, 0.f, 0.f),
                                     _float(2.f), _float4(1.f, 0.2f, 0.2f, 1.f)};
 

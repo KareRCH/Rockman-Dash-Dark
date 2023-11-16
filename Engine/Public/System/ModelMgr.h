@@ -31,9 +31,9 @@ public:
 public:
 	_bool		bPermanent = false;			// 영구적으로 로드되는 데이터 인가
 	_bool		bLoaded = false;			// 로드 되었는가
-	FMeshGroup* pMeshGroup = { nullptr };
+	FMeshGroup* pMeshGroup = { nullptr };	// 메쉬를 모아놓은 그룹
 	FBoneGroup* pBoneGroup = { nullptr };
-	FAnimGroup* pAnimGroup = { nullptr };
+	FAnimGroup* pAnimGroup = { nullptr };	// 애니메이션 그룹
 
 	vector<FModelRootNodeData*>	vecArmatures;	// 아마추어 루트 노드들
 };
@@ -67,7 +67,7 @@ public:
 	void	Load_MeshBoneMaterial(FModelGroup* pModelGroup);
 	void	Load_Anim(FAnimGroup* pAnimGroup);
 	void	Load_Hierarchi(FModelGroup* pModelGroup, aiNode* pArmatureNode);
-	void	Load_HierarchiNode(FModelGroup* pModelGroup, aiNode* pBoneNode, FModelNodeBaseData* pRootNode);
+	void	Load_HierarchiNode(aiNode* pBoneNode, FModelNodeBaseData* pRootNode);
 
 
 	const FMeshData* const	Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey);
@@ -82,6 +82,8 @@ private:
 
 private:
 	_matrix ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);
+	_float3 Calculate_InterpolatedFloat3(_float fAnimTime, const _int iNumKeys, const _vec vVectorKey);
+	_float4 Calculate_InterpolatedQuaternion(_float fAnimTime, const _int iNumKeys, const _vec vVectorKey);
 
 private:
 	const aiScene*		m_pScene = nullptr;				// 내부 통신용 씬 저장변수
