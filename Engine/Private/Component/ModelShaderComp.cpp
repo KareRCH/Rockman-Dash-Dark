@@ -84,6 +84,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
         return E_FAIL;
     }
 
+
     // 셰이더 매니저로 부터 픽셀 셰이더 얻어오기
     ComPtr<ID3DBlob> pPixelShaderBuf = GameInstance()->Get_ShaderByte(EShaderType::Pixel, strPixelShaderKey);
     m_pPixelShader = GameInstance()->Get_ShaderBuffer<EShaderType::Pixel>(strPixelShaderKey);
@@ -93,86 +94,31 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
         return E_FAIL;
     }
 
-    /***************
-    * 레이아웃 구성 (시맨틱 전달자)
-    ***************/
-    D3D11_INPUT_ELEMENT_DESC tPolygonLayout[3];
-    tPolygonLayout[0].SemanticName = "POSITION";
-    tPolygonLayout[0].SemanticIndex = 0;
-    tPolygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-    tPolygonLayout[0].InputSlot = 0;
-    tPolygonLayout[0].AlignedByteOffset = 0;
-    tPolygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-    tPolygonLayout[0].InstanceDataStepRate = 0;
 
-    tPolygonLayout[1].SemanticName = "NORMAL";
-    tPolygonLayout[1].SemanticIndex = 0;
-    tPolygonLayout[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-    tPolygonLayout[1].InputSlot = 0;
-    tPolygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-    tPolygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-    tPolygonLayout[1].InstanceDataStepRate = 0;
-
-    tPolygonLayout[2].SemanticName = "TEXCOORD";
-    tPolygonLayout[2].SemanticIndex = 0;
-    tPolygonLayout[2].Format = DXGI_FORMAT_R32G32_FLOAT;
-    tPolygonLayout[2].InputSlot = 0;
-    tPolygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-    tPolygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-    tPolygonLayout[2].InstanceDataStepRate = 0;
-    
-    _uint iNumElements = sizeof(tPolygonLayout) / sizeof(tPolygonLayout[0]);
-
-    FAILED_CHECK_RETURN(m_pDevice->CreateInputLayout(tPolygonLayout, iNumElements,
+    /***********************************
+    * 정점 레이아웃 구성 (시맨틱 전달자)
+    ************************************/
+    FAILED_CHECK_RETURN(m_pDevice->CreateInputLayout(VERTEX_MODEL_T::InputLayout, VERTEX_MODEL_T::iMaxIndex,
         pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(), &m_pLayout), E_FAIL);
     
 
-    // 텍스처 샘플러 상태 구조체 생성
-    D3D11_SAMPLER_DESC samplerDesc;
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.MipLODBias = 0.f;
-    samplerDesc.MaxAnisotropy = 1;
-    samplerDesc.BorderColor[0] = 0;
-    samplerDesc.BorderColor[1] = 0;
-    samplerDesc.BorderColor[2] = 0;
-    samplerDesc.BorderColor[3] = 0;
-    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    samplerDesc.MinLOD = 0;
-    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+    /***************
+    * 텍스처 샘플러
+    ***************/
+    FAILED_CHECK_RETURN(m_pDevice->CreateSamplerState(&SAMPLER_COMMON_DESC::Desc, &m_pSamplereState), E_FAIL);
 
-    FAILED_CHECK_RETURN(m_pDevice->CreateSamplerState(&samplerDesc, &m_pSamplereState), E_FAIL);
 
     /***********
     * 행렬 버퍼
     ************/
     // 정점 셰이더에 있는 행렬 상수 버퍼의 구조체를 작성
-    D3D11_BUFFER_DESC tMatBufferDesc;
-    tMatBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    tMatBufferDesc.ByteWidth = sizeof(MATRIX_BUFFER_T);
-    tMatBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    tMatBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    tMatBufferDesc.MiscFlags = 0;
-    tMatBufferDesc.StructureByteStride = 0;
-
-    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&tMatBufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
-
+    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&MATRIX_BUFFER_T::BufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
 
 
     /*************
     * 카메라 버퍼
     **************/
-    D3D11_BUFFER_DESC cameraBufferDesc;
-    cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    cameraBufferDesc.ByteWidth = sizeof(CAMERA_BUFFER_T);
-    cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    cameraBufferDesc.MiscFlags = 0;
-    cameraBufferDesc.StructureByteStride = 0;
-
-    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&cameraBufferDesc, NULL, &m_pCameraBuffer), E_FAIL);
+    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&CAMERA_BUFFER_T::BufferDesc, NULL, &m_pCameraBuffer), E_FAIL);
 
 
     /*********
@@ -180,15 +126,8 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     ***********/
     // 픽셀 쎄이더에 있는 광원 동적 상수 버퍼의 설명을 설정
     // D3D11_BIND_CONSTANT_BUFFER를 사용시 ByteWidth가 16의 배수여야함. 아닐시 생성 실패
-    D3D11_BUFFER_DESC lightBufferDesc;
-    lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    lightBufferDesc.ByteWidth = sizeof(LIGHT_BUFFER_T);
-    lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    lightBufferDesc.MiscFlags = 0;
-    lightBufferDesc.StructureByteStride = 0;
+    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&LIGHT_BUFFER_T::BufferDesc, NULL, &m_pLightBuffer), E_FAIL);
 
-    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&lightBufferDesc, NULL, &m_pLightBuffer), E_FAIL);
 
     return S_OK;
 }

@@ -87,7 +87,7 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 		aiProcess_SplitLargeMeshes |			// 거대한 하나의 매쉬를 하위매쉬들로 분활(나눔)
 		aiProcess_Triangulate |                 // 3개 이상의 모서리를 가진 다각형 면을 삼각형으로 만듬(나눔)
 		aiProcess_ConvertToLeftHanded |         // D3D의 왼손좌표계로 변환
-		aiProcess_PopulateArmatureData | 
+		aiProcess_PopulateArmatureData |		// Aramature의 정보를 뼈에 기록할 수 있게 하는 플래그
 		aiProcess_SortByPType;					// 단일타입의 프리미티브로 구성된 '깨끗한' 매쉬를 만듬
 	
 	m_pScene = importer.ReadFile((m_strMainDir + strFileName).c_str(), iFlag);
