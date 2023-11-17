@@ -27,7 +27,7 @@ HRESULT CModelBufferComp::Initialize(const wstring& strGroupKey, const wstring& 
 	m_iIndexCount = Cast<_uint>(pMesh->vecIndices.size());
 	Set_Transform(pMesh->matTransform);
 
-	VERTEX_MODEL* vertices = new VERTEX_MODEL[m_iVtxCount];
+	VERTEX_MODEL_T* vertices = new VERTEX_MODEL_T[m_iVtxCount];
 	if (!vertices)
 		return E_FAIL;
 
@@ -45,7 +45,7 @@ HRESULT CModelBufferComp::Initialize(const wstring& strGroupKey, const wstring& 
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VERTEX_MODEL) * m_iVtxCount;
+	vertexBufferDesc.ByteWidth = sizeof(VERTEX_MODEL_T) * m_iVtxCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -102,7 +102,7 @@ void CModelBufferComp::Late_Tick(const _float& fTimeDelta)
 
 void CModelBufferComp::Render()
 {
-	_uint iStride = sizeof(VERTEX_MODEL);
+	_uint iStride = sizeof(VERTEX_MODEL_T);
 	_uint iOffset = 0;
 
 	// 정점 버퍼 활성

@@ -26,6 +26,10 @@ namespace Engine
 		_matrix		matWorld;
 		_matrix		matView;
 		_matrix		matProj;
+
+		static constexpr D3D11_BUFFER_DESC BufferDesc = {
+			64U * 3U, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0
+		};
 	};
 
 	struct LIGHT_BUFFER_T
@@ -35,12 +39,20 @@ namespace Engine
 		_float3		vLightDirection;
 		_float		fSpecularPower;
 		_float4		vSpecularColor;		// Á¤¹Ý»ç
+
+		static constexpr D3D11_BUFFER_DESC BufferDesc = {
+			64U, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0
+		};
 	};
 
 	struct CAMERA_BUFFER_T
 	{
 		_float3		vPosition;
 		_float		fPadding;
+
+		static constexpr D3D11_BUFFER_DESC BufferDesc = {
+			16U, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0
+		};
 	};
 
 	struct VERTEX_TEXTURE_T
@@ -49,16 +61,31 @@ namespace Engine
 		_float2		vTexCoord;
 	};
 
-	struct VERTEX_MODEL
+	struct VERTEX_MODEL_T
 	{
 		_float3		vPosition;
 		_float3		vNormal;
 		_float2		vTexCoord;
+
+		static constexpr _uint iMaxIndex = 3;
+		static constexpr D3D11_INPUT_ELEMENT_DESC InputLayout[iMaxIndex] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
 	};
 
+	struct SAMPLER_COMMON_DESC
+	{
+		static constexpr D3D11_SAMPLER_DESC Desc = {
+			D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP,
+			0.f, 1, D3D11_COMPARISON_NEVER, { 0, 0, 0, 0 }, 0, D3D11_FLOAT32_MAX
+		};
+	};
+	
 	struct MESH
 	{
-		vector<VERTEX_MODEL> vecVertices;
+		vector<VERTEX_MODEL_T> vecVertices;
 		vector<_uint>		vecIndices;
 		_uint				iMaterIndex;
 		_float4x4			matTransform;
