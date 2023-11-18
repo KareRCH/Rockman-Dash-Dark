@@ -2,6 +2,8 @@
 
 #include "VIBufferComp.h"
 
+#include "System/Define/ModelMgr_Define.h"
+
 BEGIN(Engine)
 
 /// <summary>
@@ -18,7 +20,7 @@ protected:
 
 public:
 	virtual HRESULT Initialize() override;
-	virtual HRESULT Initialize(const wstring& strGroupKey, const wstring& strModelKey);
+	virtual HRESULT Initialize(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strModelKey);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual _int	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;

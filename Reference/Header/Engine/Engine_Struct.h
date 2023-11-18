@@ -55,6 +55,15 @@ namespace Engine
 		};
 	};
 
+	struct BONE_COMMON_BUFFER_T
+	{
+		_matrix		matTransform[128];
+
+		static constexpr D3D11_BUFFER_DESC BufferDesc = {
+			64U * 128U, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, 0
+		};
+	};
+
 	struct VERTEX_TEXTURE_T
 	{
 		_float3		vPosition;
@@ -75,6 +84,27 @@ namespace Engine
 		};
 	};
 
+	struct VERTEX_MODEL_SKIN_T
+	{
+		_float3		vPosition;
+		_float3		vNormal;
+		_float2		vTexCoord;
+		_float3		vTangent;
+		_int		vBoneID[2];
+		_float4		vWeight[2];
+
+		static constexpr _uint iMaxIndex = 8;
+		static constexpr D3D11_INPUT_ELEMENT_DESC InputLayout[iMaxIndex] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "BONEID", 0, DXGI_FORMAT_R32G32B32_SINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "WEIGHT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			
+		};
+	};
+
 	struct SAMPLER_COMMON_DESC
 	{
 		static constexpr D3D11_SAMPLER_DESC Desc = {
@@ -82,6 +112,8 @@ namespace Engine
 			0.f, 1, D3D11_COMPARISON_NEVER, { 0, 0, 0, 0 }, 0, D3D11_FLOAT32_MAX
 		};
 	};
+
+	
 	
 	struct MESH
 	{

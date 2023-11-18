@@ -772,20 +772,20 @@ HRESULT CGameInstance::Initialize_ModelMgr(const string& strMainPath)
 	return S_OK;
 }
 
-void CGameInstance::Load_Model(const string& strFileName, const wstring& strGroupKey)
+void CGameInstance::Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey)
 {
 	if (nullptr == m_pModelMgr)
 		return;
 
-	m_pModelMgr->Load_Model(strFileName, strGroupKey);
+	m_pModelMgr->Load_Model(eGroupIndex, strFileName, strGroupKey);
 }
 
-const FMeshData* const CGameInstance::Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey)
+const FMeshData* const CGameInstance::Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
-	return m_pModelMgr->Get_Mesh(strGroupKey, strMeshKey);
+	return m_pModelMgr->Get_Mesh(eGroupIndex, strGroupKey, strMeshKey);
 }
 
 HRESULT CGameInstance::Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)

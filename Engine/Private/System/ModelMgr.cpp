@@ -1,6 +1,6 @@
 #include "System/ModelMgr.h"
 
-FModelGroup* FModelGroup::Create(const _bool bPermanent, const _bool bLoaded)
+FModelGroup* FModelGroup::Create(const _bool bLoaded)
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -13,7 +13,10 @@ FModelGroup* FModelGroup::Create(const _bool bPermanent, const _bool bLoaded)
 		return nullptr;
 	}
 
-	pInstance->bPermanent = bPermanent;
+	pInstance->pMeshGroup = FMeshGroup::Create();
+	pInstance->pBoneGroup = FBoneGroup::Create();
+	pInstance->pAnimGroup = FAnimGroup::Create();
+	pInstance->pModelNodeGroup = FModelNodeGroup::Create();
 	pInstance->bLoaded = bLoaded;
 
 	return pInstance;
@@ -24,11 +27,7 @@ void FModelGroup::Free()
 	Safe_Release(pMeshGroup);
 	Safe_Release(pBoneGroup);
 	Safe_Release(pAnimGroup);
-	for (auto& item : vecArmatures)
-	{
-		Safe_Release(item);
-	}
-	vecArmatures.clear();
+	Safe_Release(pModelNodeGroup);
 }
 
 // ----------------------- ModelMgr ---------------------
@@ -62,14 +61,18 @@ CModelMgr* CModelMgr::Create(const string& strMainDir)
 
 void CModelMgr::Free()
 {
-	for (auto& Pair : m_mapModelGroup)
+	for (_uint i = 0; i < Cast_EnumDef(EModelGroupIndex::Size); i++)
 	{
-		Safe_Release(Pair.second);
+		for (auto& Pair : m_mapModelGroup[i])
+		{
+			Safe_Release(Pair.second);
+		}
+		m_mapModelGroup[i].clear();
 	}
-	m_mapModelGroup.clear();
+	
 }
 
-void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey)
+void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey)
 {
 	Assimp::Importer importer;
 	
@@ -99,8 +102,9 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 #endif
 		return;
 	}
+	
 
-	FModelGroup* pModelGroup = Add_ModelGroup(strGroupKey);	// 모델 그룹 로드, 없으면 추가후 로드
+	FModelGroup* pModelGroup = Add_ModelGroup(eGroupIndex, strGroupKey);	// 모델 그룹 로드, 없으면 추가후 로드
 	
 	// 메쉬, 뼈, 재질 로드
 	Load_MeshBoneMaterial(pModelGroup);
@@ -109,7 +113,7 @@ void CModelMgr::Load_Model(const string& strFileName, const wstring& strGroupKey
 	Load_Anim(pModelGroup->pAnimGroup);
 
 	// 계층 로드
-	Load_Hierarchi(pModelGroup, m_pRootArmature);
+	Load_Hierarchi(pModelGroup->pModelNodeGroup, m_pRootArmature);
 }
 
 void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
@@ -140,8 +144,8 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 	}
 
 	// 블렌더에서는 행렬이 변환되어 나오기 때문에 부모가 되는 Skeletal의 행렬은 쓰지 않는다.
-	vector<_matrix> vecMatrixTest;
-	_matrix matTest = {};
+	vector<_float4x4> vecMatrixTest;
+	_float4x4 matTest = {};
 	vecMatrixTest.reserve(pRootNode->mNumChildren);
 	for (_uint i = 0; i < pRootNode->mNumChildren; i++)
 	{
@@ -179,40 +183,41 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			m_vecMesh[i]->vecVertices[iVertexIndex] = { vPos, vNormal, vTexCoord };
 
 			// 뼈 정보를 위해 공간 확보
-			pVecVertices[iVertexIndex].vecBoneID.resize(8, -1);
-			pVecVertices[iVertexIndex].vecWeights.resize(8);
+			pVecVertices[iVertexIndex].vecBoneID.reserve(AI_LMW_MAX_WEIGHTS);
+			pVecVertices[iVertexIndex].vecWeights.reserve(AI_LMW_MAX_WEIGHTS);
 		}
 
-		for (_uint j = 0; j < pMesh->mNumVertices; j++)
+		// 뼈
+		// 정점에 대한 뼈정보 로드
+		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
-			_uint iVertexIndex = j;
+			_int iBoneID = j;
+			aiBone* pBone = pMesh->mBones[j];
+			//FBoneData* pBoneData = FBoneData::Create();
 
-			// 정점에 대한 뼈정보 로드
-			for (_uint k = 0; k < pMesh->mNumBones; k++)
+			for (_uint k = 0; k < pBone->mNumWeights; k++)
 			{
-				_int iBoneID = k;
+				_uint iVertexID = pBone->mWeights[k].mVertexId;
+				_float fWeight = pBone->mWeights[k].mWeight;
 
-				aiBone* pBone = pMesh->mBones[k];
-				//FBoneData* pBoneData = FBoneData::Create();
-
-				pVecVertices[iVertexIndex].vecBoneID[iBoneID] = iBoneID;
-
-				for (_uint l = 0; l < pBone->mNumWeights; l++)
+				// 정점 데이터에 뼈ID와 무게 정보 등록
+				if (fWeight != 0.f)
 				{
-					_uint iVertexID = pBone->mWeights[l].mVertexId;
-					_float fWeight = pBone->mWeights[l].mWeight;
-
-					// 정점 데이터에 뼈ID와 무게 정보 등록
-					pVecVertices[iVertexID].vecWeights[iBoneID] = fWeight;
-
-					//pBoneData->vecVtxIndex.push_back(iBoneID);
-					//pBoneData->vecVtxWeights.push_back(fWeight);
+					pVecVertices[iVertexID].vecBoneID.push_back(iBoneID);
+					pVecVertices[iVertexID].vecWeights.push_back(fWeight);
 				}
-
-				//pBoneGroup->Add_Bone(Make_Wstring(pBone->mName.C_Str()), pBoneData);
-				int ttt = 0;
 			}
+
+			//pBoneGroup->Add_Bone(Make_Wstring(pBone->mName.C_Str()), pBoneData);
+			++iBoneID;
 		}
+
+		/*for (_uint j = 0; j < pMesh->mNumVertices; j++)
+		{
+			wstringstream ss;
+			ss << pVecVertices[j].vecBoneID.size();
+			OutputDebugString(wstring(wstring(L"Vertex VecBoneSize : ") + ss.str() + L"\n").c_str());
+		}*/
 
 		// 뼈가 있을 때 루트 노드를 설정한다. 나중에 계층을 로드하는데 쓰인다.
 		if (pMesh->HasBones())
@@ -328,21 +333,19 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 		}
 		pAnimGroup->Add_AnimData(AnimName, pAnimData);
 
-		D3D11_INPUT_ELEMENT_DESC Test = Test::Test2[1];
-
 		int t = 1;
 	}
 }
 
-void CModelMgr::Load_Hierarchi(FModelGroup* pModelGroup, aiNode* pArmatureNode)
+void CModelMgr::Load_Hierarchi(FModelNodeGroup* pModelNodeGroup,  aiNode* pArmatureNode)
 {
 	if (pArmatureNode)
 	{
-		FModelRootNodeData* pRootNodeData = FModelRootNodeData::Create();
+		FModelNodeData* pRootNodeData = FModelNodeData::Create();
 		pRootNodeData->strname = Make_Wstring(pArmatureNode->mName.C_Str());
 		pRootNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pArmatureNode->mTransformation);
 		pRootNodeData->matTransform = pRootNodeData->matOffset;
-		pModelGroup->vecArmatures.push_back(pRootNodeData);
+		pModelNodeGroup->mapModelNodeData.emplace(pRootNodeData->strname, pRootNodeData);
 
 		for (_uint i = 0; i < pArmatureNode->mNumChildren; i++)
 		{
@@ -370,68 +373,87 @@ void CModelMgr::Load_HierarchiNode(aiNode* pBoneNode, FModelNodeBaseData* pRootN
 	}
 }
 
-const FMeshData* const CModelMgr::Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey)
+const FMeshData* const CModelMgr::Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey)
 {
-	auto iter = m_mapModelGroup.find(strGroupKey);
-	if (iter == m_mapModelGroup.end())
+	_uint iIndex = Cast_EnumDef(eGroupIndex);
+
+	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
+	if (iter == m_mapModelGroup[iIndex].end())
 		return nullptr;
 
 	return (*iter).second->pMeshGroup->Get_Mesh(strMeshKey);
 }
 
-FModelGroup* CModelMgr::Get_ModelGroup(const wstring& strGroupKey)
+FModelGroup* CModelMgr::Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	auto iter = m_mapModelGroup.find(strGroupKey);
-	if (iter == m_mapModelGroup.end())
+	_uint iIndex = Cast_EnumDef(eGroupIndex);
+
+	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
+	if (iter == m_mapModelGroup[iIndex].end())
 		return nullptr;
 
 	return (*iter).second;
 }
 
-FModelGroup* CModelMgr::Add_ModelGroup(const wstring& strGroupKey)
+FModelGroup* CModelMgr::Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	auto iter = m_mapModelGroup.find(strGroupKey);
-	if (iter != m_mapModelGroup.end())
+	_uint iIndex = Cast_EnumDef(eGroupIndex);
+
+	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
+	if (iter != m_mapModelGroup[iIndex].end())
 		return (*iter).second;
-
-	FModelGroup* pGroup = FModelGroup::Create(false, false);
-	m_mapModelGroup.emplace(strGroupKey, pGroup);
-
-	pGroup->pMeshGroup = FMeshGroup::Create();
-	pGroup->pBoneGroup = FBoneGroup::Create();
-	pGroup->pAnimGroup = FAnimGroup::Create();
+	
+	FModelGroup* pGroup = FModelGroup::Create(false);
+	m_mapModelGroup[iIndex].emplace(strGroupKey, pGroup);
 
 	return pGroup;
 }
 
-FMeshGroup* CModelMgr::Get_MeshGroup(const wstring& strGroupKey)
+FMeshGroup* CModelMgr::Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	auto iter = m_mapModelGroup.find(strGroupKey);
-	if (iter == m_mapModelGroup.end())
+	_uint iIndex = Cast_EnumDef(eGroupIndex);
+
+	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
+	if (iter == m_mapModelGroup[iIndex].end())
 		return nullptr;
 
 	return (*iter).second->pMeshGroup;
 }
 
-FBoneGroup* CModelMgr::Get_BoneGroup(const wstring& strGroupKey)
+FBoneGroup* CModelMgr::Get_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	auto iter = m_mapModelGroup.find(strGroupKey);
-	if (iter == m_mapModelGroup.end())
+	_uint iIndex = Cast_EnumDef(eGroupIndex);
+
+	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
+	if (iter == m_mapModelGroup[iIndex].end())
 		return nullptr;
 
 	return (*iter).second->pBoneGroup;
 }
 
-FAnimGroup* CModelMgr::Get_AnimGroup(const wstring& strGroupKey)
+FAnimGroup* CModelMgr::Get_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	auto iter = m_mapModelGroup.find(strGroupKey);
-	if (iter == m_mapModelGroup.end())
+	_uint iIndex = Cast_EnumDef(eGroupIndex);
+
+	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
+	if (iter == m_mapModelGroup[iIndex].end())
 		return nullptr;
 
 	return (*iter).second->pAnimGroup;
 }
 
-_matrix CModelMgr::ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix)
+FModelNodeGroup* CModelMgr::Get_ModelNodeGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
+{
+	_uint iIndex = Cast_EnumDef(eGroupIndex);
+
+	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
+	if (iter == m_mapModelGroup[iIndex].end())
+		return nullptr;
+
+	return (*iter).second->pModelNodeGroup;
+}
+
+_float4x4 CModelMgr::ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix)
 {
 	_float4x4	matOffsetTG = _float4x4(
 		matrix.a1, matrix.a2, matrix.a3, matrix.a4,
@@ -440,7 +462,7 @@ _matrix CModelMgr::ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix)
 		matrix.d1, matrix.d2, matrix.d3, matrix.d4
 	);
 
-	return XMLoadFloat4x4(&matOffsetTG);
+	return matOffsetTG;
 }
 
 _float3 CModelMgr::Calculate_InterpolatedFloat3(_float fAnimTime, const _int iNumKeys, const _vec vVectorKey)
@@ -448,6 +470,11 @@ _float3 CModelMgr::Calculate_InterpolatedFloat3(_float fAnimTime, const _int iNu
 
 
 	return _float3();
+}
+
+_float4 CModelMgr::Calculate_InterpolatedQuaternion(_float fAnimTime, const _int iNumKeys, const _vec vVectorKey)
+{
+	return _float4();
 }
 
 

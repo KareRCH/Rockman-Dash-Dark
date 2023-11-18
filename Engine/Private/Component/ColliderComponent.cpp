@@ -173,10 +173,9 @@ void CColliderComponent::ExitFromPhysics(_uint iIndex)
     //Engine::Delete_ColliderToPhysicsWorld(iIndex, m_pCollisionShape);
 }
 
-void CColliderComponent::Update_Physics(const _matrix& matWorld)
+void CColliderComponent::Update_Physics(_matrix& matWorld)
 {
-    Calculate_Transform();
-    Calculate_TransformFromParent(matWorld);
+    Calculate_TransformFromParent(&matWorld);
 
     //m_pCollisionShape->matOffset.RecieveDXArray(reinterpret_cast<float*>(Get_Transform()));
 }

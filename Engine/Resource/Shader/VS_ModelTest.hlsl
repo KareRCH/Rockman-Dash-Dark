@@ -13,14 +13,22 @@ cbuffer CameraBuffer
     float padding;
 };
 
-struct VS_INPUT
+cbuffer BoneBuffer
 {
-    float3 vPosition : POSITION0;
-    float3 vNormal : NORMAL;
-    float2 vTexCoord : TEXCOORD0;
+    float4x4 matBone[128];
 };
 
-struct PS_OUTPUT
+struct VS_INPUT
+{
+    float3  vPosition : POSITION0;
+    float3  vNormal : NORMAL;
+    float2  vTexCoord : TEXCOORD0;
+    float3  vTangent : TANGENT0;
+    int     vBoneID[2] : BONEID0;
+    float4  vWeight[2] : WEIGHT0;
+};
+
+struct VS_OUTPUT
 {
     float4 vPosition : SV_POSITION0;
     float3 vNormal : NORMAL;
@@ -28,10 +36,10 @@ struct PS_OUTPUT
     float3 vViewDirection : TEXCOORD1;
 };
 
-PS_OUTPUT main(VS_INPUT input)
+VS_OUTPUT main(VS_INPUT input)
 {
-    PS_OUTPUT output = (PS_OUTPUT) 0;
-   
+    VS_OUTPUT output = (VS_OUTPUT) 0;
+    
     output.vPosition = mul(float4(input.vPosition.xyz, 1.f), matWorld);
     output.vPosition = mul(output.vPosition, matView);
     output.vPosition = mul(output.vPosition, matProj);

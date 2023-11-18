@@ -19,15 +19,15 @@ HRESULT CModelBufferComp::Initialize()
     return S_OK;
 }
 
-HRESULT CModelBufferComp::Initialize(const wstring& strGroupKey, const wstring& strModelKey)
+HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strModelKey)
 {
-	const FMeshData* pMesh = GameInstance()->Get_Mesh(strGroupKey, strModelKey);
+	const FMeshData* pMesh = GameInstance()->Get_Mesh(eGroupIndex, strGroupKey, strModelKey);
 
 	m_iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
 	m_iIndexCount = Cast<_uint>(pMesh->vecIndices.size());
 	Set_Transform(pMesh->matTransform);
 
-	VERTEX_MODEL_T* vertices = new VERTEX_MODEL_T[m_iVtxCount];
+	VERTEX_MODEL_SKIN_T* vertices = new VERTEX_MODEL_SKIN_T[m_iVtxCount];
 	if (!vertices)
 		return E_FAIL;
 
@@ -45,7 +45,7 @@ HRESULT CModelBufferComp::Initialize(const wstring& strGroupKey, const wstring& 
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VERTEX_MODEL_T) * m_iVtxCount;
+	vertexBufferDesc.ByteWidth = sizeof(VERTEX_MODEL_SKIN_T) * m_iVtxCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;

@@ -18,8 +18,7 @@ FBoneData* FBoneData::Create()
 
 void FBoneData::Free()
 {
-	vecVtxIndex.clear();
-	vecVtxWeights.clear();
+
 }
 
 //----------------------------------------- AnimGroup

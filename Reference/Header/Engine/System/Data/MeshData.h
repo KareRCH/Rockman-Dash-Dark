@@ -17,7 +17,7 @@ struct FMeshVertexData
 /// <summary>
 /// 어떤 모델에 대한 그룹
 /// </summary>
-class FMeshData final : public CBase
+class ENGINE_DLL FMeshData final : public CBase
 {
 	DERIVED_CLASS(CBase, FMeshData)
 
@@ -33,7 +33,7 @@ public:
 public:
 	vector<FMeshVertexData>		vecVertices;
 	vector<_uint>				vecIndices;
-	_matrix						matTransform;
+	_float4x4					matTransform;
 };
 
 
