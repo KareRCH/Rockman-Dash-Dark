@@ -402,6 +402,9 @@
     <ClInclude Include="Public\System\Data\ModelNodeData.h">
       <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\Define\ModelMgr_Define.h">
+      <Filter>01. System\01. Manager\09. ModelMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">

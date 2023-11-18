@@ -41,7 +41,7 @@ public:
 	virtual void	EnterToPhysics(_uint iIndex);
 	virtual void	ExitFromPhysics(_uint iIndex);
 	// 일반 업데이트가 끝난 다음에 불러오는 물리 업데이트 함수
-	virtual void	Update_Physics(const _matrix& matWorld);
+	virtual void	Update_Physics(_matrix& matWorld);
 
 public:		// 충돌체 저장용 포인터
 	GETSET_2(FCollisionPrimitive*, m_pCollisionShape, Shape, GET, SET)

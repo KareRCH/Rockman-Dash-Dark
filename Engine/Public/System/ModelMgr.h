@@ -1,9 +1,11 @@
 #pragma once
 
+#include "System/Define/ModelMgr_Define.h"
 #include "System/Data/MeshData.h"
 #include "System/Data/BoneData.h"
 #include "System/Data/AnimData.h"
 #include "System/Data/ModelNodeData.h"
+
 
 BEGIN(Engine)
 
@@ -18,24 +20,21 @@ private:
 	virtual ~FModelGroup() = default;
 
 public:
-	static FModelGroup* Create(const _bool bPermanent, const _bool bLoaded);
+	static FModelGroup* Create( const _bool bLoaded);
 	
 private:
 	virtual void Free() override;
 	
 public:
 	void Set_AllLoaded() { bLoaded = true; }
-	void Set_Permanent() { bPermanent = true; }
-	void UnSet_Permanent() { bPermanent = false; }
 
 public:
-	_bool		bPermanent = false;			// 영구적으로 로드되는 데이터 인가
-	_bool		bLoaded = false;			// 로드 되었는가
-	FMeshGroup* pMeshGroup = { nullptr };	// 메쉬를 모아놓은 그룹
-	FBoneGroup* pBoneGroup = { nullptr };
-	FAnimGroup* pAnimGroup = { nullptr };	// 애니메이션 그룹
+	_bool		bLoaded = false;						// 로드 되었는가
 
-	vector<FModelRootNodeData*>	vecArmatures;	// 아마추어 루트 노드들
+	FMeshGroup* pMeshGroup = { nullptr };				// 메쉬를 모아놓은 그룹
+	FBoneGroup* pBoneGroup = { nullptr };				// 뼈 정보 그룹
+	FAnimGroup* pAnimGroup = { nullptr };				// 애니메이션 그룹
+	FModelNodeGroup* pModelNodeGroup = { nullptr };		// 노드 정보 그룹
 };
 
 /// <summary>
@@ -63,25 +62,26 @@ private:
 	string	m_strMainDir = "";			// 참조할 메인 디렉터리
 
 public:
-	void	Load_Model(const string& strFileName, const wstring& strGroupKey);
+	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
 	void	Load_MeshBoneMaterial(FModelGroup* pModelGroup);
 	void	Load_Anim(FAnimGroup* pAnimGroup);
-	void	Load_Hierarchi(FModelGroup* pModelGroup, aiNode* pArmatureNode);
+	void	Load_Hierarchi(FModelNodeGroup* pModelNodeGroup, aiNode* pArmatureNode);
 	void	Load_HierarchiNode(aiNode* pBoneNode, FModelNodeBaseData* pRootNode);
 
 
-	const FMeshData* const	Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey);
+	const FMeshData* const	Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
 
 private:
-	FModelGroup* Get_ModelGroup(const wstring& strGroupKey);
-	FModelGroup* Add_ModelGroup(const wstring& strGroupKey);
+	FModelGroup* Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	FModelGroup* Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 
-	FMeshGroup* Get_MeshGroup(const wstring& strGroupKey);
-	FBoneGroup* Get_BoneGroup(const wstring& strGroupKey);
-	FAnimGroup* Get_AnimGroup(const wstring& strGroupKey);
+	FMeshGroup* Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	FBoneGroup* Get_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	FAnimGroup* Get_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	FModelNodeGroup* Get_ModelNodeGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 
 private:
-	_matrix ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);
+	_float4x4 ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);
 	_float3 Calculate_InterpolatedFloat3(_float fAnimTime, const _int iNumKeys, const _vec vVectorKey);
 	_float4 Calculate_InterpolatedQuaternion(_float fAnimTime, const _int iNumKeys, const _vec vVectorKey);
 
@@ -93,7 +93,8 @@ private:
 	_uint				m_iBoneCount = 0U;
 
 private:
-	_unmap<wstring, FModelGroup*>	m_mapModelGroup;	// 모델 정보, 메쉬, 뼈, 머터리얼, 애니메이션
+	// 모델 정보, 메쉬, 뼈, 머터리얼, 애니메이션
+	_unmap<wstring, FModelGroup*>	m_mapModelGroup[Cast_EnumDef(EModelGroupIndex::Size)];
 
 };
 

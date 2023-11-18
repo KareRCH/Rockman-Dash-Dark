@@ -275,6 +275,7 @@
     <ClInclude Include="Public\System\Data\BoneData.h" />
     <ClInclude Include="Public\System\Data\MeshData.h" />
     <ClInclude Include="Public\System\Data\ModelNodeData.h" />
+    <ClInclude Include="Public\System\Define\ModelMgr_Define.h" />
     <ClInclude Include="Public\System\FontMgr.h" />
     <ClInclude Include="Public\System\Frame.h" />
     <ClInclude Include="Public\System\FrameMgr.h" />

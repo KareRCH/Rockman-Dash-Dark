@@ -9,30 +9,8 @@ void FModelNodeBaseData::Free()
 	vecChildren.clear();
 }
 
-// ---------------------------- FModelRootNodeData --------------------------
 
-FModelRootNodeData* FModelRootNodeData::Create()
-{
-	ThisClass* pInstance = new ThisClass();
-
-	if (!pInstance)
-	{
-		Safe_Release(pInstance);
-
-		MSG_BOX("FModelRootNodeData Create Failed");
-
-		return nullptr;
-	}
-
-	return pInstance;
-}
-
-void FModelRootNodeData::Free()
-{
-	SUPER::Free();
-
-
-}
+// ------------------------ FModelNodeData ----------------------------
 
 
 FModelNodeData* FModelNodeData::Create()
@@ -56,4 +34,33 @@ void FModelNodeData::Free()
 	SUPER::Free();
 
 
+}
+
+
+// ------------------------ ModelNodeGroup ----------------------------
+
+
+FModelNodeGroup* FModelNodeGroup::Create()
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (!pInstance)
+	{
+		Safe_Release(pInstance);
+
+		MSG_BOX("FModelNodeData Create Failed");
+
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+void FModelNodeGroup::Free()
+{
+	for (auto& Pair : mapModelNodeData)
+	{
+		Safe_Release(Pair.second);
+	}
+	mapModelNodeData.clear();
 }

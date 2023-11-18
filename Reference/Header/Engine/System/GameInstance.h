@@ -5,6 +5,7 @@
 
 #include "Physics/PhysicsPrecision.h"
 #include "System/ShaderMgr.h"
+#include "System/Define/ModelMgr_Define.h"
 
 BEGIN(Engine)
 
@@ -142,8 +143,8 @@ public:		// 렌더 매니저
 
 public:
 	HRESULT	Initialize_ModelMgr(const string& strMainPath);
-	void	Load_Model(const string& strFileName, const wstring& strGroupKey);
-	const FMeshData* const Get_Mesh(const wstring& strGroupKey, const wstring& strMeshKey);
+	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
+	const FMeshData* const Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
 
 public:		// 셰이더 매니저
 	HRESULT Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);

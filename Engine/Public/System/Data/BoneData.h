@@ -6,6 +6,7 @@ BEGIN(Engine)
 
 /// <summary>
 /// 뼈에 대한 정보
+/// 오프셋과 변환 행렬, 이름을 가진다.
 /// </summary>
 class FBoneData final : public CBase
 {
@@ -20,9 +21,8 @@ public:
 	
 public:
 	wstring					strName;
-	vector<_uint>			vecVtxIndex;
-	vector<_float>			vecVtxWeights;
-	_matrix					matOffset;
+	_float4x4				matOffset;
+	_float4x4				matTransform;
 };
 
 /// <summary>

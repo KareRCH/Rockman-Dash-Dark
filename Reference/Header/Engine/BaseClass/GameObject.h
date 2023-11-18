@@ -105,14 +105,13 @@ public:		// 트랜스폼 컴포넌트에 대한 함수 정의
 	const _float3	Get_Scale() const { return m_pTransformComp->Get_Scale(); }
 	void			Set_Scale(const _float3& value) { m_pTransformComp->Set_Scale(value); }
 
-	void			Calculate_Transform() { m_pTransformComp->Calculate_Transform(); }
-	void			Calculate_TransformFromParent(const _matrix& matTransform) 
+	void			Calculate_TransformFromParent(_matrix* matTransform) 
 					{ m_pTransformComp->Calculate_TransformFromParent(matTransform); }
-	const _matrix&	Get_Transform() const { return m_pTransformComp->Get_Transform(); }
+	const _float4x4*	Get_Transform() const { return m_pTransformComp->Get_Transform(); }
 
-	const _float3	Get_RightFromTransform() const { return m_pTransformComp->Get_RightFromTransform(); }
-	const _float3	Get_UpFromTransform() const { return m_pTransformComp->Get_UpFromTransform(); }
-	const _float3	Get_LookFromTransform() const { return m_pTransformComp->Get_LookFromTransform(); }
+	const _float3	Get_RightFromTransform() const { return m_pTransformComp->Get_Right(); }
+	const _float3	Get_UpFromTransform() const { return m_pTransformComp->Get_Up(); }
+	const _float3	Get_LookFromTransform() const { return m_pTransformComp->Get_Look(); }
 
 private:	// 게임 오브젝트 기본 정의 컴포넌트
 	CTransformComponent*					m_pTransformComp = nullptr;

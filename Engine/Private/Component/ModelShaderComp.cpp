@@ -35,9 +35,10 @@ _int CModelShaderComp::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-void CModelShaderComp::Render(const MATRIX_BUFFER_T& tMatrixBuf, const CAMERA_BUFFER_T tCameraBuf, const LIGHT_BUFFER_T& tLightBuf)
+void CModelShaderComp::Render(const MATRIX_BUFFER_T& tMatrixBuf, const CAMERA_BUFFER_T tCameraBuf, 
+    const BONE_COMMON_BUFFER_T tBoneBuf, const LIGHT_BUFFER_T& tLightBuf)
 {
-    if (Set_ShaderParameter(tMatrixBuf, tCameraBuf, tLightBuf) == E_FAIL)
+    if (Set_ShaderParameter(tMatrixBuf, tCameraBuf, tBoneBuf, tLightBuf) == E_FAIL)
     {
         return;
     }
@@ -98,7 +99,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     /***********************************
     * 정점 레이아웃 구성 (시맨틱 전달자)
     ************************************/
-    FAILED_CHECK_RETURN(m_pDevice->CreateInputLayout(VERTEX_MODEL_T::InputLayout, VERTEX_MODEL_T::iMaxIndex,
+    FAILED_CHECK_RETURN(m_pDevice->CreateInputLayout(VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex,
         pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(), &m_pLayout), E_FAIL);
     
 
@@ -129,10 +130,19 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&LIGHT_BUFFER_T::BufferDesc, NULL, &m_pLightBuffer), E_FAIL);
 
 
+    /*********
+    * 뼈 버퍼
+    ***********/
+    // 픽셀 쎄이더에 있는 광원 동적 상수 버퍼의 설명을 설정
+    // D3D11_BIND_CONSTANT_BUFFER를 사용시 ByteWidth가 16의 배수여야함. 아닐시 생성 실패
+    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&BONE_COMMON_BUFFER_T::BufferDesc, NULL, &m_pBoneBuffer), E_FAIL);
+
+
     return S_OK;
 }
 
-HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA_BUFFER_T tCameraBuf, LIGHT_BUFFER_T tLightBuf)
+HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA_BUFFER_T tCameraBuf, 
+    BONE_COMMON_BUFFER_T tBoneBuf, LIGHT_BUFFER_T tLightBuf)
 {
     // 전치 행렬로 바꾸어주어야함, 다렉 row우선, HLSL은 col우선 연산이라 그렇다고 한다.
     tMatrixBuf.matWorld = XMMatrixTranspose(tMatrixBuf.matWorld);
@@ -181,6 +191,25 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pCameraBuffer);
 
     m_pDeviceContext->PSSetShaderResources(0, 1, m_pTexture.GetAddressOf());
+
+
+    /*************
+    * 뼈 버퍼
+    **************/
+    FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pBoneBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    BONE_COMMON_BUFFER_T* dataPtr4 = Cast<BONE_COMMON_BUFFER_T*>(mappedResource.pData);
+
+    for (size_t i = 0; i < 128; i++)
+    {
+        dataPtr4->matTransform[i] = tBoneBuf.matTransform[i];
+    }
+    
+    m_pDeviceContext->Unmap(m_pCameraBuffer, 0);
+
+    iBufferNumber = 2;
+
+    m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pBoneBuffer);;
+
 
     /*********
     * 빛 버퍼

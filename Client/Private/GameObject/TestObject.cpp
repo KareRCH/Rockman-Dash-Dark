@@ -53,8 +53,10 @@ _int CTestObject::Tick(const _float& fTimeDelta)
     else if (GameInstance()->IsKey_Pressing(DIK_S))
         Set_Position(_float3(Get_Position().x, Get_Position().y, Get_Position().z - 5.f * fTimeDelta));
     
-    Set_Scale(_float3(1.f, 1.f, 1.f));
-    Calculate_Transform();
+    Set_Scale(_float3(2.f, 2.f, 2.f));
+    Set_Rotation(_float3(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(180.f)));
+    
+    _float3 t = Get_Rotation();
     //m_pModelBufferComp->Calculate_TransformFromParent();
 
     return 0;
@@ -69,14 +71,15 @@ void CTestObject::Render()
 {
     SUPER::Render();
 
-    MATRIX_BUFFER_T matBuffer = { m_pModelBufferComp->Get_Transform() * Get_Transform(),
+    MATRIX_BUFFER_T matBuffer = { XMLoadFloat4x4(m_pModelBufferComp->Get_Transform()) * XMLoadFloat4x4(Get_Transform()),
         GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0) };
     CAMERA_BUFFER_T cameraBuffer = { _float3(6.f, 6.f, 6.f) };
     LIGHT_BUFFER_T lightBuffer = { _float4(0.2f, 0.2f, 0.2f, 1.f), _float4(0.2f, 0.2f, 0.2f, 1.f), _float3(-1.f, 0.f, 0.f),
                                     _float(2.f), _float4(1.f, 0.2f, 0.2f, 1.f)};
+    BONE_COMMON_BUFFER_T boneBuffer = {};
 
     m_pModelBufferComp->Render();
-    m_pModelShaderComp->Render(matBuffer, cameraBuffer, lightBuffer);
+    m_pModelShaderComp->Render(matBuffer, cameraBuffer, boneBuffer, lightBuffer);
 }
 
 CTestObject* CTestObject::Create(const DX11DEVICE_T tDevice)
@@ -137,7 +140,7 @@ void CTestObject::Free()
 HRESULT CTestObject::Initialize_Component()
 {
     FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_pModelBufferComp = CModelBufferComp::Create({ m_pDevice.Get(), m_pDeviceContext.Get()})), E_FAIL);
-    m_pModelBufferComp->Initialize(L"RockVolnutt", L"Body");
+    m_pModelBufferComp->Initialize(EModelGroupIndex::Permanent, L"RockVolnutt", L"Body");
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
     FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create({ m_pDevice.Get(), m_pDeviceContext.Get()}, g_hWnd)), E_FAIL);

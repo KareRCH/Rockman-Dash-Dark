@@ -2,10 +2,10 @@
 
 CSceneComponent::CSceneComponent(const DX11DEVICE_T tDeivce)
 	: Base(tDeivce)
-	, m_vPosition(_float3()), m_vRotation(_float3()), m_vScale(_float3(1.f, 1.f, 1.f)), m_qtOrientation(_float4(1.f, 0.f, 0.f, 0.f))
-	, m_matTransform(XMMatrixIdentity())
+	, m_qtOrientation(_float4(0.f, 0.f, 0.f, 1.f)), m_vScale(1.f, 1.f, 1.f)
+	, m_matTransform()
 {
-	
+	XMStoreFloat4x4(&m_matTransform, XMMatrixIdentity());
 }
 
 CSceneComponent::CSceneComponent(const CSceneComponent& rhs)
