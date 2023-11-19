@@ -54,7 +54,7 @@ CModelShaderComp* CModelShaderComp::Create(const DX11DEVICE_T tDevice, HWND hWnd
     {
         Engine::Safe_Release(pInstance);
 
-        MSG_BOX("ModelShader Create Failed");
+        MSG_BOX("ModelShaderComp Create Failed");
 
         return nullptr;
     }
@@ -62,9 +62,20 @@ CModelShaderComp* CModelShaderComp::Create(const DX11DEVICE_T tDevice, HWND hWnd
     return pInstance;
 }
 
-CPrimitiveComponent* CModelShaderComp::Clone(void* Arg)
+CComponent* CModelShaderComp::Clone(void* Arg)
 {
-    return new ThisClass(*this);
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize()))
+    {
+        Engine::Safe_Release(pInstance);
+
+        MSG_BOX("ModelShaderComp Copy Failed");
+
+        return nullptr;
+    }
+
+    return Cast<CComponent*>(pInstance);
 }
 
 void CModelShaderComp::Free()

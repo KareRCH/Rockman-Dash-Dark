@@ -2,10 +2,8 @@
 
 CSceneComponent::CSceneComponent(const DX11DEVICE_T tDeivce)
 	: Base(tDeivce)
-	, m_qtOrientation(_float4(0.f, 0.f, 0.f, 1.f)), m_vScale(1.f, 1.f, 1.f)
-	, m_matTransform()
 {
-	XMStoreFloat4x4(&m_matTransform, XMMatrixIdentity());
+	
 }
 
 CSceneComponent::CSceneComponent(const CSceneComponent& rhs)
@@ -15,6 +13,14 @@ CSceneComponent::CSceneComponent(const CSceneComponent& rhs)
 
 CSceneComponent::~CSceneComponent()
 {
+}
+
+HRESULT CSceneComponent::Initialize()
+{
+	Add_InterComponent(m_pTransformComp->Get_Name(), m_pTransformComp = CTransformComponent::Create());
+	Safe_AddRef(m_pTransformComp);
+
+	return S_OK;
 }
 
 _int CSceneComponent::Tick(const _float& fTimeDelta)
@@ -27,23 +33,25 @@ _int CSceneComponent::Tick(const _float& fTimeDelta)
 void CSceneComponent::Free()
 {
 	SUPER::Free();
+
+	Safe_Release(m_pTransformComp);
 }
 
 CSceneComponent* CSceneComponent::Get_FirstChildComp()
 {
-	if (m_listChildrenComp.empty())
+	if (m_listChildSceneComp.empty())
 		return nullptr;
 
-	return m_listChildrenComp.front();
+	return m_listChildSceneComp.front();
 }
 
 CSceneComponent* CSceneComponent::Get_ChildComp(_uint iIndex)
 {
-	if (m_listChildrenComp.empty())
+	if (m_listChildSceneComp.empty())
 		return nullptr;
 
 	_uint i = 0;
-	for (auto iter = m_listChildrenComp.begin(); iter != m_listChildrenComp.end(); iter++)
+	for (auto iter = m_listChildSceneComp.begin(); iter != m_listChildSceneComp.end(); iter++)
 	{
 		if (i == iIndex)
 			return (*iter);
@@ -58,7 +66,7 @@ void CSceneComponent::Add_Child(CSceneComponent* const pComp)
 	if (nullptr == pComp)
 		return;
 
-	m_listChildrenComp.push_back(pComp);
+	m_listChildSceneComp.push_back(pComp);
 }
 
 _bool CSceneComponent::Insert_Child(_uint iIndex, CSceneComponent* const pComp)
@@ -67,15 +75,15 @@ _bool CSceneComponent::Insert_Child(_uint iIndex, CSceneComponent* const pComp)
 		return false;
 
 	_uint i = 0;
-	auto iter = m_listChildrenComp.begin();
-	for (; iter != m_listChildrenComp.end(); iter++)
+	auto iter = m_listChildSceneComp.begin();
+	for (; iter != m_listChildSceneComp.end(); iter++)
 	{
 		if (i == iIndex)
 			break;
 		++i;
 	}
-	if (iter != m_listChildrenComp.end())
-		m_listChildrenComp.insert(iter, pComp);
+	if (iter != m_listChildSceneComp.end())
+		m_listChildSceneComp.insert(iter, pComp);
 	else
 		return false;
 

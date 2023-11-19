@@ -31,8 +31,8 @@ public:
 	virtual void	Render() {}
 
 public:
-	static	CPrimitiveComponent*			Create(const DX11DEVICE_T tDevice, ECOLLISION eType);
-	virtual CPrimitiveComponent*			Clone(void* Arg);
+	static	CColliderComponent*		Create(const DX11DEVICE_T tDevice, ECOLLISION eType);
+	virtual CComponent*				Clone(void* Arg = nullptr) override;
 
 protected:
 	virtual void				Free();
@@ -96,7 +96,8 @@ public:
 
 protected:
 	_uint				m_iCollisionLayer_Flag;			// 콜리전 레이어, 충돌체가 존재하는 층
-	_uint				m_iCollisionMask_Flag;				// 콜리전 마스크, 충돌체가 충돌하고 싶어하는 층
+	_uint				m_iCollisionMask_Flag;
+	// 콜리전 마스크, 충돌체가 충돌하고 싶어하는 층
 };
 
 END

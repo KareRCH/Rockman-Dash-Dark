@@ -25,7 +25,7 @@ public:
 
 public:
 	static CTextureComponent* Create(const DX11DEVICE_T tDevice);
-	virtual CPrimitiveComponent* Clone(void* Arg);
+	virtual CComponent* Clone(void* Arg = nullptr);
 
 protected:
 	virtual void	Free();

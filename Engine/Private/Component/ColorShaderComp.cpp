@@ -60,9 +60,20 @@ CColorShaderComp* CColorShaderComp::Create(const DX11DEVICE_T tDevice, HWND hWnd
     return pInstance;
 }
 
-CPrimitiveComponent* CColorShaderComp::Clone(void* Arg)
+CComponent* CColorShaderComp::Clone(void* Arg)
 {
-    return new ThisClass(*this);
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize()))
+    {
+        Engine::Safe_Release(pInstance);
+
+        MSG_BOX("ColorShaderComp Copy Failed");
+
+        return nullptr;
+    }
+
+    return Cast<CComponent*>(pInstance);
 }
 
 void CColorShaderComp::Free()

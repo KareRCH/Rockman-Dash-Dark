@@ -25,7 +25,7 @@ public:
 	virtual void	Render() PURE;
 
 protected:
-	virtual CPrimitiveComponent* Clone(void* Arg) PURE;
+	virtual CComponent* Clone(void* Arg = nullptr) PURE;
 
 protected:
 	virtual void	Free();

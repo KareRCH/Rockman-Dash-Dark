@@ -1,7 +1,6 @@
 #include "Component/SkeletonComponent.h"
 
-CSkeletonComponent::CSkeletonComponent(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
+CSkeletonComponent::CSkeletonComponent()
 {
 }
 
@@ -24,9 +23,9 @@ _int CSkeletonComponent::Tick(const _float& fTimeDelta)
     return 0;
 }
 
-CSkeletonComponent* CSkeletonComponent::Create(const DX11DEVICE_T tDevice)
+CSkeletonComponent* CSkeletonComponent::Create()
 {
-    ThisClass* pInstance = new ThisClass(tDevice);
+    ThisClass* pInstance = new ThisClass();
 
     if (FAILED(pInstance->Initialize()))
     {

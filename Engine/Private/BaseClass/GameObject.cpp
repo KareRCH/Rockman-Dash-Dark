@@ -204,7 +204,7 @@ void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, 
 
 HRESULT CGameObject::Initialize_Component()
 {
-	FAILED_CHECK_RETURN(Add_Component(L"Transform", m_pTransformComp = CTransformComponent::Create({ m_pDevice.Get(), m_pDeviceContext.Get()})), E_FAIL);
+	m_pTransformComp = CTransformComponent::Create();
 
 	return S_OK;
 }

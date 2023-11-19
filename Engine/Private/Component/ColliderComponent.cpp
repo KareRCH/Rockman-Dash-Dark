@@ -79,7 +79,7 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     // 이벤트 함수 클론 제외, 수동으로 외부에서 추가
 }
 
-CPrimitiveComponent* CColliderComponent::Create(const DX11DEVICE_T tDevice, ECOLLISION eType)
+CColliderComponent* CColliderComponent::Create(const DX11DEVICE_T tDevice, ECOLLISION eType)
 {
     ThisClass* pInstance = new ThisClass(tDevice);
 
@@ -94,9 +94,20 @@ CPrimitiveComponent* CColliderComponent::Create(const DX11DEVICE_T tDevice, ECOL
     return pInstance;
 }
 
-CPrimitiveComponent* CColliderComponent::Clone(void* Arg)
+CComponent* CColliderComponent::Clone(void* Arg)
 {
-    return new ThisClass(*this);
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize()))
+    {
+        Engine::Safe_Release(pInstance);
+
+        MSG_BOX("ColliderBufferComp Copy Failed");
+
+        return nullptr;
+    }
+
+    return Cast<CComponent*>(pInstance);
 }
 
 void CColliderComponent::Free()
@@ -203,7 +214,7 @@ void CColliderComponent::OnCollision(CColliderComponent* pDst, const FContact* c
     if (m_fnCollision)
     {
         // 오너 객체가 있어야 해당 객체를 주인에게 넘겨준다.
-        if (CGameObject* pObj = pDst->Get_Owner())
+        if (CGameObject* pObj = pDst->Get_OwnerObject())
         {
             m_fnCollision(pObj, pContact);
         }
@@ -217,7 +228,7 @@ void CColliderComponent::OnCollisionEntered(CColliderComponent* pDst, const FCon
     if (m_fnCollisionEntered)
     {
         // 오너 객체가 있어야 해당 객체를 주인에게 넘겨준다.
-        if (CGameObject* pObj = pDst->Get_Owner())
+        if (CGameObject* pObj = pDst->Get_OwnerObject())
         {
             m_fnCollisionEntered(pObj, pContact);
         }
@@ -235,7 +246,7 @@ void CColliderComponent::OnCollisionExited()
             if (m_fnCollisionExited)
             {
                 // 오너 객체가 있어야 해당 객체를 주인에게 넘겨준다.
-                if (CGameObject* pObj = (*iter).first->Get_Owner())
+                if (CGameObject* pObj = (*iter).first->Get_OwnerObject())
                 {
                     m_fnCollisionExited(pObj);
                 }
@@ -246,4 +257,3 @@ void CColliderComponent::OnCollisionExited()
             ++iter;
     }
 }
-

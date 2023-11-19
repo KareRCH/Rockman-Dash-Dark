@@ -26,7 +26,7 @@ public:
 
 public:
 	static CModelShaderComp* Create(const DX11DEVICE_T tDevice, HWND hWnd);
-	virtual CPrimitiveComponent* Clone(void* Arg);
+	virtual CComponent* Clone(void* Arg = nullptr);
 
 protected:
 	virtual void	Free();
