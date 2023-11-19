@@ -66,7 +66,7 @@ public:
 	void	Load_MeshBoneMaterial(FModelGroup* pModelGroup);
 	void	Load_Anim(FAnimGroup* pAnimGroup);
 	void	Load_Hierarchi(FModelNodeGroup* pModelNodeGroup, aiNode* pArmatureNode);
-	void	Load_HierarchiNode(aiNode* pBoneNode, FModelNodeBaseData* pRootNode);
+	void	Load_HierarchiNode(FModelNodeGroup* pModelNodeGroup, aiNode* pBoneNode, FModelNodeData* pRootNode, FModelNodeData* pParentNode);
 
 
 	const FMeshData* const	Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
@@ -89,6 +89,7 @@ private:
 	const aiScene*		m_pScene = nullptr;				// 내부 통신용 씬 저장변수
 	vector<FMeshData*>	m_vecMesh;						// 내부 통신용 메쉬 저장변수
 	aiNode*				m_pRootArmature;				// 내부용, 아마추어 노드
+	_int				m_iNodeID;						// 내부용, 노드 번호 부여용.
 	_uint				m_iMaterialCount = 0U;
 	_uint				m_iBoneCount = 0U;
 

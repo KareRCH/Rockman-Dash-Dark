@@ -184,6 +184,15 @@
     <Filter Include="01. System\01. Manager\09. ModelMgr\Data">
       <UniqueIdentifier>{b95d51cb-99c3-40e5-9182-22ebae9c741e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. System\01. Manager\09. ModelMgr\Define">
+      <UniqueIdentifier>{15ae23f2-4234-4243-9660-aceffe84a068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent">
+      <UniqueIdentifier>{ee136c04-e3cc-498e-9e90-33b2c1c57f19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\01. SceneComponent">
+      <UniqueIdentifier>{608dc5ca-a884-4355-bcd2-58b424c5a593}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -403,7 +412,7 @@
       <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Define\ModelMgr_Define.h">
-      <Filter>01. System\01. Manager\09. ModelMgr</Filter>
+      <Filter>01. System\01. Manager\09. ModelMgr\Define</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

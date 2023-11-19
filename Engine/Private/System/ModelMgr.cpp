@@ -77,7 +77,7 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 	Assimp::Importer importer;
 	
 	_uint iFlag;
-	iFlag = aiProcess_JoinIdenticalVertices |   // 동일한 꼭지점 결합, 인덱싱 최적화
+	iFlag = //aiProcess_JoinIdenticalVertices |   // 동일한 꼭지점 결합, 인덱싱 최적화
 		aiProcess_ValidateDataStructure |       // 로더의 출력을 검증
 		aiProcess_ImproveCacheLocality |        // 출력 정점의 캐쉬위치를 개선
 		aiProcess_RemoveRedundantMaterials |    // 중복된 매터리얼 제거
@@ -113,7 +113,7 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 	Load_Anim(pModelGroup->pAnimGroup);
 
 	// 계층 로드
-	Load_Hierarchi(pModelGroup->pModelNodeGroup, m_pRootArmature);
+	//Load_Hierarchi(pModelGroup->pModelNodeGroup, m_pRootArmature);
 }
 
 void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
@@ -164,6 +164,13 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 		aiMatrix4x4 aiTransform = pChildNode->mTransformation;
 		m_vecMesh[i]->matTransform = matTest;//ConvertAiMatrix_ToDXMatrix(aiTransform);
 
+		// 뼈가 있을 때 루트 노드를 설정한다. 계층을 로드하는데 쓰인다.
+		if (pMesh->HasBones())
+		{
+			m_pRootArmature = pMesh->mBones[0]->mArmature;
+			Load_Hierarchi(pModelGroup->pModelNodeGroup, m_pRootArmature);
+		}
+
 		// 점
 		vector<FMeshVertexData>& pVecVertices = m_vecMesh[i]->vecVertices;
 		pVecVertices.resize(pMesh->mNumVertices);
@@ -174,13 +181,22 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			_float3 vPos(&pMesh->mVertices[j].x);
 			_float3 vNormal(&pMesh->mNormals[j].x);
 			_float2 vTexCoord;
+			_float3 vTangent, vBiTangent;
 
 			if (pMesh->HasTextureCoords(0))
 				vTexCoord = _float2(&pMesh->mTextureCoords[0][j].x);
 			else
 				vTexCoord = _float2(0.f, 0.f);
 
-			m_vecMesh[i]->vecVertices[iVertexIndex] = { vPos, vNormal, vTexCoord };
+			if (pMesh->HasTangentsAndBitangents())
+			{
+				vTangent = _float3(&pMesh->mTangents[j].x);
+				vBiTangent = _float3(&pMesh->mBitangents[j].x);
+			}
+			else
+				vTangent = vBiTangent = _float3(0.f, 0.f, 0.f);
+
+			m_vecMesh[i]->vecVertices[iVertexIndex] = { vPos, vNormal, vTexCoord, vTangent, vBiTangent };
 
 			// 뼈 정보를 위해 공간 확보
 			pVecVertices[iVertexIndex].vecBoneID.reserve(AI_LMW_MAX_WEIGHTS);
@@ -189,11 +205,14 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 
 		// 뼈
 		// 정점에 대한 뼈정보 로드
+		wstring strArmatureKey = Make_Wstring(pMesh->mBones[0]->mArmature->mName.C_Str());
 		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
-			_int iBoneID = j;
+			wstring strNodeKey = Make_Wstring(pMesh->mBones[j]->mName.C_Str());
+			auto pModelNode = pModelGroup->pModelNodeGroup->Find_NodeData(strArmatureKey, strNodeKey);
+
+			_int iBoneID = pModelNode->iID;
 			aiBone* pBone = pMesh->mBones[j];
-			//FBoneData* pBoneData = FBoneData::Create();
 
 			for (_uint k = 0; k < pBone->mNumWeights; k++)
 			{
@@ -208,8 +227,14 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 				}
 			}
 
-			//pBoneGroup->Add_Bone(Make_Wstring(pBone->mName.C_Str()), pBoneData);
 			++iBoneID;
+		}
+
+		for (_uint j = 0; j < pMesh->mNumVertices; j++)
+		{
+			// 뼈 정보를 위해 공간 확보
+			pVecVertices[j].vecBoneID.resize(AI_LMW_MAX_WEIGHTS, 0);
+			pVecVertices[j].vecWeights.resize(AI_LMW_MAX_WEIGHTS, 0.f);
 		}
 
 		/*for (_uint j = 0; j < pMesh->mNumVertices; j++)
@@ -219,11 +244,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 			OutputDebugString(wstring(wstring(L"Vertex VecBoneSize : ") + ss.str() + L"\n").c_str());
 		}*/
 
-		// 뼈가 있을 때 루트 노드를 설정한다. 나중에 계층을 로드하는데 쓰인다.
-		if (pMesh->HasBones())
-		{
-			m_pRootArmature = pMesh->mBones[0]->mArmature;
-		}
+		
 
 		// 면 (인덱싱)
 		for (_uint j = 0; j < pMesh->mNumFaces; j++)
@@ -277,6 +298,8 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 		// 애님 데이터 생성
 		FAnimData* pAnimData = FAnimData::Create();
 		wstring AnimNameWithTK = Make_Wstring(pAnimAI->mName.C_Str());
+		pAnimData->fDuration = pAnimAI->mDuration;
+		pAnimData->fTickPerSecond = pAnimAI->mTicksPerSecond;
 
 		// 애니메이션 이름 추출
 		size_t iTokkenInd = AnimNameWithTK.find_first_of(L'|') + Cast<size_t>(1);
@@ -332,7 +355,7 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 			pAnimData->Add_AnimNodeData(AnimNodeName, pAnimNodeData);
 		}
 		pAnimGroup->Add_AnimData(AnimName, pAnimData);
-
+		size_t test = pAnimData->mapNodeAnim.size() + pAnimData->mapNodeAnim.bucket_count();
 		int t = 1;
 	}
 }
@@ -341,34 +364,64 @@ void CModelMgr::Load_Hierarchi(FModelNodeGroup* pModelNodeGroup,  aiNode* pArmat
 {
 	if (pArmatureNode)
 	{
-		FModelNodeData* pRootNodeData = FModelNodeData::Create();
-		pRootNodeData->strname = Make_Wstring(pArmatureNode->mName.C_Str());
+		// 한번만 로드
+		wstring strKey = Make_Wstring(pArmatureNode->mName.C_Str());	// 아마추어 키
+		auto pArmature = pModelNodeGroup->Find_ArmatureData(strKey);
+		// 이미 있으면 만들어진 것으로 판별
+		if (pArmature)
+			return;
+
+		// 아마추어 컨테이너 생성
+		pArmature = pModelNodeGroup->Create_ArmatureData(strKey);
+		if (!pArmature)
+			return;
+
+		m_iNodeID = 0;
+
+		// ID 지정
+		FModelNodeData* pRootNodeData = pModelNodeGroup->Create_NodeData(strKey, strKey);
+		pRootNodeData->iID = m_iNodeID ++;
+		pRootNodeData->eType = EModelNodeType::Armature;
+		pRootNodeData->eBoneType = EModelBoneType::Null;
+		pRootNodeData->strName = strKey;
+		pRootNodeData->pParent = nullptr;
 		pRootNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pArmatureNode->mTransformation);
 		pRootNodeData->matTransform = pRootNodeData->matOffset;
-		pModelNodeGroup->mapModelNodeData.emplace(pRootNodeData->strname, pRootNodeData);
 
 		for (_uint i = 0; i < pArmatureNode->mNumChildren; i++)
 		{
-			Load_HierarchiNode(pArmatureNode->mChildren[i], pRootNodeData);
+			Load_HierarchiNode(pModelNodeGroup, pArmatureNode->mChildren[i], pRootNodeData, pRootNodeData);
 		}
+
+		pModelNodeGroup->Appoint_ArmatureNode(strKey, strKey);
 	}
 
 	m_pRootArmature = nullptr;
 }
 
-void CModelMgr::Load_HierarchiNode(aiNode* pBoneNode, FModelNodeBaseData* pRootNode)
+void CModelMgr::Load_HierarchiNode(FModelNodeGroup* pModelNodeGroup, aiNode* pBoneNode, FModelNodeData* pRootNode, FModelNodeData* pParentNode)
 {
 	if (pBoneNode)
 	{
-		FModelNodeData* pRootNodeData = FModelNodeData::Create();
-		pRootNodeData->strname = Make_Wstring(pBoneNode->mName.C_Str());
-		pRootNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);
-		pRootNodeData->matTransform = pRootNodeData->matOffset;
-		pRootNode->vecChildren.push_back(pRootNodeData);
+		wstring strArmatureKey = pRootNode->strName;
+		wstring strNodeKey = Make_Wstring(pBoneNode->mName.C_Str());
+
+		FModelNodeData* pNodeData = pModelNodeGroup->Create_NodeData(strArmatureKey, strNodeKey);
+		pNodeData->iID = m_iNodeID++;
+		pNodeData->eType = EModelNodeType::Bone;
+		pNodeData->eBoneType = EModelBoneType::Base;
+		pNodeData->strName = strNodeKey;
+		pNodeData->pParent = pParentNode;
+		pNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);
+		pNodeData->matTransform = pNodeData->matOffset;
+		pParentNode->vecChildren.push_back(pNodeData);
+		
+		if (pBoneNode->mNumChildren == 0)
+			pNodeData->eBoneType = EModelBoneType::End;
 
 		for (_uint i = 0; i < pBoneNode->mNumChildren; i++)
 		{
-			Load_HierarchiNode(pBoneNode->mChildren[i], pRootNodeData);
+			Load_HierarchiNode(pModelNodeGroup, pBoneNode->mChildren[i], pRootNode, pNodeData);
 		}
 	}
 }

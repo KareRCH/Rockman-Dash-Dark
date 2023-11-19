@@ -24,8 +24,8 @@ struct VS_INPUT
     float3  vNormal : NORMAL;
     float2  vTexCoord : TEXCOORD0;
     float3  vTangent : TANGENT0;
-    int     vBoneID[2] : BONEID0;
-    float4  vWeight[2] : WEIGHT0;
+    int4    vBoneID : BONEID;
+    float4  vWeight  : WEIGHT;
 };
 
 struct VS_OUTPUT

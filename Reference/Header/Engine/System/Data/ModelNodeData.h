@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Base.h"
+#include "System/Define/ModelMgr_Define.h"
 
 BEGIN(Engine)
 
@@ -20,7 +21,10 @@ protected:
 	virtual void Free() override;
 
 public:
-	wstring							strname;				// 노드 이름
+	_int							iID = -1;				// 뼈 구분용 ID
+	EModelNodeType					eType;					// 노드 구분용
+	EModelBoneType					eBoneType;				// 뼈 속성
+	wstring							strName;				// 노드 이름
 	FModelNodeBaseData*				pParent = { nullptr };	// 부모 노드
 	vector<class FModelNodeData*>	vecChildren;			// 자식 노드들
 	_float4x4						matOffset;				// 노드의 오프셋
@@ -43,8 +47,42 @@ public:
 	_bool	Is_Root() { return (pParent == nullptr); }
 
 public:
+	FModelNodeData* Find_NodeFromID(_int iID);
+
+public:
 	static FModelNodeData* Create();
 	virtual void Free() override;
+
+};
+
+/// <summary>
+/// 아마추어 정보가 저장되는 데이터,
+/// 단, 아마추어 노드도 따로 노드로 저장하는데.
+/// 이는 계층 구조를 만들어 저장하기 위함이다.
+/// </summary>
+class ENGINE_DLL FArmatureData final : public CBase
+{
+	DERIVED_CLASS(CBase, FArmatureData)
+
+private:
+	explicit FArmatureData() {}
+	explicit FArmatureData(const FArmatureData& rhs) = delete;
+	virtual ~FArmatureData() = default;
+
+public:
+	static FArmatureData* Create();
+	virtual void Free() override;
+
+public:
+	FModelNodeData* Find_NodeData(_int iID);
+	FModelNodeData* Find_NodeData(const wstring& strModelNodeKey);
+	FModelNodeData* Create_NodeData(const wstring& strModelNodeKey);
+	void Appoint_ArmatureNode(const wstring& strModelNodeKey);
+
+private:
+	// 아마추어 노드도 같이 저장된다.
+	FModelNodeData*						pArmatureNode = { nullptr };	// 루트 노드를 바로 찾을 수 있게 해놓았다.
+	_unmap<wstring, FModelNodeData*>	mapModelNodeData;
 
 };
 
@@ -63,7 +101,15 @@ public:
 	virtual void Free() override;
 
 public:
-	_unmap<wstring, FModelNodeBaseData*> mapModelNodeData;	// 메시 저장 맵
+	FArmatureData* Find_ArmatureData(const wstring& strArmatureKey);
+	FArmatureData* Create_ArmatureData(const wstring& strArmatureKey);
+	void Appoint_ArmatureNode(const wstring& strArmatureKey, const wstring& strModelNodeKey);
+
+	FModelNodeData* Find_NodeData(const wstring& strArmatureKey, const wstring& strModelNodeKey);
+	FModelNodeData* Create_NodeData(const wstring& strArmatureKey, const wstring& strModelNodeKey);
+
+private:
+	_unmap<wstring, FArmatureData*> mapArmatureData;	// 메시 저장 맵
 };
 
 END

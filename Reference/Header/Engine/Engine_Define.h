@@ -16,7 +16,7 @@
 
 
 // Assimp 라이브러리
-#define AI_LMW_MAX_WEIGHTS 8
+#define AI_LMW_MAX_WEIGHTS 4
 #include <assimp/Importer.hpp>
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>

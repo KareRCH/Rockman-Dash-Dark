@@ -17,23 +17,36 @@ private:
 public:
 	static FAnimNodeData* Create();
 	virtual void Free() override;
+
+public:
+	/// <summary>
+	/// 설정한 시간으로 보간된 행렬을 반환하는 함수
+	/// </summary>
+	/// <param name="fTime">변환된 시간을 넣어주어야함</param>
+	/// <returns></returns>
+	_float4x4 Interporated_Matrix(const _float& fCurTime);
+
+	// 각각 배열의 기준점을 찾아주는 함수, 해당 기준점을 통해
+	_uint Calculate_PivotPosition(const _float& fCurTime);
+	_uint Calculate_PivotRotation(const _float& fCurTime);
+	_uint Calculate_PivotScale(const _float& fCurTime);
 	
 public:
 	struct FAnimPosition
 	{
-		_float vTime;
+		_float fTime;
 		_float3 vPos;
 	};
 
 	struct FAnimRotation
 	{
-		_float vTime;
+		_float fTime;
 		_float4 qtRot;
 	};
 
 	struct FAnimScale
 	{
-		_float vTime;
+		_float fTime;
 		_float3 vScale;
 	};
 
@@ -61,10 +74,14 @@ public:
 public:
 	const FAnimNodeData* const Get_AnimNodeData(const wstring& strNodeKey);
 	void Add_AnimNodeData(const wstring& strNodeKey, FAnimNodeData* pAnimNodeData);
+
+public:
+	// 시간 변화율로 애니메이션 타임라인의 현재 시간을 구해주는 함수, Mod를 켜면 반복됨
+	_float Calculate_Time(const _float& fTimeDelta, _float fCurTime, _bool bMod = true);
 	
 public:
-	_double fDuration = 0.0;
-	_double fTicksPerSecond = 0.0;
+	_double fDuration = 0.0;							// 진행 길이
+	_double fTickPerSecond = 0.0;						// 시간당 프레임
 	_unmap<wstring, FAnimNodeData*> mapNodeAnim;		// 노드 이름으로 검색
 };
 
