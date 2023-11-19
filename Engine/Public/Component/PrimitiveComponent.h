@@ -1,17 +1,17 @@
 #pragma once
 
-#include "Base.h"
 #include "BaseClass/GameObject_Define.h"
 #include "Component/Component_Define.h"
+#include "Component/Component.h"
 
 BEGIN(Engine)
 
 class CGameObject;
 
 /// <summary>
-/// 컴포넌트의 원형
+/// 게임오브젝트에 추가할 수 있는 컴포넌트의 원형
 /// </summary>
-class ENGINE_DLL CPrimitiveComponent abstract : public CBase
+class ENGINE_DLL CPrimitiveComponent abstract : public CComponent
 {
 	DERIVED_CLASS(CBase, CPrimitiveComponent)
 protected:
@@ -27,7 +27,7 @@ public:
 	virtual void	Render() PURE;
 
 public:
-	virtual CPrimitiveComponent*	Clone(void* Arg) PURE;
+	virtual CComponent*	Clone(void* Arg) PURE;
 
 protected:
 	virtual void					Free();
@@ -42,7 +42,7 @@ public:
 
 private:	// 기본 속성
 	wstring				m_strName;											// 컴포넌트 이름
-	_float				m_fPriority[Cast_EnumDef(ECompTickType::Size)];	// 우선도
+	_float				m_fPriority[Cast_EnumDef(ECompTickType::Size)];		// 우선도
 
 public:
 	// 외부에서는 포인터 변경 불가를 조건으로 주소를 얻음

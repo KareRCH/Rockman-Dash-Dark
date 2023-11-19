@@ -10,6 +10,8 @@ struct FMeshVertexData
 	_float3		vPosition;
 	_float3		vNormal;
 	_float2		vTexCoord;
+	_float3		vTangent;
+	_float3		vBiTangent;
 	vector<_int>	vecBoneID;
 	vector<_float>	vecWeights;
 };

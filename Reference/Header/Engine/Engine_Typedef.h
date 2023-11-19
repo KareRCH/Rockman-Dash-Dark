@@ -57,6 +57,11 @@ namespace Engine
 	typedef		DirectX::XMFLOAT3			_float3;
 	typedef		DirectX::XMFLOAT4			_float4;
 
+	// 저장용 벡터
+	typedef		DirectX::XMINT2				_int2;
+	typedef		DirectX::XMINT3				_int3;
+	typedef		DirectX::XMINT4				_int4;
+
 	// 계산용 벡터
 	typedef		DirectX::XMVECTOR			_vec;
 

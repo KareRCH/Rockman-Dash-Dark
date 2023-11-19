@@ -47,6 +47,4 @@ private:
 	ID3D11Buffer*	m_pBoneBuffer = { nullptr };
 };
 
-
-
 END

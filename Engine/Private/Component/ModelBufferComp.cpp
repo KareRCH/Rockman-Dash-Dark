@@ -41,6 +41,20 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 		vertices[i].vPosition = pMesh->vecVertices[i].vPosition;
 		vertices[i].vNormal = pMesh->vecVertices[i].vNormal;
 		vertices[i].vTexCoord = pMesh->vecVertices[i].vTexCoord;
+		vertices[i].vTangent = pMesh->vecVertices[i].vTangent;
+		for (_uint j = 0; j < (_uint)pMesh->vecVertices[j].vecBoneID.size() / 4; j++)
+		{
+			_uint iIndex = j * 4;
+			vertices[i].vBoneID.x = pMesh->vecVertices[i].vecBoneID[iIndex];
+			vertices[i].vBoneID.y = pMesh->vecVertices[i].vecBoneID[iIndex + 1];
+			vertices[i].vBoneID.z = pMesh->vecVertices[i].vecBoneID[iIndex + 2];
+			vertices[i].vBoneID.w = pMesh->vecVertices[i].vecBoneID[iIndex + 3];
+
+			vertices[i].vWeight.x = pMesh->vecVertices[i].vecWeights[iIndex];
+			vertices[i].vWeight.y = pMesh->vecVertices[i].vecWeights[iIndex + 1];
+			vertices[i].vWeight.z = pMesh->vecVertices[i].vecWeights[iIndex + 2];
+			vertices[i].vWeight.w = pMesh->vecVertices[i].vecWeights[iIndex + 3];
+		}
 	}
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
@@ -102,7 +116,7 @@ void CModelBufferComp::Late_Tick(const _float& fTimeDelta)
 
 void CModelBufferComp::Render()
 {
-	_uint iStride = sizeof(VERTEX_MODEL_T);
+	_uint iStride = sizeof(VERTEX_MODEL_SKIN_T);
 	_uint iOffset = 0;
 
 	// 정점 버퍼 활성

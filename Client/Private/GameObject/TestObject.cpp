@@ -53,8 +53,8 @@ _int CTestObject::Tick(const _float& fTimeDelta)
     else if (GameInstance()->IsKey_Pressing(DIK_S))
         Set_Position(_float3(Get_Position().x, Get_Position().y, Get_Position().z - 5.f * fTimeDelta));
     
-    Set_Scale(_float3(2.f, 2.f, 2.f));
-    Set_Rotation(_float3(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(180.f)));
+    //Set_Scale(_float3(2.f, 2.f, 2.f));
+    //Set_Rotation(_float3(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(180.f)));
     
     _float3 t = Get_Rotation();
     //m_pModelBufferComp->Calculate_TransformFromParent();
