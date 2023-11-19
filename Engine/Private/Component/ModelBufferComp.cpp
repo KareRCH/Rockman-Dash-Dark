@@ -15,6 +15,7 @@ CModelBufferComp::CModelBufferComp(const CModelBufferComp& rhs)
 
 HRESULT CModelBufferComp::Initialize()
 {
+	FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
 
     return S_OK;
 }
@@ -146,9 +147,20 @@ CModelBufferComp* CModelBufferComp::Create(const DX11DEVICE_T tDevice)
 	return pInstance;
 }
 
-CPrimitiveComponent* CModelBufferComp::Clone(void* Arg)
+CComponent* CModelBufferComp::Clone(void* Arg)
 {
-    return new ThisClass(*this);
+	ThisClass* pInstance = new ThisClass(*this);
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		Engine::Safe_Release(pInstance);
+
+		MSG_BOX("ModelBufferComp Copy Failed");
+
+		return nullptr;
+	}
+
+	return Cast<CComponent*>(pInstance);
 }
 
 void CModelBufferComp::Free()

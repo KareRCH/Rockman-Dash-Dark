@@ -21,7 +21,7 @@ public:
 
 public:
 	static CBoxBufferComp* Create(const DX11DEVICE_T tDevice);
-	virtual CPrimitiveComponent* Clone(void* Arg);
+	virtual CComponent* Clone(void* Arg = nullptr) override;
 
 protected:
 	virtual void	Free();

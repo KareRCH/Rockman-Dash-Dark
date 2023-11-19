@@ -1,17 +1,19 @@
 #pragma once
 
-#include "Base.h"
 #include "BaseClass/GameObject_Define.h"
 #include "Component/Component_Define.h"
+#include "Component/Component.h"
 
 BEGIN(Engine)
 
 class CGameObject;
 
 /// <summary>
-/// 컴포넌트의 원형
+/// 게임오브젝트에 추가할 수 있는 컴포넌트의 원형.
+/// Primitive 타입은 Primitive전용 맵에 저장된다.
+/// 
 /// </summary>
-class ENGINE_DLL CPrimitiveComponent abstract : public CBase
+class ENGINE_DLL CPrimitiveComponent abstract : public CComponent
 {
 	DERIVED_CLASS(CBase, CPrimitiveComponent)
 protected:
@@ -27,7 +29,7 @@ public:
 	virtual void	Render() PURE;
 
 public:
-	virtual CPrimitiveComponent*	Clone(void* Arg) PURE;
+	virtual CComponent*	Clone(void* Arg = nullptr) PURE;
 
 protected:
 	virtual void					Free();
@@ -37,19 +39,24 @@ protected:
 	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };	// 렌더 장치 컨텍스트
 	_bool							m_bClone;
 
-public:
-	GETSET_1(wstring,	m_strName, Name, GET_C_REF)
-
 private:	// 기본 속성
-	wstring				m_strName;											// 컴포넌트 이름
-	_float				m_fPriority[Cast_EnumDef(ECompTickType::Size)];	// 우선도
+	_float				m_fPriority[Cast_EnumDef(ECompTickType::Size)];		// 우선도
 
 public:
 	// 외부에서는 포인터 변경 불가를 조건으로 주소를 얻음
-	GETSET_2(CGameObject*, m_pOwner, Owner, GET_REF_C, SET__C)
+	GETSET_2(CGameObject*, m_pOwnerObject, OwnerObject, GET_REF_C, SET__C)
+	GETSET_2(CPrimitiveComponent*, m_pOwnerPrimComp, OwnerPrimComp, GET_REF_C, SET__C)
 
 private:
-	CGameObject*		m_pOwner = nullptr;
+	CGameObject*			m_pOwnerObject = { nullptr };			// 소유하고 있는 게임오브젝트
+	CPrimitiveComponent*	m_pOwnerPrimComp = { nullptr };			// 부모 컴포넌트
+
+public:
+	HRESULT Add_PrimComponent(const wstring& strCompKey, CPrimitiveComponent* pComp);
+	CPrimitiveComponent* Find_PrimComponent(const wstring& strCompKey);
+
+private:
+	_unmap<wstring, CPrimitiveComponent*>	m_mapPrimComponent;		// 원시 컴포넌트를 저장하는 맵
 
 public:
 	template<typename T, typename = enable_if_t<is_class<T>::value>>

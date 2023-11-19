@@ -1,7 +1,6 @@
 #include "Component/MaterialComponent.h"
 
-CMaterialComponent::CMaterialComponent(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
+CMaterialComponent::CMaterialComponent()
 {
 }
 
@@ -32,9 +31,9 @@ void CMaterialComponent::Render()
 {
 }
 
-CMaterialComponent* CMaterialComponent::Create(const DX11DEVICE_T tDevice)
+CMaterialComponent* CMaterialComponent::Create()
 {
-	ThisClass* pInstance = new ThisClass(tDevice);
+	ThisClass* pInstance = new ThisClass();
 
 	if (FAILED(pInstance->Initialize()))
 	{

@@ -132,7 +132,7 @@ CRectBufferComp* CRectBufferComp::Create(const DX11DEVICE_T tDevice)
 	return pInstance;
 }
 
-CPrimitiveComponent* CRectBufferComp::Clone(void* Arg)
+CComponent* CRectBufferComp::Clone(void* Arg)
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
@@ -145,7 +145,7 @@ CPrimitiveComponent* CRectBufferComp::Clone(void* Arg)
 		return nullptr;
 	}
 
-	return pInstance;
+	return Cast<CComponent*>(pInstance);
 }
 
 void CRectBufferComp::Free()

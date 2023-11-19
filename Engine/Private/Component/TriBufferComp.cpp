@@ -127,9 +127,20 @@ CTriBufferComp* CTriBufferComp::Create(const DX11DEVICE_T tDevice)
 	return pInstance;
 }
 
-CPrimitiveComponent* CTriBufferComp::Clone(void* Arg)
+CComponent* CTriBufferComp::Clone(void* Arg)
 {
-	return new ThisClass(*this);
+	ThisClass* pInstance = new ThisClass(*this);
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		Engine::Safe_Release(pInstance);
+
+		MSG_BOX("TriBufferComp Copy Failed");
+
+		return nullptr;
+	}
+
+	return Cast<CComponent*>(pInstance);
 }
 
 void CTriBufferComp::Free()

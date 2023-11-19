@@ -13,14 +13,14 @@ protected:
 	virtual ~CVIBufferComp() = default;
 
 public:
-	virtual HRESULT Initialize() PURE;
+	virtual HRESULT Initialize();
 	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta) PURE;
 	virtual void	Render() PURE;
 
 public:
-	virtual CPrimitiveComponent*	Clone(void* Arg) PURE;
+	virtual CComponent*	Clone(void* Arg = nullptr) PURE;
 
 protected:
 	virtual void	Free();

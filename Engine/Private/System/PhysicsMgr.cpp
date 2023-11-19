@@ -74,7 +74,7 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_GetGameObject(con
 	for (auto iter = listCollision.begin(); iter != listCollision.end(); ++iter)
 	{
 		CColliderComponent* pCollideComp = static_cast<CColliderComponent*>((*iter).first->Get_Owner());
-		CGameObject* pObj = static_cast<CGameObject*>(pCollideComp->Get_Owner());
+		CGameObject* pObj = static_cast<CGameObject*>(pCollideComp->Get_OwnerObject());
 		listGameObject.push_back(pair<CGameObject*, FContact>(pObj, (*iter).second));
 	}
 

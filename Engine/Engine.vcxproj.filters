@@ -190,8 +190,14 @@
     <Filter Include="02. Utility\02. Component\03. InternalComponent">
       <UniqueIdentifier>{ee136c04-e3cc-498e-9e90-33b2c1c57f19}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Utility\02. Component\03. InternalComponent\01. SceneComponent">
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\01. SkeletonComponent">
       <UniqueIdentifier>{608dc5ca-a884-4355-bcd2-58b424c5a593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\02. AnimationComponent">
+      <UniqueIdentifier>{94f372a1-20f6-48a9-a017-8889a055621a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\03. MaterialComponent">
+      <UniqueIdentifier>{3c25317c-31dd-452e-afb7-e27af4b0f8ed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -414,6 +420,21 @@
     <ClInclude Include="Public\System\Define\ModelMgr_Define.h">
       <Filter>01. System\01. Manager\09. ModelMgr\Define</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\InternalComponent.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\SkeletonComponent.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. SkeletonComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\Component.h">
+      <Filter>02. Utility\02. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\MaterialComponent.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\03. MaterialComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\AnimationComponent.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\02. AnimationComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -592,6 +613,21 @@
     </ClCompile>
     <ClCompile Include="Private\System\Data\ModelNodeData.cpp">
       <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\InternalComponent.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\SkeletonComponent.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. SkeletonComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\Component.cpp">
+      <Filter>02. Utility\02. Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\AnimationComponent.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\02. AnimationComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\MaterialComponent.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\03. MaterialComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,6 @@
 #include "Component/AnimationComponent.h"
 
-CAnimationComponent::CAnimationComponent(const DX11DEVICE_T tDevice)
-	: Base(tDevice)
+CAnimationComponent::CAnimationComponent()
 {
 }
 
@@ -32,9 +31,9 @@ void CAnimationComponent::Render()
 {
 }
 
-CAnimationComponent* CAnimationComponent::Create(const DX11DEVICE_T tDevice)
+CAnimationComponent* CAnimationComponent::Create()
 {
-	ThisClass* pInstance = new ThisClass(tDevice);
+	ThisClass* pInstance = new ThisClass();
 
 	if (FAILED(pInstance->Initialize()))
 	{

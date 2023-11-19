@@ -11,6 +11,13 @@ CVIBufferComp::CVIBufferComp(const CVIBufferComp& rhs)
 {
 }
 
+HRESULT CVIBufferComp::Initialize()
+{
+	FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
+
+	return S_OK;
+}
+
 _int CVIBufferComp::Tick(const _float& fTimeDelta)
 {
 	return 0;

@@ -73,6 +73,7 @@ private:
 #pragma region 컴포넌트
 
 public:
+	// 검색용
 	HRESULT Add_Component(const wstring& strName, CPrimitiveComponent* pComponent);
 	CPrimitiveComponent* Get_Component(const _uint iIndex)
 	{
@@ -90,6 +91,7 @@ public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
 
 private:	// 컴포넌트 속성
 	vector<CPrimitiveComponent*>			m_vecComponent;				// 컴포넌트 관리 컨테이너
+	_unmap<wstring, CPrimitiveComponent*>	m_mapPrimComp;				// 오브젝트 전용 컴포넌트 관리 컨테이너
 
 	using list_comp =						list<CPrimitiveComponent*>;
 	list_comp								m_listUpdateComp[Cast_EnumDef(ECompTickType::Size)];	// 컴포넌트 업데이트 관리 리소스

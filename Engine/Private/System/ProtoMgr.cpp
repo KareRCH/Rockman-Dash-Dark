@@ -1,6 +1,6 @@
 #include "System/ProtoMgr.h"
 
-#include "Component/PrimitiveComponent.h"
+#include "Component/Component.h"
 
 CProtoMgr::CProtoMgr()
 {
@@ -37,9 +37,9 @@ void CProtoMgr::Free()
     }
 }
 
-HRESULT CProtoMgr::Create_Proto(const _tchar* pProtoTag, CPrimitiveComponent* pComponent)
+HRESULT CProtoMgr::Create_Proto(const _tchar* pProtoTag, CComponent* pComponent)
 {
-    CPrimitiveComponent* pInstance = Find_Prototype(pProtoTag);
+    CComponent* pInstance = Find_Prototype(pProtoTag);
 
     /*if (nullptr != pInstance)
         return E_FAIL;*/
@@ -50,33 +50,33 @@ HRESULT CProtoMgr::Create_Proto(const _tchar* pProtoTag, CPrimitiveComponent* pC
         m_mapProto.erase(iter);
     }
 
-    m_mapProto.insert({ pProtoTag, pComponent });
+    m_mapProto.emplace(pProtoTag, pComponent);
 
     return S_OK;
 }
 
 
-CPrimitiveComponent* CProtoMgr::Clone_Proto(const _tchar* pProtoTag)
+CComponent* CProtoMgr::Clone_Proto(const _tchar* pProtoTag)
 {
     // 프로토타입이될 인스턴스를 찾아 복사한 인스턴스를 반환한다.
-    CPrimitiveComponent* pComponent = Find_Prototype(pProtoTag);
+    CComponent* pComponent = Find_Prototype(pProtoTag);
 
     NULL_CHECK_RETURN(pComponent, nullptr);
-    _int t = 0;
-    return pComponent->Clone(&t);
+    
+    return pComponent->Clone();
 }
 
-CPrimitiveComponent* CProtoMgr::Clone_Proto(const _tchar* pProtoTag, CPrimitiveComponent*& prComponent)
+CComponent* CProtoMgr::Clone_Proto(const _tchar* pProtoTag, CComponent*& prComponent)
 {
     // 프로토타입이될 인스턴스를 찾아 복사한 인스턴스를 반환한다.
     prComponent = Find_Prototype(pProtoTag);
 
     NULL_CHECK_RETURN(prComponent, nullptr);
     _int t = 0;
-    return prComponent->Clone(&t);
+    return prComponent->Clone();
 }
 
-CPrimitiveComponent* CProtoMgr::Find_Prototype(const _tchar* pProtoTag)
+CComponent* CProtoMgr::Find_Prototype(const _tchar* pProtoTag)
 {
     // 컴포넌트를 찾는다.
     //auto	iter = find_if(m_mapProto.begin(), m_mapProto.end(), CTag_Finder(pProtoTag));

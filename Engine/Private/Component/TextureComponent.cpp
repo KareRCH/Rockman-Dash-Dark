@@ -48,9 +48,20 @@ CTextureComponent* CTextureComponent::Create(const DX11DEVICE_T tDevice)
 	return pInstance;
 }
 
-CPrimitiveComponent* CTextureComponent::Clone(void* Arg)
+CComponent* CTextureComponent::Clone(void* Arg)
 {
-    return new ThisClass(*this);
+	ThisClass* pInstance = new ThisClass(*this);
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		Engine::Safe_Release(pInstance);
+
+		MSG_BOX("TextureComponent Copy Failed");
+
+		return nullptr;
+	}
+
+	return Cast<CComponent*>(pInstance);
 }
 
 void CTextureComponent::Free()

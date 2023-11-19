@@ -132,7 +132,7 @@ CBoxBufferComp* CBoxBufferComp::Create(const DX11DEVICE_T tDevice)
 	return pInstance;
 }
 
-CPrimitiveComponent* CBoxBufferComp::Clone(void* Arg)
+CComponent* CBoxBufferComp::Clone(void* Arg)
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
@@ -145,7 +145,7 @@ CPrimitiveComponent* CBoxBufferComp::Clone(void* Arg)
 		return nullptr;
 	}
 
-	return pInstance;
+	return Cast<CComponent*>(pInstance);
 }
 
 void CBoxBufferComp::Free()
