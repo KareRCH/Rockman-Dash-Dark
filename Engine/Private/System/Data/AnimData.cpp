@@ -27,7 +27,7 @@ _float4x4 FAnimNodeData::Interporated_Matrix(const _float& fCurTime)
 {
 	_uint iStartPivot, iPivot;
 	_matrix matTransform = XMMatrixIdentity();
-	_vec vCalcPos, vCalcRot, vCalcScale;
+	_vector vCalcPos, vCalcRot, vCalcScale;
 	if (!vecPositions.empty())
 	{
 		iPivot = Calculate_PivotPosition(fCurTime);
@@ -37,9 +37,9 @@ _float4x4 FAnimNodeData::Interporated_Matrix(const _float& fCurTime)
 		_float fEndTime = fStartTime;								// 기준점과 다음점의 시간차이
 		_float fRatioTime = fStartTime;
 
-		_vec vStartPos = XMLoadFloat3(&vecPositions[iPivot].vPos);	// 기준으로부터 변화율
-		_vec vEndPos = vStartPos;
-		_vec vFinalPos = vStartPos;
+		_vector vStartPos = XMLoadFloat3(&vecPositions[iPivot].vPos);	// 기준으로부터 변화율
+		_vector vEndPos = vStartPos;
+		_vector vFinalPos = vStartPos;
 
 		// 다음 요소가 있을 때
 		if (iPivot + 1 < vecRotations.size())
@@ -64,9 +64,9 @@ _float4x4 FAnimNodeData::Interporated_Matrix(const _float& fCurTime)
 		_float fEndTime = fStartTime;								
 		_float fRatioTime = 0.f;		// 기준점과 다음점의 시간차이
 
-		_vec qtStartRot = XMLoadFloat4(&vecRotations[iPivot].qtRot);
-		_vec qtEndRot = qtStartRot;
-		_vec qtFinalRot = qtStartRot;
+		_vector qtStartRot = XMLoadFloat4(&vecRotations[iPivot].qtRot);
+		_vector qtEndRot = qtStartRot;
+		_vector qtFinalRot = qtStartRot;
 
 		// 다음 요소가 있을 때
 		if (iPivot + 1 < vecRotations.size())
@@ -91,9 +91,9 @@ _float4x4 FAnimNodeData::Interporated_Matrix(const _float& fCurTime)
 		_float fEndTime = fStartTime;								// 기준점과 다음점의 시간차이
 		_float fRatioTime = fStartTime;
 
-		_vec vStartScale = XMLoadFloat3(&vecScales[iPivot].vScale);	// 기준으로부터 변화율
-		_vec vEndScale = vStartScale;
-		_vec vFinalScale = vStartScale;
+		_vector vStartScale = XMLoadFloat3(&vecScales[iPivot].vScale);	// 기준으로부터 변화율
+		_vector vEndScale = vStartScale;
+		_vector vFinalScale = vStartScale;
 
 		// 다음 요소가 있을 때
 		if (iPivot + 1 < vecScales.size())

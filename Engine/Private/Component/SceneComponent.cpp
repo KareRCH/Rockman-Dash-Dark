@@ -17,8 +17,7 @@ CSceneComponent::~CSceneComponent()
 
 HRESULT CSceneComponent::Initialize()
 {
-	Add_InterComponent(m_pTransformComp->Get_Name(), m_pTransformComp = CTransformComponent::Create());
-	Safe_AddRef(m_pTransformComp);
+	m_pTransformComp = CTransformComponent::Create();
 
 	return S_OK;
 }
@@ -34,7 +33,7 @@ void CSceneComponent::Free()
 {
 	SUPER::Free();
 
-	Safe_Release(m_pTransformComp);
+	Release_Transform();
 }
 
 CSceneComponent* CSceneComponent::Get_FirstChildComp()

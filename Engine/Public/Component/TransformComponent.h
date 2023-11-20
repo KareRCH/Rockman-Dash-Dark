@@ -28,41 +28,86 @@ protected:
 
 #pragma region Transform
 public:
-	const _float3 Get_Position()
+	inline const _vector Get_PositionVector()
+	{
+		return XMVectorSet(m_matTransform._41, m_matTransform._42, m_matTransform._43, m_matTransform._44);
+	}
+	inline const _float3 Get_PositionFloat3()
 	{
 		return _float3(m_matTransform._41, m_matTransform._42, m_matTransform._43);
 	}
-	void Set_Position(const _float3 vPos)
+	inline void Set_Position(_fvector vPos)
+	{
+		m_matTransform._41 = XMVectorGetX(vPos);
+		m_matTransform._42 = XMVectorGetY(vPos);
+		m_matTransform._43 = XMVectorGetZ(vPos);
+	}
+	inline void Set_Position(const _float3& vPos)
 	{
 		m_matTransform._41 = vPos.x;
 		m_matTransform._42 = vPos.y;
 		m_matTransform._43 = vPos.z;
 	}
-	void Set_Position(const _float x, const _float y, const _float z)
+	inline void Set_Position(const _float x, const _float y, const _float z)
 	{
 		m_matTransform._41 = x;
 		m_matTransform._42 = y;
 		m_matTransform._43 = z;
 	}
-	void Set_PosX(const _float value) { m_matTransform._41 = value; }
-	void Set_PosY(const _float value) { m_matTransform._42 = value; }
-	void Set_PosZ(const _float value) { m_matTransform._43 = value; }
+	inline void Set_PositionX(const _float value) { m_matTransform._41 = value; }
+	inline void Set_PositionY(const _float value) { m_matTransform._42 = value; }
+	inline void Set_PositionZ(const _float value) { m_matTransform._43 = value; }
 
-	inline const _float3 Get_Right()
+	inline void Set_Right(_fvector vRight)
+	{
+		m_matTransform.m[0][0] = XMVectorGetX(vRight);
+		m_matTransform.m[0][1] = XMVectorGetY(vRight);
+		m_matTransform.m[0][2] = XMVectorGetZ(vRight);
+		m_matTransform.m[0][3] = XMVectorGetW(vRight);
+	}
+	inline const _vector Get_RightVector()
+	{
+		return XMVectorSet(m_matTransform._11, m_matTransform._12, m_matTransform._13, m_matTransform._14);
+	}
+	inline const _float3 Get_RightFloat3()
 	{
 		return _float3(m_matTransform._11, m_matTransform._12, m_matTransform._13);
 	}
-	inline const _float3 Get_Up()
+
+	inline void Set_Up(_fvector vUp)
+	{
+		m_matTransform.m[1][0] = XMVectorGetX(vUp);
+		m_matTransform.m[1][1] = XMVectorGetY(vUp);
+		m_matTransform.m[1][2] = XMVectorGetZ(vUp);
+		m_matTransform.m[1][3] = XMVectorGetW(vUp);
+	}
+	inline const _vector Get_UpVector()
+	{
+		return XMVectorSet(m_matTransform._21, m_matTransform._22, m_matTransform._23, m_matTransform._24);
+	}
+	inline const _float3 Get_UpFloat3()
 	{
 		return _float3(m_matTransform._21, m_matTransform._22, m_matTransform._23);
 	}
-	inline const _float3 Get_Look()
+
+	inline void Set_Look(_fvector vLook)
+	{
+		m_matTransform.m[2][0] = XMVectorGetX(vLook);
+		m_matTransform.m[2][1] = XMVectorGetY(vLook);
+		m_matTransform.m[2][2] = XMVectorGetZ(vLook);
+		m_matTransform.m[2][3] = XMVectorGetW(vLook);
+	}
+	inline const _vector Get_LookVector()
+	{
+		return XMVectorSet(m_matTransform._31, m_matTransform._32, m_matTransform._33, m_matTransform._34);
+	}
+	inline const _float3 Get_LookFloat3()
 	{
 		return _float3(m_matTransform._31, m_matTransform._32, m_matTransform._33);
 	}
 
 
-	const _float3 Get_Rotation()
+	const _vector Get_RotationEulerVector()
 	{
 		_matrix matRot = {
 			m_matTransform._11, m_matTransform._12, m_matTransform._13, 0,
@@ -71,7 +116,37 @@ public:
 			0, 0, 0, 1
 		};
 
-		_vec vRot = XMQuaternionRotationMatrix(matRot);
+		_vector vRot = XMQuaternionRotationMatrix(matRot);
+		_float3 vEuler = {};
+		_float pitch, yaw, roll;
+		_float t0, t1;
+		t0 = 2.f * (vRot.m128_f32[3] * vRot.m128_f32[0] + vRot.m128_f32[1] * vRot.m128_f32[2]);
+		t1 = 1.f - 2.f * (vRot.m128_f32[0] * vRot.m128_f32[0] + vRot.m128_f32[1] * vRot.m128_f32[1]);
+		pitch = atan2(t0, t1);
+
+		_float t2;
+		t2 = 2.f * (vRot.m128_f32[3] * vRot.m128_f32[1] - vRot.m128_f32[2] * vRot.m128_f32[0]);
+		t2 = (t2 > 1.f) ? 1.f : t2;
+		t2 = (t2 < -1.f) ? -1.f : t2;
+		yaw = asin(t2);
+
+		_float t3, t4;
+		t3 = 2.f * (vRot.m128_f32[3] * vRot.m128_f32[2] + vRot.m128_f32[0] * vRot.m128_f32[1]);
+		t4 = 1.f - 2.f * (vRot.m128_f32[1] * vRot.m128_f32[1] + vRot.m128_f32[2] * vRot.m128_f32[2]);
+		roll = atan2(t3, t4);
+
+		return XMVectorSet(pitch, yaw, roll, 0.f);
+	}
+	const _float3 Get_RotationEulerFloat3()
+	{
+		_matrix matRot = {
+			m_matTransform._11, m_matTransform._12, m_matTransform._13, 0,
+			m_matTransform._21, m_matTransform._22, m_matTransform._23, 0,
+			m_matTransform._31, m_matTransform._32, m_matTransform._33, 0,
+			0, 0, 0, 1
+		};
+
+		_vector vRot = XMQuaternionRotationMatrix(matRot);
 		_float3 vEuler = {};
 		_float pitch, yaw, roll;
 		_float t0, t1;
@@ -92,33 +167,87 @@ public:
 
 		return _float3(pitch, yaw, roll);
 	}
-	void Set_Rotation(_float3 vRot)
+	void Set_RotationEuler(_fvector vRot)
 	{
-		_matrix matTrans = XMLoadFloat4x4(&m_matTransform);
+		_vector vPosition = Get_PositionVector();
+		_vector vRotation = XMQuaternionRotationRollPitchYawFromVector(vRot);
+		_vector vScale = Get_ScaleVector();
 
-		_vec vPosition, vRotation, vScale, vEmptyRot = {};
-		_float3 vPos = Get_Position();
-		vPosition = XMLoadFloat3(&vPos);
-		vRotation = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&vRot));
-		vScale = XMLoadFloat3(&m_vScale);
-		matTrans = XMMatrixAffineTransformation(vScale, vEmptyRot, vRotation, vPosition);
+		_matrix matTrans = XMMatrixAffineTransformation(vScale, {}, vRotation, vPosition);
 
 		XMStoreFloat4x4(&m_matTransform, matTrans);
 	}
-	/*void Set_Rotation(const _float x, const _float y, const _float z)
+	void Set_RotationEuler(const _float3 vRot)
 	{
-		_float3();
+		Set_RotationEuler(XMLoadFloat3(&vRot));
 	}
-	void Set_RotX(const _float value) { m_vRotation.x = value; }
-	void Set_RotY(const _float value) { m_vRotation.y = value; }
-	void Set_RotZ(const _float value) { m_vRotation.z = value; }*/
-
-
-	_float3 Get_Scale()
+	void Set_RotationEuler(const _float x, const _float y, const _float z)
 	{
+		_float3 vRot = _float3(x, y, z);
+		Set_RotationEuler(XMLoadFloat3(&vRot));
+	}
+	void Set_RotationEulerX(const _float value) { /*m_vRotation.x = value;*/ }
+	void Set_RotationEulerY(const _float value) { /*m_vRotation.y = value;*/ }
+	void Set_RotationEulerZ(const _float value) { /*m_vRotation.z = value;*/ }
+	void Set_RotationAxis(_fvector vAxis, _float fRadian)
+	{
+		_float3 vScale = Get_ScaleFloat3();
+
+		_vector vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f) * vScale.x;
+		_vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
+		_vector vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f) * vScale.z;
+
+		_matrix matRotation = XMMatrixRotationAxis(vAxis, fRadian);
+
+		Set_Right(XMVector3TransformNormal(vRight, matRotation));
+		Set_Up(XMVector3TransformNormal(vUp, matRotation));
+		Set_Look(XMVector3TransformNormal(vLook, matRotation));
+	}
+	void Set_RotationAxis(const _float3 vAxis, _float fRadian)
+	{
+		Set_RotationAxis(XMLoadFloat3(&vAxis), fRadian);
+	}
+
+	const _vector Get_RotationQuaternionVector() { return _vector(); }
+	const _float4 Get_RotationQuaternionFloat4() { return _float4(); }
+	void Set_RotationQuaternion(_fvector qtRot)
+	{
+		_vector vPosition = Get_PositionVector();
+		_vector vRotation = qtRot;
+		_vector vScale = Get_ScaleVector();
+
+		_matrix matTrans = XMMatrixAffineTransformation(vScale, {}, vRotation, vPosition);
+
+		XMStoreFloat4x4(&m_matTransform, matTrans);
+	}
+	void Set_RotationQuternion(_float4 qtRot)
+	{
+		Set_RotationQuaternion(XMLoadFloat4(&qtRot));
+	}
+	
+
+	// 스케일
+	_vector Get_ScaleVector()
+	{ 
+		return XMVectorSet(m_vScale.x, m_vScale.y, m_vScale.z, 0.f);
+	}
+	_float3 Get_ScaleFloat3()
+	{ 
 		return m_vScale;
 	}
-	void Set_Scale(_float3 value)
+	void Set_Scale(_fvector value)
+	{
+		_float3 vStore;
+		XMStoreFloat3(&vStore, value);
+
+		m_matTransform._11 *= vStore.x * m_vScale.x; m_matTransform._12 *= vStore.x * m_vScale.x; m_matTransform._13 *= vStore.x * m_vScale.x;
+		m_matTransform._21 *= vStore.y * m_vScale.y; m_matTransform._22 *= vStore.y * m_vScale.y; m_matTransform._23 *= vStore.y * m_vScale.y;
+		m_matTransform._31 *= vStore.z * m_vScale.z; m_matTransform._32 *= vStore.z * m_vScale.z; m_matTransform._33 *= vStore.z * m_vScale.z;
+
+		// 부동소수점 문제로 Scale값은 따로 저장
+		m_vScale = vStore;
+	}
+	void Set_Scale(const _float3 value)
 	{
 		m_matTransform._11 *= value.x * m_vScale.x; m_matTransform._12 *= value.x * m_vScale.x; m_matTransform._13 *= value.x * m_vScale.x;
 		m_matTransform._21 *= value.y * m_vScale.y; m_matTransform._22 *= value.y * m_vScale.y; m_matTransform._23 *= value.y * m_vScale.y;
@@ -127,7 +256,7 @@ public:
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale = value;
 	}
-	void Set_Scale(_float x, _float y, _float z)
+	void Set_Scale(const _float x, const _float y, const _float z)
 	{
 		m_matTransform._11 *= x * m_vScale.x; m_matTransform._12 *= x * m_vScale.x; m_matTransform._13 *= x * m_vScale.x;
 		m_matTransform._21 *= y * m_vScale.y; m_matTransform._22 *= y * m_vScale.y; m_matTransform._23 *= y * m_vScale.y;
@@ -136,35 +265,43 @@ public:
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale = { x, y, z };
 	}
-	void Set_ScaleX(_float value)
+	void Set_ScaleX(const _float value)
 	{
 		m_matTransform._11 *= value * m_vScale.x; m_matTransform._12 *= value * m_vScale.x; m_matTransform._13 *= value * m_vScale.x;
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale.x = value;
 	}
-	void Set_ScaleY(_float value)
+	void Set_ScaleY(const _float value)
 	{
 		m_matTransform._21 *= value * m_vScale.y; m_matTransform._22 *= value * m_vScale.y; m_matTransform._23 *= value * m_vScale.y;
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale.y = value;
 	}
-	void Set_ScaleZ(_float value)
+	void Set_ScaleZ(const _float value)
 	{
 		m_matTransform._31 *= value * m_vScale.z; m_matTransform._32 *= value * m_vScale.z; m_matTransform._33 *= value * m_vScale.z;
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale.z = value;
 	}
 
-	GETSET_2(_float4x4, m_matTransform, Transform, GET_C_PTR, SET_C_REF)
-		_matrix Get_TransformToCalc()
+	// 트랜스폼
+	const _float4x4& Get_TransformFloat4x4()
+	{ return m_matTransform; }
+	_matrix Get_TransformMatrix()
+	{ return XMLoadFloat4x4(&m_matTransform); }
+	void Set_Transform(_fmatrix matTransform)
 	{
-		return XMLoadFloat4x4(&m_matTransform);
+		XMStoreFloat4x4(&m_matTransform, matTransform);
 	}
-	//_float3 Get_PosByTransform() { return _float3(m_matTransform.r[3], m_matTransform._42, m_matTransform._43); }
-	inline void Calculate_TransformFromParent(_matrix* const matParent)
+	void Set_Transform(const _float4x4& matTransform)
+	{
+		m_matTransform = matTransform;
+	}
+
+	inline void Calculate_TransformFromParent(_fmatrix* const matParent)
 	{
 		_matrix matTransform = XMLoadFloat4x4(&m_matTransform);
-		matTransform *= *matParent;
+		matTransform *= (*matParent);
 
 		XMStoreFloat4x4(&m_matTransform, matTransform);
 	}

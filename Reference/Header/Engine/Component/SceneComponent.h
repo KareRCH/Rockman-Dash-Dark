@@ -2,6 +2,7 @@
 
 #include "Component/PrimitiveComponent.h"
 #include "Component/TransformComponent.h"
+#include "Component/Interface/ITransform.h"
 
 BEGIN(Engine)
 
@@ -10,7 +11,7 @@ BEGIN(Engine)
 /// 내부적으로 트랜스폼 컴포넌트를 포함하는 클래스
 /// 이 클래스를 상속받으면 트랜스폼 속성을 같이 가지게 된다.
 /// </summary>
-class ENGINE_DLL CSceneComponent abstract : public CPrimitiveComponent
+class ENGINE_DLL CSceneComponent abstract : public CPrimitiveComponent, public ITransform
 {
 	DERIVED_CLASS(CPrimitiveComponent, CSceneComponent)
 protected:
@@ -44,26 +45,9 @@ protected:
 
 
 public:		// 트랜스폼 컴포넌트에 대한 함수 정의
-	const _float3	Get_Position() const { return m_pTransformComp->Get_Position(); }
-	void			Set_Position(const _float3& value) { m_pTransformComp->Set_Position(value); }
-
-	const _float3	Get_Rotation() const { return m_pTransformComp->Get_Rotation(); }
-	void			Set_Rotation(const _float3& value) { m_pTransformComp->Set_Rotation(value); }
-
-	const _float3	Get_Scale() const { return m_pTransformComp->Get_Scale(); }
-	void			Set_Scale(const _float3& value) { m_pTransformComp->Set_Scale(value); }
-
-	void			Calculate_TransformFromParent(_matrix* matTransform)
-	{
-		m_pTransformComp->Calculate_TransformFromParent(matTransform);
-	}
-
-	const void		Set_Transform(_float4x4 value) { m_pTransformComp->Set_Transform(value); }
-	const _float4x4* Get_Transform() const { return m_pTransformComp->Get_Transform(); }
-
-	const _float3	Get_RightFromTransform() const { return m_pTransformComp->Get_Right(); }
-	const _float3	Get_UpFromTransform() const { return m_pTransformComp->Get_Up(); }
-	const _float3	Get_LookFromTransform() const { return m_pTransformComp->Get_Look(); }
+	// 반드시 초기화가 되었을 때 사용해야 함.
+	inline virtual CTransformComponent& Transform() override { return (*m_pTransformComp); }
+	inline virtual void Release_Transform() override { Safe_Release(m_pTransformComp); }
 
 private:
 	CTransformComponent* m_pTransformComp = { nullptr };			// 내부 트랜스폼 컴포넌트 포함

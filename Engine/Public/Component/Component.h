@@ -34,17 +34,11 @@ private:
 
 public:
 	// 기본형 컴포넌트임. 게임 오브젝트에 추가된 것들은 PrimiveComponent를 상속받은 객체를 사용할 것.
-	GETSET_2(CComponent*, m_pOwnerComp, OwnerComp, GET_REF_C, SET__C)
+	GETSET_2(CComponent*, m_pParentComp, ParentComp, GET_REF_C, SET__C)
 
 private:
-	CComponent*			m_pOwnerComp = { nullptr };
-
-public:
-	HRESULT Add_InterComponent(const wstring& strCompKey, CComponent* pComp);
-	CComponent* Find_InterComponent(const wstring& strCompKey);
-
-private:
-	_unmap<wstring, CComponent*>	m_mapInterComponent;		// 내부적으로 작동하도록 만드는 컴포넌트는 여기에 넣는다.
+	CComponent*			m_pParentComp = { nullptr };		// 이 컴포넌트를 관리하는 컴포넌트
+	vector<CComponent*>	m_pChildrenComp;					// 이 컴포넌트가 관리하는 컴포넌트
 };
 
 END

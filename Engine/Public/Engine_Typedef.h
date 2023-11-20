@@ -63,7 +63,11 @@ namespace Engine
 	typedef		DirectX::XMINT4				_int4;
 
 	// 계산용 벡터
-	typedef		DirectX::XMVECTOR			_vec;
+	typedef		DirectX::XMVECTOR			_vector;	// 일반적인 계산에 쓰인다.
+	typedef		DirectX::FXMVECTOR			_fvector;	// 함수 매개변수 1 ~ 3
+	typedef		DirectX::GXMVECTOR			_gvector;	// 4
+	typedef		DirectX::HXMVECTOR			_hvector;	// 5 ~ 6
+	typedef		DirectX::CXMVECTOR			_cvector;	// 7
 
 	// 저장용 행렬
 	typedef		DirectX::XMFLOAT3X3			_float3x3;
@@ -72,7 +76,9 @@ namespace Engine
 	typedef		DirectX::XMFLOAT4X4			_float4x4;
 
 	// 계산용 행렬
-	typedef		DirectX::XMMATRIX			_matrix;
+	typedef		DirectX::XMMATRIX			_matrix;	// 일반적인 계산용
+	typedef		DirectX::FXMMATRIX			_fmatrix;	// 함수 첫번째 인자
+	typedef		DirectX::CXMMATRIX			_cmatrix;	// 함수 두번째 인자
 
 	
 

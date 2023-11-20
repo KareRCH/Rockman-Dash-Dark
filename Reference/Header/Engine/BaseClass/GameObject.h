@@ -4,6 +4,7 @@
 #include "Component/TransformComponent.h"
 #include "BaseClass/GameObject_Define.h"
 #include "Component/Component_Define.h"
+#include "Component/Interface/ITransform.h"
 
 BEGIN(Engine)
 
@@ -13,7 +14,7 @@ class CPrimitiveComponent;
 /// 씬에 추가되어 사용되는 좌표를 기본적으로 탑재하는 오브젝트 클래스
 /// 좌표가 필요없는 클래스는 씬이 아닌 별도의 시스템을 사용합니다.
 /// </summary>
-class ENGINE_DLL CGameObject abstract : public CBase
+class ENGINE_DLL CGameObject abstract : public CBase, public ITransform
 {
 	DERIVED_CLASS(CBase, CGameObject)
 protected:
@@ -98,22 +99,9 @@ private:	// 컴포넌트 속성
 
 
 public:		// 트랜스폼 컴포넌트에 대한 함수 정의
-	const _float3	Get_Position() const { return m_pTransformComp->Get_Position(); }
-	void			Set_Position(const _float3& value) { m_pTransformComp->Set_Position(value); }
-
-	const _float3	Get_Rotation() const { return m_pTransformComp->Get_Rotation(); }
-	void			Set_Rotation(const _float3& value) { m_pTransformComp->Set_Rotation(value); }
-
-	const _float3	Get_Scale() const { return m_pTransformComp->Get_Scale(); }
-	void			Set_Scale(const _float3& value) { m_pTransformComp->Set_Scale(value); }
-
-	void			Calculate_TransformFromParent(_matrix* matTransform) 
-					{ m_pTransformComp->Calculate_TransformFromParent(matTransform); }
-	const _float4x4*	Get_Transform() const { return m_pTransformComp->Get_Transform(); }
-
-	const _float3	Get_RightFromTransform() const { return m_pTransformComp->Get_Right(); }
-	const _float3	Get_UpFromTransform() const { return m_pTransformComp->Get_Up(); }
-	const _float3	Get_LookFromTransform() const { return m_pTransformComp->Get_Look(); }
+	// 반드시 초기화가 되었을 때 사용해야 함.
+	inline virtual CTransformComponent& Transform() override { return (*m_pTransformComp); }
+	inline virtual void Release_Transform() override { Safe_Release(m_pTransformComp); }
 
 private:	// 게임 오브젝트 기본 정의 컴포넌트
 	CTransformComponent*					m_pTransformComp = nullptr;

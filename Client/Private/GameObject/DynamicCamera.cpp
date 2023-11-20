@@ -28,10 +28,10 @@ _int CDynamicCamera::Tick(const _float& fTimeDelta)
     SUPER::Tick(fTimeDelta);
 
 
-    Set_Position(_float3(6.f, 6.f, 6.f));
+    Transform().Set_Position(_float3(6.f, 6.f, 6.f));
 
     _float3 vPos, vUp, vAt;
-    vPos = Get_Position();
+    vPos = Transform().Get_PositionFloat3();
     vAt = _float3(0.f, 0.f, 0.f);
     vUp = _float3(0.f, 1.f, 0.f);
 
