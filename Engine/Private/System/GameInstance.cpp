@@ -788,6 +788,14 @@ const FMeshData* const CGameInstance::Get_Mesh(const EModelGroupIndex eGroupInde
 	return m_pModelMgr->Get_Mesh(eGroupIndex, strGroupKey, strMeshKey);
 }
 
+FArmatureData* CGameInstance::Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey)
+{
+	if (nullptr == m_pModelMgr)
+		return nullptr;
+
+	return m_pModelMgr->Clone_Armature(eGroupIndex, strGroupKey, strArmatureKey);
+}
+
 HRESULT CGameInstance::Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)
 {
 	if (nullptr != m_pShaderMgr)

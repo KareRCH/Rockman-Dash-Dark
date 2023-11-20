@@ -1,5 +1,12 @@
 #include "System/Data/ModelNodeData.h"
 
+FModelNodeBaseData::FModelNodeBaseData(const FModelNodeBaseData& rhs)
+	: iID(rhs.iID), eType(rhs.eType), eBoneType(rhs.eBoneType)
+	, strName(rhs.strName), pParent(rhs.pParent)
+	, vecChildren(rhs.vecChildren), matOffset(rhs.matOffset), matTransform(rhs.matTransform)
+{
+}
+
 void FModelNodeBaseData::Free()
 {
 	for (auto& item : vecChildren)
@@ -24,6 +31,32 @@ FModelNodeData* FModelNodeData::Create()
 		MSG_BOX("FModelNodeData Create Failed");
 
 		return nullptr;
+	}
+
+	return pInstance;
+}
+
+FModelNodeBaseData* FModelNodeData::Clone()
+{
+	ThisClass* pInstance = new ThisClass(*this);
+
+	if (!pInstance)
+	{
+		Safe_Release(pInstance);
+
+		MSG_BOX("FModelNodeData Copy Failed");
+
+		return nullptr;
+	}
+
+	if (!pInstance->vecChildren.empty())
+	{
+		for (_uint i = 0; Cast<size_t>(i) < pInstance->vecChildren.size(); i++)
+		{
+			FModelNodeBaseData* pNode = pInstance->vecChildren[i]->Clone();
+			pNode->pParent = pInstance;
+			vecChildren[i] = Cast<FModelNodeData*>(pNode);
+		}
 	}
 
 	return pInstance;
@@ -63,7 +96,15 @@ FModelNodeData* FModelNodeData::Find_NodeFromID(_int iID)
 	return nullptr;
 }
 
+
+
 // ------------------------ ArmatureData ---------------------------
+
+FArmatureData::FArmatureData(const FArmatureData& rhs)
+	: pArmatureNode(rhs.pArmatureNode), mapModelNodeData(rhs.mapModelNodeData)
+{
+}
+
 FArmatureData* FArmatureData::Create()
 {
 	ThisClass* pInstance = new ThisClass();
@@ -75,6 +116,31 @@ FArmatureData* FArmatureData::Create()
 		MSG_BOX("FArmatureData Create Failed");
 
 		return nullptr;
+	}
+
+	return pInstance;
+}
+
+FArmatureData* FArmatureData::Clone()
+{
+	ThisClass* pInstance = new ThisClass(*this);
+
+	if (!pInstance)
+	{
+		Safe_Release(pInstance);
+
+		MSG_BOX("FModelNodeData Copy Failed");
+
+		return nullptr;
+	}
+
+	if (!pInstance->pArmatureNode)
+	{
+		pInstance->pArmatureNode = Cast<FModelNodeData*>(pInstance->pArmatureNode->Clone());
+		for (_uint i = 0; i < pInstance->pArmatureNode->vecChildren.size(); i++)
+		{
+
+		}
 	}
 
 	return pInstance;
@@ -157,6 +223,16 @@ void FModelNodeGroup::Free()
 	mapArmatureData.clear();
 }
 
+FArmatureData* FModelNodeGroup::Clone_ArmatureData(const wstring& strArmatureKey)
+{
+	auto iter = mapArmatureData.find(strArmatureKey);
+	if (iter == mapArmatureData.end())
+		return nullptr;
+
+	return (*iter).second->Clone();
+}
+
+
 FArmatureData* FModelNodeGroup::Find_ArmatureData(const wstring& strArmatureKey)
 {
 	auto iter = mapArmatureData.find(strArmatureKey);
@@ -165,6 +241,7 @@ FArmatureData* FModelNodeGroup::Find_ArmatureData(const wstring& strArmatureKey)
 
 	return (*iter).second;
 }
+
 
 FArmatureData* FModelNodeGroup::Create_ArmatureData(const wstring& strArmatureKey)
 {
@@ -178,6 +255,17 @@ FArmatureData* FModelNodeGroup::Create_ArmatureData(const wstring& strArmatureKe
 	return pArmature;
 }
 
+
+void FModelNodeGroup::Appoint_ArmatureNode(const wstring& strArmatureKey, const wstring& strModelNodeKey)
+{
+	auto iter = mapArmatureData.find(strArmatureKey);
+	if (iter == mapArmatureData.end())
+		return;
+
+	(*iter).second->Appoint_ArmatureNode(strModelNodeKey);
+}
+
+
 FModelNodeData* FModelNodeGroup::Find_NodeData(const wstring& strArmatureKey, const wstring& strModelNodeKey)
 {
 	auto iter = mapArmatureData.find(strArmatureKey);
@@ -187,6 +275,7 @@ FModelNodeData* FModelNodeGroup::Find_NodeData(const wstring& strArmatureKey, co
 	return (*iter).second->Find_NodeData(strModelNodeKey);
 }
 
+
 FModelNodeData* FModelNodeGroup::Create_NodeData(const wstring& strArmatureKey, const wstring& strModelNodeKey)
 {
 	auto iter = mapArmatureData.find(strArmatureKey);
@@ -194,14 +283,5 @@ FModelNodeData* FModelNodeGroup::Create_NodeData(const wstring& strArmatureKey, 
 		return nullptr;
 
 	return (*iter).second->Create_NodeData(strModelNodeKey);
-}
-
-void FModelNodeGroup::Appoint_ArmatureNode(const wstring& strArmatureKey, const wstring& strModelNodeKey)
-{
-	auto iter = mapArmatureData.find(strArmatureKey);
-	if (iter == mapArmatureData.end())
-		return;
-
-	(*iter).second->Appoint_ArmatureNode(strModelNodeKey);
 }
 

@@ -17,7 +17,7 @@ protected:
 	virtual ~CTransformComponent() = default;
 
 public:
-	virtual HRESULT Initialize();
+	virtual HRESULT Initialize(void* Arg = nullptr);
 
 public:
 	static	CTransformComponent* Create();
@@ -186,9 +186,25 @@ public:
 		_float3 vRot = _float3(x, y, z);
 		Set_RotationEuler(XMLoadFloat3(&vRot));
 	}
-	void Set_RotationEulerX(const _float value) { /*m_vRotation.x = value;*/ }
-	void Set_RotationEulerY(const _float value) { /*m_vRotation.y = value;*/ }
-	void Set_RotationEulerZ(const _float value) { /*m_vRotation.z = value;*/ }
+	void Set_RotationEulerX(const _float x) 
+	{
+		_float3 vRot = Get_RotationEulerFloat3();
+		vRot.x = x;
+		Set_RotationEuler(XMLoadFloat3(&vRot));
+	}
+	void Set_RotationEulerY(const _float y)
+	{
+		_float3 vRot = Get_RotationEulerFloat3();
+		vRot.y = y;
+		Set_RotationEuler(XMLoadFloat3(&vRot));
+	}
+	void Set_RotationEulerZ(const _float z)
+	{
+		_float3 vRot = Get_RotationEulerFloat3();
+		vRot.z = z;
+		Set_RotationEuler(XMLoadFloat3(&vRot));
+	}
+
 	void Set_RotationAxis(_fvector vAxis, _float fRadian)
 	{
 		_float3 vScale = Get_ScaleFloat3();
@@ -237,15 +253,12 @@ public:
 	}
 	void Set_Scale(_fvector value)
 	{
-		_float3 vStore;
-		XMStoreFloat3(&vStore, value);
-
-		m_matTransform._11 *= vStore.x * m_vScale.x; m_matTransform._12 *= vStore.x * m_vScale.x; m_matTransform._13 *= vStore.x * m_vScale.x;
-		m_matTransform._21 *= vStore.y * m_vScale.y; m_matTransform._22 *= vStore.y * m_vScale.y; m_matTransform._23 *= vStore.y * m_vScale.y;
-		m_matTransform._31 *= vStore.z * m_vScale.z; m_matTransform._32 *= vStore.z * m_vScale.z; m_matTransform._33 *= vStore.z * m_vScale.z;
-
 		// 부동소수점 문제로 Scale값은 따로 저장
-		m_vScale = vStore;
+		XMStoreFloat3(&m_vScale, value);
+
+		m_matTransform._11 *= m_vScale.x * m_vScale.x; m_matTransform._12 *= m_vScale.x * m_vScale.x; m_matTransform._13 *= m_vScale.x * m_vScale.x;
+		m_matTransform._21 *= m_vScale.y * m_vScale.y; m_matTransform._22 *= m_vScale.y * m_vScale.y; m_matTransform._23 *= m_vScale.y * m_vScale.y;
+		m_matTransform._31 *= m_vScale.z * m_vScale.z; m_matTransform._32 *= m_vScale.z * m_vScale.z; m_matTransform._33 *= m_vScale.z * m_vScale.z;
 	}
 	void Set_Scale(const _float3 value)
 	{
@@ -285,9 +298,9 @@ public:
 	}
 
 	// 트랜스폼
-	const _float4x4& Get_TransformFloat4x4()
+	const _float4x4& Get_TransformFloat4x4() const
 	{ return m_matTransform; }
-	_matrix Get_TransformMatrix()
+	const _matrix Get_TransformMatrix() const
 	{ return XMLoadFloat4x4(&m_matTransform); }
 	void Set_Transform(_fmatrix matTransform)
 	{
@@ -298,10 +311,10 @@ public:
 		m_matTransform = matTransform;
 	}
 
-	inline void Calculate_TransformFromParent(_fmatrix* const matParent)
+	inline void Calculate_TransformFromParent(_fmatrix& matParent)
 	{
 		_matrix matTransform = XMLoadFloat4x4(&m_matTransform);
-		matTransform *= (*matParent);
+		matTransform *= matParent;
 
 		XMStoreFloat4x4(&m_matTransform, matTransform);
 	}

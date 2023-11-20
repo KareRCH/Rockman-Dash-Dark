@@ -10,7 +10,7 @@ CTriBufferComp::CTriBufferComp(const CTriBufferComp& rhs)
 {
 }
 
-HRESULT CTriBufferComp::Initialize()
+HRESULT CTriBufferComp::Initialize(void* Arg)
 {
 	m_iVtxCount = 3;
 	m_iIndexCount = 3;

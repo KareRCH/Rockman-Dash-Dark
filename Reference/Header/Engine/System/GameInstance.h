@@ -177,6 +177,12 @@ inline CGameInstance* GameInstance()
 	return CGameInstance::GetInstance();
 }
 
+// ´õ Âª°Ô½á¶ó
+inline CGameInstance* GI()
+{
+	return CGameInstance::GetInstance();
+}
+
 inline _uint Release_GameInstance()
 {
 	return CGameInstance::GetInstance()->DestroyInstance();

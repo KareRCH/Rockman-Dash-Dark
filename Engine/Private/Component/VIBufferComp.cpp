@@ -11,7 +11,7 @@ CVIBufferComp::CVIBufferComp(const CVIBufferComp& rhs)
 {
 }
 
-HRESULT CVIBufferComp::Initialize()
+HRESULT CVIBufferComp::Initialize(void* Arg)
 {
 	FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
 

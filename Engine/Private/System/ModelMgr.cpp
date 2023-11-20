@@ -437,6 +437,18 @@ const FMeshData* const CModelMgr::Get_Mesh(const EModelGroupIndex eGroupIndex, c
 	return (*iter).second->pMeshGroup->Get_Mesh(strMeshKey);
 }
 
+FArmatureData* CModelMgr::Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey)
+{
+	_uint iIndex = Cast_EnumDef(eGroupIndex);
+
+	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
+	if (iter == m_mapModelGroup[iIndex].end())
+		return nullptr;
+
+	FModelGroup* pModelGroup = (*iter).second;
+	return pModelGroup->pModelNodeGroup->Clone_ArmatureData(strModelNodeKey);
+}
+
 FModelGroup* CModelMgr::Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
 	_uint iIndex = Cast_EnumDef(eGroupIndex);

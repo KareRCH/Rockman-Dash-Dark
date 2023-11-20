@@ -12,7 +12,7 @@ CTransformComponent::CTransformComponent(const CTransformComponent& rhs)
 {
 }
 
-HRESULT CTransformComponent::Initialize()
+HRESULT CTransformComponent::Initialize(void* Arg)
 {
 
 	return S_OK;

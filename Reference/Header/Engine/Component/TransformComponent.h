@@ -285,9 +285,9 @@ public:
 	}
 
 	// Æ®·£½ºÆû
-	const _float4x4& Get_TransformFloat4x4()
+	const _float4x4& Get_TransformFloat4x4() const
 	{ return m_matTransform; }
-	_matrix Get_TransformMatrix()
+	const _matrix Get_TransformMatrix() const
 	{ return XMLoadFloat4x4(&m_matTransform); }
 	void Set_Transform(_fmatrix matTransform)
 	{

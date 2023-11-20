@@ -9,7 +9,7 @@ CMaterialComponent::CMaterialComponent(const CMaterialComponent& rhs)
 {
 }
 
-HRESULT CMaterialComponent::Initialize()
+HRESULT CMaterialComponent::Initialize(void* Arg)
 {
     return S_OK;
 }

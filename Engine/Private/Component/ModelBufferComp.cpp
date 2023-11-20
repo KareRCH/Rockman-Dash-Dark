@@ -13,7 +13,7 @@ CModelBufferComp::CModelBufferComp(const CModelBufferComp& rhs)
 {
 }
 
-HRESULT CModelBufferComp::Initialize()
+HRESULT CModelBufferComp::Initialize(void* Arg)
 {
 	FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
 

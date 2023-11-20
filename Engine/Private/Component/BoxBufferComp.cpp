@@ -10,7 +10,7 @@ CBoxBufferComp::CBoxBufferComp(const CBoxBufferComp& rhs)
 {
 }
 
-HRESULT CBoxBufferComp::Initialize()
+HRESULT CBoxBufferComp::Initialize(void* Arg)
 {
 	m_iVtxCount = 4;
 	m_iIndexCount = 6;

@@ -21,7 +21,7 @@ protected:
 	virtual ~CInternalComponent() = default;
 
 public:
-	virtual HRESULT Initialize() PURE;
+	virtual HRESULT Initialize(void* Arg = nullptr) override PURE;
 
 public:
 	virtual CComponent* Clone(void* Arg = nullptr) PURE;
