@@ -19,7 +19,7 @@ protected:
 	virtual ~CModelBufferComp() = default;
 
 public:
-	virtual HRESULT Initialize() override;
+	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strModelKey);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual _int	Tick(const _float& fTimeDelta) override;

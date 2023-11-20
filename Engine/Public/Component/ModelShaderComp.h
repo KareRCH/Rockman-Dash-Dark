@@ -16,7 +16,7 @@ protected:
 	virtual ~CModelShaderComp() = default;
 
 public:
-	virtual HRESULT Initialize();
+	virtual HRESULT Initialize(void* Arg = nullptr);
 	virtual HRESULT	Initialize(HWND hWnd);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual _int	Tick(const _float& fTimeDelta);

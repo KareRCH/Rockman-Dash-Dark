@@ -10,7 +10,7 @@ CTextureComponent::CTextureComponent(const CTextureComponent& rhs)
 {
 }
 
-HRESULT CTextureComponent::Initialize()
+HRESULT CTextureComponent::Initialize(void* Arg)
 {
     return S_OK;
 }

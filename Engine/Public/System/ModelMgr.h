@@ -70,6 +70,7 @@ public:
 
 
 	const FMeshData* const	Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
+	FArmatureData* Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey);
 
 private:
 	FModelGroup* Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);

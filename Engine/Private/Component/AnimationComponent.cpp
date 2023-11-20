@@ -9,7 +9,7 @@ CAnimationComponent::CAnimationComponent(const CAnimationComponent& rhs)
 {
 }
 
-HRESULT CAnimationComponent::Initialize()
+HRESULT CAnimationComponent::Initialize(void* Arg)
 {
 	return S_OK;
 }

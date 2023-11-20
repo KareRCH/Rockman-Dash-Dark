@@ -11,7 +11,7 @@ CColorShaderComp::CColorShaderComp(const CColorShaderComp& rhs)
 {
 }
 
-HRESULT CColorShaderComp::Initialize()
+HRESULT CColorShaderComp::Initialize(void* Arg)
 {
     return S_OK;
 }

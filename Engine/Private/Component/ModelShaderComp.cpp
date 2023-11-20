@@ -12,7 +12,7 @@ CModelShaderComp::CModelShaderComp(const CModelShaderComp& rhs)
 {
 }
 
-HRESULT CModelShaderComp::Initialize()
+HRESULT CModelShaderComp::Initialize(void* Arg)
 {
     return S_OK;
 }

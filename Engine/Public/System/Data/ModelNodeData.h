@@ -14,10 +14,11 @@ class ENGINE_DLL FModelNodeBaseData abstract : public CBase
 
 protected:
 	explicit FModelNodeBaseData() {}
-	explicit FModelNodeBaseData(const FModelNodeBaseData& rhs) = delete;
+	explicit FModelNodeBaseData(const FModelNodeBaseData& rhs);
 	virtual ~FModelNodeBaseData() = default;
 
 protected:
+	virtual FModelNodeBaseData* Clone() PURE;
 	virtual void Free() override;
 
 public:
@@ -40,7 +41,7 @@ class ENGINE_DLL FModelNodeData final : public FModelNodeBaseData
 
 private:
 	explicit FModelNodeData() {}
-	explicit FModelNodeData(const FModelNodeData& rhs) = delete;
+	explicit FModelNodeData(const FModelNodeData& rhs);
 	virtual ~FModelNodeData() = default;
 
 public:
@@ -51,6 +52,7 @@ public:
 
 public:
 	static FModelNodeData* Create();
+	virtual FModelNodeBaseData* Clone() override;
 	virtual void Free() override;
 
 };
@@ -71,6 +73,7 @@ private:
 
 public:
 	static FArmatureData* Create();
+	virtual FArmatureData* Clone();
 	virtual void Free() override;
 
 public:
@@ -101,6 +104,7 @@ public:
 	virtual void Free() override;
 
 public:
+	FArmatureData* Clone_ArmatureData(const wstring& strArmatureKey);
 	FArmatureData* Find_ArmatureData(const wstring& strArmatureKey);
 	FArmatureData* Create_ArmatureData(const wstring& strArmatureKey);
 	void Appoint_ArmatureNode(const wstring& strArmatureKey, const wstring& strModelNodeKey);

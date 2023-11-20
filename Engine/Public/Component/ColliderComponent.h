@@ -23,7 +23,7 @@ protected:
 	virtual ~CColliderComponent() = default;
 
 public:
-	PRIVATE virtual HRESULT Initialize() { return S_OK; }
+	PRIVATE virtual HRESULT Initialize(void* Arg = nullptr) { return S_OK; }
 	PUBLIC	virtual HRESULT Initialize(ECOLLISION eType);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual _int	Tick(const _float& fTimeDelta);

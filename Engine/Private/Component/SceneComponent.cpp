@@ -15,7 +15,7 @@ CSceneComponent::~CSceneComponent()
 {
 }
 
-HRESULT CSceneComponent::Initialize()
+HRESULT CSceneComponent::Initialize(void* Arg)
 {
 	m_pTransformComp = CTransformComponent::Create();
 

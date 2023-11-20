@@ -1,5 +1,8 @@
 #include "Component/SkeletonComponent.h"
 
+#include "System/ModelMgr.h"
+#include "System/GameInstance.h"
+
 CSkeletonComponent::CSkeletonComponent()
 {
 }
@@ -9,18 +12,9 @@ CSkeletonComponent::CSkeletonComponent(const CSkeletonComponent& rhs)
 {
 }
 
-HRESULT CSkeletonComponent::Initialize()
+HRESULT CSkeletonComponent::Initialize(void* Arg)
 {
     return S_OK;
-}
-
-void CSkeletonComponent::Priority_Tick(const _float& fTimeDelta)
-{
-}
-
-_int CSkeletonComponent::Tick(const _float& fTimeDelta)
-{
-    return 0;
 }
 
 CSkeletonComponent* CSkeletonComponent::Create()
@@ -58,4 +52,11 @@ CComponent* CSkeletonComponent::Clone(void* Arg)
 void CSkeletonComponent::Free()
 {
     SUPER::Free();
+}
+
+HRESULT CSkeletonComponent::Load_BoneRootNode(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strArmatureKey)
+{
+    FArmatureData* pArmatureData = GI()->Clone_Armature(eGroupIndex, strModelKey, strArmatureKey);
+
+    return S_OK;
 }

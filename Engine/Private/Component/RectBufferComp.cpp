@@ -10,7 +10,7 @@ CRectBufferComp::CRectBufferComp(const CRectBufferComp& rhs)
 {
 }
 
-HRESULT CRectBufferComp::Initialize()
+HRESULT CRectBufferComp::Initialize(void* Arg)
 {
 	m_iVtxCount = 4;
 	m_iIndexCount = 6;
