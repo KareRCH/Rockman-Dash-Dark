@@ -34,7 +34,7 @@ HRESULT CTestObject::Initialize(const _float3 vPos)
 {
     FAILED_CHECK_RETURN(Initialize(), E_FAIL);
 
-    Set_Position(vPos);
+    Transform().Set_Position(vPos);
 
     return S_OK;
 }
@@ -49,14 +49,18 @@ _int CTestObject::Tick(const _float& fTimeDelta)
     SUPER::Tick(fTimeDelta);
 
     if (GameInstance()->IsKey_Pressing(DIK_W))
-        Set_Position(_float3(Get_Position().x, Get_Position().y, Get_Position().z + 5.f * fTimeDelta));
+        Transform().Set_PositionZ(Transform().Get_PositionFloat3().z + 5.f * fTimeDelta);
     else if (GameInstance()->IsKey_Pressing(DIK_S))
-        Set_Position(_float3(Get_Position().x, Get_Position().y, Get_Position().z - 5.f * fTimeDelta));
+        Transform().Set_PositionZ(Transform().Get_PositionFloat3().z - 5.f * fTimeDelta);
     
     //Set_Scale(_float3(2.f, 2.f, 2.f));
-    //Set_Rotation(_float3(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(180.f)));
+    for (_uint i = 0; i < 1000; i++)
+    {
+        Transform().Set_RotationEuler(_float3(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(180.f)));
+    }
     
-    _float3 t = Get_Rotation();
+    
+    _float3 t = Transform().Get_RotationEulerFloat3();
     //m_pModelBufferComp->Calculate_TransformFromParent();
 
     return 0;
@@ -71,7 +75,8 @@ void CTestObject::Render()
 {
     SUPER::Render();
 
-    MATRIX_BUFFER_T matBuffer = { XMLoadFloat4x4(m_pModelBufferComp->Get_Transform()) * XMLoadFloat4x4(Get_Transform()),
+    MATRIX_BUFFER_T matBuffer = { 
+        m_pModelBufferComp->Transform().Get_TransformMatrix() * Transform().Get_TransformMatrix(),
         GameInstance()->Get_PerspectiveViewMatrix(0), GameInstance()->Get_PerspectiveProjMatrix(0) };
     CAMERA_BUFFER_T cameraBuffer = { _float3(6.f, 6.f, 6.f) };
     LIGHT_BUFFER_T lightBuffer = { _float4(0.2f, 0.2f, 0.2f, 1.f), _float4(0.2f, 0.2f, 0.2f, 1.f), _float3(-1.f, 0.f, 0.f),

@@ -247,6 +247,7 @@
     <ClInclude Include="Public\Component\Component.h" />
     <ClInclude Include="Public\Component\Component_Define.h" />
     <ClInclude Include="Public\Component\GameObjectComp.h" />
+    <ClInclude Include="Public\Component\Interface\ITransform.h" />
     <ClInclude Include="Public\Component\InternalComponent.h" />
     <ClInclude Include="Public\Component\MaterialComponent.h" />
     <ClInclude Include="Public\Component\ModelBufferComp.h" />
@@ -322,6 +323,7 @@
     <ClCompile Include="Private\Component\ColorShaderComp.cpp" />
     <ClCompile Include="Private\Component\Component.cpp" />
     <ClCompile Include="Private\Component\GameObjectComp.cpp" />
+    <ClCompile Include="Private\Component\Interface\ITransform.cpp" />
     <ClCompile Include="Private\Component\InternalComponent.cpp" />
     <ClCompile Include="Private\Component\MaterialComponent.cpp" />
     <ClCompile Include="Private\Component\ModelBufferComp.cpp" />

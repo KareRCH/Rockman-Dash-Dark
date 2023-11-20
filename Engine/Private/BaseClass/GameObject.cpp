@@ -71,6 +71,8 @@ void CGameObject::Free()
 		Safe_Release((*iter));
 	}
 	m_vecComponent.clear();
+
+	Release_Transform();
 }
 
 void CGameObject::Delete_Tag(const wstring& strTag)

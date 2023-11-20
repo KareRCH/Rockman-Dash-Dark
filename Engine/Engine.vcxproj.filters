@@ -435,6 +435,7 @@
     <ClInclude Include="Public\Component\AnimationComponent.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\02. AnimationComponent</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\Interface\ITransform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -629,6 +630,7 @@
     <ClCompile Include="Private\Component\MaterialComponent.cpp">
       <Filter>02. Utility\02. Component\03. InternalComponent\03. MaterialComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Component\Interface\ITransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\PS_ModelTest.hlsl">

@@ -82,8 +82,8 @@ private:
 
 private:
 	_float4x4 ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);
-	_float3 Calculate_InterpolatedFloat3(_float fAnimTime, const _int iNumKeys, const _vec vVectorKey);
-	_float4 Calculate_InterpolatedQuaternion(_float fAnimTime, const _int iNumKeys, const _vec vVectorKey);
+	_float3 Calculate_InterpolatedFloat3(_float fAnimTime, const _int iNumKeys, const _vector vVectorKey);
+	_float4 Calculate_InterpolatedQuaternion(_float fAnimTime, const _int iNumKeys, const _vector vVectorKey);
 
 private:
 	const aiScene*		m_pScene = nullptr;				// 내부 통신용 씬 저장변수

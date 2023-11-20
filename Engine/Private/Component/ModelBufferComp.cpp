@@ -26,7 +26,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 
 	m_iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
 	m_iIndexCount = Cast<_uint>(pMesh->vecIndices.size());
-	Set_Transform(pMesh->matTransform);
+	Transform().Set_Transform(pMesh->matTransform);
 
 	VERTEX_MODEL_SKIN_T* vertices = new VERTEX_MODEL_SKIN_T[m_iVtxCount];
 	if (!vertices)
