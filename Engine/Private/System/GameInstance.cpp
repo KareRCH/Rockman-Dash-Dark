@@ -9,13 +9,14 @@
 #include "System/TimerMgr.h"
 #include "System/FontMgr.h"
 #include "System/ObjectMgr.h"
+#include "System/ComponentMgr.h"
 #include "System/BlackBoardMgr.h"
 #include "System/TextureMgr.h"
-#include "System/ProtoMgr.h"
 #include "System/RenderMgr.h"
-#include "BaseClass/GameObject.h"
 #include "System/ModelMgr.h"
 #include "System/ParticleMgr.h"
+
+#include "BaseClass/GameObject.h"
 
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -648,7 +649,7 @@ HRESULT CGameInstance::Initialize_ProtoMgr()
 	if (nullptr != m_pProtoMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pProtoMgr = CProtoMgr::Create(), E_FAIL);
+	NULL_CHECK_RETURN(m_pProtoMgr = CComponentMgr::Create(), E_FAIL);
 
 	return S_OK;
 }

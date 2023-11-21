@@ -56,7 +56,7 @@ void CLevel::Late_Tick(const _float& fTimeDelta)
 	m_vecPriorityLayer.clear();
 }
 
-void CLevel::Render()
+HRESULT CLevel::Render()
 {
 	// _DEBUG ¿ë
 }

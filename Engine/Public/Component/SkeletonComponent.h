@@ -16,6 +16,8 @@ class ENGINE_DLL CSkeletonComponent final : public CInternalComponent
 	DERIVED_CLASS(CInternalComponent, CSkeletonComponent)
 	struct FInitialData
 	{
+		EModelGroupIndex eGroupIndex;
+		wstring strGroupKey;
 		wstring strArmatureKey;
 	};
 protected:
@@ -24,6 +26,7 @@ protected:
 	virtual ~CSkeletonComponent() = default;
 
 public:
+	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	
 public:

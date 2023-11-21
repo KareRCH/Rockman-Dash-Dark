@@ -21,6 +21,7 @@ protected:
 	virtual ~CInternalComponent() = default;
 
 public:
+	virtual HRESULT Initialize_Prototype() PURE;
 	virtual HRESULT Initialize(void* Arg = nullptr) override PURE;
 
 public:
