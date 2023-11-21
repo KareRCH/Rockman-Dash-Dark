@@ -18,7 +18,7 @@ protected:
 	virtual ~FModelNodeBaseData() = default;
 
 protected:
-	virtual FModelNodeBaseData* Clone() PURE;
+	virtual FModelNodeBaseData* Clone(FArmatureData* pArg) PURE;
 	virtual void Free() override;
 
 public:
@@ -52,7 +52,7 @@ public:
 
 public:
 	static FModelNodeData* Create();
-	virtual FModelNodeBaseData* Clone() override;
+	virtual FModelNodeBaseData* Clone(FArmatureData* pArg) override;
 	virtual void Free() override;
 
 };
@@ -68,7 +68,7 @@ class ENGINE_DLL FArmatureData final : public CBase
 
 private:
 	explicit FArmatureData() {}
-	explicit FArmatureData(const FArmatureData& rhs) = delete;
+	explicit FArmatureData(const FArmatureData& rhs);
 	virtual ~FArmatureData() = default;
 
 public:
@@ -81,6 +81,7 @@ public:
 	FModelNodeData* Find_NodeData(const wstring& strModelNodeKey);
 	FModelNodeData* Create_NodeData(const wstring& strModelNodeKey);
 	void Appoint_ArmatureNode(const wstring& strModelNodeKey);
+	HRESULT Add_NodeData(const wstring& strModelNodeKey, FModelNodeBaseData* pNode);
 
 private:
 	// 아마추어 노드도 같이 저장된다.

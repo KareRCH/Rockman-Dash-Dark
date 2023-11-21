@@ -36,7 +36,7 @@ FModelNodeData* FModelNodeData::Create()
 	return pInstance;
 }
 
-FModelNodeBaseData* FModelNodeData::Clone()
+FModelNodeBaseData* FModelNodeData::Clone(FArmatureData* pArg)
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
@@ -53,9 +53,10 @@ FModelNodeBaseData* FModelNodeData::Clone()
 	{
 		for (_uint i = 0; Cast<size_t>(i) < pInstance->vecChildren.size(); i++)
 		{
-			FModelNodeBaseData* pNode = pInstance->vecChildren[i]->Clone();
+			FModelNodeBaseData* pNode = pInstance->vecChildren[i]->Clone(pArg);
 			pNode->pParent = pInstance;
 			vecChildren[i] = Cast<FModelNodeData*>(pNode);
+			pArg->Add_NodeData(pNode->strName, pNode);
 		}
 	}
 
@@ -136,11 +137,8 @@ FArmatureData* FArmatureData::Clone()
 
 	if (!pInstance->pArmatureNode)
 	{
-		pInstance->pArmatureNode = Cast<FModelNodeData*>(pInstance->pArmatureNode->Clone());
-		for (_uint i = 0; i < pInstance->pArmatureNode->vecChildren.size(); i++)
-		{
-
-		}
+		mapModelNodeData.clear();
+		pInstance->pArmatureNode = Cast<FModelNodeData*>(pInstance->pArmatureNode->Clone(this));
 	}
 
 	return pInstance;
@@ -192,6 +190,17 @@ void FArmatureData::Appoint_ArmatureNode(const wstring& strModelNodeKey)
 		return;
 
 	pArmatureNode = (*iter).second;
+}
+
+HRESULT FArmatureData::Add_NodeData(const wstring& strModelNodeKey, FModelNodeBaseData* pNode)
+{
+	auto iter = mapModelNodeData.find(strModelNodeKey);
+	if (iter != mapModelNodeData.end())
+		return E_FAIL;
+
+	mapModelNodeData.emplace(strModelNodeKey, pNode);
+
+	return S_OK;
 }
 
 

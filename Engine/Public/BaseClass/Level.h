@@ -17,7 +17,7 @@ public:
 	virtual void		Priority_Tick(const _float& fTimeDelta);
 	virtual _int		Tick(const _float& fTimeDelta);
 	virtual void		Late_Tick(const _float& fTimeDelta);
-	virtual void		Render();
+	virtual HRESULT		Render();
 
 	virtual HRESULT		InitializeLate_Scene();
 

@@ -182,7 +182,7 @@ private:
 	class CObjectMgr*		m_pManagement = nullptr;
 	class CBlackBoardMgr*	m_pBlackBoardMgr = nullptr;
 	class CTextureMgr*		m_pTextureMgr = nullptr;
-	class CProtoMgr*		m_pProtoMgr = nullptr;
+	class CComponentMgr*		m_pProtoMgr = nullptr;
 	class CRenderMgr*		m_pRenderMgr = nullptr;
 	class CModelMgr*		m_pModelMgr = nullptr;
 	class CShaderMgr*		m_pShaderMgr = nullptr;

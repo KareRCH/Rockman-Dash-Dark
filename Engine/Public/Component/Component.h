@@ -18,6 +18,7 @@ protected:
 	virtual ~CComponent() = default;
 
 public:
+	virtual HRESULT		Initialize_Prototype() PURE;
 	virtual HRESULT		Initialize(void* Arg = nullptr) PURE;
 
 public:

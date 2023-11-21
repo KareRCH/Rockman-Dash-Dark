@@ -289,6 +289,7 @@
     <ClInclude Include="Public\System\ImGuiMgr.h" />
     <ClInclude Include="Public\System\JobMgr.h" />
     <ClInclude Include="Public\System\KeyMgr.h" />
+    <ClInclude Include="Public\System\LevelMgr.h" />
     <ClInclude Include="Public\System\ObjectMgr.h" />
     <ClInclude Include="Public\System\ModelMgr.h" />
     <ClInclude Include="Public\System\MultiStateTexture.h" />
@@ -301,7 +302,7 @@
     <ClInclude Include="Public\System\GameInstance.h" />
     <ClInclude Include="Public\System\GraphicDev.h" />
     <ClInclude Include="Public\System\InputDev.h" />
-    <ClInclude Include="Public\System\ProtoMgr.h" />
+    <ClInclude Include="Public\System\ComponentMgr.h" />
     <ClInclude Include="Public\System\RenderMgr.h" />
     <ClInclude Include="Public\System\ShaderMgr.h" />
     <ClInclude Include="Public\System\ShaderMgr_Enum.h" />
@@ -355,6 +356,7 @@
     <ClCompile Include="Private\System\ImGuiMgr.cpp" />
     <ClCompile Include="Private\System\JobMgr.cpp" />
     <ClCompile Include="Private\System\KeyMgr.cpp" />
+    <ClCompile Include="Private\System\LevelMgr.cpp" />
     <ClCompile Include="Private\System\ObjectMgr.cpp" />
     <ClCompile Include="Private\System\ModelMgr.cpp" />
     <ClCompile Include="Private\System\MultiStateTexture.cpp" />
@@ -366,7 +368,7 @@
     <ClCompile Include="Private\System\GameInstance.cpp" />
     <ClCompile Include="Private\System\GraphicDev.cpp" />
     <ClCompile Include="Private\System\InputDev.cpp" />
-    <ClCompile Include="Private\System\ProtoMgr.cpp" />
+    <ClCompile Include="Private\System\ComponentMgr.cpp" />
     <ClCompile Include="Private\System\RenderMgr.cpp" />
     <ClCompile Include="Private\System\ShaderMgr.cpp" />
     <ClCompile Include="Private\System\SoundMgr.cpp" />

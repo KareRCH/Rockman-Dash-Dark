@@ -12,8 +12,21 @@ CSkeletonComponent::CSkeletonComponent(const CSkeletonComponent& rhs)
 {
 }
 
+HRESULT CSkeletonComponent::Initialize_Prototype()
+{
+
+    return S_OK;
+}
+
 HRESULT CSkeletonComponent::Initialize(void* Arg)
 {
+    FInitialData tInit = {};
+    
+    if (nullptr != Arg)
+        tInit = (*ReCast<FInitialData*>(Arg));
+
+    
+
     return S_OK;
 }
 
@@ -21,7 +34,7 @@ CSkeletonComponent* CSkeletonComponent::Create()
 {
     ThisClass* pInstance = new ThisClass();
 
-    if (FAILED(pInstance->Initialize()))
+    if (FAILED(pInstance->Initialize_Prototype()))
     {
         Engine::Safe_Release(pInstance);
 

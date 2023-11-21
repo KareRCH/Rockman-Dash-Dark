@@ -4,83 +4,59 @@
 
 CObjectMgr::CObjectMgr(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
-	, m_pScene_Current(nullptr), m_pScene_Reserve(nullptr)
 {
 }
 
-HRESULT CObjectMgr::Initialize(const EMANAGE_SCENE eType)
+HRESULT CObjectMgr::Initialize(_uint iNumLevels)
 {
-	m_eSceneProcess = eType;
+	if (nullptr != m_pLayers)
+		return E_FAIL;
+
+	m_iNumLevels = iNumLevels;
+
+	m_pLayers = new map_layer[iNumLevels];
 
 	return S_OK;
 }
 
 void CObjectMgr::Priority_Tick(const _float& fTimeDelta)
 {
-	// 씬 없으면 예외처리
-	if (nullptr == m_pScene_Current)
-		return;
-
-	m_pScene_Current->Priority_Tick(fTimeDelta);
+	for (_uint i = 0; i < m_iNumLevels; i++)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			Pair.second->Priority_Tick(fTimeDelta);
+		}
+	}
 }
 
 _int CObjectMgr::Tick(const _float& fTimeDelta)
 {
-	if (m_pScene_Reserve)
+	for (_uint i = 0; i < m_iNumLevels; i++)
 	{
-		switch (m_eSceneProcess)
+		for (auto& Pair : m_pLayers[i])
 		{
-		case Engine::EMANAGE_SCENE::SINGLE:
-		{
-			Safe_Release(m_pScene_Current);
-			m_pScene_Current = m_pScene_Reserve;
-			m_pScene_Reserve = nullptr;
-			break;
+			Pair.second->Tick(fTimeDelta);
 		}
-		case Engine::EMANAGE_SCENE::MULTI:
-		{
-			m_pScene_Current = m_pScene_Reserve;
-			m_pScene_Reserve = nullptr;
-			break;
-		}
-		}
-
-		//GameInstance()->Clear_RenderGroup();
-		GameInstance()->Play_PhysicsSimulation(0);
 	}
-
-	// 씬 없으면 예외처리
-	if (nullptr == m_pScene_Current)
-		return -1;
-
-	return m_pScene_Current->Tick(fTimeDelta);
 }
 
 void CObjectMgr::Late_Tick(const _float& fTimeDelta)
 {
-	// 씬 없으면 예외처리
-	if (nullptr == m_pScene_Current)
-		return;
-
-	m_pScene_Current->Late_Tick(fTimeDelta);
+	for (_uint i = 0; i < m_iNumLevels; i++)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			Pair.second->Late_Tick(fTimeDelta);
+		}
+	}
 }
 
-void CObjectMgr::Render()
-{
-	//GameInstance()->Render_GameObject(pGraphicDev);
-
-	// 씬 없으면 예외처리
-	if (nullptr == m_pScene_Current)
-		return;
-
-	m_pScene_Current->Render();		// 디버깅용
-}
-
-CObjectMgr* CObjectMgr::Create(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eType)
+CObjectMgr* CObjectMgr::Create(const DX11DEVICE_T tDevice, _uint iNumLevels)
 {
 	ThisClass* pInstance = new ThisClass(tDevice);
 
-	if (FAILED(pInstance->Initialize(eType)))
+	if (FAILED(pInstance->Initialize(iNumLevels)))
 	{
 		MSG_BOX("Management Create Failed");
 		Engine::Safe_Release(pInstance);
@@ -93,17 +69,74 @@ CObjectMgr* CObjectMgr::Create(const DX11DEVICE_T tDevice, const EMANAGE_SCENE e
 
 void CObjectMgr::Free()
 {
-	switch (m_eSceneProcess)
+	for (size_t i = 0; i < m_iNumLevels; i++)
 	{
-	case EMANAGE_SCENE::SINGLE:
-		Safe_Release(m_pScene_Current);
-		break;
-	case EMANAGE_SCENE::MULTI:
-		for (auto& item : m_mapScene)
-			Safe_Release(item.second);
-		m_mapScene.clear();
-		break;
+		for (auto& Pair : m_pLayers[i])
+			Safe_Release(Pair.second);
+
+		m_pLayers[i].clear();
 	}
+	Safe_Delete_Array(m_pLayers);
+
+	for (auto& Pair : m_mapPrototypes)
+		Safe_Release(Pair.second);
+	m_mapPrototypes.clear();
+}
+
+HRESULT CObjectMgr::Add_Prototype(const wstring& strPrototypeKey, CGameObject* pPrototype)
+{
+	if (nullptr == pPrototype ||
+		nullptr != Find_Prototype(strPrototypeKey))
+		return E_FAIL;
+
+	m_mapPrototypes.emplace(strPrototypeKey, pPrototype);
+
+	return S_OK;
+}
+
+HRESULT CObjectMgr::Add_CloneObject(_uint iLevelIndex, const wstring& strLayerKey, const wstring& strPrototypeKey, void* pArg)
+{
+	/* 원형을 찾고. */
+	CGameObject* pPrototype = Find_Prototype(strPrototypeKey);
+
+	if (nullptr == pPrototype)
+		return E_FAIL;
+
+	/* 원형을 복제하여 실제 게임내에 사용할 사본 객체를 생성해낸다.  */
+	CGameObject* pGameObject = pPrototype->Clone(pArg);
+	if (nullptr == pGameObject)
+		return E_FAIL;
+
+	/* 만들어낸 사본객체를 추가해야할 레이어를 찾자. */
+	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerKey);
+
+	/* 아직 해당 이름을 가진 레이어가 없었다. */
+	/* 이 이름을 가진 레이어에 최초로 추가하고 있는 상황이다. */
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create(0);
+		if (nullptr == pLayer)
+			return E_FAIL;
+
+		pLayer->Add_GameObject(pGameObject);
+
+		m_pLayers[iLevelIndex].emplace(strLayerKey, pLayer);
+	}
+	/* 이미 이름을 가진 레이어가 있었어. */
+	else
+		pLayer->Add_GameObject(pGameObject);
+
+	return S_OK;
+}
+
+CGameObject* CObjectMgr::Find_Prototype(const wstring& strPrototypeKey)
+{
+	return nullptr;
+}
+
+CLayer* CObjectMgr::Find_Layer(_uint iLevelIndex, const wstring& strLayerKey)
+{
+	return nullptr;
 }
 
 
@@ -144,80 +177,3 @@ void CObjectMgr::Add_Layer(const wstring& pLayerTag, CLayer* const pLayer)
 	m_pScene_Current->Add_Layer(pLayerTag, pLayer);
 }
 
-
-
-HRESULT CObjectMgr::Set_Scene(CLevel* pScene)
-{
-	if (m_eSceneProcess != EMANAGE_SCENE::SINGLE)
-		return E_FAIL;
-
-	// 씬 해제 후 새로운 씬을 로드
-	m_pScene_Reserve = pScene;
-	//GameInstance()->Stop_PhysicsSimulation(0);
-
-	return S_OK;
-}
-
-HRESULT CObjectMgr::Set_Scene(wstring strSceneName)
-{
-	auto iter = m_mapScene.find(strSceneName);
-	if (iter == m_mapScene.end())
-		return E_FAIL;
-
-	switch (m_eSceneProcess)
-	{
-	case EMANAGE_SCENE::SINGLE:
-		// 씬 해제 후 새로운 씬을 로드
-		m_pScene_Reserve = (*iter).second;
-
-		break;
-	case EMANAGE_SCENE::MULTI:
-		// 기존 씬 자체는 유지한다. 씬을 로드하러 올 때 그 상태 그대로 로드한다.
-		// + 나중에 씬이 멈췄음을 인지할 수 있는 이벤트를 만들어 넣어주어야 한다.
-		// 이를 통해 씬과 관련없는 매니저와 같은 곳에서 로드되지 않은 자원을 쓰는 객체에 대해 통제할 수 있다.
-		// 특히 물리엔진
-		m_pScene_Reserve = (*iter).second;
-
-		break;
-	}
-	//Engine::Stop_PhysicsSimulation(0);
-
-	return S_OK;
-}
-
-HRESULT CObjectMgr::Add_Scene(CLevel* pScene, wstring strSceneName)
-{
-	m_mapScene.emplace(strSceneName, pScene);
-
-	return S_OK;
-}
-
-HRESULT CObjectMgr::Clear_CurrentScene()
-{
-	m_pScene_Current->Delete_LayerAll();
-
-	return S_OK;
-}
-
-HRESULT CObjectMgr::Clear_SceneAll()
-{
-	for (auto& item : m_mapScene)
-		item.second->Delete_LayerAll();
-
-	return S_OK;
-}
-
-HRESULT CObjectMgr::Delete_SceneAll()
-{
-	for (auto& item : m_mapScene)
-		Safe_Release(item.second);
-
-	return S_OK;
-}
-
-HRESULT CObjectMgr::Delete_CurrentScene()
-{
-	Safe_Release(m_pScene_Current);
-
-	return S_OK;
-}

@@ -70,57 +70,6 @@
     <Filter Include="01. System\01. Manager">
       <UniqueIdentifier>{fa594517-3c84-4988-9229-35314eab8809}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. System\01. Manager\01. GraphicDev">
-      <UniqueIdentifier>{970d303a-a746-446e-a455-440e859508c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\09. ModelMgr">
-      <UniqueIdentifier>{4da3c881-3f47-43e1-a4f1-8bd61601fbf1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\02. Render">
-      <UniqueIdentifier>{c5c4caf4-c2c6-4ceb-8c5c-ec31d184f521}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\03. Proto">
-      <UniqueIdentifier>{90adab0e-20ec-4094-9b8c-9a914cd459ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\04. Physics">
-      <UniqueIdentifier>{efd867c1-4be8-465d-bbbd-3e6f5f8a72dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\04. Physics\Collision">
-      <UniqueIdentifier>{e249bab2-198e-4fa6-83c5-3180bbf2b96a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\04. Physics\Core">
-      <UniqueIdentifier>{c4166190-ffd6-4bbc-960c-92017c74407d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\04. Physics\Force">
-      <UniqueIdentifier>{fdbbb261-4bdf-47bc-920b-db7de084469d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\05. Sound">
-      <UniqueIdentifier>{f0482150-a6f7-4152-b6b6-45f8031ddf2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\06. Texture">
-      <UniqueIdentifier>{394b307a-0f35-4b0c-9bfd-ad790676f474}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\07. Font">
-      <UniqueIdentifier>{b6f827f8-a8f7-43d9-9251-4c42272132f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\08. Input">
-      <UniqueIdentifier>{43df9f42-bb47-4bdb-8aa4-73a0fb6a9074}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\09. Key">
-      <UniqueIdentifier>{86f86bac-7d56-4b94-88cb-8d5b7c0c1e91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\10. Frame">
-      <UniqueIdentifier>{8b7f991d-6299-4c0c-8bde-f87207e7981d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\11. Time">
-      <UniqueIdentifier>{b4b3165d-f6c7-4e73-bb8d-665f50b7a6d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\12. JobQueue">
-      <UniqueIdentifier>{a1651063-ff1d-4e3d-b6e4-dc8cc8790475}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\13. BlackBoard">
-      <UniqueIdentifier>{5538bfdf-d833-40e1-88ba-f9c4510f0d7e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent">
       <UniqueIdentifier>{530a3b69-f0fc-49cf-8049-d7cfe931e9e1}</UniqueIdentifier>
     </Filter>
@@ -148,18 +97,6 @@
     <Filter Include="03. Shader\99. Test\Texture">
       <UniqueIdentifier>{357fe1e0-dab1-4ad0-8d47-88afeee70c0b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. System\01. Manager\14. ObjectMgr">
-      <UniqueIdentifier>{7cbcff4a-8bed-4d2f-b78e-f1a7368cb647}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\15. ImGuiMgr">
-      <UniqueIdentifier>{c873a54f-a8d7-4a42-ae22-e612778fd043}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\17. AnimationMgr">
-      <UniqueIdentifier>{44e32fab-7877-41ac-bf4a-1e9efb522ea0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\16. ShaderMgr">
-      <UniqueIdentifier>{b07dd1c6-4e7a-4b28-8233-159e007fc41a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Shader\02. DeferredShading">
       <UniqueIdentifier>{4a9b8166-0cec-45e0-95b7-53b3de1f8f17}</UniqueIdentifier>
     </Filter>
@@ -169,9 +106,6 @@
     <Filter Include="03. Shader\02. DeferredShading\01. GBuffer">
       <UniqueIdentifier>{f6a8962c-b852-4855-a50c-a5b154bccb40}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. System\01. Manager\18. ParticleMgr">
-      <UniqueIdentifier>{ad0f9a93-ff98-4c18-a854-be503d85f43e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Rect">
       <UniqueIdentifier>{916a8f6e-f3cb-4531-921e-d2f12799ac4d}</UniqueIdentifier>
     </Filter>
@@ -180,12 +114,6 @@
     </Filter>
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. BufferComponent\04. Box">
       <UniqueIdentifier>{b9e6f23c-a1ee-4bb0-a401-369969820f9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\09. ModelMgr\Data">
-      <UniqueIdentifier>{b95d51cb-99c3-40e5-9182-22ebae9c741e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\09. ModelMgr\Define">
-      <UniqueIdentifier>{15ae23f2-4234-4243-9660-aceffe84a068}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Utility\02. Component\03. InternalComponent">
       <UniqueIdentifier>{ee136c04-e3cc-498e-9e90-33b2c1c57f19}</UniqueIdentifier>
@@ -198,6 +126,90 @@
     </Filter>
     <Filter Include="02. Utility\02. Component\03. InternalComponent\03. MaterialComponent">
       <UniqueIdentifier>{3c25317c-31dd-452e-afb7-e27af4b0f8ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main">
+      <UniqueIdentifier>{4810984a-d225-4fa5-9d02-1bd631050983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main\01. GraphicDev">
+      <UniqueIdentifier>{970d303a-a746-446e-a455-440e859508c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main\04. Physics">
+      <UniqueIdentifier>{efd867c1-4be8-465d-bbbd-3e6f5f8a72dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main\04. Physics\Collision">
+      <UniqueIdentifier>{e249bab2-198e-4fa6-83c5-3180bbf2b96a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main\04. Physics\Core">
+      <UniqueIdentifier>{c4166190-ffd6-4bbc-960c-92017c74407d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main\04. Physics\Force">
+      <UniqueIdentifier>{fdbbb261-4bdf-47bc-920b-db7de084469d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\01. Resource">
+      <UniqueIdentifier>{52ed036e-460c-4729-8abb-da03117f62b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline">
+      <UniqueIdentifier>{ff976e51-9d77-41d5-a70a-75616e27673e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main\02. InputDev">
+      <UniqueIdentifier>{43df9f42-bb47-4bdb-8aa4-73a0fb6a9074}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main\03. Key">
+      <UniqueIdentifier>{86f86bac-7d56-4b94-88cb-8d5b7c0c1e91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main\05. TimeMgr">
+      <UniqueIdentifier>{b4b3165d-f6c7-4e73-bb8d-665f50b7a6d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main\06. FrameMgr">
+      <UniqueIdentifier>{8b7f991d-6299-4c0c-8bde-f87207e7981d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\00. Main\07. JobQueue">
+      <UniqueIdentifier>{a1651063-ff1d-4e3d-b6e4-dc8cc8790475}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\01. Resource\01. Sound">
+      <UniqueIdentifier>{f0482150-a6f7-4152-b6b6-45f8031ddf2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\01. Resource\02. Texture">
+      <UniqueIdentifier>{394b307a-0f35-4b0c-9bfd-ad790676f474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\01. Resource\03. Font">
+      <UniqueIdentifier>{b6f827f8-a8f7-43d9-9251-4c42272132f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\01. Resource\04. ModelMgr">
+      <UniqueIdentifier>{4da3c881-3f47-43e1-a4f1-8bd61601fbf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\01. Resource\04. ModelMgr\Data">
+      <UniqueIdentifier>{b95d51cb-99c3-40e5-9182-22ebae9c741e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\01. Resource\04. ModelMgr\Define">
+      <UniqueIdentifier>{15ae23f2-4234-4243-9660-aceffe84a068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\01. Resource\06. ShaderMgr">
+      <UniqueIdentifier>{b07dd1c6-4e7a-4b28-8233-159e007fc41a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\01. Resource\05. AnimationMgr">
+      <UniqueIdentifier>{44e32fab-7877-41ac-bf4a-1e9efb522ea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\01. Resource\07. ParticleMgr">
+      <UniqueIdentifier>{ad0f9a93-ff98-4c18-a854-be503d85f43e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\01. LevelMgr">
+      <UniqueIdentifier>{d6dade1f-50bc-4fbc-8b29-318374de967b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\02. ObjectMgr">
+      <UniqueIdentifier>{7cbcff4a-8bed-4d2f-b78e-f1a7368cb647}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\03. ComponentMgr">
+      <UniqueIdentifier>{90adab0e-20ec-4094-9b8c-9a914cd459ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\04. RenderMgr">
+      <UniqueIdentifier>{c5c4caf4-c2c6-4ceb-8c5c-ec31d184f521}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr">
+      <UniqueIdentifier>{5538bfdf-d833-40e1-88ba-f9c4510f0d7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\06. ImGuiMgr">
+      <UniqueIdentifier>{c873a54f-a8d7-4a42-ae22-e612778fd043}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -241,58 +253,58 @@
       <Filter>02. Utility\01. BaseClass\01. GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\PhysicsMgr.h">
-      <Filter>01. System\01. Manager\04. Physics</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics</Filter>
     </ClInclude>
     <ClInclude Include="Public\Physics\CollisionPrimitive.h">
-      <Filter>01. System\01. Manager\04. Physics\Collision</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Public\Physics\Collide.h">
-      <Filter>01. System\01. Manager\04. Physics\Collision</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Public\Physics\ContactGen_Joint.h">
-      <Filter>01. System\01. Manager\04. Physics\Collision</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Public\Physics\Contact.h">
-      <Filter>01. System\01. Manager\04. Physics\Collision</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Public\Physics\ForceGenerator.h">
-      <Filter>01. System\01. Manager\04. Physics\Force</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Force</Filter>
     </ClInclude>
     <ClInclude Include="Public\Physics\PhysicsWorld3D.h">
-      <Filter>01. System\01. Manager\04. Physics\Core</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Core</Filter>
     </ClInclude>
     <ClInclude Include="Public\Physics\PhysicsCore.h">
-      <Filter>01. System\01. Manager\04. Physics\Core</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Core</Filter>
     </ClInclude>
     <ClInclude Include="Public\Physics\PhysicsPrecision.h">
-      <Filter>01. System\01. Manager\04. Physics\Core</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Core</Filter>
     </ClInclude>
     <ClInclude Include="Public\Physics\RigidBody.h">
-      <Filter>01. System\01. Manager\04. Physics\Core</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Core</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\ColliderComponent.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\02. ColliderComponent</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\InputDev.h">
-      <Filter>01. System\01. Manager\08. Input</Filter>
+      <Filter>01. System\01. Manager\00. Main\02. InputDev</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\GameInstance.h">
       <Filter>01. System\01. Manager</Filter>
     </ClInclude>
     <ClInclude Include="Public\BaseClass\BlackBoard.h">
-      <Filter>01. System\01. Manager\13. BlackBoard</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\BlackBoardMgr.h">
-      <Filter>01. System\01. Manager\13. BlackBoard</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\BlackBoardPtr.h">
-      <Filter>01. System\01. Manager\13. BlackBoard</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\KeyMgr.h">
-      <Filter>01. System\01. Manager\09. Key</Filter>
+      <Filter>01. System\01. Manager\00. Main\03. Key</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\TextureMgr.h">
-      <Filter>01. System\01. Manager\06. Texture</Filter>
+      <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
     </ClInclude>
     <ClInclude Include="Public\BaseClass\Layer.h">
       <Filter>02. Utility\01. BaseClass\04. Layer</Filter>
@@ -300,17 +312,17 @@
     <ClInclude Include="Public\BaseClass\Level.h">
       <Filter>02. Utility\01. BaseClass\03. Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System\ProtoMgr.h">
-      <Filter>01. System\01. Manager\03. Proto</Filter>
+    <ClInclude Include="Public\System\ComponentMgr.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\03. ComponentMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\ObjectMgr.h">
-      <Filter>01. System\01. Manager\14. ObjectMgr</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\02. ObjectMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\MultiStateTexture.h">
-      <Filter>01. System\01. Manager\06. Texture</Filter>
+      <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Texture.h">
-      <Filter>01. System\01. Manager\06. Texture</Filter>
+      <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\ShaderComponent.h">
       <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent</Filter>
@@ -325,7 +337,7 @@
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\01. Tri</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\RenderMgr.h">
-      <Filter>01. System\01. Manager\02. Render</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\04. RenderMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\BaseClass\Camera.h">
       <Filter>02. Utility\01. BaseClass\05. Camera</Filter>
@@ -346,55 +358,55 @@
       <Filter>02. Utility\02. Component\02. GameObjectComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\SoundMgr.h">
-      <Filter>01. System\01. Manager\05. Sound</Filter>
+      <Filter>01. System\01. Manager\01. Resource\01. Sound</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\FontMgr.h">
-      <Filter>01. System\01. Manager\07. Font</Filter>
+      <Filter>01. System\01. Manager\01. Resource\03. Font</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\MyFont.h">
-      <Filter>01. System\01. Manager\07. Font</Filter>
+      <Filter>01. System\01. Manager\01. Resource\03. Font</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Frame.h">
-      <Filter>01. System\01. Manager\10. Frame</Filter>
+      <Filter>01. System\01. Manager\00. Main\06. FrameMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\FrameMgr.h">
-      <Filter>01. System\01. Manager\10. Frame</Filter>
+      <Filter>01. System\01. Manager\00. Main\06. FrameMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Timer.h">
-      <Filter>01. System\01. Manager\11. Time</Filter>
+      <Filter>01. System\01. Manager\00. Main\05. TimeMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\TimerMgr.h">
-      <Filter>01. System\01. Manager\11. Time</Filter>
+      <Filter>01. System\01. Manager\00. Main\05. TimeMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\ModelMgr.h">
-      <Filter>01. System\01. Manager\09. ModelMgr</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\BaseClass\ImGuiWin.h">
-      <Filter>01. System\01. Manager\15. ImGuiMgr</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\06. ImGuiMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\ImGuiMgr.h">
-      <Filter>01. System\01. Manager\15. ImGuiMgr</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\06. ImGuiMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\GraphicDev.h">
-      <Filter>01. System\01. Manager\01. GraphicDev</Filter>
+      <Filter>01. System\01. Manager\00. Main\01. GraphicDev</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\JobMgr.h">
-      <Filter>01. System\01. Manager\12. JobQueue</Filter>
+      <Filter>01. System\01. Manager\00. Main\07. JobQueue</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\ShaderMgr.h">
-      <Filter>01. System\01. Manager\16. ShaderMgr</Filter>
+      <Filter>01. System\01. Manager\01. Resource\06. ShaderMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\AnimationMgr.h">
-      <Filter>01. System\01. Manager\17. AnimationMgr</Filter>
+      <Filter>01. System\01. Manager\01. Resource\05. AnimationMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\ShaderMgr_Enum.h">
-      <Filter>01. System\01. Manager\16. ShaderMgr</Filter>
+      <Filter>01. System\01. Manager\01. Resource\06. ShaderMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\GraphicDev_Include.h">
-      <Filter>01. System\01. Manager\01. GraphicDev</Filter>
+      <Filter>01. System\01. Manager\00. Main\01. GraphicDev</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\ParticleMgr.h">
-      <Filter>01. System\01. Manager\18. ParticleMgr</Filter>
+      <Filter>01. System\01. Manager\01. Resource\07. ParticleMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\RectBufferComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Rect</Filter>
@@ -406,19 +418,19 @@
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\04. Box</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Data\AnimData.h">
-      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Data\BoneData.h">
-      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Data\MeshData.h">
-      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Data\ModelNodeData.h">
-      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Define\ModelMgr_Define.h">
-      <Filter>01. System\01. Manager\09. ModelMgr\Define</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Define</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\InternalComponent.h">
       <Filter>02. Utility\02. Component\03. InternalComponent</Filter>
@@ -436,6 +448,9 @@
       <Filter>02. Utility\02. Component\03. InternalComponent\02. AnimationComponent</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\Interface\ITransform.h" />
+    <ClInclude Include="Public\System\LevelMgr.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\01. LevelMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -454,55 +469,55 @@
       <Filter>02. Utility\01. BaseClass\01. GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\PhysicsMgr.cpp">
-      <Filter>01. System\01. Manager\04. Physics</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics</Filter>
     </ClCompile>
     <ClCompile Include="Private\Physics\Collide.cpp">
-      <Filter>01. System\01. Manager\04. Physics\Collision</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Private\Physics\CollisionPrimitive.cpp">
-      <Filter>01. System\01. Manager\04. Physics\Collision</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Private\Physics\Contact.cpp">
-      <Filter>01. System\01. Manager\04. Physics\Collision</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Private\Physics\ContactGen_Joint.cpp">
-      <Filter>01. System\01. Manager\04. Physics\Collision</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Private\Physics\ForceGenerator.cpp">
-      <Filter>01. System\01. Manager\04. Physics\Force</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Force</Filter>
     </ClCompile>
     <ClCompile Include="Private\Physics\PhysicsCore.cpp">
-      <Filter>01. System\01. Manager\04. Physics\Core</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Core</Filter>
     </ClCompile>
     <ClCompile Include="Private\Physics\PhysicsWorld3D.cpp">
-      <Filter>01. System\01. Manager\04. Physics\Core</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Core</Filter>
     </ClCompile>
     <ClCompile Include="Private\Physics\RigidBody.cpp">
-      <Filter>01. System\01. Manager\04. Physics\Core</Filter>
+      <Filter>01. System\01. Manager\00. Main\04. Physics\Core</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\ColliderComponent.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\02. ColliderComponent</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\InputDev.cpp">
-      <Filter>01. System\01. Manager\08. Input</Filter>
+      <Filter>01. System\01. Manager\00. Main\02. InputDev</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\GameInstance.cpp">
       <Filter>01. System\01. Manager</Filter>
     </ClCompile>
     <ClCompile Include="Private\BaseClass\BlackBoard.cpp">
-      <Filter>01. System\01. Manager\13. BlackBoard</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\BlackBoardMgr.cpp">
-      <Filter>01. System\01. Manager\13. BlackBoard</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\BlackBoardPtr.cpp">
-      <Filter>01. System\01. Manager\13. BlackBoard</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\KeyMgr.cpp">
-      <Filter>01. System\01. Manager\09. Key</Filter>
+      <Filter>01. System\01. Manager\00. Main\03. Key</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\TextureMgr.cpp">
-      <Filter>01. System\01. Manager\06. Texture</Filter>
+      <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
     </ClCompile>
     <ClCompile Include="Private\BaseClass\Level.cpp">
       <Filter>02. Utility\01. BaseClass\03. Scene</Filter>
@@ -510,17 +525,17 @@
     <ClCompile Include="Private\BaseClass\Layer.cpp">
       <Filter>02. Utility\01. BaseClass\04. Layer</Filter>
     </ClCompile>
-    <ClCompile Include="Private\System\ProtoMgr.cpp">
-      <Filter>01. System\01. Manager\03. Proto</Filter>
+    <ClCompile Include="Private\System\ComponentMgr.cpp">
+      <Filter>01. System\01. Manager\02. GamePipeline\03. ComponentMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\ObjectMgr.cpp">
-      <Filter>01. System\01. Manager\14. ObjectMgr</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\02. ObjectMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\MultiStateTexture.cpp">
-      <Filter>01. System\01. Manager\06. Texture</Filter>
+      <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Texture.cpp">
-      <Filter>01. System\01. Manager\06. Texture</Filter>
+      <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\ShaderComponent.cpp">
       <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent</Filter>
@@ -535,7 +550,7 @@
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\01. Tri</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\RenderMgr.cpp">
-      <Filter>01. System\01. Manager\02. Render</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\04. RenderMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\BaseClass\Camera.cpp">
       <Filter>02. Utility\01. BaseClass\05. Camera</Filter>
@@ -550,49 +565,49 @@
       <Filter>02. Utility\02. Component\02. GameObjectComp</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\SoundMgr.cpp">
-      <Filter>01. System\01. Manager\05. Sound</Filter>
+      <Filter>01. System\01. Manager\01. Resource\01. Sound</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\FontMgr.cpp">
-      <Filter>01. System\01. Manager\07. Font</Filter>
+      <Filter>01. System\01. Manager\01. Resource\03. Font</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\MyFont.cpp">
-      <Filter>01. System\01. Manager\07. Font</Filter>
+      <Filter>01. System\01. Manager\01. Resource\03. Font</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Frame.cpp">
-      <Filter>01. System\01. Manager\10. Frame</Filter>
+      <Filter>01. System\01. Manager\00. Main\06. FrameMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\FrameMgr.cpp">
-      <Filter>01. System\01. Manager\10. Frame</Filter>
+      <Filter>01. System\01. Manager\00. Main\06. FrameMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Timer.cpp">
-      <Filter>01. System\01. Manager\11. Time</Filter>
+      <Filter>01. System\01. Manager\00. Main\05. TimeMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\TimerMgr.cpp">
-      <Filter>01. System\01. Manager\11. Time</Filter>
+      <Filter>01. System\01. Manager\00. Main\05. TimeMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\JobMgr.cpp">
-      <Filter>01. System\01. Manager\12. JobQueue</Filter>
+      <Filter>01. System\01. Manager\00. Main\07. JobQueue</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\ModelMgr.cpp">
-      <Filter>01. System\01. Manager\09. ModelMgr</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\BaseClass\ImGuiWin.cpp">
-      <Filter>01. System\01. Manager\15. ImGuiMgr</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\06. ImGuiMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\ImGuiMgr.cpp">
-      <Filter>01. System\01. Manager\15. ImGuiMgr</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\06. ImGuiMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\GraphicDev.cpp">
-      <Filter>01. System\01. Manager\01. GraphicDev</Filter>
+      <Filter>01. System\01. Manager\00. Main\01. GraphicDev</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\ShaderMgr.cpp">
-      <Filter>01. System\01. Manager\16. ShaderMgr</Filter>
+      <Filter>01. System\01. Manager\01. Resource\06. ShaderMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\AnimationMgr.cpp">
-      <Filter>01. System\01. Manager\17. AnimationMgr</Filter>
+      <Filter>01. System\01. Manager\01. Resource\05. AnimationMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\ParticleMgr.cpp">
-      <Filter>01. System\01. Manager\18. ParticleMgr</Filter>
+      <Filter>01. System\01. Manager\01. Resource\07. ParticleMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\RectBufferComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\02. Rect</Filter>
@@ -604,16 +619,16 @@
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\04. Box</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Data\AnimData.cpp">
-      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Data\BoneData.cpp">
-      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Data\MeshData.cpp">
-      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Data\ModelNodeData.cpp">
-      <Filter>01. System\01. Manager\09. ModelMgr\Data</Filter>
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\InternalComponent.cpp">
       <Filter>02. Utility\02. Component\03. InternalComponent</Filter>
@@ -631,6 +646,9 @@
       <Filter>02. Utility\02. Component\03. InternalComponent\03. MaterialComponent</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\Interface\ITransform.cpp" />
+    <ClCompile Include="Private\System\LevelMgr.cpp">
+      <Filter>01. System\01. Manager\02. GamePipeline\01. LevelMgr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\PS_ModelTest.hlsl">
