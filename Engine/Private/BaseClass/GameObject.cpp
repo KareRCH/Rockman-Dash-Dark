@@ -2,18 +2,11 @@
 
 #include "Component/PrimitiveComponent.h"
 
-
-CGameObject::CGameObject(const DX11DEVICE_T tDevice)
-	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
-{
-}
-
 CGameObject::CGameObject(const CGameObject& rhs)
-	: m_pDevice(rhs.m_pDevice), m_pDeviceContext(rhs.m_pDeviceContext)
 {
 }
 
-HRESULT CGameObject::Initialize()
+HRESULT CGameObject::Initialize(void* Arg)
 {
 	FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 

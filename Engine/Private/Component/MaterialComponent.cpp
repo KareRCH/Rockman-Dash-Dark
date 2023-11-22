@@ -19,28 +19,11 @@ HRESULT CMaterialComponent::Initialize(void* Arg)
     return S_OK;
 }
 
-void CMaterialComponent::Priority_Tick(const _float& fTimeDelta)
-{
-}
-
-_int CMaterialComponent::Tick(const _float& fTimeDelta)
-{
-    return 0;
-}
-
-void CMaterialComponent::Late_Tick(const _float& fTimeDelta)
-{
-}
-
-void CMaterialComponent::Render()
-{
-}
-
 CMaterialComponent* CMaterialComponent::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
 		Engine::Safe_Release(pInstance);
 		MSG_BOX("CMaterialComponent Create Failed");

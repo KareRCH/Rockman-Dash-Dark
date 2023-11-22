@@ -20,49 +20,49 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     default:
     case ECOLLISION::SPHERE:
     {
-        FCollisionSphere* pShape = dynamic_cast<FCollisionSphere*>(rhs.m_pCollisionShape);
+        FCollisionSphere* pShape = DynCast<FCollisionSphere*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionSphere(*pShape);
         break;
     }
     case ECOLLISION::BOX:
     {
-        FCollisionBox* pShape = dynamic_cast<FCollisionBox*>(rhs.m_pCollisionShape);
+        FCollisionBox* pShape = DynCast<FCollisionBox*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionBox(*pShape);
         break;
     }
     case ECOLLISION::CAPSULE:
     {
-        FCollisionCapsule* pShape = dynamic_cast<FCollisionCapsule*>(rhs.m_pCollisionShape);
+        FCollisionCapsule* pShape = DynCast<FCollisionCapsule*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionCapsule(*pShape);
         break;
     }
     case ECOLLISION::PLANE:
     {
-        FCollisionPlane* pShape = dynamic_cast<FCollisionPlane*>(rhs.m_pCollisionShape);
+        FCollisionPlane* pShape = DynCast<FCollisionPlane*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionPlane(*pShape);
         break;
     }
     case ECOLLISION::LINE:
     {
-        FCollisionLine* pShape = dynamic_cast<FCollisionLine*>(rhs.m_pCollisionShape);
+        FCollisionLine* pShape = DynCast<FCollisionLine*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionLine(*pShape);
         break;
     }
     case ECOLLISION::RAY:
     {
-        FCollisionRay* pShape = dynamic_cast<FCollisionRay*>(rhs.m_pCollisionShape);
+        FCollisionRay* pShape = DynCast<FCollisionRay*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionRay(*pShape);
         break;
     }
     case ECOLLISION::TRIANGLE:
     {
-        FCollisionTriangle* pShape = dynamic_cast<FCollisionTriangle*>(rhs.m_pCollisionShape);
+        FCollisionTriangle* pShape = DynCast<FCollisionTriangle*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionTriangle(*pShape);
         break;
     }
     case ECOLLISION::OBB:
     {
-        FCollisionOBB* pShape = dynamic_cast<FCollisionOBB*>(rhs.m_pCollisionShape);
+        FCollisionOBB* pShape = DynCast<FCollisionOBB*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionOBB(*pShape);
         break;
     }
@@ -72,7 +72,7 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
 
     // 충돌체에 충돌 이벤트 추가하기
     m_pCollisionShape->Add_CollisionEvent([this](void* pDst, const FContact* const pContact) {
-        this->OnCollision(static_cast<CColliderComponent*>(pDst), pContact);
+        this->OnCollision(Cast<CColliderComponent*>(pDst), pContact);
         });
 
     // 이벤트 함수 클론 제외, 수동으로 외부에서 추가
@@ -85,8 +85,8 @@ CColliderComponent* CColliderComponent::Create(ECOLLISION eType)
     if (FAILED(pInstance->Initialize(eType)))
     {
         Safe_Release(pInstance);
-
         MSG_BOX("Player Create Failed");
+
         return nullptr;
     }
 
@@ -100,7 +100,6 @@ CComponent* CColliderComponent::Clone(void* Arg)
     if (FAILED(pInstance->Initialize()))
     {
         Engine::Safe_Release(pInstance);
-
         MSG_BOX("ColliderBufferComp Copy Failed");
 
         return nullptr;

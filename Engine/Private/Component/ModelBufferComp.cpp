@@ -10,6 +10,8 @@ CModelBufferComp::CModelBufferComp(const CModelBufferComp& rhs)
 
 HRESULT CModelBufferComp::Initialize_Prototype(void* Arg)
 {
+	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+
 	return S_OK;
 }
 
@@ -135,10 +137,9 @@ CModelBufferComp* CModelBufferComp::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("ModelBufferComp Create Failed");
 
 		return nullptr;
@@ -151,10 +152,9 @@ CComponent* CModelBufferComp::Clone(void* Arg)
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize(Arg)))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("ModelBufferComp Copy Failed");
 
 		return nullptr;

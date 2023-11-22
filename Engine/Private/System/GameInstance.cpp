@@ -8,8 +8,11 @@
 #include "System/FrameMgr.h"
 #include "System/TimerMgr.h"
 #include "System/FontMgr.h"
+
+#include "System/LevelMgr.h"
 #include "System/ObjectMgr.h"
 #include "System/ComponentMgr.h"
+
 #include "System/BlackBoardMgr.h"
 #include "System/TextureMgr.h"
 #include "System/RenderMgr.h"
@@ -32,24 +35,25 @@ HRESULT CGameInstance::Initialize()
 
 void CGameInstance::Free()
 {
-	Safe_Release(m_pKeyMgr);
+	Safe_Release(m_pRenderMgr);
+	Safe_Release(m_pComponentMgr);
+	Safe_Release(m_pObjectMgr);
+	Safe_Release(m_pLevelMgr);
+	Safe_Release(m_pBlackBoardMgr);
+	
+	Safe_Release(m_pParticleMgr);
+	Safe_Release(m_pShaderMgr);
+	Safe_Release(m_pModelMgr);
+
+	Safe_Release(m_pFontMgr);
+	Safe_Release(m_pTextureMgr);
+
 	Safe_Release(m_pPhysicsMgr);
 	Safe_Release(m_pSoundMgr);
 	Safe_Release(m_pFrameMgr);
 	Safe_Release(m_pTimerMgr);
-	Safe_Release(m_pManagement);
-	Safe_Release(m_pBlackBoardMgr);
-	
-	Safe_Release(m_pProtoMgr);
-	Safe_Release(m_pRenderMgr);
-
-	Safe_Release(m_pParticleMgr);
-	Safe_Release(m_pShaderMgr);
-	Safe_Release(m_pModelMgr);
-	Safe_Release(m_pTextureMgr);
-	Safe_Release(m_pFontMgr);
+	Safe_Release(m_pKeyMgr);
 	Safe_Release(m_pInputDev);
-
 	Safe_Release(m_pGraphicDev);
 }
 
@@ -525,43 +529,66 @@ void CGameInstance::Tick_Timer(const _tchar* pTimerTag)
 //----------------------------------------------------------------
 
 
-
-#pragma region 매니지먼트
-
-HRESULT CGameInstance::Initialize_ObjectMgr(const DX11DEVICE_T tDevice)
+#pragma region 레벨 매니저
+HRESULT CGameInstance::Initialize_LevelMgr()
 {
-	if (nullptr != m_pManagement)
+	if (nullptr != m_pLevelMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pManagement = CObjectMgr::Create(tDevice, 0), E_FAIL);
+	NULL_CHECK_RETURN(m_pLevelMgr = CLevelMgr::Create(), E_FAIL);
 
 	return S_OK;
 }
 
-void CGameInstance::Priority_Tick_Scene(const _float& fTimeDelta)
+HRESULT CGameInstance::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel)
 {
-	if (nullptr == m_pManagement)
-		return;
+	if (nullptr == m_pLevelMgr)
+		return E_FAIL;
 
-	m_pManagement->Priority_Tick(fTimeDelta);
+	return m_pLevelMgr->Open_Level(iCurrentLevelIndex, pNewLevel);
+}
+#pragma endregion
+
+
+//----------------------------------------------------------------
+
+
+#pragma region 오브젝트 매니저
+
+HRESULT CGameInstance::Initialize_ObjectMgr()
+{
+	if (nullptr != m_pObjectMgr)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(m_pObjectMgr = CObjectMgr::Create(0), E_FAIL);
+
+	return S_OK;
 }
 
-_int CGameInstance::Tick_Scene(const _float& fTimeDelta)
+void CGameInstance::Priority_Tick_Object(const _float& fTimeDelta)
 {
-	if (nullptr == m_pManagement)
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->Priority_Tick(fTimeDelta);
+}
+
+_int CGameInstance::Tick_Object(const _float& fTimeDelta)
+{
+	if (nullptr == m_pObjectMgr)
 		return -1;
 
-	m_pManagement->Tick(fTimeDelta);
+	m_pObjectMgr->Tick(fTimeDelta);
 
 	return 0;
 }
 
-void CGameInstance::Late_Tick_Scene(const _float& fTimeDelta)
+void CGameInstance::Late_Tick_Object(const _float& fTimeDelta)
 {
-	if (nullptr == m_pManagement)
+	if (nullptr == m_pObjectMgr)
 		return;
 
-	m_pManagement->Late_Tick(fTimeDelta);
+	m_pObjectMgr->Late_Tick(fTimeDelta);
 }
 
 #pragma endregion
@@ -626,12 +653,12 @@ ID3D11ShaderResourceView* CGameInstance::Get_Texture(const wstring& strGroupKey,
 
 #pragma region 프로토 매니저
 
-HRESULT CGameInstance::Initialize_ProtoMgr()
+HRESULT CGameInstance::Initialize_ComponentMgr()
 {
-	if (nullptr != m_pProtoMgr)
+	if (nullptr != m_pComponentMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pProtoMgr = CComponentMgr::Create(), E_FAIL);
+	NULL_CHECK_RETURN(m_pComponentMgr = CComponentMgr::Create(), E_FAIL);
 
 	return S_OK;
 }

@@ -240,6 +240,7 @@
     <ClInclude Include="Public\BaseClass\ImGuiWin.h" />
     <ClInclude Include="Public\BaseClass\Layer.h" />
     <ClInclude Include="Public\BaseClass\Level.h" />
+    <ClInclude Include="Public\BaseClass\Terrain.h" />
     <ClInclude Include="Public\Component\AnimationComponent.h" />
     <ClInclude Include="Public\Component\BoxBufferComp.h" />
     <ClInclude Include="Public\Component\ColliderComponent.h" />
@@ -321,6 +322,7 @@
     <ClCompile Include="Private\BaseClass\ImGuiWin.cpp" />
     <ClCompile Include="Private\BaseClass\Layer.cpp" />
     <ClCompile Include="Private\BaseClass\Level.cpp" />
+    <ClCompile Include="Private\BaseClass\Terrain.cpp" />
     <ClCompile Include="Private\Component\AnimationComponent.cpp" />
     <ClCompile Include="Private\Component\BoxBufferComp.cpp" />
     <ClCompile Include="Private\Component\ColliderComponent.cpp" />
@@ -328,7 +330,6 @@
     <ClCompile Include="Private\Component\Component.cpp" />
     <ClCompile Include="Private\Component\GameObjectComp.cpp" />
     <ClCompile Include="Private\Component\D3D11DeviceComp.cpp" />
-    <ClCompile Include="Private\Component\Interface\ITransform.cpp" />
     <ClCompile Include="Private\Component\InternalComponent.cpp" />
     <ClCompile Include="Private\Component\MaterialComponent.cpp" />
     <ClCompile Include="Private\Component\ModelBufferComp.cpp" />

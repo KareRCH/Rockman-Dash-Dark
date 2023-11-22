@@ -1,20 +1,20 @@
 #pragma once
 
-#include "BaseClass/Camera.h"
-#include "Client_Define.h"
+#include "GameObject.h"
 
-BEGIN(Client)
+BEGIN(Engine)
 
 /// <summary>
-/// 게임 내에서 유동적으로 쓰이는 카메라
+/// 지형 정보를 바탕으로 지형에 대한 기능을 가지도록 설계된 오브젝트
 /// </summary>
-class CDynamicCamera final : public CCamera
+class ENGINE_DLL CTerrain final : public CGameObject
 {
-	DERIVED_CLASS(CCamera, CDynamicCamera)
+	DERIVED_CLASS(CGameObject, CTerrain)
+
 protected:
-	explicit CDynamicCamera();
-	explicit CDynamicCamera(const CDynamicCamera& rhs);
-	virtual ~CDynamicCamera() = default;
+	explicit CTerrain() = default;
+	explicit CTerrain(const CTerrain& rhs);
+	virtual ~CTerrain() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -23,10 +23,6 @@ public:
 	virtual _int	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;
 	virtual void	Render() override;
-
-public:
-	static CDynamicCamera* Create();
-	CGameObject* Clone(void* Arg = nullptr) override;
 
 protected:
 	virtual void	Free() override;

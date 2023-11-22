@@ -20,8 +20,8 @@ protected:
 	virtual ~CSceneComponent() = default;
 
 public:
-	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr);
-	virtual HRESULT Initialize(void* Arg = nullptr);
+	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta) PURE;
@@ -31,7 +31,7 @@ public:
 	virtual CComponent* Clone(void* Arg = nullptr) PURE;
 
 protected:
-	virtual void	Free();
+	virtual void	Free() override;
 
 
 #pragma region ¾À ÄÄÆ÷³ÍÆ® °èÃþ

@@ -25,7 +25,7 @@ public:
 	virtual CComponent* Clone(void* Arg = nullptr) override;
 
 protected:
-	virtual void	Free();
+	virtual void	Free() override;
 
 #pragma region Transform
 public:

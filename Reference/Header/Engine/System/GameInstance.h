@@ -40,6 +40,8 @@ public:
 private:
 	virtual void Free() override;
 
+
+
 #pragma region 그래픽 디바이스
 public:		// 그래픽 디바이스
 	HRESULT							Initialize_GraphicDev(const FDEVICE_INIT& tInit);
@@ -57,8 +59,6 @@ public:		// 그래픽 디바이스
 	const _matrix* Get_GraphicDev_OrthoMatrix();
 #pragma endregion
 
-	
-
 
 #pragma region 인풋 디바이스
 public:		// 인풋 디바이스
@@ -69,7 +69,6 @@ public:		// 인풋 디바이스
 	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState);
 #pragma endregion
 
-	
 
 #pragma region 키 매니저
 public:		// 키 매니저
@@ -96,43 +95,72 @@ public:		// 피직스 매니저
 #pragma endregion
 
 
+#pragma region 사운드 매니저
 public:		// 사운드 매니저
 	HRESULT Initialize_SoundMgr();
+#pragma endregion
 
+
+#pragma region 폰트 매니저
 public:		// 폰트 매니저
 	HRESULT Initialize_FontMgr(const DX11DEVICE_T tDevice);
 	HRESULT Create_Font(const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight);
 	void	Render_Font(const _tchar* pFontTag, const _tchar* pString, const _float2* pPos, D3DCOLOR Color);
+#pragma endregion
 
+
+#pragma region 프레임 매니저
 public:		// 프레임 매니저
 	HRESULT Initialize_FrameMgr();
 	HRESULT Create_Frame(const _tchar* pFrameTag, const _float& fCallLimit);
 	_bool	IsPermit_Call(const _tchar* pFrameTag, const _float& fTimeDelta);
 	const _float Get_FrameRate(const _tchar* pFrameTag);
+#pragma endregion
 
+
+#pragma region 타이머 매니저
 public:		// 타이머 매니저
 	HRESULT Initialize_TimerMgr();
 	HRESULT Create_Timer(const _tchar* pTimerTag);
 	_float	Get_TimerDelta(const _tchar* pTimerTag);
 	void	Tick_Timer(const _tchar* pTimeTag);
+#pragma endregion
 
+#pragma region 레벨 매니저
+public:
+	HRESULT Initialize_LevelMgr();
+	HRESULT Open_Level(_uint iCurrentLevelIndex, class CLevel* pNewLevel);
+
+#pragma endregion
+
+#pragma region 오브젝트 매니저
 public:		// 매니지먼트
-	HRESULT Initialize_ObjectMgr(const DX11DEVICE_T tDevice);
+	HRESULT Initialize_ObjectMgr();
 	void	Priority_Tick_Scene(const _float& fTimeDelta);
 	_int	Tick_Scene(const _float& fTimeDelta);
 	void	Late_Tick_Scene(const _float& fTimeDelta);
+#pragma endregion
 
+
+#pragma region 컴포넌트 매니저
+public:		// 컴포넌트 매니저
+	HRESULT Initialize_ComponentMgr();
+#pragma endregion
+
+
+#pragma region 블랙보드 매니저
 public:		// 블랙보드 매니저
 	HRESULT Initialize_BlackBoardMgr();
+#pragma endregion
 
+
+#pragma region 텍스처 매니저
 public:		// 텍스처 매니저
 	HRESULT Initialize_TextureMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
 	HRESULT Load_Texture(const wstring& strFileName, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent);
 	ID3D11ShaderResourceView* Get_Texture(const wstring& strGroupKey, const wstring& strTextureKey);
+#pragma endregion
 
-
-public:		// 프로토 매니저
-	HRESULT Initialize_ProtoMgr();
 
 #pragma region 렌더 매니저
 public:		// 렌더 매니저
@@ -161,12 +189,16 @@ public:		// 모델 매니저
 #pragma endregion
 
 
+#pragma region 셰이더 매니저
 public:		// 셰이더 매니저
 	HRESULT Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
 	HRESULT	Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey);
 	const ComPtr<ID3DBlob>& Get_ShaderByte(const EShaderType eType, const wstring& strKey);
 	template<EShaderType Type>
 	inline ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strKey);
+#pragma endregion
+
+
 
 private:
 	class CGraphicDev*		m_pGraphicDev = nullptr;
@@ -177,15 +209,19 @@ private:
 	class CFontMgr*			m_pFontMgr = nullptr;
 	class CFrameMgr*		m_pFrameMgr = nullptr;
 	class CTimerMgr*		m_pTimerMgr = nullptr;
-	class CObjectMgr*		m_pManagement = nullptr;
-	class CBlackBoardMgr*	m_pBlackBoardMgr = nullptr;
-	class CTextureMgr*		m_pTextureMgr = nullptr;
-	class CComponentMgr*		m_pProtoMgr = nullptr;
+
+	class CLevelMgr*		m_pLevelMgr = nullptr;
+	class CObjectMgr*		m_pObjectMgr = nullptr;
+	class CComponentMgr*	m_pComponentMgr = nullptr;
 	class CRenderMgr*		m_pRenderMgr = nullptr;
+	class CBlackBoardMgr*	m_pBlackBoardMgr = nullptr;
+	
 	class CModelMgr*		m_pModelMgr = nullptr;
+	class CTextureMgr*		m_pTextureMgr = nullptr;
 	class CShaderMgr*		m_pShaderMgr = nullptr;
 	class CParticleMgr*		m_pParticleMgr = nullptr;
 };
+
 
 inline CGameInstance* GameInstance()
 {

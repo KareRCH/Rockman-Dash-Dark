@@ -19,31 +19,13 @@ HRESULT CAnimationComponent::Initialize(void* Arg)
 	return S_OK;
 }
 
-void CAnimationComponent::Priority_Tick(const _float& fTimeDelta)
-{
-}
-
-_int CAnimationComponent::Tick(const _float& fTimeDelta)
-{
-	return 0;
-}
-
-void CAnimationComponent::Late_Tick(const _float& fTimeDelta)
-{
-}
-
-void CAnimationComponent::Render()
-{
-}
-
 CAnimationComponent* CAnimationComponent::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("CAnimationComponent Create Failed");
 
 		return nullptr;
@@ -59,7 +41,6 @@ CComponent* CAnimationComponent::Clone(void* Arg)
 	if (FAILED(pInstance->Initialize()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("CAnimationComponent Create Failed");
 
 		return nullptr;
