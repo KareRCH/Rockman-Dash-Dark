@@ -4,11 +4,6 @@
 #include "GameObject/DynamicCamera.h"
 #include "System/Define/ModelMgr_Define.h"
 
-CTestScene::CTestScene(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
-{
-}
-
 HRESULT CTestScene::Initialize()
 {
     FAILED_CHECK_RETURN(SUPER::Initialize(), E_FAIL);
@@ -20,9 +15,9 @@ HRESULT CTestScene::Initialize()
     CLayer* pLayer = CLayer::Create(0.f);
     Add_Layer(L"GameLogic", pLayer);
 
-    pLayer->Add_GameObject(CTestObject::Create({ m_pDevice, m_pDeviceContext }, _float3(0.f, 0.f, 10.f)));
-    pLayer->Add_GameObject(CTestObject::Create({ m_pDevice, m_pDeviceContext }, _float3(0.f, 0.f, 9.f)));
-    pLayer->Add_GameObject(CDynamicCamera::Create({ m_pDevice, m_pDeviceContext }));
+    pLayer->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 10.f)));
+    pLayer->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 9.f)));
+    pLayer->Add_GameObject(CDynamicCamera::Create());
 
     return S_OK;
 }
@@ -53,19 +48,16 @@ HRESULT CTestScene::Render()
 
 HRESULT CTestScene::InitializeLate_Scene()
 {
-
-
     return S_OK;
 }
 
-CTestScene* CTestScene::Create(const DX11DEVICE_T tDevice)
+CTestScene* CTestScene::Create()
 {
-    ThisClass* pInstance = new ThisClass(tDevice);
+    ThisClass* pInstance = new ThisClass();
 
     if (FAILED(pInstance->Initialize()))
     {
         Engine::Safe_Release(pInstance);
-
         MSG_BOX("TestScene Create Failed");
 
         return nullptr;

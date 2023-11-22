@@ -31,10 +31,10 @@ public:
 	
 public:
 	static CSkeletonComponent* Create();
-	virtual CComponent* Clone(void* Arg = nullptr);
+	virtual CComponent* Clone(void* Arg = nullptr) override;
 
 protected:
-	virtual void	Free();
+	virtual void	Free() override;
 
 public:
 	HRESULT Load_BoneRootNode(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strArmatureKey);

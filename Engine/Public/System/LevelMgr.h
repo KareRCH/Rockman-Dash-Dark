@@ -17,7 +17,7 @@ private:
 
 public:
 	HRESULT Initialize();
-	void Tick(const _float& fTimeDelta);
+	void	Tick(const _float& fTimeDelta);
 	HRESULT Render();
 
 public:

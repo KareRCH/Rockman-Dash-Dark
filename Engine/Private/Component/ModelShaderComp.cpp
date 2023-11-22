@@ -7,8 +7,17 @@ CModelShaderComp::CModelShaderComp(const CModelShaderComp& rhs)
 {
 }
 
+HRESULT CModelShaderComp::Initialize_Prototype(void* Arg)
+{
+    FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+
+    return S_OK;
+}
+
 HRESULT CModelShaderComp::Initialize(void* Arg)
 {
+
+
     return S_OK;
 }
 
@@ -45,7 +54,7 @@ CModelShaderComp* CModelShaderComp::Create(HWND hWnd)
 {
     ThisClass* pInstance = new ThisClass();
 
-    if (FAILED(pInstance->Initialize(hWnd)))
+    if (FAILED(pInstance->Initialize_Prototype(hWnd)))
     {
         Engine::Safe_Release(pInstance);
 

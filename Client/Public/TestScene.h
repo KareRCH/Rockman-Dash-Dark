@@ -9,7 +9,7 @@ class CTestScene : public CLevel
 {
 	DERIVED_CLASS(CLevel, CTestScene)
 protected:
-	explicit CTestScene(const DX11DEVICE_T tDevice);
+	explicit CTestScene() = default;
 	explicit CTestScene(const CTestScene& rhs) = delete;
 	virtual ~CTestScene() = default;
 
@@ -23,7 +23,7 @@ public:
 	virtual HRESULT		InitializeLate_Scene();
 
 public:
-	static CTestScene*	Create(const DX11DEVICE_T tDevice);
+	static CTestScene*	Create();
 
 private:
 	virtual void		Free();

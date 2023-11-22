@@ -1,7 +1,6 @@
 #include "GameObject/DynamicCamera.h"
 
-CDynamicCamera::CDynamicCamera(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
+CDynamicCamera::CDynamicCamera()
 {
     Set_Name(L"DynamicCamera");
 }
@@ -11,12 +10,19 @@ CDynamicCamera::CDynamicCamera(const CDynamicCamera& rhs)
 {
 }
 
-HRESULT CDynamicCamera::Initialize()
+HRESULT CDynamicCamera::Initialize_Prototype()
+{
+    return S_OK;
+}
+
+HRESULT CDynamicCamera::Initialize(void* Arg)
 {
     FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
 
     return S_OK;
 }
+
+
 
 void CDynamicCamera::Priority_Tick(const _float& fTimeDelta)
 {
@@ -27,7 +33,6 @@ _int CDynamicCamera::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
-
     Transform().Set_Position(_float3(6.f, 6.f, 6.f));
 
     _float3 vPos, vUp, vAt;
@@ -35,13 +40,18 @@ _int CDynamicCamera::Tick(const _float& fTimeDelta)
     vAt = _float3(0.f, 0.f, 0.f);
     vUp = _float3(0.f, 1.f, 0.f);
 
-    m_matPersView = XMMatrixLookAtLH(XMLoadFloat3(&vPos),
+    _matrix matPersView, matPersProj;
+
+    matPersView = XMMatrixLookAtLH(XMLoadFloat3(&vPos),
         XMLoadFloat3(&vAt), XMLoadFloat3(&vUp));
-    m_matPersProj = XMMatrixPerspectiveFovLH(XM_PI * 0.25f, ((_float)g_iWindowSizeX / (_float)g_iWindowSizeY), 0.1f, 1000.f);
+    matPersProj = XMMatrixPerspectiveFovLH(XM_PI * 0.25f, ((_float)g_iWindowSizeX / (_float)g_iWindowSizeY), 0.1f, 1000.f);
     //m_matPersProj = XMMatrixOrthographicLH(g_iWindowSizeX, g_iWindowSizeY, 0.1f, 1000.f);
 
-    GameInstance()->Set_PerspectiveViewMatrix(0U, m_matPersView);
-    GameInstance()->Set_PerspectiveProjMatrix(0U, m_matPersProj);
+    XMStoreFloat4x4(&m_matPersView, matPersView);
+    XMStoreFloat4x4(&m_matPersProj, matPersProj);
+
+    GameInstance()->Set_PerspectiveViewMatrix(0U, matPersView);
+    GameInstance()->Set_PerspectiveProjMatrix(0U, matPersProj);
 
     return 0;
 }
@@ -56,14 +66,13 @@ void CDynamicCamera::Render()
     SUPER::Render();
 }
 
-CDynamicCamera* CDynamicCamera::Create(const DX11DEVICE_T tDevice)
+CDynamicCamera* CDynamicCamera::Create()
 {
-    ThisClass* pInstance = new ThisClass(tDevice);
+    ThisClass* pInstance = new ThisClass();
 
     if (FAILED(pInstance->Initialize()))
     {
         Engine::Safe_Release(pInstance);
-
         MSG_BOX("DynamicCamera Create Failed");
 
         return nullptr;
@@ -76,10 +85,9 @@ CGameObject* CDynamicCamera::Clone(void* Arg)
 {
     ThisClass* pInstance = new ThisClass(*this);
 
-    if (FAILED(pInstance->Initialize()))
+    if (FAILED(pInstance->Initialize(Arg)))
     {
         Engine::Safe_Release(pInstance);
-
         MSG_BOX("DynamicCamera Create Failed");
 
         return nullptr;

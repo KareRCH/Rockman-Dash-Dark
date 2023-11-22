@@ -31,26 +31,14 @@
     <Filter Include="02. Utility\01. BaseClass\01. GameObject">
       <UniqueIdentifier>{2d0abd39-7ef5-4611-9f3f-a98f3559676f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Utility\01. BaseClass\02. CCollisionObject">
-      <UniqueIdentifier>{17043d84-2fed-4832-b786-da69c1df5945}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Utility\04. Serialize">
       <UniqueIdentifier>{6a6e644a-f793-496a-b975-1572c3d5e854}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Utility\05. Interface">
       <UniqueIdentifier>{9ef585e4-7021-45f4-88b8-80cf51e778b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Utility\01. BaseClass\03. Scene">
-      <UniqueIdentifier>{333f689f-6fb5-4a40-b44c-9fd2402670c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\01. BaseClass\04. Layer">
-      <UniqueIdentifier>{33d3a709-0023-47bf-a81f-479214a249f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Shader">
       <UniqueIdentifier>{f0851f53-d322-43e4-9bb7-bbabbfd419b2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\01. BaseClass\05. Camera">
-      <UniqueIdentifier>{cbace4bd-8956-4d90-bb10-05422bcb9a5b}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Utility\06. LogicDevice">
       <UniqueIdentifier>{0962f9e2-0e08-4ce2-bf79-d838df3167a6}</UniqueIdentifier>
@@ -223,6 +211,21 @@
     <Filter Include="02. Utility\02. Component\03. InternalComponent\04. TeamAgentComponent\Interface">
       <UniqueIdentifier>{56313027-606a-44dc-bada-a6bf2390274a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\01. BaseClass\01. GameObject\01. Camera">
+      <UniqueIdentifier>{cbace4bd-8956-4d90-bb10-05422bcb9a5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\01. BaseClass\01. GameObject\02. CCollisionObject">
+      <UniqueIdentifier>{17043d84-2fed-4832-b786-da69c1df5945}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\01. BaseClass\02. Level">
+      <UniqueIdentifier>{333f689f-6fb5-4a40-b44c-9fd2402670c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\01. BaseClass\03. Layer">
+      <UniqueIdentifier>{33d3a709-0023-47bf-a81f-479214a249f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\01. BaseClass\01. GameObject\03. Terrain">
+      <UniqueIdentifier>{f530efd7-cb29-4b6c-a121-50b830f0d4b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -319,10 +322,10 @@
       <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
     </ClInclude>
     <ClInclude Include="Public\BaseClass\Layer.h">
-      <Filter>02. Utility\01. BaseClass\04. Layer</Filter>
+      <Filter>02. Utility\01. BaseClass\03. Layer</Filter>
     </ClInclude>
     <ClInclude Include="Public\BaseClass\Level.h">
-      <Filter>02. Utility\01. BaseClass\03. Scene</Filter>
+      <Filter>02. Utility\01. BaseClass\02. Level</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\ComponentMgr.h">
       <Filter>01. System\01. Manager\02. GamePipeline\03. ComponentMgr</Filter>
@@ -352,7 +355,7 @@
       <Filter>01. System\01. Manager\02. GamePipeline\04. RenderMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\BaseClass\Camera.h">
-      <Filter>02. Utility\01. BaseClass\05. Camera</Filter>
+      <Filter>02. Utility\01. BaseClass\01. GameObject\01. Camera</Filter>
     </ClInclude>
     <ClInclude Include="LogicDeviceBasic.h">
       <Filter>02. Utility\06. LogicDevice</Filter>
@@ -459,7 +462,6 @@
     <ClInclude Include="Public\Component\AnimationComponent.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\02. AnimationComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Component\Interface\ITransform.h" />
     <ClInclude Include="Public\System\LevelMgr.h">
       <Filter>01. System\01. Manager\02. GamePipeline\01. LevelMgr</Filter>
     </ClInclude>
@@ -471,6 +473,12 @@
     </ClInclude>
     <ClInclude Include="Public\Component\TeamAgentComp.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\04. TeamAgentComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BaseClass\Terrain.h">
+      <Filter>02. Utility\01. BaseClass\01. GameObject\03. Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\Interface\ITransform.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\01. TransformComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -541,10 +549,10 @@
       <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
     </ClCompile>
     <ClCompile Include="Private\BaseClass\Level.cpp">
-      <Filter>02. Utility\01. BaseClass\03. Scene</Filter>
+      <Filter>02. Utility\01. BaseClass\02. Level</Filter>
     </ClCompile>
     <ClCompile Include="Private\BaseClass\Layer.cpp">
-      <Filter>02. Utility\01. BaseClass\04. Layer</Filter>
+      <Filter>02. Utility\01. BaseClass\03. Layer</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\ComponentMgr.cpp">
       <Filter>01. System\01. Manager\02. GamePipeline\03. ComponentMgr</Filter>
@@ -574,7 +582,7 @@
       <Filter>01. System\01. Manager\02. GamePipeline\04. RenderMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\BaseClass\Camera.cpp">
-      <Filter>02. Utility\01. BaseClass\05. Camera</Filter>
+      <Filter>02. Utility\01. BaseClass\01. GameObject\01. Camera</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\ModelBufferComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. BufferComponent\03. Model</Filter>
@@ -666,7 +674,6 @@
     <ClCompile Include="Private\Component\MaterialComponent.cpp">
       <Filter>02. Utility\02. Component\03. InternalComponent\03. MaterialComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Component\Interface\ITransform.cpp" />
     <ClCompile Include="Private\System\LevelMgr.cpp">
       <Filter>01. System\01. Manager\02. GamePipeline\01. LevelMgr</Filter>
     </ClCompile>
@@ -675,6 +682,9 @@
     </ClCompile>
     <ClCompile Include="Private\Component\TeamAgentComp.cpp">
       <Filter>02. Utility\02. Component\03. InternalComponent\04. TeamAgentComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BaseClass\Terrain.cpp">
+      <Filter>02. Utility\01. BaseClass\01. GameObject\03. Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -83,7 +83,7 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_BlackBoardMgr(), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ProtoMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(tDevice, EMANAGE_SCENE::MULTI), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(tDevice), E_FAIL);
 
 	return S_OK;
 }
@@ -94,7 +94,7 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 
 	m_pGameInstance->StartFrame_PhysicsMgr();
 
-	m_pGameInstance->Tick_Scene(fTimeDelta);
+	m_pGameInstance->Tick_Object(fTimeDelta);
 
 	m_pGameInstance->Tick_PhysicsMgr(fTimeDelta);
 
@@ -103,7 +103,7 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 
 void CMainApp::Late_Tick(const _float& fTimeDelta)
 {
-	m_pGameInstance->Late_Tick_Scene(fTimeDelta);
+	m_pGameInstance->Late_Tick_Object(fTimeDelta);
 	m_pGameInstance->Late_Tick_KeyMgr();
 }
 

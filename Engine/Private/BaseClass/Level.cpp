@@ -1,12 +1,5 @@
 #include "BaseClass/Level.h"
 
-
-
-CLevel::CLevel(const DX11DEVICE_T tDevice)
-	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
-{
-}
-
 HRESULT CLevel::Initialize()
 {
 	return S_OK;

@@ -18,7 +18,10 @@ void CLevelMgr::Tick(const _float& fTimeDelta)
 
 HRESULT CLevelMgr::Render()
 {
-	return S_OK;
+	if (nullptr == m_pCurrentLevel)
+		return E_FAIL;
+
+	return m_pCurrentLevel->Render();
 }
 
 CLevelMgr* CLevelMgr::Create()

@@ -1,14 +1,16 @@
 #include "BaseClass/Camera.h"
 
-CCamera::CCamera(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
-    , m_vAt(_float3(0.f, 0.f, 0.f)), m_vUp(_float3(0.f, 1.f, 0.f))
-    , m_matPersView(XMMatrixIdentity()), m_matPersProj(XMMatrixIdentity())
+CCamera::CCamera()
+    : m_vAt(_float3(0.f, 0.f, 0.f)), m_vUp(_float3(0.f, 1.f, 0.f))
+    , m_matPersView(), m_matPersProj()
 {
+    XMStoreFloat4x4(&m_matPersView, XMMatrixIdentity());
+    XMStoreFloat4x4(&m_matPersProj, XMMatrixIdentity());
 }
 
 CCamera::CCamera(const CCamera& rhs)
     : Base(rhs)
+    , m_matPersView(rhs.m_matPersView)
     , m_matPersProj(rhs.m_matPersProj)
 {
 }

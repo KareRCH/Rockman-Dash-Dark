@@ -16,19 +16,15 @@ protected:
 	virtual ~CMaterialComponent() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(void* Arg = nullptr);
-	virtual HRESULT Initialize(void* Arg = nullptr);
-	virtual void	Priority_Tick(const _float& fTimeDelta);
-	virtual _int	Tick(const _float& fTimeDelta);
-	virtual void	Late_Tick(const _float& fTimeDelta);
-	virtual void	Render();
+	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(void* Arg = nullptr) override;
 
 public:
 	static CMaterialComponent* Create();
-	virtual CComponent* Clone(void* Arg = nullptr);
+	virtual CComponent* Clone(void* Arg = nullptr) override;
 
 protected:
-	virtual void	Free();
+	virtual void	Free() override;
 };
 
 END

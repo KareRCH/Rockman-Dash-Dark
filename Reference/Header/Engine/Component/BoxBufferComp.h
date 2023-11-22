@@ -13,18 +13,19 @@ protected:
 	virtual ~CBoxBufferComp() = default;
 
 public:
-	virtual HRESULT Initialize(void* Arg = nullptr);
-	virtual void	Priority_Tick(const _float& fTimeDelta);
-	virtual _int	Tick(const _float& fTimeDelta);
-	virtual void	Late_Tick(const _float& fTimeDelta);
-	virtual void	Render();
+	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual void	Priority_Tick(const _float& fTimeDelta) override;
+	virtual _int	Tick(const _float& fTimeDelta) override;
+	virtual void	Late_Tick(const _float& fTimeDelta) override;
+	virtual void	Render() override;
 
 public:
 	static CBoxBufferComp* Create();
 	virtual CComponent* Clone(void* Arg = nullptr) override;
 
 protected:
-	virtual void	Free();
+	virtual void	Free() override;
 };
 
 END

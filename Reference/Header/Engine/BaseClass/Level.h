@@ -8,7 +8,7 @@ class ENGINE_DLL CLevel abstract : public CBase
 {
 	DERIVED_CLASS(CBase, CLevel)
 protected:
-	explicit CLevel(const DX11DEVICE_T tDevice);
+	explicit CLevel() = default;
 	explicit CLevel(const CLevel& rhs) = delete;
 	virtual ~CLevel() = default;
 

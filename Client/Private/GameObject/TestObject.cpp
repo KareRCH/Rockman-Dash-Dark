@@ -7,8 +7,7 @@
 
 #include "System/RenderMgr.h"
 
-CTestObject::CTestObject(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
+CTestObject::CTestObject()
 {
     Set_Name(L"TestObject");
 }
@@ -18,7 +17,12 @@ CTestObject::CTestObject(const CGameObject& rhs)
 {
 }
 
-HRESULT CTestObject::Initialize()
+HRESULT CTestObject::Initialize_Prototype()
+{
+    return S_OK;
+}
+
+HRESULT CTestObject::Initialize(void* Arg)
 {
     FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
@@ -88,9 +92,9 @@ void CTestObject::Render()
     m_pModelShaderComp->Render(matBuffer, cameraBuffer, boneBuffer, lightBuffer);
 }
 
-CTestObject* CTestObject::Create(const DX11DEVICE_T tDevice)
+CTestObject* CTestObject::Create()
 {
-    ThisClass* pInstance = new ThisClass(tDevice);
+    ThisClass* pInstance = new ThisClass();
 
     if (FAILED(pInstance->Initialize()))
     {
@@ -104,9 +108,9 @@ CTestObject* CTestObject::Create(const DX11DEVICE_T tDevice)
     return pInstance;
 }
 
-CTestObject* CTestObject::Create(const DX11DEVICE_T tDevice, const _float3 vPos)
+CTestObject* CTestObject::Create(const _float3 vPos)
 {
-    ThisClass* pInstance = new ThisClass(tDevice);
+    ThisClass* pInstance = new ThisClass();
 
     if (FAILED(pInstance->Initialize(vPos)))
     {

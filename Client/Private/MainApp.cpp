@@ -82,11 +82,10 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_BlackBoardMgr(), E_FAIL);
 
-	
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ProtoMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(tDevice), E_FAIL);
-	//m_pGameInstance->Set_Scene(CTestScene::Create());
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ComponentMgr(), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_LevelMgr(), E_FAIL);
+	m_pGameInstance->Open_Level(0, CTestScene::Create());
 	
 
 	return S_OK;
@@ -97,12 +96,12 @@ void CMainApp::Priority_Tick(const _float& fTimeDelta)
 	m_pGameInstance->Tick_KeyMgr();
 	m_pGameInstance->StartFrame_PhysicsMgr();
 
-	m_pGameInstance->Priority_Tick_Scene(fTimeDelta);
+	m_pGameInstance->Priority_Tick_Object(fTimeDelta);
 }
 
 _int CMainApp::Tick(const _float& fTimeDelta)
 {
-	m_pGameInstance->Tick_Scene(fTimeDelta);
+	m_pGameInstance->Tick_Object(fTimeDelta);
 
 	m_pGameInstance->Tick_PhysicsMgr(fTimeDelta);
 
@@ -111,7 +110,7 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 
 void CMainApp::Late_Tick(const _float& fTimeDelta)
 {
-	m_pGameInstance->Late_Tick_Scene(fTimeDelta);
+	m_pGameInstance->Late_Tick_Object(fTimeDelta);
 	m_pGameInstance->Late_Tick_KeyMgr();
 }
 

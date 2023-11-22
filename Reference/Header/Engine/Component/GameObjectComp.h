@@ -17,6 +17,7 @@ protected:
 	virtual ~CGameObjectComp() = default;
 
 public:
+	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) PURE;
 	virtual HRESULT Initialize(void* Arg = nullptr) PURE;
 	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
 	virtual _int	Tick(const _float& fTimeDelta) PURE;

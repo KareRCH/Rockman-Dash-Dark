@@ -14,7 +14,7 @@ class CObjectMgr final : public CBase
 	DERIVED_CLASS(CBase, CObjectMgr)
 
 private:
-	explicit CObjectMgr(const DX11DEVICE_T tDevice);
+	explicit CObjectMgr();
 	virtual ~CObjectMgr() = default;
 
 public:
@@ -24,7 +24,7 @@ public:
 	void				Late_Tick(const _float& fTimeDelta);
 
 public:
-	static CObjectMgr* Create(const DX11DEVICE_T tDevice, _uint iNumLevels);
+	static CObjectMgr* Create(_uint iNumLevels);
 private:
 	virtual void		Free();
 
@@ -50,11 +50,6 @@ private:
 //
 //	// 툴에서 쓰이는 함수
 //	void					Add_Layer(const wstring& pLayerTag, CLayer* const pLayer);
-
-	
-private:
-	ComPtr<ID3D11Device>					m_pDevice = { nullptr };
-	ComPtr<ID3D11DeviceContext>				m_pDeviceContext = { nullptr };
 
 
 };

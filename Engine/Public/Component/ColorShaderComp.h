@@ -27,7 +27,7 @@ public:
 	virtual CComponent*				Clone(void* Arg = nullptr) override;
 
 protected:
-	virtual void	Free();
+	virtual void	Free() override;
 
 public:
 	HRESULT Initialize_Shader(HWND hWnd, const _tchar* vsFileName, const _tchar* psFileName);

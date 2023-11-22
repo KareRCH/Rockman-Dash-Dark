@@ -5,6 +5,11 @@ CRectBufferComp::CRectBufferComp(const CRectBufferComp& rhs)
 {
 }
 
+HRESULT CRectBufferComp::Initialize_Prototype(void* Arg)
+{
+	return S_OK;
+}
+
 HRESULT CRectBufferComp::Initialize(void* Arg)
 {
 	m_iVtxCount = 4;

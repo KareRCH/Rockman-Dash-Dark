@@ -2,8 +2,7 @@
 
 #include "System/GameInstance.h"
 
-CObjectMgr::CObjectMgr(const DX11DEVICE_T tDevice)
-	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
+CObjectMgr::CObjectMgr()
 {
 }
 
@@ -54,9 +53,9 @@ void CObjectMgr::Late_Tick(const _float& fTimeDelta)
 	}
 }
 
-CObjectMgr* CObjectMgr::Create(const DX11DEVICE_T tDevice, _uint iNumLevels)
+CObjectMgr* CObjectMgr::Create(_uint iNumLevels)
 {
-	ThisClass* pInstance = new ThisClass(tDevice);
+	ThisClass* pInstance = new ThisClass();
 
 	if (FAILED(pInstance->Initialize(iNumLevels)))
 	{

@@ -5,7 +5,7 @@ CBoxBufferComp::CBoxBufferComp(const CBoxBufferComp& rhs)
 {
 }
 
-HRESULT CBoxBufferComp::Initialize(void* Arg)
+HRESULT CBoxBufferComp::Initialize_Prototype(void* Arg)
 {
 	m_iVtxCount = 4;
 	m_iIndexCount = 6;
@@ -83,6 +83,11 @@ HRESULT CBoxBufferComp::Initialize(void* Arg)
 	return S_OK;
 }
 
+HRESULT CBoxBufferComp::Initialize(void* Arg)
+{
+	return S_OK;
+}
+
 void CBoxBufferComp::Priority_Tick(const _float& fTimeDelta)
 {
 }
@@ -115,10 +120,9 @@ CBoxBufferComp* CBoxBufferComp::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("BoxBufferComp Create Failed");
 
 		return nullptr;
@@ -134,7 +138,6 @@ CComponent* CBoxBufferComp::Clone(void* Arg)
 	if (FAILED(pInstance->Initialize()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("BoxBufferComp Copy Failed");
 
 		return nullptr;
