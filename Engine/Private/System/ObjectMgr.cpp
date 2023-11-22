@@ -39,6 +39,8 @@ _int CObjectMgr::Tick(const _float& fTimeDelta)
 			Pair.second->Tick(fTimeDelta);
 		}
 	}
+
+	return 0;
 }
 
 void CObjectMgr::Late_Tick(const _float& fTimeDelta)
@@ -144,36 +146,36 @@ CLayer* CObjectMgr::Find_Layer(_uint iLevelIndex, const wstring& strLayerKey)
 
 
 
-CPrimitiveComponent* Engine::CObjectMgr::Get_Component(COMPONENTID eID, const wstring& pLayerTag, const wstring& pObjTag, const wstring& pComponentTag)
-{
-	// 매니지먼트 -> 씬 -> 레이어 -> 게임 오브젝트 -> 컴포넌트
-	if (nullptr == m_pScene_Current)
-		return nullptr;
-
-	return m_pScene_Current->Get_Component(eID, pLayerTag, pObjTag, pComponentTag);
-}
-
-CGameObject* CObjectMgr::Get_GameObject(const wstring& pLayerTag, const wstring& pObjTag)
-{
-	// 매니지먼트 -> 씬 -> 레이어 -> 게임 오브젝트
-	if (nullptr == m_pScene_Current)
-		return nullptr;
-
-	return m_pScene_Current->Get_GameObject(pLayerTag, pObjTag);
-}
-
-void CObjectMgr::Add_GameObject(const wstring& pLayerTag, CGameObject* const pObj)
-{
-	m_pScene_Current->Add_GameObject(pLayerTag, pObj);
-}
-
-void CObjectMgr::Add_GameObject(const wstring& pLayerTag, const wstring& pObjTag, CGameObject* const pObj)
-{
-	m_pScene_Current->Add_GameObject(pLayerTag, pObjTag, pObj);
-}
-
-void CObjectMgr::Add_Layer(const wstring& pLayerTag, CLayer* const pLayer)
-{
-	m_pScene_Current->Add_Layer(pLayerTag, pLayer);
-}
-
+//CPrimitiveComponent* Engine::CObjectMgr::Get_Component(COMPONENTID eID, const wstring& pLayerTag, const wstring& pObjTag, const wstring& pComponentTag)
+//{
+//	// 매니지먼트 -> 씬 -> 레이어 -> 게임 오브젝트 -> 컴포넌트
+//	if (nullptr == m_pScene_Current)
+//		return nullptr;
+//
+//	return m_pScene_Current->Get_Component(eID, pLayerTag, pObjTag, pComponentTag);
+//}
+//
+//CGameObject* CObjectMgr::Get_GameObject(const wstring& pLayerTag, const wstring& pObjTag)
+//{
+//	// 매니지먼트 -> 씬 -> 레이어 -> 게임 오브젝트
+//	if (nullptr == m_pScene_Current)
+//		return nullptr;
+//
+//	return m_pScene_Current->Get_GameObject(pLayerTag, pObjTag);
+//}
+//
+//void CObjectMgr::Add_GameObject(const wstring& pLayerTag, CGameObject* const pObj)
+//{
+//	m_pScene_Current->Add_GameObject(pLayerTag, pObj);
+//}
+//
+//void CObjectMgr::Add_GameObject(const wstring& pLayerTag, const wstring& pObjTag, CGameObject* const pObj)
+//{
+//	m_pScene_Current->Add_GameObject(pLayerTag, pObjTag, pObj);
+//}
+//
+//void CObjectMgr::Add_Layer(const wstring& pLayerTag, CLayer* const pLayer)
+//{
+//	m_pScene_Current->Add_Layer(pLayerTag, pLayer);
+//}
+//

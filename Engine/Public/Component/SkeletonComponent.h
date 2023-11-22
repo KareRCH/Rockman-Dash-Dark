@@ -21,12 +21,12 @@ class ENGINE_DLL CSkeletonComponent final : public CInternalComponent
 		wstring strArmatureKey;
 	};
 protected:
-	explicit CSkeletonComponent();
+	explicit CSkeletonComponent() = default;
 	explicit CSkeletonComponent(const CSkeletonComponent& rhs);
 	virtual ~CSkeletonComponent() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	
 public:

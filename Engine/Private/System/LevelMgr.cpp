@@ -18,10 +18,7 @@ void CLevelMgr::Tick(const _float& fTimeDelta)
 
 HRESULT CLevelMgr::Render()
 {
-	if (nullptr == m_pCurrentLevel)
-		return E_FAIL;
-
-	return m_pCurrentLevel->Render();
+	return S_OK;
 }
 
 CLevelMgr* CLevelMgr::Create()
@@ -50,8 +47,8 @@ HRESULT CLevelMgr::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel)
 		return E_FAIL;
 
 	// 씬 옮겨갈 때 오브젝트 없애기
-	if (nullptr != m_pCurrentLevel)
-		GI()->Clear(m_iCurrentLevelIndex);
+	/*if (nullptr != m_pCurrentLevel)
+		GI()->Clear(m_iCurrentLevelIndex);*/
 
 	if (0 != Safe_Release(m_pCurrentLevel))
 		return E_FAIL;

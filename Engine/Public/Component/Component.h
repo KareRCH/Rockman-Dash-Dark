@@ -18,20 +18,21 @@ protected:
 	virtual ~CComponent() = default;
 
 public:
-	virtual HRESULT		Initialize_Prototype() PURE;
+	virtual HRESULT		Initialize_Prototype(void* Arg = nullptr) PURE;
 	virtual HRESULT		Initialize(void* Arg = nullptr) PURE;
 
 public:
 	virtual CComponent* Clone(void* Arg = nullptr) PURE;
 
 protected:
-	virtual void		Free();
+	virtual void		Free() PURE;
 
 public:
 	GETSET_1(wstring, m_strName, Name, GET_C_REF)		// 이름을 얻기만 가능
 
 private:
 	wstring				m_strName;						// 컴포넌트 이름
+	_bool				m_bClone;						// 원형인지 아닌지
 
 public:
 	// 기본형 컴포넌트임. 게임 오브젝트에 추가된 것들은 PrimiveComponent를 상속받은 객체를 사용할 것.

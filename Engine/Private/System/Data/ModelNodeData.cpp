@@ -19,6 +19,10 @@ void FModelNodeBaseData::Free()
 
 // ------------------------ FModelNodeData ----------------------------
 
+FModelNodeData::FModelNodeData(const FModelNodeData& rhs)
+	: Base(rhs)
+{
+}
 
 FModelNodeData* FModelNodeData::Create()
 {
@@ -56,7 +60,7 @@ FModelNodeBaseData* FModelNodeData::Clone(FArmatureData* pArg)
 			FModelNodeBaseData* pNode = pInstance->vecChildren[i]->Clone(pArg);
 			pNode->pParent = pInstance;
 			vecChildren[i] = Cast<FModelNodeData*>(pNode);
-			pArg->Add_NodeData(pNode->strName, pNode);
+			pArg->Add_NodeData(pNode->strName, Cast<FModelNodeData*>(pNode));
 		}
 	}
 
@@ -192,7 +196,7 @@ void FArmatureData::Appoint_ArmatureNode(const wstring& strModelNodeKey)
 	pArmatureNode = (*iter).second;
 }
 
-HRESULT FArmatureData::Add_NodeData(const wstring& strModelNodeKey, FModelNodeBaseData* pNode)
+HRESULT FArmatureData::Add_NodeData(const wstring& strModelNodeKey, FModelNodeData* pNode)
 {
 	auto iter = mapModelNodeData.find(strModelNodeKey);
 	if (iter != mapModelNodeData.end())

@@ -14,11 +14,11 @@ protected:
 	virtual ~CTestScene() = default;
 
 public:
-	virtual HRESULT		Initialize();
-	virtual void		Priority_Tick(const _float& fTimeDelta);
-	virtual _int		Tick(const _float& fTimeDelta);
-	virtual void		Late_Tick(const _float& fTimeDelta);
-	virtual void		Render();
+	virtual HRESULT		Initialize() override;
+	virtual void		Priority_Tick(const _float& fTimeDelta) override;
+	virtual _int		Tick(const _float& fTimeDelta) override;
+	virtual void		Late_Tick(const _float& fTimeDelta) override;
+	virtual HRESULT		Render() override;
 
 	virtual HRESULT		InitializeLate_Scene();
 

@@ -85,8 +85,8 @@ HRESULT CMainApp::Initialize()
 	
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ProtoMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(tDevice, EMANAGE_SCENE::SINGLE), E_FAIL);
-	m_pGameInstance->Set_Scene(CTestScene::Create(tDevice));
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(tDevice), E_FAIL);
+	//m_pGameInstance->Set_Scene(CTestScene::Create());
 	
 
 	return S_OK;

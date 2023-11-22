@@ -1,10 +1,5 @@
 #include "Component/RectBufferComp.h"
 
-CRectBufferComp::CRectBufferComp(const DX11DEVICE_T tDevice)
-	: Base(tDevice)
-{
-}
-
 CRectBufferComp::CRectBufferComp(const CRectBufferComp& rhs)
 	: Base(rhs)
 {
@@ -63,7 +58,7 @@ HRESULT CRectBufferComp::Initialize(void* Arg)
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVtxBuffer.GetAddressOf()), E_FAIL);
+	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVtxBuffer.GetAddressOf()), E_FAIL);
 
 	// 정적 인덱스 버퍼의 구조체를 설정한다.
 	D3D11_BUFFER_DESC indexBufferDesc;
@@ -80,7 +75,7 @@ HRESULT CRectBufferComp::Initialize(void* Arg)
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&indexBufferDesc, &indexData, m_pIndexBuffer.GetAddressOf()), E_FAIL);
+	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&indexBufferDesc, &indexData, m_pIndexBuffer.GetAddressOf()), E_FAIL);
 
 	Safe_Delete_Array(vertices);
 	Safe_Delete_Array(indices);
@@ -107,23 +102,22 @@ void CRectBufferComp::Render()
 	_uint iOffset = 0;
 
 	// 렌더링 할 수 있도록 입력 어셈블러에서 정점 버퍼를 활성으로 설정
-	m_pDeviceContext->IASetVertexBuffers(0, 1, m_pVtxBuffer.GetAddressOf(), &iStride, &iOffset);
+	D3D11Context()->IASetVertexBuffers(0, 1, m_pVtxBuffer.GetAddressOf(), &iStride, &iOffset);
 
 	// 렌더링 할 수 있도록 입력 어셈블러에서 인덱스 버퍼를 활성으로 설정
-	m_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	D3D11Context()->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 	// 정점 버퍼로 그릴 기본형 설정. 삼각형 설정
-	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-CRectBufferComp* CRectBufferComp::Create(const DX11DEVICE_T tDevice)
+CRectBufferComp* CRectBufferComp::Create()
 {
-	ThisClass* pInstance = new ThisClass(tDevice);
+	ThisClass* pInstance = new ThisClass();
 
 	if (FAILED(pInstance->Initialize()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("RectBufferComp Create Failed");
 
 		return nullptr;
@@ -139,7 +133,6 @@ CComponent* CRectBufferComp::Clone(void* Arg)
 	if (FAILED(pInstance->Initialize()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("RectBufferComp Copy Failed");
 
 		return nullptr;

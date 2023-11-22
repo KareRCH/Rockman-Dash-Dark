@@ -8,21 +8,22 @@ class ENGINE_DLL CColorShaderComp final : public CShaderComponent
 {
 	DERIVED_CLASS(CShaderComponent, CColorShaderComp)
 protected:
-	explicit CColorShaderComp(const DX11DEVICE_T tDevice);
+	explicit CColorShaderComp() = default;
 	explicit CColorShaderComp(const CColorShaderComp& rhs);
 	virtual ~CColorShaderComp() = default;
 
 public:
-	virtual HRESULT Initialize(void* Arg = nullptr);
+	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual HRESULT	Initialize(HWND hWnd);
-	virtual void	Priority_Tick(const _float& fTimeDelta);
-	virtual _int	Tick(const _float& fTimeDelta);
-	virtual void	Late_Tick(const _float& fTimeDelta) {}
-	virtual void	Render() {}
+	virtual void	Priority_Tick(const _float& fTimeDelta) override;
+	virtual _int	Tick(const _float& fTimeDelta) override;
+	virtual void	Late_Tick(const _float& fTimeDelta) override {}
+	virtual void	Render() override {}
 	virtual void	Render(const _matrix& matWorld, const _matrix& matView, const _matrix& matProj);
 
 public:
-	static CColorShaderComp*		Create(const DX11DEVICE_T tDevice, HWND hWnd);
+	static CColorShaderComp*		Create(HWND hWnd);
 	virtual CComponent*				Clone(void* Arg = nullptr) override;
 
 protected:

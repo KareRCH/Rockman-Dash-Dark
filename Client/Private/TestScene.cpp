@@ -44,9 +44,11 @@ void CTestScene::Late_Tick(const _float& fTimeDelta)
     SUPER::Late_Tick(fTimeDelta);
 }
 
-void CTestScene::Render()
+HRESULT CTestScene::Render()
 {
     SUPER::Render();
+
+    return S_OK;
 }
 
 HRESULT CTestScene::InitializeLate_Scene()

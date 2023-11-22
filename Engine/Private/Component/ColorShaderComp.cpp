@@ -1,14 +1,13 @@
 #include "Component/ColorShaderComp.h"
 
-CColorShaderComp::CColorShaderComp(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
-{
-    
-}
-
 CColorShaderComp::CColorShaderComp(const CColorShaderComp& rhs)
     : Base(rhs)
 {
+}
+
+HRESULT CColorShaderComp::Initialize_Prototype(void* Arg)
+{
+    return S_OK;
 }
 
 HRESULT CColorShaderComp::Initialize(void* Arg)
@@ -44,9 +43,9 @@ void CColorShaderComp::Render(const _matrix& matWorld, const _matrix& matView, c
     Render_Shader(m_iIndexCount);
 }
 
-CColorShaderComp* CColorShaderComp::Create(const DX11DEVICE_T tDevice, HWND hWnd)
+CColorShaderComp* CColorShaderComp::Create(HWND hWnd)
 {
-    ThisClass* pInstance = new ThisClass(tDevice);
+    ThisClass* pInstance = new ThisClass();
 
     if (FAILED(pInstance->Initialize(hWnd)))
     {
@@ -121,11 +120,11 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     }
 
     // 버퍼로부터 정점 셰이더를 생성
-    FAILED_CHECK_RETURN(m_pDevice->CreateVertexShader(pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(),
+    FAILED_CHECK_RETURN(D3D11Device()->CreateVertexShader(pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(),
         NULL, &m_pVertexShader), E_FAIL);
 
     // 버퍼로부터 픽셀 셰이더를 생성
-    FAILED_CHECK_RETURN(m_pDevice->CreatePixelShader(pPixelShaderBuf->GetBufferPointer(), pPixelShaderBuf->GetBufferSize(),
+    FAILED_CHECK_RETURN(D3D11Device()->CreatePixelShader(pPixelShaderBuf->GetBufferPointer(), pPixelShaderBuf->GetBufferSize(),
         NULL, &m_pPixelShader), E_FAIL);
 
     D3D11_INPUT_ELEMENT_DESC tPolygonLayout[2];
@@ -148,7 +147,7 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
 
     _uint iNumElements = sizeof(tPolygonLayout) / sizeof(tPolygonLayout[0]);
 
-    FAILED_CHECK_RETURN(m_pDevice->CreateInputLayout(tPolygonLayout, iNumElements,
+    FAILED_CHECK_RETURN(D3D11Device()->CreateInputLayout(tPolygonLayout, iNumElements,
         pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(), &m_pLayout), E_FAIL);
 
     Safe_Release(pVertexShaderBuf);
@@ -162,7 +161,7 @@ HRESULT CColorShaderComp::Initialize_Shader(HWND hWnd, const _tchar* vsFileName,
     tMatBufferDesc.MiscFlags = 0;
     tMatBufferDesc.StructureByteStride = 0;
 
-    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&tMatBufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&tMatBufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
 
     return S_OK;
 }
@@ -176,7 +175,7 @@ HRESULT CColorShaderComp::Set_ShaderParameter(XMMATRIX matWorld, XMMATRIX matVie
 
     // 상수 버퍼의 내용을 쓸 수 있도록 잠금
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     // 상수 버퍼의 데이터에 대한 포인터를 가져옴
     MATRIX_BUFFER_T* pDataPtr = Cast<MATRIX_BUFFER_T*>(mappedResource.pData);
@@ -187,22 +186,22 @@ HRESULT CColorShaderComp::Set_ShaderParameter(XMMATRIX matWorld, XMMATRIX matVie
     pDataPtr->matProj = matProj;
 
     // 상수 버퍼의 잠금 풀기
-    m_pDeviceContext->Unmap(m_pMatrixBuffer, 0);
+    D3D11Context()->Unmap(m_pMatrixBuffer, 0);
 
     // 정점 셰이더에서의 상수 버퍼의 위치를 설정
     _uint iBufferNumber = 0;
 
-    m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
+    D3D11Context()->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
 
     return S_OK;
 }
 
 void CColorShaderComp::Render_Shader(_int iIndexCount)
 {
-    m_pDeviceContext->IASetInputLayout(m_pLayout);
+    D3D11Context()->IASetInputLayout(m_pLayout);
 
-    m_pDeviceContext->VSSetShader(m_pVertexShader.Get(), NULL, 0);
-    m_pDeviceContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
+    D3D11Context()->VSSetShader(m_pVertexShader.Get(), NULL, 0);
+    D3D11Context()->PSSetShader(m_pPixelShader.Get(), NULL, 0);
 
-    m_pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
+    D3D11Context()->DrawIndexed(iIndexCount, 0, 0);
 }

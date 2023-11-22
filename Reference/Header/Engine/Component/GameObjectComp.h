@@ -12,12 +12,12 @@ class ENGINE_DLL CGameObjectComp abstract : public CPrimitiveComponent
 {
 	DERIVED_CLASS(CPrimitiveComponent, CGameObjectComp)
 protected:
-	explicit CGameObjectComp(const DX11DEVICE_T tDevice);
+	explicit CGameObjectComp() = default;
 	explicit CGameObjectComp(const CGameObjectComp& rhs);
 	virtual ~CGameObjectComp() = default;
 
 public:
-	virtual HRESULT Initialize() PURE;
+	virtual HRESULT Initialize(void* Arg = nullptr) PURE;
 	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
 	virtual _int	Tick(const _float& fTimeDelta) PURE;
 	virtual void	Late_Tick(const _float& fTimeDelta) PURE;

@@ -9,6 +9,11 @@ CAnimationComponent::CAnimationComponent(const CAnimationComponent& rhs)
 {
 }
 
+HRESULT CAnimationComponent::Initialize_Prototype(void* Arg)
+{
+	return S_OK;
+}
+
 HRESULT CAnimationComponent::Initialize(void* Arg)
 {
 	return S_OK;
@@ -65,5 +70,5 @@ CComponent* CAnimationComponent::Clone(void* Arg)
 
 void CAnimationComponent::Free()
 {
-	SUPER::Free();
+
 }

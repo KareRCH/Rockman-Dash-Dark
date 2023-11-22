@@ -3,18 +3,13 @@
 #include "System/ModelMgr.h"
 #include "System/GameInstance.h"
 
-CSkeletonComponent::CSkeletonComponent()
-{
-}
-
 CSkeletonComponent::CSkeletonComponent(const CSkeletonComponent& rhs)
     : Base(rhs)
 {
 }
 
-HRESULT CSkeletonComponent::Initialize_Prototype()
+HRESULT CSkeletonComponent::Initialize_Prototype(void* Arg)
 {
-
     return S_OK;
 }
 
@@ -24,8 +19,6 @@ HRESULT CSkeletonComponent::Initialize(void* Arg)
     
     if (nullptr != Arg)
         tInit = (*ReCast<FInitialData*>(Arg));
-
-    
 
     return S_OK;
 }
@@ -37,7 +30,6 @@ CSkeletonComponent* CSkeletonComponent::Create()
     if (FAILED(pInstance->Initialize_Prototype()))
     {
         Engine::Safe_Release(pInstance);
-
         MSG_BOX("CSkeletonComponent Create Failed");
 
         return nullptr;
@@ -53,7 +45,6 @@ CComponent* CSkeletonComponent::Clone(void* Arg)
     if (FAILED(pInstance->Initialize()))
     {
         Engine::Safe_Release(pInstance);
-
         MSG_BOX("CSkeletonComponent Create Failed");
 
         return nullptr;
@@ -64,7 +55,7 @@ CComponent* CSkeletonComponent::Clone(void* Arg)
 
 void CSkeletonComponent::Free()
 {
-    SUPER::Free();
+    
 }
 
 HRESULT CSkeletonComponent::Load_BoneRootNode(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strArmatureKey)

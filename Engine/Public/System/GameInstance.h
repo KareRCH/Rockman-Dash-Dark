@@ -117,12 +117,10 @@ public:		// 타이머 매니저
 	void	Tick_Timer(const _tchar* pTimeTag);
 
 public:		// 매니지먼트
-	HRESULT Initialize_ObjectMgr(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eManageSceneType);
+	HRESULT Initialize_ObjectMgr(const DX11DEVICE_T tDevice);
 	void	Priority_Tick_Scene(const _float& fTimeDelta);
 	_int	Tick_Scene(const _float& fTimeDelta);
 	void	Late_Tick_Scene(const _float& fTimeDelta);
-	void	Render_Scene();
-	HRESULT	Set_Scene(CLevel* pScene);
 
 public:		// 블랙보드 매니저
 	HRESULT Initialize_BlackBoardMgr();

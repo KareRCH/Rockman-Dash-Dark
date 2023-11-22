@@ -15,12 +15,13 @@ class ENGINE_DLL CSceneComponent abstract : public CPrimitiveComponent, public I
 {
 	DERIVED_CLASS(CPrimitiveComponent, CSceneComponent)
 protected:
-	explicit CSceneComponent(const DX11DEVICE_T tDevice);
+	explicit CSceneComponent() = default;
 	explicit CSceneComponent(const CSceneComponent& rhs);
-	virtual ~CSceneComponent();
+	virtual ~CSceneComponent() = default;
 
 public:
-	virtual HRESULT Initialize();
+	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr);
+	virtual HRESULT Initialize(void* Arg = nullptr);
 	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta) PURE;
@@ -32,25 +33,33 @@ public:
 protected:
 	virtual void	Free();
 
+
+#pragma region 씬 컴포넌트 계층
+	// 씬 컴포넌트는 계층관계를 가진다. 자식을 여럿 가질 수 있으며, 그에 대한 기능을 제공한다.
 public:
-	GETSET_1(CSceneComponent*, m_pParentComp, ParentComp, GET)
-	CSceneComponent*	Get_FirstChildComp();
-	CSceneComponent*	Get_ChildComp(_uint iIndex);
-	void				Add_Child(CSceneComponent* const pComp);
-	_bool				Insert_Child(_uint iIndex, CSceneComponent* const pComp);
+	GETSET_1(CSceneComponent*, m_pParentSceneComp, ParentSceneComp, GET)
+		CSceneComponent* Get_FirstChildSceneComp();
+	CSceneComponent* Get_ChildSceneComp(_uint iIndex);
+	void				Add_ChildSceneComp(CSceneComponent* const pComp);
+	_bool				Insert_ChildSceneComp(_uint iIndex, CSceneComponent* const pComp);
 
 protected:
-	CSceneComponent*			m_pParentComp = { nullptr };		// 부모 컴포넌트
-	list<CSceneComponent*>		m_listChildSceneComp;				// 자식 컴포넌트
+	CSceneComponent* m_pParentSceneComp = { nullptr };		// 부모 씬 컴포넌트
+	vector<CSceneComponent*>	m_vecChildSceneComp;					// 자식 씬 컴포넌트  
+#pragma endregion
 
 
-public:		// 트랜스폼 컴포넌트에 대한 함수 정의
+#pragma region 트랜스폼
+	// 트랜스폼 컴포넌트에 대한 함수 정의, 씬 컴포넌트는 항상 트랜스폼을 요소로 가진다.
+public:
 	// 반드시 초기화가 되었을 때 사용해야 함.
 	inline virtual CTransformComponent& Transform() override { return (*m_pTransformComp); }
 	inline virtual void Release_Transform() override { Safe_Release(m_pTransformComp); }
 
 private:
-	CTransformComponent* m_pTransformComp = { nullptr };			// 내부 트랜스폼 컴포넌트 포함
+	CTransformComponent* m_pTransformComp = { nullptr };			// 내부 트랜스폼 컴포넌트 포함  
+#pragma endregion
+
 
 
 };

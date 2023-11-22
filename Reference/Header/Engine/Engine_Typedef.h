@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 #include <DirectXMath.h>
+#include <map>
+#include <unordered_map>
+#include <unordered_set>
 
-using std::unordered_multimap;
-using std::unordered_map;
-using std::unordered_set;
-using std::pair;
+using namespace std;
 
 namespace Engine
 {

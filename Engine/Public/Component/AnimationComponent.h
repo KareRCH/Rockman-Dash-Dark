@@ -16,6 +16,7 @@ protected:
 	virtual ~CAnimationComponent() = default;
 
 public:
+	virtual HRESULT Initialize_Prototype(void* Arg = nullptr);
 	virtual HRESULT Initialize(void* Arg = nullptr);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual _int	Tick(const _float& fTimeDelta);
@@ -27,7 +28,7 @@ public:
 	virtual CComponent* Clone(void* Arg = nullptr);
 
 protected:
-	virtual void					Free();
+	virtual void	Free();
 };
 
 END

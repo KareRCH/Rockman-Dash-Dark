@@ -1,13 +1,13 @@
 #include "Component/TextureComponent.h"
 
-CTextureComponent::CTextureComponent(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
-{
-}
-
 CTextureComponent::CTextureComponent(const CTextureComponent& rhs)
     : Base(rhs)
 {
+}
+
+HRESULT CTextureComponent::Initialize_Prototype(void* Arg)
+{
+	return S_OK;
 }
 
 HRESULT CTextureComponent::Initialize(void* Arg)
@@ -32,14 +32,13 @@ void CTextureComponent::Render()
 {
 }
 
-CTextureComponent* CTextureComponent::Create(const DX11DEVICE_T tDevice)
+CTextureComponent* CTextureComponent::Create()
 {
-	ThisClass* pInstance = new ThisClass(tDevice);
+	ThisClass* pInstance = new ThisClass();
 
 	if (FAILED(pInstance->Initialize()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("TextureComponent Create Failed");
 
 		return nullptr;
@@ -55,7 +54,6 @@ CComponent* CTextureComponent::Clone(void* Arg)
 	if (FAILED(pInstance->Initialize()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("TextureComponent Copy Failed");
 
 		return nullptr;

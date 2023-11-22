@@ -2,11 +2,6 @@
 
 #include "System/GameInstance.h"
 
-CModelShaderComp::CModelShaderComp(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
-{
-}
-
 CModelShaderComp::CModelShaderComp(const CModelShaderComp& rhs)
     : Base(rhs)
 {
@@ -46,9 +41,9 @@ void CModelShaderComp::Render(const MATRIX_BUFFER_T& tMatrixBuf, const CAMERA_BU
     Render_Shader(m_iIndexCount);
 }
 
-CModelShaderComp* CModelShaderComp::Create(const DX11DEVICE_T tDevice, HWND hWnd)
+CModelShaderComp* CModelShaderComp::Create(HWND hWnd)
 {
-    ThisClass* pInstance = new ThisClass(tDevice);
+    ThisClass* pInstance = new ThisClass();
 
     if (FAILED(pInstance->Initialize(hWnd)))
     {
@@ -110,27 +105,27 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     /***********************************
     * 정점 레이아웃 구성 (시맨틱 전달자)
     ************************************/
-    FAILED_CHECK_RETURN(m_pDevice->CreateInputLayout(VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex,
+    FAILED_CHECK_RETURN(D3D11Device()->CreateInputLayout(VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex,
         pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(), &m_pLayout), E_FAIL);
     
 
     /***************
     * 텍스처 샘플러
     ***************/
-    FAILED_CHECK_RETURN(m_pDevice->CreateSamplerState(&SAMPLER_COMMON_DESC::Desc, &m_pSamplereState), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Device()->CreateSamplerState(&SAMPLER_COMMON_DESC::Desc, &m_pSamplereState), E_FAIL);
 
 
     /***********
     * 행렬 버퍼
     ************/
     // 정점 셰이더에 있는 행렬 상수 버퍼의 구조체를 작성
-    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&MATRIX_BUFFER_T::BufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&MATRIX_BUFFER_T::BufferDesc, NULL, &m_pMatrixBuffer), E_FAIL);
 
 
     /*************
     * 카메라 버퍼
     **************/
-    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&CAMERA_BUFFER_T::BufferDesc, NULL, &m_pCameraBuffer), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&CAMERA_BUFFER_T::BufferDesc, NULL, &m_pCameraBuffer), E_FAIL);
 
 
     /*********
@@ -138,7 +133,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     ***********/
     // 픽셀 쎄이더에 있는 광원 동적 상수 버퍼의 설명을 설정
     // D3D11_BIND_CONSTANT_BUFFER를 사용시 ByteWidth가 16의 배수여야함. 아닐시 생성 실패
-    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&LIGHT_BUFFER_T::BufferDesc, NULL, &m_pLightBuffer), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&LIGHT_BUFFER_T::BufferDesc, NULL, &m_pLightBuffer), E_FAIL);
 
 
     /*********
@@ -146,7 +141,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     ***********/
     // 픽셀 쎄이더에 있는 광원 동적 상수 버퍼의 설명을 설정
     // D3D11_BIND_CONSTANT_BUFFER를 사용시 ByteWidth가 16의 배수여야함. 아닐시 생성 실패
-    FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&BONE_COMMON_BUFFER_T::BufferDesc, NULL, &m_pBoneBuffer), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&BONE_COMMON_BUFFER_T::BufferDesc, NULL, &m_pBoneBuffer), E_FAIL);
 
 
     return S_OK;
@@ -167,7 +162,7 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     /***********
     * 행렬 버퍼
     ************/
-    FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     // 상수 버퍼의 데이터에 대한 포인터를 가져옴
     MATRIX_BUFFER_T* pDataPtr = Cast<MATRIX_BUFFER_T*>(mappedResource.pData);
@@ -178,36 +173,36 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     pDataPtr->matProj = tMatrixBuf.matProj;
 
     // 상수 버퍼의 잠금 풀기
-    m_pDeviceContext->Unmap(m_pMatrixBuffer, 0);
+    D3D11Context()->Unmap(m_pMatrixBuffer, 0);
 
     // 정점 셰이더에서의 상수 버퍼의 위치를 설정
     _uint iBufferNumber = 0;
 
-    m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
+    D3D11Context()->VSSetConstantBuffers(iBufferNumber, 1, &m_pMatrixBuffer);
 
     
     /*************
     * 카메라 버퍼
     **************/
-    FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pCameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pCameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
     CAMERA_BUFFER_T* dataPtr3 = Cast<CAMERA_BUFFER_T*>(mappedResource.pData);
 
     dataPtr3->vPosition = tCameraBuf.vPosition;
     dataPtr3->fPadding = 0.f;
 
-    m_pDeviceContext->Unmap(m_pCameraBuffer, 0);
+    D3D11Context()->Unmap(m_pCameraBuffer, 0);
 
     iBufferNumber = 1;
 
-    m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pCameraBuffer);
+    D3D11Context()->VSSetConstantBuffers(iBufferNumber, 1, &m_pCameraBuffer);
 
-    m_pDeviceContext->PSSetShaderResources(0, 1, m_pTexture.GetAddressOf());
+    D3D11Context()->PSSetShaderResources(0, 1, m_pTexture.GetAddressOf());
 
 
     /*************
     * 뼈 버퍼
     **************/
-    FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pBoneBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pBoneBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
     BONE_COMMON_BUFFER_T* dataPtr4 = Cast<BONE_COMMON_BUFFER_T*>(mappedResource.pData);
 
     for (size_t i = 0; i < 128; i++)
@@ -215,17 +210,17 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
         dataPtr4->matTransform[i] = tBoneBuf.matTransform[i];
     }
     
-    m_pDeviceContext->Unmap(m_pCameraBuffer, 0);
+    D3D11Context()->Unmap(m_pCameraBuffer, 0);
 
     iBufferNumber = 2;
 
-    m_pDeviceContext->VSSetConstantBuffers(iBufferNumber, 1, &m_pBoneBuffer);;
+    D3D11Context()->VSSetConstantBuffers(iBufferNumber, 1, &m_pBoneBuffer);;
 
 
     /*********
     * 빛 버퍼
     ***********/
-    FAILED_CHECK_RETURN(m_pDeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     LIGHT_BUFFER_T* dataPtr2 = Cast<LIGHT_BUFFER_T*>(mappedResource.pData);
 
@@ -235,24 +230,24 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     dataPtr2->fSpecularPower = tLightBuf.fSpecularPower;
     dataPtr2->vSpecularColor = tLightBuf.vSpecularColor;
 
-    m_pDeviceContext->Unmap(m_pLightBuffer, 0);
+    D3D11Context()->Unmap(m_pLightBuffer, 0);
 
     iBufferNumber = 0;
 
     // 픽셀 셰이더에서 셰이더 텍스처 리소스 설정
-    m_pDeviceContext->PSSetConstantBuffers(iBufferNumber, 1, &m_pLightBuffer);
+    D3D11Context()->PSSetConstantBuffers(iBufferNumber, 1, &m_pLightBuffer);
 
     return S_OK;
 }
 
 void CModelShaderComp::Render_Shader(_int iIndexCount)
 {
-    m_pDeviceContext->IASetInputLayout(m_pLayout);
+    D3D11Context()->IASetInputLayout(m_pLayout);
 
-    m_pDeviceContext->VSSetShader(m_pVertexShader.Get(), NULL, 0);
-    m_pDeviceContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
+    D3D11Context()->VSSetShader(m_pVertexShader.Get(), NULL, 0);
+    D3D11Context()->PSSetShader(m_pPixelShader.Get(), NULL, 0);
 
-    m_pDeviceContext->PSSetSamplers(0, 1, m_pSamplereState.GetAddressOf());
+    D3D11Context()->PSSetSamplers(0, 1, m_pSamplereState.GetAddressOf());
 
-    m_pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
+    D3D11Context()->DrawIndexed(iIndexCount, 0, 0);
 }

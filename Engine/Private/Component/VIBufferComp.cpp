@@ -1,10 +1,5 @@
 #include "Component/VIBufferComp.h"
 
-CVIBufferComp::CVIBufferComp(const DX11DEVICE_T tDevice)
-	: Base(tDevice)
-{
-}
-
 CVIBufferComp::CVIBufferComp(const CVIBufferComp& rhs)
 	: Base(rhs)
 	, m_pVtxBuffer(rhs.m_pVtxBuffer), m_pIndexBuffer(rhs.m_pIndexBuffer)

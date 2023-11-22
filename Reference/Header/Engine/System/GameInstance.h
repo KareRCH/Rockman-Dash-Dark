@@ -40,6 +40,7 @@ public:
 private:
 	virtual void Free() override;
 
+#pragma region 그래픽 디바이스
 public:		// 그래픽 디바이스
 	HRESULT							Initialize_GraphicDev(const FDEVICE_INIT& tInit);
 	HRESULT							Clear_BackBuffer_View(_float4 vClearColor);
@@ -51,20 +52,26 @@ public:		// 그래픽 디바이스
 	void							TurnOff_ZBuffer();
 	void							TurnOn_Cull();
 	void							TurnOff_Cull();
-	const _matrix*					Get_GraphicDev_ProjectionMatrix();
-	const _matrix*					Get_GraphicDev_WorldMatrix();
-	const _matrix*					Get_GraphicDev_OrthoMatrix();
+	const _matrix* Get_GraphicDev_ProjectionMatrix();
+	const _matrix* Get_GraphicDev_WorldMatrix();
+	const _matrix* Get_GraphicDev_OrthoMatrix();
+#pragma endregion
+
 	
 
 
+#pragma region 인풋 디바이스
 public:		// 인풋 디바이스
 	HRESULT Initialize_InputDev(HINSTANCE hInst, HWND hWnd);
 	void	Tick_InputDev();
 	_byte	Get_DIKeyState(_ubyte byKeyID);
 	_byte	Get_DIMouseState(MOUSEKEYSTATE eMouse);
 	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState);
+#pragma endregion
+
 	
 
+#pragma region 키 매니저
 public:		// 키 매니저
 	HRESULT Initialize_KeyMgr();
 	void	Tick_KeyMgr();
@@ -86,6 +93,8 @@ public:		// 피직스 매니저
 	inline void			Play_PhysicsSimulation(const _uint iWorldID);
 	inline void			Add_ColliderToPhysicsWorld(const _uint iWorldID, FCollisionPrimitive* pCollider);
 	inline void			Delete_ColliderToPhysicsWorld(const _uint iWorldID, FCollisionPrimitive* pCollider);
+#pragma endregion
+
 
 public:		// 사운드 매니저
 	HRESULT Initialize_SoundMgr();
@@ -108,12 +117,10 @@ public:		// 타이머 매니저
 	void	Tick_Timer(const _tchar* pTimeTag);
 
 public:		// 매니지먼트
-	HRESULT Initialize_ObjectMgr(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eManageSceneType);
+	HRESULT Initialize_ObjectMgr(const DX11DEVICE_T tDevice);
 	void	Priority_Tick_Scene(const _float& fTimeDelta);
 	_int	Tick_Scene(const _float& fTimeDelta);
 	void	Late_Tick_Scene(const _float& fTimeDelta);
-	void	Render_Scene();
-	HRESULT	Set_Scene(CLevel* pScene);
 
 public:		// 블랙보드 매니저
 	HRESULT Initialize_BlackBoardMgr();
@@ -127,6 +134,7 @@ public:		// 텍스처 매니저
 public:		// 프로토 매니저
 	HRESULT Initialize_ProtoMgr();
 
+#pragma region 렌더 매니저
 public:		// 렌더 매니저
 	HRESULT	Initialize_RenderMgr(const DX11DEVICE_T tDevice, const _uint iWidth = 1280U, const _uint iHeight = 720U);
 	void	Render();
@@ -140,11 +148,18 @@ public:		// 렌더 매니저
 	const _matrix	Get_OrthogonalViewMatrix(const _uint iCam) const;
 	void			Set_OrthogonalProjMatrix(const _uint iCam, const _matrix& matOrthoProj);
 	const _matrix	Get_OrthogonalProjMatrix(const _uint iCam) const;
+#pragma endregion
 
-public:
+
+#pragma region 모델 매니저
+public:		// 모델 매니저
 	HRESULT	Initialize_ModelMgr(const string& strMainPath);
 	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
 	const FMeshData* const Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
+	class FArmatureData* Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey);
+
+#pragma endregion
+
 
 public:		// 셰이더 매니저
 	HRESULT Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
@@ -165,7 +180,7 @@ private:
 	class CObjectMgr*		m_pManagement = nullptr;
 	class CBlackBoardMgr*	m_pBlackBoardMgr = nullptr;
 	class CTextureMgr*		m_pTextureMgr = nullptr;
-	class CProtoMgr*		m_pProtoMgr = nullptr;
+	class CComponentMgr*		m_pProtoMgr = nullptr;
 	class CRenderMgr*		m_pRenderMgr = nullptr;
 	class CModelMgr*		m_pModelMgr = nullptr;
 	class CShaderMgr*		m_pShaderMgr = nullptr;

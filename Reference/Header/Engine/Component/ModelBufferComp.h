@@ -14,12 +14,13 @@ class ENGINE_DLL CModelBufferComp : public CVIBufferComp
 {
 	DERIVED_CLASS(CVIBufferComp, CModelBufferComp)
 protected:
-	explicit CModelBufferComp(const DX11DEVICE_T tDevice);
+	explicit CModelBufferComp() = default;
 	explicit CModelBufferComp(const CModelBufferComp& rhs);
 	virtual ~CModelBufferComp() = default;
 
 public:
-	virtual HRESULT Initialize() override;
+	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strModelKey);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual _int	Tick(const _float& fTimeDelta) override;
@@ -27,7 +28,7 @@ public:
 	virtual void	Render() override;
 
 public:
-	static CModelBufferComp* Create(const DX11DEVICE_T tDevice);
+	static CModelBufferComp* Create();
 	virtual CComponent* Clone(void* Arg = nullptr) override;
 
 protected:

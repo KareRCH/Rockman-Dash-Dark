@@ -3,14 +3,14 @@
 #include "System/GameInstance.h"
 #include "System/ModelMgr.h"
 
-CModelBufferComp::CModelBufferComp(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
-{
-}
-
 CModelBufferComp::CModelBufferComp(const CModelBufferComp& rhs)
     : Base(rhs)
 {
+}
+
+HRESULT CModelBufferComp::Initialize_Prototype(void* Arg)
+{
+	return S_OK;
 }
 
 HRESULT CModelBufferComp::Initialize(void* Arg)
@@ -71,7 +71,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVtxBuffer.GetAddressOf()), E_FAIL);
+	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVtxBuffer.GetAddressOf()), E_FAIL);
 
 	// 인덱스 버퍼 제작
 	for (_uint i = 0; i < m_iIndexCount; i++)
@@ -94,7 +94,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(m_pDevice->CreateBuffer(&indexBufferDesc, &indexData, m_pIndexBuffer.GetAddressOf()), E_FAIL);
+	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&indexBufferDesc, &indexData, m_pIndexBuffer.GetAddressOf()), E_FAIL);
 
 	Safe_Delete_Array(vertices);
 	Safe_Delete_Array(indices);
@@ -121,19 +121,19 @@ void CModelBufferComp::Render()
 	_uint iOffset = 0;
 
 	// 정점 버퍼 활성
-	m_pDeviceContext->IASetVertexBuffers(0, 1, m_pVtxBuffer.GetAddressOf(), &iStride, &iOffset);
+	D3D11Context()->IASetVertexBuffers(0, 1, m_pVtxBuffer.GetAddressOf(), &iStride, &iOffset);
 
 	// 인텍스 버퍼 활성
-	m_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	D3D11Context()->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// 정점 버퍼 삼각형 리스트
-	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 }
 
-CModelBufferComp* CModelBufferComp::Create(const DX11DEVICE_T tDevice)
+CModelBufferComp* CModelBufferComp::Create()
 {
-	ThisClass* pInstance = new ThisClass(tDevice);
+	ThisClass* pInstance = new ThisClass();
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -167,3 +167,5 @@ void CModelBufferComp::Free()
 {
     SUPER::Free();
 }
+
+
