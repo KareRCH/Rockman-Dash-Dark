@@ -42,14 +42,14 @@ private:
 	_unmap<wstring, class CLayer*>*				m_pLayers = { nullptr };
 	using map_layer = _unmap<wstring, class CLayer*>;
 
-public:
-	CPrimitiveComponent*	Get_Component(COMPONENTID eID, const wstring& pLayerTag, const wstring& pObjTag, const wstring& pComponentTag);
-	CGameObject*			Get_GameObject(const wstring& strLayerTag, const wstring& pObjTag);
-	void					Add_GameObject(const wstring& strLayerTag, CGameObject* const pObj);
-	void					Add_GameObject(const wstring& strLayerTag, const wstring& pObjTag, CGameObject* const pObj);
-
-	// 툴에서 쓰이는 함수
-	void					Add_Layer(const wstring& pLayerTag, CLayer* const pLayer);
+//public:
+//	CPrimitiveComponent*	Get_Component(COMPONENTID eID, const wstring& pLayerTag, const wstring& pObjTag, const wstring& pComponentTag);
+//	CGameObject*			Get_GameObject(const wstring& strLayerTag, const wstring& pObjTag);
+//	void					Add_GameObject(const wstring& strLayerTag, CGameObject* const pObj);
+//	void					Add_GameObject(const wstring& strLayerTag, const wstring& pObjTag, CGameObject* const pObj);
+//
+//	// 툴에서 쓰이는 함수
+//	void					Add_Layer(const wstring& pLayerTag, CLayer* const pLayer);
 
 	
 private:

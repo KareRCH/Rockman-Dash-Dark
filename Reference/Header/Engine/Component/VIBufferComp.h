@@ -8,12 +8,12 @@ class ENGINE_DLL CVIBufferComp abstract : public CSceneComponent
 {
 	DERIVED_CLASS(CSceneComponent, CVIBufferComp)
 protected:
-	explicit CVIBufferComp(const DX11DEVICE_T tDevice);
+	explicit CVIBufferComp() = default;
 	explicit CVIBufferComp(const CVIBufferComp& rhs);
 	virtual ~CVIBufferComp() = default;
 
 public:
-	virtual HRESULT Initialize();
+	virtual HRESULT Initialize(void* Arg = nullptr);
 	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta) PURE;

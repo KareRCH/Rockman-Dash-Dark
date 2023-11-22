@@ -12,9 +12,13 @@ CTransformComponent::CTransformComponent(const CTransformComponent& rhs)
 {
 }
 
+HRESULT CTransformComponent::Initialize_Prototype(void* Arg)
+{
+	return S_OK;
+}
+
 HRESULT CTransformComponent::Initialize(void* Arg)
 {
-
 	return S_OK;
 }
 
@@ -25,7 +29,6 @@ CTransformComponent* CTransformComponent::Create()
 	if (FAILED(pInstance->Initialize()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("CGraphicDev Create Failed");
 		
 		return nullptr;
@@ -41,7 +44,6 @@ CComponent* CTransformComponent::Clone(void* Arg)
 	if (FAILED(pInstance->Initialize()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("TransformComponent Copy Failed");
 
 		return nullptr;
@@ -52,7 +54,7 @@ CComponent* CTransformComponent::Clone(void* Arg)
 
 void CTransformComponent::Free()
 {
-	SUPER::Free();
+	
 }
 
 

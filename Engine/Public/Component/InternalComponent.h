@@ -16,12 +16,12 @@ class ENGINE_DLL CInternalComponent abstract : public CComponent
 {
 	DERIVED_CLASS(CComponent, CInternalComponent)
 protected:
-	explicit CInternalComponent();
+	explicit CInternalComponent() = default;
 	explicit CInternalComponent(const CInternalComponent& rhs);
 	virtual ~CInternalComponent() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() PURE;
+	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override PURE;
 	virtual HRESULT Initialize(void* Arg = nullptr) override PURE;
 
 public:
@@ -29,7 +29,6 @@ public:
 
 protected:
 	virtual void Free() PURE;
-
 
 };
 

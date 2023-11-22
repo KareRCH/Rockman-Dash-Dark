@@ -17,7 +17,8 @@ protected:
 	virtual ~CTransformComponent() = default;
 
 public:
-	virtual HRESULT Initialize(void* Arg = nullptr);
+	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(void* Arg = nullptr) override;
 
 public:
 	static	CTransformComponent* Create();
@@ -309,14 +310,6 @@ public:
 	void Set_Transform(const _float4x4& matTransform)
 	{
 		m_matTransform = matTransform;
-	}
-
-	inline void Calculate_TransformFromParent(_fmatrix& matParent)
-	{
-		_matrix matTransform = XMLoadFloat4x4(&m_matTransform);
-		matTransform *= matParent;
-
-		XMStoreFloat4x4(&m_matTransform, matTransform);
 	}
 #pragma endregion
 

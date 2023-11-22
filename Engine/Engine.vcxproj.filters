@@ -211,6 +211,18 @@
     <Filter Include="01. System\01. Manager\02. GamePipeline\06. ImGuiMgr">
       <UniqueIdentifier>{c873a54f-a8d7-4a42-ae22-e612778fd043}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\00. D3D11DeviceComp">
+      <UniqueIdentifier>{a4c62ecd-6c17-4a2a-9da2-0018e88b9f87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\00. D3D11DeviceComp\Interface">
+      <UniqueIdentifier>{455da618-5449-48a4-8232-0e619da9d163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\04. TeamAgentComponent">
+      <UniqueIdentifier>{2b9f803c-d97d-4911-a207-d179e412dad0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\04. TeamAgentComponent\Interface">
+      <UniqueIdentifier>{56313027-606a-44dc-bada-a6bf2390274a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -451,6 +463,15 @@
     <ClInclude Include="Public\System\LevelMgr.h">
       <Filter>01. System\01. Manager\02. GamePipeline\01. LevelMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\D3D11DeviceComp.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\00. D3D11DeviceComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\Interface\ID3D11DeviceComp.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\00. D3D11DeviceComp\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\TeamAgentComp.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\04. TeamAgentComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -648,6 +669,12 @@
     <ClCompile Include="Private\Component\Interface\ITransform.cpp" />
     <ClCompile Include="Private\System\LevelMgr.cpp">
       <Filter>01. System\01. Manager\02. GamePipeline\01. LevelMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\D3D11DeviceComp.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\00. D3D11DeviceComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\TeamAgentComp.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\04. TeamAgentComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

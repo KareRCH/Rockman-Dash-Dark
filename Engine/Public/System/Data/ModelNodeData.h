@@ -81,7 +81,7 @@ public:
 	FModelNodeData* Find_NodeData(const wstring& strModelNodeKey);
 	FModelNodeData* Create_NodeData(const wstring& strModelNodeKey);
 	void Appoint_ArmatureNode(const wstring& strModelNodeKey);
-	HRESULT Add_NodeData(const wstring& strModelNodeKey, FModelNodeBaseData* pNode);
+	HRESULT Add_NodeData(const wstring& strModelNodeKey, FModelNodeData* pNode);
 
 private:
 	// 아마추어 노드도 같이 저장된다.

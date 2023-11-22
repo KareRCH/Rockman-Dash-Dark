@@ -9,6 +9,11 @@ CMaterialComponent::CMaterialComponent(const CMaterialComponent& rhs)
 {
 }
 
+HRESULT CMaterialComponent::Initialize_Prototype(void* Arg)
+{
+	return S_OK;
+}
+
 HRESULT CMaterialComponent::Initialize(void* Arg)
 {
     return S_OK;
@@ -38,7 +43,6 @@ CMaterialComponent* CMaterialComponent::Create()
 	if (FAILED(pInstance->Initialize()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("CMaterialComponent Create Failed");
 
 		return nullptr;
@@ -54,7 +58,6 @@ CComponent* CMaterialComponent::Clone(void* Arg)
 	if (FAILED(pInstance->Initialize()))
 	{
 		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("CMaterialComponent Create Failed");
 
 		return nullptr;
@@ -65,5 +68,5 @@ CComponent* CMaterialComponent::Clone(void* Arg)
 
 void CMaterialComponent::Free()
 {
-	SUPER::Free();
+
 }

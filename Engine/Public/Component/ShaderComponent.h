@@ -13,7 +13,7 @@ class ENGINE_DLL CShaderComponent abstract : public CPrimitiveComponent
 {
 	DERIVED_CLASS(CPrimitiveComponent, CShaderComponent)
 protected:
-	explicit CShaderComponent(const DX11DEVICE_T tDevice);
+	explicit CShaderComponent() = default;
 	explicit CShaderComponent(const CShaderComponent& rhs);
 	virtual ~CShaderComponent() = default;
 

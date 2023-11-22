@@ -80,8 +80,8 @@ public:
 	_float Calculate_Time(const _float& fTimeDelta, _float fCurTime, _bool bMod = true);
 	
 public:
-	_double fDuration = 0.0;							// 진행 길이
-	_double fTickPerSecond = 0.0;						// 시간당 프레임
+	_double dfDuration = 0.0;							// 진행 길이
+	_double dfTickPerSecond = 0.0;						// 시간당 프레임
 	_unmap<wstring, FAnimNodeData*> mapNodeAnim;		// 노드 이름으로 검색
 };
 

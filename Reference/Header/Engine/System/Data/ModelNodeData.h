@@ -14,10 +14,11 @@ class ENGINE_DLL FModelNodeBaseData abstract : public CBase
 
 protected:
 	explicit FModelNodeBaseData() {}
-	explicit FModelNodeBaseData(const FModelNodeBaseData& rhs) = delete;
+	explicit FModelNodeBaseData(const FModelNodeBaseData& rhs);
 	virtual ~FModelNodeBaseData() = default;
 
 protected:
+	virtual FModelNodeBaseData* Clone(FArmatureData* pArg) PURE;
 	virtual void Free() override;
 
 public:
@@ -40,7 +41,7 @@ class ENGINE_DLL FModelNodeData final : public FModelNodeBaseData
 
 private:
 	explicit FModelNodeData() {}
-	explicit FModelNodeData(const FModelNodeData& rhs) = delete;
+	explicit FModelNodeData(const FModelNodeData& rhs);
 	virtual ~FModelNodeData() = default;
 
 public:
@@ -51,6 +52,7 @@ public:
 
 public:
 	static FModelNodeData* Create();
+	virtual FModelNodeBaseData* Clone(FArmatureData* pArg) override;
 	virtual void Free() override;
 
 };
@@ -66,11 +68,12 @@ class ENGINE_DLL FArmatureData final : public CBase
 
 private:
 	explicit FArmatureData() {}
-	explicit FArmatureData(const FArmatureData& rhs) = delete;
+	explicit FArmatureData(const FArmatureData& rhs);
 	virtual ~FArmatureData() = default;
 
 public:
 	static FArmatureData* Create();
+	virtual FArmatureData* Clone();
 	virtual void Free() override;
 
 public:
@@ -78,6 +81,7 @@ public:
 	FModelNodeData* Find_NodeData(const wstring& strModelNodeKey);
 	FModelNodeData* Create_NodeData(const wstring& strModelNodeKey);
 	void Appoint_ArmatureNode(const wstring& strModelNodeKey);
+	HRESULT Add_NodeData(const wstring& strModelNodeKey, FModelNodeData* pNode);
 
 private:
 	// 아마추어 노드도 같이 저장된다.
@@ -101,6 +105,7 @@ public:
 	virtual void Free() override;
 
 public:
+	FArmatureData* Clone_ArmatureData(const wstring& strArmatureKey);
 	FArmatureData* Find_ArmatureData(const wstring& strArmatureKey);
 	FArmatureData* Create_ArmatureData(const wstring& strArmatureKey);
 	void Appoint_ArmatureNode(const wstring& strArmatureKey, const wstring& strModelNodeKey);

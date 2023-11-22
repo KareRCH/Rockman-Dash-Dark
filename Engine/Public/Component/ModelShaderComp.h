@@ -11,7 +11,7 @@ class ENGINE_DLL CModelShaderComp final : public CShaderComponent
 {
 	DERIVED_CLASS(CShaderComponent, CModelShaderComp)
 protected:
-	explicit CModelShaderComp(const DX11DEVICE_T tDevice);
+	explicit CModelShaderComp() = default;
 	explicit CModelShaderComp(const CModelShaderComp& rhs);
 	virtual ~CModelShaderComp() = default;
 
@@ -25,7 +25,7 @@ public:
 	virtual void	Render(const MATRIX_BUFFER_T& tMatrixBuf, const CAMERA_BUFFER_T tCameraBuf, const BONE_COMMON_BUFFER_T tBoneBuf, const LIGHT_BUFFER_T& tLightBuf);
 
 public:
-	static CModelShaderComp* Create(const DX11DEVICE_T tDevice, HWND hWnd);
+	static CModelShaderComp* Create(HWND hWnd);
 	virtual CComponent* Clone(void* Arg = nullptr);
 
 protected:

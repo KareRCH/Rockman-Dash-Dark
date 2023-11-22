@@ -8,19 +8,20 @@ class ENGINE_DLL CTriBufferComp : public CVIBufferComp
 {
 	DERIVED_CLASS(CVIBufferComp, CTriBufferComp)
 protected:
-	explicit CTriBufferComp(const DX11DEVICE_T tDevice);
+	explicit CTriBufferComp() = default;
 	explicit CTriBufferComp(const CTriBufferComp& rhs);
 	virtual ~CTriBufferComp() = default;
 
 public:
-	virtual HRESULT Initialize(void* Arg = nullptr);
-	virtual void	Priority_Tick(const _float& fTimeDelta);
-	virtual _int	Tick(const _float& fTimeDelta);
-	virtual void	Late_Tick(const _float& fTimeDelta);
-	virtual void	Render();
+	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual void	Priority_Tick(const _float& fTimeDelta) override;
+	virtual _int	Tick(const _float& fTimeDelta) override;
+	virtual void	Late_Tick(const _float& fTimeDelta) override;
+	virtual void	Render() override;
 
 public:
-	static CTriBufferComp* Create(const DX11DEVICE_T tDevice);
+	static CTriBufferComp* Create();
 	virtual CComponent* Clone(void* Arg = nullptr) override;
 
 protected:

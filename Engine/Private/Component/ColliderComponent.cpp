@@ -3,9 +3,8 @@
 #include "Physics/CollisionPrimitive.h"
 #include "Physics/Contact.h"
 
-CColliderComponent::CColliderComponent(const DX11DEVICE_T tDevice)
-    : Base(tDevice)
-    , m_iCollisionLayer_Flag(m_iCollisionLayer_Flag)
+CColliderComponent::CColliderComponent()
+    : m_iCollisionLayer_Flag(m_iCollisionLayer_Flag)
     , m_iCollisionMask_Flag(m_iCollisionMask_Flag)
 {
 }
@@ -79,9 +78,9 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     // 이벤트 함수 클론 제외, 수동으로 외부에서 추가
 }
 
-CColliderComponent* CColliderComponent::Create(const DX11DEVICE_T tDevice, ECOLLISION eType)
+CColliderComponent* CColliderComponent::Create(ECOLLISION eType)
 {
-    ThisClass* pInstance = new ThisClass(tDevice);
+    ThisClass* pInstance = new ThisClass();
 
     if (FAILED(pInstance->Initialize(eType)))
     {
@@ -117,6 +116,11 @@ void CColliderComponent::Free()
     // + 물리 세계에서 제거 요청 코드 필요
     ExitFromPhysics(0);
     Safe_Delete(m_pCollisionShape);
+}
+
+HRESULT CColliderComponent::Initialize_Prototype(void* Arg)
+{
+    return S_OK;
 }
 
 HRESULT CColliderComponent::Initialize(ECOLLISION eType)
@@ -186,9 +190,9 @@ void CColliderComponent::ExitFromPhysics(_uint iIndex)
 
 void CColliderComponent::Update_Physics(_matrix& matWorld)
 {
-    Transform().Calculate_TransformFromParent(&matWorld);
+    //Transform().Calculate_TransformFromParent(matWorld);
 
-    //m_pCollisionShape->matOffset.RecieveDXArray(reinterpret_cast<float*>(Get_Transform()));
+    //m_pCollisionShape->matOffset.RecieveDXArray(reinterpret_cast<float*>(Transform().Get_TransformMatrix() * matWorld));
 }
 
 void CColliderComponent::OnCollision(CColliderComponent* pDst, const FContact* const pContact)

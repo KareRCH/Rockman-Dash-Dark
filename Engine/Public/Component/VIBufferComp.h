@@ -8,7 +8,7 @@ class ENGINE_DLL CVIBufferComp abstract : public CSceneComponent
 {
 	DERIVED_CLASS(CSceneComponent, CVIBufferComp)
 protected:
-	explicit CVIBufferComp(const DX11DEVICE_T tDevice);
+	explicit CVIBufferComp() = default;
 	explicit CVIBufferComp(const CVIBufferComp& rhs);
 	virtual ~CVIBufferComp() = default;
 

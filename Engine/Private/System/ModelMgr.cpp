@@ -298,8 +298,8 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 		// 애님 데이터 생성
 		FAnimData* pAnimData = FAnimData::Create();
 		wstring AnimNameWithTK = Make_Wstring(pAnimAI->mName.C_Str());
-		pAnimData->fDuration = pAnimAI->mDuration;
-		pAnimData->fTickPerSecond = pAnimAI->mTicksPerSecond;
+		pAnimData->dfDuration = pAnimAI->mDuration;
+		pAnimData->dfTickPerSecond = pAnimAI->mTicksPerSecond;
 
 		// 애니메이션 이름 추출
 		size_t iTokkenInd = AnimNameWithTK.find_first_of(L'|') + Cast<size_t>(1);

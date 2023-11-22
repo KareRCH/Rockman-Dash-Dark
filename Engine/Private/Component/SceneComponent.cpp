@@ -1,18 +1,18 @@
 #include "Component/SceneComponent.h"
 
-CSceneComponent::CSceneComponent(const DX11DEVICE_T tDeivce)
-	: Base(tDeivce)
-{
-	
-}
-
 CSceneComponent::CSceneComponent(const CSceneComponent& rhs)
 	: Base(rhs)
 {
 }
 
-CSceneComponent::~CSceneComponent()
+HRESULT CSceneComponent::Initialize_Prototype(void* Arg)
 {
+	if (S_OK != SUPER::Initialize_Prototype())
+		return E_FAIL;
+
+	m_pTransformComp = CTransformComponent::Create();
+
+	return S_OK;
 }
 
 HRESULT CSceneComponent::Initialize(void* Arg)
@@ -36,55 +36,43 @@ void CSceneComponent::Free()
 	Release_Transform();
 }
 
-CSceneComponent* CSceneComponent::Get_FirstChildComp()
+CSceneComponent* CSceneComponent::Get_FirstChildSceneComp()
 {
-	if (m_listChildSceneComp.empty())
+	if (m_vecChildSceneComp.empty())
 		return nullptr;
 
-	return m_listChildSceneComp.front();
+	return m_vecChildSceneComp.front();
 }
 
-CSceneComponent* CSceneComponent::Get_ChildComp(_uint iIndex)
+CSceneComponent* CSceneComponent::Get_ChildSceneComp(_uint iIndex)
 {
-	if (m_listChildSceneComp.empty())
+	if (m_vecChildSceneComp.empty())
 		return nullptr;
 
-	_uint i = 0;
-	for (auto iter = m_listChildSceneComp.begin(); iter != m_listChildSceneComp.end(); iter++)
-	{
-		if (i == iIndex)
-			return (*iter);
-		++i;
-	}
+	if (iIndex < 0 || iIndex >= Cast<_uint>(m_vecChildSceneComp.size()))
+		return nullptr;
 
-	return nullptr;
+	return m_vecChildSceneComp[iIndex];
 }
 
-void CSceneComponent::Add_Child(CSceneComponent* const pComp)
+void CSceneComponent::Add_ChildSceneComp(CSceneComponent* const pComp)
 {
 	if (nullptr == pComp)
 		return;
 
-	m_listChildSceneComp.push_back(pComp);
+	m_vecChildSceneComp.push_back(pComp);
 }
 
-_bool CSceneComponent::Insert_Child(_uint iIndex, CSceneComponent* const pComp)
+_bool CSceneComponent::Insert_ChildSceneComp(_uint iIndex, CSceneComponent* const pComp)
 {
 	if (nullptr == pComp)
 		return false;
 
-	_uint i = 0;
-	auto iter = m_listChildSceneComp.begin();
-	for (; iter != m_listChildSceneComp.end(); iter++)
-	{
-		if (i == iIndex)
-			break;
-		++i;
-	}
-	if (iter != m_listChildSceneComp.end())
-		m_listChildSceneComp.insert(iter, pComp);
-	else
+	if (iIndex < 0 || iIndex >= Cast<_uint>(m_vecChildSceneComp.size()))
 		return false;
+
+	auto iter = m_vecChildSceneComp.begin() + iIndex;
+	m_vecChildSceneComp.insert(iter, pComp);
 
 	return true;
 }

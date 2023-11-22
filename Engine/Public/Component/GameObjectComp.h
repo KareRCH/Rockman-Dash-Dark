@@ -12,7 +12,7 @@ class ENGINE_DLL CGameObjectComp abstract : public CPrimitiveComponent
 {
 	DERIVED_CLASS(CPrimitiveComponent, CGameObjectComp)
 protected:
-	explicit CGameObjectComp(const DX11DEVICE_T tDevice);
+	explicit CGameObjectComp() = default;
 	explicit CGameObjectComp(const CGameObjectComp& rhs);
 	virtual ~CGameObjectComp() = default;
 

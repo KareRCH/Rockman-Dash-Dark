@@ -18,11 +18,12 @@ class ENGINE_DLL CColliderComponent : public CSceneComponent
 	DERIVED_CLASS(CSceneComponent, CColliderComponent)
 
 protected:
-	explicit CColliderComponent(const DX11DEVICE_T tDevice);
+	explicit CColliderComponent();
 	explicit CColliderComponent(const CColliderComponent& rhs);
 	virtual ~CColliderComponent() = default;
 
 public:
+	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
 	PRIVATE virtual HRESULT Initialize(void* Arg = nullptr) { return S_OK; }
 	PUBLIC	virtual HRESULT Initialize(ECOLLISION eType);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
@@ -31,7 +32,7 @@ public:
 	virtual void	Render() {}
 
 public:
-	static	CColliderComponent*		Create(const DX11DEVICE_T tDevice, ECOLLISION eType);
+	static	CColliderComponent*		Create(ECOLLISION eType);
 	virtual CComponent*				Clone(void* Arg = nullptr) override;
 
 protected:

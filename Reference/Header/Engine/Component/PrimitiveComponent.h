@@ -3,6 +3,7 @@
 #include "BaseClass/GameObject_Define.h"
 #include "Component/Component_Define.h"
 #include "Component/Component.h"
+#include "Component/Interface/ID3D11DeviceComp.h"
 
 BEGIN(Engine)
 
@@ -13,16 +14,17 @@ class CGameObject;
 /// Primitive 타입은 Primitive전용 맵에 저장된다.
 /// 
 /// </summary>
-class ENGINE_DLL CPrimitiveComponent abstract : public CComponent
+class ENGINE_DLL CPrimitiveComponent abstract : public CComponent, public ID3D11DeviceComp
 {
-	DERIVED_CLASS(CBase, CPrimitiveComponent)
+	DERIVED_CLASS(CComponent, CPrimitiveComponent)
 protected:
-	explicit CPrimitiveComponent(const DX11DEVICE_T tDevice);
+	explicit CPrimitiveComponent() = default;
 	explicit CPrimitiveComponent(const CPrimitiveComponent& rhs);
 	virtual ~CPrimitiveComponent() = default;
 
 public:
-	virtual HRESULT Initialize() PURE;
+	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr);
+	virtual HRESULT Initialize(void* Arg = nullptr) PURE;
 	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
 	virtual _int	Tick(const _float& fTimeDelta) PURE;
 	virtual void	Late_Tick(const _float& fTimeDelta) PURE;
@@ -32,31 +34,56 @@ public:
 	virtual CComponent*	Clone(void* Arg = nullptr) PURE;
 
 protected:
-	virtual void					Free();
+	virtual void		Free();
 
-protected:
-	ComPtr<ID3D11Device>			m_pDevice = { nullptr };		// 렌더 장치
-	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };	// 렌더 장치 컨텍스트
-	_bool							m_bClone;
+#pragma region 그래픽 디바이스
+	/*
+	* 그래픽 디바이스는 컴포넌트로 제공됩니다.
+	* 그래픽 디바이스 컴포넌트는 돌려쓰기가 허용됩니다.
+	* 객체 복사시 얕은 복사를 하여 씁니다. 이를 통해 메모리 상의 이점을 얻습니다.
+	* 객체 유형이 다르면 그만큼 이 컴포넌트의 양도 많아집니다.
+	* 그리 크게 신경쓸 사항은 아닙니다.
+	* 이를 통해 그래픽 디바이스는 자동적으로 관리됨을 시사합니다.
+	* 그래픽 디바이스 컴포넌트의 인터페이스가 제공되며, 이를 구현하여 디바이스를 얻어 쓰도록 만들어야 합니다.
+	*/
+public:
+	inline virtual ID3D11Device* const D3D11Device() const { return m_pDeviceComp->Get_Device(); }
+	inline virtual ID3D11DeviceContext* const D3D11Context() const { return m_pDeviceComp->Get_Context(); }
+
+private:
+	class CD3D11DeviceComp* m_pDeviceComp = { nullptr };
+#pragma endregion
+
+
+#pragma region 기본 속성
+public:
+	_float Get_Priority(ECompTickType eType) { return m_fPriority[Cast_EnumDef(eType)]; }
+	void Set_Priority(ECompTickType eType, _float fPriority) { m_fPriority[Cast_EnumDef(eType)] = fPriority; }
 
 private:	// 기본 속성
-	_float				m_fPriority[Cast_EnumDef(ECompTickType::Size)];		// 우선도
+	_float					m_fPriority[Cast_EnumDef(ECompTickType::Size)];		// 우선도
+#pragma endregion
 
+
+#pragma region 계층구조
 public:
 	// 외부에서는 포인터 변경 불가를 조건으로 주소를 얻음
 	GETSET_2(CGameObject*, m_pOwnerObject, OwnerObject, GET_REF_C, SET__C)
 	GETSET_2(CPrimitiveComponent*, m_pOwnerPrimComp, OwnerPrimComp, GET_REF_C, SET__C)
 
 private:
-	CGameObject*			m_pOwnerObject = { nullptr };			// 소유하고 있는 게임오브젝트
-	CPrimitiveComponent*	m_pOwnerPrimComp = { nullptr };			// 부모 컴포넌트
+	CGameObject*			m_pOwnerObject = { nullptr };			// 소유하고 있는 게임오브젝트, 이는 반드시 누군가 소유해주어야 함.
+	CPrimitiveComponent*	m_pOwnerPrimComp = { nullptr };			// 소유하고 있는 Primitive 컴포넌트, 비어있을 수 있음
 
 public:
-	HRESULT Add_PrimComponent(const wstring& strCompKey, CPrimitiveComponent* pComp);
-	CPrimitiveComponent* Find_PrimComponent(const wstring& strCompKey);
+	HRESULT Add_PrimComponent(const wstring& strCompKey, CPrimitiveComponent* pComp);	// Primitive 컴포넌트 추가
+	CPrimitiveComponent* Find_PrimComponent(const wstring& strCompKey);					// Primitive 컴포넌트 추가
 
 private:
-	_unmap<wstring, CPrimitiveComponent*>	m_mapPrimComponent;		// 원시 컴포넌트를 저장하는 맵
+	_unmap<wstring, CPrimitiveComponent*>	m_mapPrimComponent;		// Primitive 컴포넌트를 저장하는 컨테이너, CComponent는 저장이 안됩니다.
+																	// Scene 컴포넌트를 저장시 동시에 저장됩니다.
+#pragma endregion
+
 
 public:
 	template<typename T, typename = enable_if_t<is_class<T>::value>>

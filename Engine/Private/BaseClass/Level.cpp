@@ -59,6 +59,7 @@ void CLevel::Late_Tick(const _float& fTimeDelta)
 HRESULT CLevel::Render()
 {
 	// _DEBUG ¿ë
+	return S_OK;
 }
 
 void CLevel::Free()

@@ -25,7 +25,7 @@ void FAnimNodeData::Free()
 
 _float4x4 FAnimNodeData::Interporated_Matrix(const _float& fCurTime)
 {
-	_uint iStartPivot, iPivot;
+	_uint iPivot;
 	_matrix matTransform = XMMatrixIdentity();
 	_vector vCalcPos, vCalcRot, vCalcScale;
 	if (!vecPositions.empty())
@@ -121,7 +121,7 @@ _uint FAnimNodeData::Calculate_PivotPosition(const _float& fCurTime)
 	_uint iPivot;
 
 	// 벡터의 크기는 인덱스의 시간과 끝의 차이를 뜻함.
-	_uint iSize = vecPositions.size();
+	_uint iSize = Cast<_uint>(vecPositions.size());
 	// 첫점과 끝점의 시간차를 구해둠
 	iPivot = Cast<_uint>(vecPositions.back().fTime - vecPositions.front().fTime);
 	// 비율을 구해 현재 시간을 구해 실제 기준점을 구한다.
@@ -155,7 +155,7 @@ _uint FAnimNodeData::Calculate_PivotRotation(const _float& fCurTime)
 	_uint iPivot;
 
 	// 벡터의 크기는 인덱스의 시간과 끝의 차이를 뜻함.
-	_uint iSize = vecRotations.size();
+	_uint iSize = Cast<_uint>(vecRotations.size());
 	// 첫점과 끝점의 시간차를 구해둠
 	iPivot = Cast<_uint>(vecRotations.back().fTime - vecRotations.front().fTime);
 	// 비율을 구해 현재 시간을 구해 실제 기준점을 구한다.
@@ -188,7 +188,7 @@ _uint FAnimNodeData::Calculate_PivotScale(const _float& fCurTime)
 	_uint iPivot;
 
 	// 벡터의 크기는 인덱스의 시간과 끝의 차이를 뜻함.
-	_uint iSize = vecScales.size();
+	_uint iSize = Cast<_uint>(vecScales.size());
 	// 첫점과 끝점의 시간차를 구해둠
 	iPivot = Cast<_uint>(vecScales.back().fTime - vecScales.front().fTime);
 	// 비율을 구해 현재 시간을 구해 실제 기준점을 구한다.
@@ -263,8 +263,8 @@ void FAnimData::Add_AnimNodeData(const wstring& strNodeKey, FAnimNodeData* pAnim
 
 _float FAnimData::Calculate_Time(const _float& fTimeDelta, _float fCurTime, _bool bMod)
 {
-	_float fModedTIme = (bMod) ? fmodf(fCurTime, fDuration) : min(fCurTime, fDuration);		// 정해진 시간 뒤로 가지 않게 한다.
-	_float fRatio = fTickPerSecond * fTimeDelta;		// 애니메이션과 시스템 시간변화율을 동기화한다.
+	_float fModedTIme = Cast<_float>((bMod) ? fmodf(fCurTime, Cast<_float>(dfDuration)) : min(fCurTime, Cast<_float>(dfDuration)));		// 정해진 시간 뒤로 가지 않게 한다.
+	_float fRatio = Cast<_float>(dfTickPerSecond) * fTimeDelta;		// 애니메이션과 시스템 시간변화율을 동기화한다.
 	return fModedTIme * fRatio;
 }
 

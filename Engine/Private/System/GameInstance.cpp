@@ -528,12 +528,12 @@ void CGameInstance::Tick_Timer(const _tchar* pTimerTag)
 
 #pragma region 매니지먼트
 
-HRESULT CGameInstance::Initialize_ObjectMgr(const DX11DEVICE_T tDevice, const EMANAGE_SCENE eManageSceneType)
+HRESULT CGameInstance::Initialize_ObjectMgr(const DX11DEVICE_T tDevice)
 {
 	if (nullptr != m_pManagement)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pManagement = CObjectMgr::Create(tDevice, eManageSceneType), E_FAIL);
+	NULL_CHECK_RETURN(m_pManagement = CObjectMgr::Create(tDevice, 0), E_FAIL);
 
 	return S_OK;
 }
@@ -562,24 +562,6 @@ void CGameInstance::Late_Tick_Scene(const _float& fTimeDelta)
 		return;
 
 	m_pManagement->Late_Tick(fTimeDelta);
-}
-
-void CGameInstance::Render_Scene()
-{
-	if (nullptr == m_pManagement)
-		return;
-
-	m_pManagement->Render();
-}
-
-HRESULT CGameInstance::Set_Scene(CLevel* pScene)
-{
-	if (nullptr == m_pManagement)
-		return E_FAIL;
-
-	FAILED_CHECK_RETURN(m_pManagement->Set_Scene(pScene), E_FAIL);
-
-	return S_OK;
 }
 
 #pragma endregion

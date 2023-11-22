@@ -1,10 +1,5 @@
 #include "Component/ShaderComponent.h"
 
-CShaderComponent::CShaderComponent(const DX11DEVICE_T tDevice)
-	: Base(tDevice)
-{
-}
-
 CShaderComponent::CShaderComponent(const CShaderComponent& rhs)
 	: Base(rhs)
 {
