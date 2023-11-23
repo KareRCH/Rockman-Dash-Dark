@@ -56,16 +56,15 @@ _int CTestObject::Tick(const _float& fTimeDelta)
         Transform().Set_PositionZ(Transform().Get_PositionFloat3().z + 5.f * fTimeDelta);
     else if (GI()->IsKey_Pressing(DIK_S))
         Transform().Set_PositionZ(Transform().Get_PositionFloat3().z - 5.f * fTimeDelta);
+
+    if (GI()->IsKey_Pressed(DIK_RETURN))
+        Toggle_State(EGObjectState::Render);
+    if (GI()->IsKey_Pressed(DIK_BACK))
+        Set_Dead();
     
-    //Set_Scale(_float3(2.f, 2.f, 2.f));
-    for (_uint i = 0; i < 10000; i++)
-    {
-        Transform().Set_RotationEuler(_float3(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(180.f)));
-    }
-    
+    Transform().Set_Scale(_float3(2.f, 2.f, 2.f));
     
     _float3 t = Transform().Get_RotationEulerFloat3();
-    //m_pModelBufferComp->Calculate_TransformFromParent();
 
     return 0;
 }

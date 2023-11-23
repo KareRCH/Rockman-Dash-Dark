@@ -30,8 +30,14 @@ protected:
 public:
 	GETSET_1(wstring, m_strName, Name, GET_C_REF)		// 이름을 얻기만 가능
 
+	void		Add_LevelTag(const wstring& strPrototypeTag) { m_setLevelTag.emplace(strPrototypeTag); }
+	_bool		Has_LevelTag(const wstring& strPrototypeTag) { return (m_setLevelTag.find(strPrototypeTag) != m_setLevelTag.end()); }
+	void		Delete_LevelTag(const wstring& strTag);
+	_uint		LevelTag_Size() { return Cast<_uint>(m_setLevelTag.size()); }
+
 private:
 	wstring				m_strName;						// 컴포넌트 이름
+	set<wstring>		m_setLevelTag;					// 분류태그, 레벨에 따라 로드된 분류에 따라 원본을 정리하는데 사용된다.
 	_bool				m_bClone;						// 원형인지 아닌지
 
 public:

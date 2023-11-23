@@ -68,12 +68,12 @@ void CGameObject::Free()
 	Release_Transform();
 }
 
-void CGameObject::Delete_Tag(const wstring& strTag)
+void CGameObject::Delete_Tag(const EGObjTag eTagType, const wstring& strTag)
 {
-	auto iter = m_setTag.find(strTag);
+	auto iter = m_setTag[Cast_EnumDef(eTagType)].find(strTag);
 
-	if (iter != m_setTag.end())
-		m_setTag.erase(iter);
+	if (iter != m_setTag[Cast_EnumDef(eTagType)].end())
+		m_setTag[Cast_EnumDef(eTagType)].erase(iter);
 }
 
 

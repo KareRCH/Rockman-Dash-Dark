@@ -20,6 +20,7 @@
 #include "System/ParticleMgr.h"
 
 #include "BaseClass/GameObject.h"
+#include "Component/Component.h"
 
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -591,6 +592,62 @@ void CGameInstance::Late_Tick_Object(const _float& fTimeDelta)
 	m_pObjectMgr->Late_Tick(fTimeDelta);
 }
 
+HRESULT CGameInstance::Add_PrototypeObject(const wstring& strPrototypeKey, CGameObject* pPrototype)
+{
+	if (nullptr == m_pObjectMgr)
+		return E_FAIL;
+
+	return m_pObjectMgr->Add_CloneObject(strPrototypeKey, pPrototype);
+}
+
+HRESULT CGameInstance::Add_CloneObject(const wstring& strPrototypeKey, void* pArg)
+{
+	if (nullptr == m_pObjectMgr)
+		return E_FAIL;
+
+	return m_pObjectMgr->Add_CloneObject(strPrototypeKey, pArg);
+}
+
+CGameObject* CGameInstance::Find_PrototypeObject(const wstring& strPrototypeKey)
+{
+	if (nullptr == m_pObjectMgr)
+		return nullptr;
+
+	return m_pObjectMgr->Find_Prototype(strPrototypeKey);
+}
+
+void CGameInstance::Clear_PrototypeObejcts(const wstring& strContainTag)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->Clear_Prototypes(strContainTag);
+}
+
+HRESULT CGameInstance::Add_GameObject(CGameObject* pObj)
+{
+	if (nullptr == m_pObjectMgr)
+		return E_FAIL;
+
+	return m_pObjectMgr->Add_GameObject(pObj);
+}
+
+CGameObject* CGameInstance::Find_GameObject(_uint iFindID)
+{
+	if (nullptr == m_pObjectMgr)
+		return nullptr;
+
+	return m_pObjectMgr->Find_GameObject(iFindID);
+}
+
+void CGameInstance::Clear_GameObject(const wstring& strLayerTag)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->Clear_GameObject(strLayerTag);
+}
+
 #pragma endregion
 
 //----------------------------------------------------------------
@@ -661,6 +718,30 @@ HRESULT CGameInstance::Initialize_ComponentMgr()
 	NULL_CHECK_RETURN(m_pComponentMgr = CComponentMgr::Create(), E_FAIL);
 
 	return S_OK;
+}
+
+HRESULT CGameInstance::Add_PrototypeComp(const wstring& strProtoKey, CComponent* pPrototype)
+{
+	if (nullptr == m_pComponentMgr)
+		return E_FAIL;
+
+	return m_pComponentMgr->Add_Prototype(strProtoKey, pPrototype);
+}
+
+CComponent* CGameInstance::Clone_PrototypeComp(const wstring& strProtoKey, void* pArg)
+{
+	if (nullptr == m_pComponentMgr)
+		return nullptr;
+
+	return m_pComponentMgr->Clone_Prototype(strProtoKey, pArg);
+}
+
+void CGameInstance::Clear_PrototypeComps(const wstring& strContainTag)
+{
+	if (nullptr == m_pComponentMgr)
+		return;
+
+	m_pComponentMgr->Clear_Prototypes(strContainTag);
 }
 
 

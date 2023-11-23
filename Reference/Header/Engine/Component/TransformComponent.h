@@ -257,43 +257,43 @@ public:
 		// 부동소수점 문제로 Scale값은 따로 저장
 		XMStoreFloat3(&m_vScale, value);
 
-		m_matTransform._11 *= m_vScale.x * m_vScale.x; m_matTransform._12 *= m_vScale.x * m_vScale.x; m_matTransform._13 *= m_vScale.x * m_vScale.x;
-		m_matTransform._21 *= m_vScale.y * m_vScale.y; m_matTransform._22 *= m_vScale.y * m_vScale.y; m_matTransform._23 *= m_vScale.y * m_vScale.y;
-		m_matTransform._31 *= m_vScale.z * m_vScale.z; m_matTransform._32 *= m_vScale.z * m_vScale.z; m_matTransform._33 *= m_vScale.z * m_vScale.z;
+		m_matTransform._11 *= m_vScale.x / m_vScale.x; m_matTransform._12 *= m_vScale.x / m_vScale.x; m_matTransform._13 *= m_vScale.x / m_vScale.x;
+		m_matTransform._21 *= m_vScale.y / m_vScale.y; m_matTransform._22 *= m_vScale.y / m_vScale.y; m_matTransform._23 *= m_vScale.y / m_vScale.y;
+		m_matTransform._31 *= m_vScale.z / m_vScale.z; m_matTransform._32 *= m_vScale.z / m_vScale.z; m_matTransform._33 *= m_vScale.z / m_vScale.z;
 	}
 	void Set_Scale(const _float3 value)
 	{
-		m_matTransform._11 *= value.x * m_vScale.x; m_matTransform._12 *= value.x * m_vScale.x; m_matTransform._13 *= value.x * m_vScale.x;
-		m_matTransform._21 *= value.y * m_vScale.y; m_matTransform._22 *= value.y * m_vScale.y; m_matTransform._23 *= value.y * m_vScale.y;
-		m_matTransform._31 *= value.z * m_vScale.z; m_matTransform._32 *= value.z * m_vScale.z; m_matTransform._33 *= value.z * m_vScale.z;
+		m_matTransform._11 *= value.x / m_vScale.x; m_matTransform._12 *= value.x / m_vScale.x; m_matTransform._13 *= value.x / m_vScale.x;
+		m_matTransform._21 *= value.y / m_vScale.y; m_matTransform._22 *= value.y / m_vScale.y; m_matTransform._23 *= value.y / m_vScale.y;
+		m_matTransform._31 *= value.z / m_vScale.z; m_matTransform._32 *= value.z / m_vScale.z; m_matTransform._33 *= value.z / m_vScale.z;
 
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale = value;
 	}
 	void Set_Scale(const _float x, const _float y, const _float z)
 	{
-		m_matTransform._11 *= x * m_vScale.x; m_matTransform._12 *= x * m_vScale.x; m_matTransform._13 *= x * m_vScale.x;
-		m_matTransform._21 *= y * m_vScale.y; m_matTransform._22 *= y * m_vScale.y; m_matTransform._23 *= y * m_vScale.y;
-		m_matTransform._31 *= z * m_vScale.z; m_matTransform._32 *= z * m_vScale.z; m_matTransform._33 *= z * m_vScale.z;
+		m_matTransform._11 *= x / m_vScale.x; m_matTransform._12 *= x / m_vScale.x; m_matTransform._13 *= x / m_vScale.x;
+		m_matTransform._21 *= y / m_vScale.y; m_matTransform._22 *= y / m_vScale.y; m_matTransform._23 *= y / m_vScale.y;
+		m_matTransform._31 *= z / m_vScale.z; m_matTransform._32 *= z / m_vScale.z; m_matTransform._33 *= z / m_vScale.z;
 
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale = { x, y, z };
 	}
 	void Set_ScaleX(const _float value)
 	{
-		m_matTransform._11 *= value * m_vScale.x; m_matTransform._12 *= value * m_vScale.x; m_matTransform._13 *= value * m_vScale.x;
+		m_matTransform._11 *= value / m_vScale.x; m_matTransform._12 *= value / m_vScale.x; m_matTransform._13 *= value / m_vScale.x;
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale.x = value;
 	}
 	void Set_ScaleY(const _float value)
 	{
-		m_matTransform._21 *= value * m_vScale.y; m_matTransform._22 *= value * m_vScale.y; m_matTransform._23 *= value * m_vScale.y;
+		m_matTransform._21 *= value / m_vScale.y; m_matTransform._22 *= value / m_vScale.y; m_matTransform._23 *= value / m_vScale.y;
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale.y = value;
 	}
 	void Set_ScaleZ(const _float value)
 	{
-		m_matTransform._31 *= value * m_vScale.z; m_matTransform._32 *= value * m_vScale.z; m_matTransform._33 *= value * m_vScale.z;
+		m_matTransform._31 *= value / m_vScale.z; m_matTransform._32 *= value / m_vScale.z; m_matTransform._33 *= value / m_vScale.z;
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale.z = value;
 	}

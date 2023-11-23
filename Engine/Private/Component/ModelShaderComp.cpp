@@ -11,21 +11,22 @@ HRESULT CModelShaderComp::Initialize_Prototype(void* Arg)
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 
+    FInitData tInit = {};
+    if (Arg) { tInit = (*ReCast<FInitData*>(Arg)); }
+
+    FAILED_CHECK_RETURN(Initialize_Shader(tInit.hWnd, L"VS_ModelTest", L"PS_ModelTest"), E_FAIL);
+
     return S_OK;
 }
 
 HRESULT CModelShaderComp::Initialize(void* Arg)
 {
+    //FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
 
+    FInitData tInit = {};
+    if (Arg) { tInit = (*ReCast<FInitData*>(Arg)); }
 
-    return S_OK;
-}
-
-HRESULT CModelShaderComp::Initialize(HWND hWnd)
-{
-    FAILED_CHECK_RETURN(Initialize(), E_FAIL);
-
-    FAILED_CHECK_RETURN(Initialize_Shader(hWnd, L"VS_ModelTest", L"PS_ModelTest"), E_FAIL);
+    FAILED_CHECK_RETURN(Initialize_Shader(tInit.hWnd, L"VS_ModelTest", L"PS_ModelTest"), E_FAIL);
 
     return S_OK;
 }
@@ -54,7 +55,9 @@ CModelShaderComp* CModelShaderComp::Create(HWND hWnd)
 {
     ThisClass* pInstance = new ThisClass();
 
-    if (FAILED(pInstance->Initialize_Prototype(hWnd)))
+    FInitData Arg = { hWnd };
+
+    if (FAILED(pInstance->Initialize_Prototype(&Arg)))
     {
         Engine::Safe_Release(pInstance);
 
@@ -165,8 +168,9 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     tMatrixBuf.matProj = XMMatrixTranspose(tMatrixBuf.matProj);
 
     // 상수 버퍼의 내용을 쓸 수 있도록 잠금
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 
+    ID3D11DeviceContext* pContext = D3D11Context();
 
     /***********
     * 행렬 버퍼

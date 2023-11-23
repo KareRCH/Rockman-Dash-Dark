@@ -17,6 +17,11 @@ protected:
 	explicit CShaderComponent(const CShaderComponent& rhs);
 	virtual ~CShaderComponent() = default;
 
+	struct FInitData
+	{
+		HWND hWnd;
+	};
+
 public:
 	virtual HRESULT Initialize(void* Arg = nullptr) PURE;
 	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;

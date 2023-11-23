@@ -10,6 +10,11 @@ BEGIN(Engine)
 class ENGINE_DLL CModelShaderComp final : public CShaderComponent
 {
 	DERIVED_CLASS(CShaderComponent, CModelShaderComp)
+
+	struct FInitData
+	{
+		HWND hWnd;
+	};
 protected:
 	explicit CModelShaderComp() = default;
 	explicit CModelShaderComp(const CModelShaderComp& rhs);
@@ -18,7 +23,6 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr);
-	virtual HRESULT	Initialize(HWND hWnd);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual _int	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta) {}

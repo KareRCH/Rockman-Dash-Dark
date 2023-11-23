@@ -41,7 +41,6 @@ private:
 	virtual void Free() override;
 
 
-
 #pragma region 그래픽 디바이스
 public:		// 그래픽 디바이스
 	HRESULT							Initialize_GraphicDev(const FDEVICE_INIT& tInit);
@@ -136,15 +135,27 @@ public:
 #pragma region 오브젝트 매니저
 public:		// 매니지먼트
 	HRESULT Initialize_ObjectMgr();
-	void	Priority_Tick_Scene(const _float& fTimeDelta);
-	_int	Tick_Scene(const _float& fTimeDelta);
-	void	Late_Tick_Scene(const _float& fTimeDelta);
+	void	Priority_Tick_Object(const _float& fTimeDelta);
+	_int	Tick_Object(const _float& fTimeDelta);
+	void	Late_Tick_Object(const _float& fTimeDelta);
+
+	HRESULT Add_PrototypeObject(const wstring& strPrototypeKey, class CGameObject* pPrototype);
+	HRESULT Add_CloneObject(const wstring& strPrototypeKey, void* pArg = nullptr);
+	class CGameObject* Find_PrototypeObject(const wstring& strPrototypeKey);
+	void	Clear_PrototypeObejcts(const wstring& strContainTag);
+
+	HRESULT				Add_GameObject(class CGameObject* pObj);
+	class CGameObject*	Find_GameObject(_uint iFindID);
+	void				Clear_GameObject(const wstring& strLayerTag);
 #pragma endregion
 
 
 #pragma region 컴포넌트 매니저
 public:		// 컴포넌트 매니저
-	HRESULT Initialize_ComponentMgr();
+	HRESULT				Initialize_ComponentMgr();
+	HRESULT				Add_PrototypeComp(const wstring& strProtoKey, class CComponent* pPrototype);
+	class CComponent*	Clone_PrototypeComp(const wstring& strProtoKey, void* pArg);
+	void				Clear_PrototypeComps(const wstring& strContainTag);
 #pragma endregion
 
 
