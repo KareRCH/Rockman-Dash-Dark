@@ -18,6 +18,7 @@ class CPrimitiveComponent;
 class ENGINE_DLL CGameObject abstract : public CBase, public ITransform
 {
 	DERIVED_CLASS(CBase, CGameObject)
+	friend class CObjectMgr;
 protected:
 	explicit CGameObject() = default;
 	explicit CGameObject(const CGameObject& rhs);
@@ -38,10 +39,13 @@ protected:
 	virtual void	Free() override;
 
 public:
+	GETSET_1(_uint, m_iID, ID, GET_C_REF)
 	GETSET_2(wstring, m_strName, Name, GET_C_REF, SET_C_REF)
 
-	void		Add_Tag(const wstring& strTag) { m_setTag.emplace(strTag); }
-	void		Delete_Tag(const wstring& strTag);
+	void		Add_Tag(const EGObjTag eTagType, const wstring& strTag) { m_setTag[Cast_EnumDef(eTagType)].emplace(strTag); }
+	_bool		Has_Tag(const EGObjTag eTagType, const wstring& strTag) { return (m_setTag[Cast_EnumDef(eTagType)].find(strTag) != m_setTag[Cast_EnumDef(eTagType)].end()); }
+	void		Delete_Tag(const EGObjTag eTagType, const wstring& strTag);
+	_uint		Tag_Size(const EGObjTag eTagType) { return Cast<_uint>(m_setTag[Cast_EnumDef(eTagType)].size()); }
 
 	_bool		IsDead() { return m_iStateFlag & Cast_EnumDef(EGObjectState::Dead); }
 	void		Set_Dead() { m_iStateFlag |= Cast_EnumDef(EGObjectState::Dead); }
@@ -54,10 +58,11 @@ public:
 	_bool		IsState(const EGObjectState value) { return (m_iStateFlag & Cast_EnumDef(value)); }
 
 private:	// 기본 속성
-	_uint_64					m_iID = 0ULL;			// 식별용 ID
-	wstring						m_strName = L"";		// 오브젝트 이름
-	_unset<wstring>				m_setTag;				// 분류, 제어용 태그
-	_uint						m_iStateFlag = 0U;		// 상태 플래그
+	_uint						m_iID = 0U;										// 식별용 ID, 오브젝트 관리에 사용된다.
+	wstring						m_strName = L"";								// 오브젝트 이름, 인스턴스를 식별하기 위해 사용된다.
+	_uint						m_iStateFlag = 0U;								// 상태 플래그, 32가지의 상태를 구현한다. 시스템에서 쓰인다.
+	_unset<wstring>				m_setTag[Cast_EnumDef(EGObjTag::Size)];		// 분류 태그. 시스템과 게임 로직에 사용된다.
+	
 	
 	_float						m_fPriority[Cast_EnumDef(EGObjTickPriority::Size)];	// 우선도
 
