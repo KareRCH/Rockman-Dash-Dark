@@ -42,29 +42,29 @@ public:
 	GETSET_1(_uint, m_iID, ID, GET_C_REF)
 	GETSET_2(wstring, m_strName, Name, GET_C_REF, SET_C_REF)
 
-	void		Add_Tag(const EGObjTag eTagType, const wstring& strTag) { m_setTag[Cast_EnumDef(eTagType)].emplace(strTag); }
-	_bool		Has_Tag(const EGObjTag eTagType, const wstring& strTag) { return (m_setTag[Cast_EnumDef(eTagType)].find(strTag) != m_setTag[Cast_EnumDef(eTagType)].end()); }
+	void		Add_Tag(const EGObjTag eTagType, const wstring& strTag) { m_setTag[ECast(eTagType)].emplace(strTag); }
+	_bool		Has_Tag(const EGObjTag eTagType, const wstring& strTag) { return (m_setTag[ECast(eTagType)].find(strTag) != m_setTag[ECast(eTagType)].end()); }
 	void		Delete_Tag(const EGObjTag eTagType, const wstring& strTag);
-	_uint		Tag_Size(const EGObjTag eTagType) { return Cast<_uint>(m_setTag[Cast_EnumDef(eTagType)].size()); }
+	_uint		Tag_Size(const EGObjTag eTagType) { return Cast<_uint>(m_setTag[ECast(eTagType)].size()); }
 
-	_bool		IsDead() { return m_iStateFlag & Cast_EnumDef(EGObjectState::Dead); }
-	void		Set_Dead() { m_iStateFlag |= Cast_EnumDef(EGObjectState::Dead); }
+	_bool		IsDead() { return m_iStateFlag & ECast(EGObjectState::Dead); }
+	void		Set_Dead() { m_iStateFlag |= ECast(EGObjectState::Dead); }
 	
 	_float		Get_Priority(_uint iIndex) { return m_fPriority[iIndex]; }
 
-	void		TurnOn_State(const EGObjectState value) { m_iStateFlag |= Cast_EnumDef(value); }
-	void		TurnOff_State(const EGObjectState value) { m_iStateFlag &= ~Cast_EnumDef(value); }
-	void		Toggle_State(const EGObjectState value) { m_iStateFlag ^= Cast_EnumDef(value); }
-	_bool		IsState(const EGObjectState value) { return (m_iStateFlag & Cast_EnumDef(value)); }
+	void		TurnOn_State(const EGObjectState value) { m_iStateFlag |= ECast(value); }
+	void		TurnOff_State(const EGObjectState value) { m_iStateFlag &= ~ECast(value); }
+	void		Toggle_State(const EGObjectState value) { m_iStateFlag ^= ECast(value); }
+	_bool		IsState(const EGObjectState value) { return (m_iStateFlag & ECast(value)); }
 
 private:	// 기본 속성
 	_uint						m_iID = 0U;										// 식별용 ID, 오브젝트 관리에 사용된다.
 	wstring						m_strName = L"";								// 오브젝트 이름, 인스턴스를 식별하기 위해 사용된다.
 	_uint						m_iStateFlag = 0U;								// 상태 플래그, 32가지의 상태를 구현한다. 시스템에서 쓰인다.
-	_unset<wstring>				m_setTag[Cast_EnumDef(EGObjTag::Size)];		// 분류 태그. 시스템과 게임 로직에 사용된다.
+	_unset<wstring>				m_setTag[ECast(EGObjTag::Size)];		// 분류 태그. 시스템과 게임 로직에 사용된다.
 	
 	
-	_float						m_fPriority[Cast_EnumDef(EGObjTickPriority::Size)];	// 우선도
+	_float						m_fPriority[ECast(EGObjTickPriority::Size)];	// 우선도
 
 public: // 각 오브젝트는 자식 오브젝트를 가질 수 있음
 	GETSET_2(CGameObject*, m_pOwner, Owner, GET_REF_C, SET__C)
@@ -95,7 +95,7 @@ private:	// 컴포넌트 속성
 	_unmap<wstring, CPrimitiveComponent*>	m_mapPrimComp;				// 오브젝트 전용 컴포넌트 관리 컨테이너
 
 	using list_comp =						list<CPrimitiveComponent*>;
-	list_comp								m_listUpdateComp[Cast_EnumDef(ECompTickType::Size)];	// 컴포넌트 업데이트 관리 리소스
+	list_comp								m_listUpdateComp[ECast(ECompTickType::Size)];	// 컴포넌트 업데이트 관리 리소스
 #pragma endregion
 
 #pragma region 트랜스폼 컴포넌트

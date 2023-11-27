@@ -70,3 +70,11 @@ HRESULT CSkeletalComponent::Load_Armature(const EModelGroupIndex eGroupIndex, co
 
     return S_OK;
 }
+
+vector<const _float4x4*> CSkeletalComponent::Get_FinalTransforms()
+{
+    if (!m_pArmature)
+        return vector<const _float4x4*>();
+
+    return m_pArmature->Provide_FinalTransforms();
+}

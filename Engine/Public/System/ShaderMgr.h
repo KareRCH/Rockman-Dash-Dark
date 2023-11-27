@@ -105,7 +105,7 @@ private:
 
 private:
 	wstring								m_strMainPath;
-	_unmap<wstring, FShaderData*>		m_mapShaderData[Cast_EnumDef(EShaderType::Size)];
+	_unmap<wstring, FShaderData*>		m_mapShaderData[Cast_Enum(EShaderType::Size)];
 };
 
 
@@ -114,7 +114,7 @@ private:
 template <EShaderType Type>
 ComPtr<ShaderType<Type>> CShaderMgr::Get_ShaderBuffer(const wstring& strName) const
 {
-	constexpr _uint iIndex = Cast_EnumDef(Type);
+	constexpr _uint iIndex = Cast_Enum(Type);
 
 	auto iter = m_mapShaderData[iIndex].find(strName);
 	if (iter == m_mapShaderData[iIndex].end() || !(*iter).second->IsLoaded())

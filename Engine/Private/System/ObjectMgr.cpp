@@ -281,7 +281,7 @@ void CObjectMgr::RegistToTick_GameObjects()
 	copy(m_vecGameObjects.begin(), m_vecGameObjects.end(), back_inserter(m_listTickObjects));
 
 	// Tick 우선도 기반 정렬
-	_uint iIndex = Cast_EnumDef(EGObjTickPriority::Tick);
+	_uint iIndex = ECast(EGObjTickPriority::Tick);
 	m_listTickObjects.sort(
 		[&iIndex](CGameObject* const pDst, CGameObject* const pSrc) {
 			return (pDst->Get_Priority(iIndex) > pSrc->Get_Priority(iIndex));

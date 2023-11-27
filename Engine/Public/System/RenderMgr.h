@@ -74,7 +74,7 @@ private:
 	HRESULT			m_hReadyResult;
 
 private:
-	list<CGameObject*>		m_RenderGroup[Cast_EnumDef(ERenderGroup::Size)];
+	list<CGameObject*>		m_RenderGroup[ECast(ERenderGroup::Size)];
 
 private:
 	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
@@ -94,10 +94,10 @@ public:		// 카메라 행렬저장용
 	const _matrix& Get_OrthogonalProjMatrix(const _uint iCam) const { return m_matOrthoProj[iCam]; }
 
 private:	// 렌더러의 위치 속성은 뷰를 기반으로
-	_matrix		m_matPersView[Cast_EnumDef(ECameraIndex::Size)];			// 원근용 뷰 행렬
-	_matrix		m_matPersProj[Cast_EnumDef(ECameraIndex::Size)];			// 원근용 투영 행렬
-	_matrix		m_matOrthoView[Cast_EnumDef(ECameraIndex::Size)];			// 직교용 뷰 행렬
-	_matrix		m_matOrthoProj[Cast_EnumDef(ECameraIndex::Size)];			// UI용 직교투영 범위
+	_matrix		m_matPersView[ECast(ECameraIndex::Size)];			// 원근용 뷰 행렬
+	_matrix		m_matPersProj[ECast(ECameraIndex::Size)];			// 원근용 투영 행렬
+	_matrix		m_matOrthoView[ECast(ECameraIndex::Size)];			// 직교용 뷰 행렬
+	_matrix		m_matOrthoProj[ECast(ECameraIndex::Size)];			// UI용 직교투영 범위
 
 public:
 	GETSET_1(vector<D3D11_VIEWPORT>, m_vecViewport,	VecViewport, GET_REF)

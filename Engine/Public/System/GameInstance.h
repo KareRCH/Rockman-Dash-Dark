@@ -240,7 +240,7 @@ private:
 	class CObjectMgr*		m_pObjectMgr = nullptr;
 	class CComponentMgr*	m_pComponentMgr = nullptr;
 	class CRenderMgr*		m_pRenderMgr = nullptr;
-	class CBlackBoardMgr*	m_pBlackBoardMgr = nullptr;
+	class CCloudStationMgr*	m_pBlackBoardMgr = nullptr;
 	
 	class CModelMgr*		m_pModelMgr = nullptr;
 	class CTextureMgr*		m_pTextureMgr = nullptr;

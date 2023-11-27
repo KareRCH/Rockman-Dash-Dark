@@ -102,7 +102,7 @@ private:
 
 private:
 	// 모델 정보, 메쉬, 뼈, 머터리얼, 애니메이션
-	_unmap<wstring, FModelGroup*>	m_mapModelGroup[Cast_EnumDef(EModelGroupIndex::Size)];
+	_unmap<wstring, FModelGroup*>	m_mapModelGroup[ECast(EModelGroupIndex::Size)];
 
 };
 

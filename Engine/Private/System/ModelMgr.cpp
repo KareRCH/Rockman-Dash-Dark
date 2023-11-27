@@ -61,7 +61,7 @@ CModelMgr* CModelMgr::Create(const string& strMainDir)
 
 void CModelMgr::Free()
 {
-	for (_uint i = 0; i < Cast_EnumDef(EModelGroupIndex::Size); i++)
+	for (_uint i = 0; i < ECast(EModelGroupIndex::Size); i++)
 	{
 		for (auto& Pair : m_mapModelGroup[i])
 		{
@@ -431,7 +431,7 @@ void CModelMgr::Load_HierarchiNode(FBoneGroup* pModelNodeGroup, aiNode* pBoneNod
 
 const FMeshData* const CModelMgr::Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey)
 {
-	_uint iIndex = Cast_EnumDef(eGroupIndex);
+	_uint iIndex = ECast(eGroupIndex);
 
 	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
 	if (iter == m_mapModelGroup[iIndex].end())
@@ -442,7 +442,7 @@ const FMeshData* const CModelMgr::Get_Mesh(const EModelGroupIndex eGroupIndex, c
 
 FArmatureData* CModelMgr::Find_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey)
 {
-	_uint iIndex = Cast_EnumDef(eGroupIndex);
+	_uint iIndex = ECast(eGroupIndex);
 
 	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
 	if (iter == m_mapModelGroup[iIndex].end())
@@ -454,7 +454,7 @@ FArmatureData* CModelMgr::Find_Armature(const EModelGroupIndex eGroupIndex, cons
 
 FArmatureData* CModelMgr::Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey)
 {
-	_uint iIndex = Cast_EnumDef(eGroupIndex);
+	_uint iIndex = ECast(eGroupIndex);
 
 	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
 	if (iter == m_mapModelGroup[iIndex].end())
@@ -466,7 +466,7 @@ FArmatureData* CModelMgr::Clone_Armature(const EModelGroupIndex eGroupIndex, con
 
 FModelGroup* CModelMgr::Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	_uint iIndex = Cast_EnumDef(eGroupIndex);
+	_uint iIndex = ECast(eGroupIndex);
 
 	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
 	if (iter == m_mapModelGroup[iIndex].end())
@@ -477,7 +477,7 @@ FModelGroup* CModelMgr::Get_ModelGroup(const EModelGroupIndex eGroupIndex, const
 
 FModelGroup* CModelMgr::Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	_uint iIndex = Cast_EnumDef(eGroupIndex);
+	_uint iIndex = ECast(eGroupIndex);
 
 	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
 	if (iter != m_mapModelGroup[iIndex].end())
@@ -491,7 +491,7 @@ FModelGroup* CModelMgr::Add_ModelGroup(const EModelGroupIndex eGroupIndex, const
 
 FMeshGroup* CModelMgr::Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	_uint iIndex = Cast_EnumDef(eGroupIndex);
+	_uint iIndex = ECast(eGroupIndex);
 
 	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
 	if (iter == m_mapModelGroup[iIndex].end())
@@ -502,7 +502,7 @@ FMeshGroup* CModelMgr::Get_MeshGroup(const EModelGroupIndex eGroupIndex, const w
 
 FBoneGroup* CModelMgr::Get_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	_uint iIndex = Cast_EnumDef(eGroupIndex);
+	_uint iIndex = ECast(eGroupIndex);
 
 	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
 	if (iter == m_mapModelGroup[iIndex].end())
@@ -513,7 +513,7 @@ FBoneGroup* CModelMgr::Get_BoneGroup(const EModelGroupIndex eGroupIndex, const w
 
 FBoneAnimGroup* CModelMgr::Get_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	_uint iIndex = Cast_EnumDef(eGroupIndex);
+	_uint iIndex = ECast(eGroupIndex);
 
 	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
 	if (iter == m_mapModelGroup[iIndex].end())
@@ -524,7 +524,7 @@ FBoneAnimGroup* CModelMgr::Get_AnimGroup(const EModelGroupIndex eGroupIndex, con
 
 FBoneGroup* CModelMgr::Get_ModelNodeGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
-	_uint iIndex = Cast_EnumDef(eGroupIndex);
+	_uint iIndex = ECast(eGroupIndex);
 
 	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
 	if (iter == m_mapModelGroup[iIndex].end())

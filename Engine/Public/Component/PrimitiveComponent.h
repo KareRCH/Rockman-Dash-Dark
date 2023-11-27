@@ -57,11 +57,11 @@ private:
 
 #pragma region 기본 속성
 public:
-	_float Get_Priority(ECompTickType eType) { return m_fPriority[Cast_EnumDef(eType)]; }
-	void Set_Priority(ECompTickType eType, _float fPriority) { m_fPriority[Cast_EnumDef(eType)] = fPriority; }
+	_float Get_Priority(ECompTickType eType) { return m_fPriority[Cast_Enum(eType)]; }
+	void Set_Priority(ECompTickType eType, _float fPriority) { m_fPriority[Cast_Enum(eType)] = fPriority; }
 
 private:	// 기본 속성
-	_float					m_fPriority[Cast_EnumDef(ECompTickType::Size)];		// 우선도
+	_float					m_fPriority[Cast_Enum(ECompTickType::Size)];		// 우선도
 #pragma endregion
 
 

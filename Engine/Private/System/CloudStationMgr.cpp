@@ -1,15 +1,15 @@
-#include "System/BlackBoardMgr.h"
+#include "System/CloudStationMgr.h"
 
-CBlackBoardMgr::CBlackBoardMgr()
+CCloudStationMgr::CCloudStationMgr()
 {
 }
 
-HRESULT CBlackBoardMgr::Initialize()
+HRESULT CCloudStationMgr::Initialize()
 {
 	return S_OK;
 }
 
-_int CBlackBoardMgr::Tick()
+_int CCloudStationMgr::Tick()
 {
 	// 만료시 삭제하는 블랙보드 삭제.
 	for (auto iter = m_mapBlackBoard.begin(); iter != m_mapBlackBoard.end();)
@@ -26,7 +26,7 @@ _int CBlackBoardMgr::Tick()
 	return 0;
 }
 
-CBlackBoardMgr* CBlackBoardMgr::Create()
+CCloudStationMgr* CCloudStationMgr::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -41,7 +41,7 @@ CBlackBoardMgr* CBlackBoardMgr::Create()
 	return pInstance;
 }
 
-void CBlackBoardMgr::Free()
+void CCloudStationMgr::Free()
 {
 	for (auto itemPair : m_mapBlackBoard)
 	{
@@ -50,7 +50,7 @@ void CBlackBoardMgr::Free()
 	m_mapBlackBoard.clear();
 }
 
-HRESULT CBlackBoardMgr::Add_BlackBoard(const wstring& strBoardName, CBlackBoard* pBlackBoard)
+HRESULT CCloudStationMgr::Add_BlackBoard(const wstring& strBoardName, CCloudStation* pBlackBoard)
 {
 	auto iter = m_mapBlackBoard.emplace(strBoardName, pBlackBoard);
 	if (!iter.second)
@@ -67,7 +67,7 @@ HRESULT CBlackBoardMgr::Add_BlackBoard(const wstring& strBoardName, CBlackBoard*
 	return S_OK;
 }
 
-HRESULT CBlackBoardMgr::Delete_BlackBoard(const wstring& strBoardName)
+HRESULT CCloudStationMgr::Delete_BlackBoard(const wstring& strBoardName)
 {
 	auto iter = m_mapBlackBoard.find(strBoardName);
 	if (iter == m_mapBlackBoard.end())
@@ -86,7 +86,7 @@ HRESULT CBlackBoardMgr::Delete_BlackBoard(const wstring& strBoardName)
 	return S_OK;
 }
 
-CBlackBoard* CBlackBoardMgr::Get_BlackBoard(const wstring& strBoardName)
+CCloudStation* CCloudStationMgr::Get_BlackBoard(const wstring& strBoardName)
 {
 	auto iter = m_mapBlackBoard.find(strBoardName);
 	if (iter == m_mapBlackBoard.end())
