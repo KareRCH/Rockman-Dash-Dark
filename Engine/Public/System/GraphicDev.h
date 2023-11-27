@@ -74,13 +74,13 @@ private:
 	ComPtr<ID3D11RenderTargetView>	m_pRTV_SwapChain = { nullptr };			// ¸ÞÀÎ ·»´õ Å¸°Ù
 	
 	// ¾Æ·¡´Â µðÆÛµå¿ë GBuffer ·»´õÅ¸±ê
-	ComPtr<ID3D11Texture2D>			m_pTexture_LGC[Cast_EnumDef(ERenderTarget_Legacy::Size)] = { nullptr };
-	ComPtr<ID3D11Texture2D>			m_pTexture_PBR[Cast_EnumDef(ERenderTarget_PBR::Size)] = { nullptr };
-	ComPtr<ID3D11Texture2D>			m_pTexture_Common[Cast_EnumDef(ERenderTarget_Legacy::Size)] = { nullptr };
+	ComPtr<ID3D11Texture2D>			m_pTexture_LGC[ECast(ERenderTarget_Legacy::Size)] = { nullptr };
+	ComPtr<ID3D11Texture2D>			m_pTexture_PBR[ECast(ERenderTarget_PBR::Size)] = { nullptr };
+	ComPtr<ID3D11Texture2D>			m_pTexture_Common[ECast(ERenderTarget_Legacy::Size)] = { nullptr };
 
-	ComPtr<ID3D11RenderTargetView>	m_pRTV_LGC[Cast_EnumDef(ERenderTarget_Legacy::Size)] = { nullptr };		// ·¹°Å½Ã Àü¿ë ·»´õÅ¸±ê
-	ComPtr<ID3D11RenderTargetView>	m_pRTV_PBR[Cast_EnumDef(ERenderTarget_PBR::Size)] = { nullptr };		// PBR Àü¿ë ·»´õÅ¸±ê
-	ComPtr<ID3D11RenderTargetView>	m_pRTV_Common[Cast_EnumDef(ERenderTarget_Common::Size)] = { nullptr };	// ±âÅ¸ °øÅë ·»´õ Å¸±ê
+	ComPtr<ID3D11RenderTargetView>	m_pRTV_LGC[ECast(ERenderTarget_Legacy::Size)] = { nullptr };		// ·¹°Å½Ã Àü¿ë ·»´õÅ¸±ê
+	ComPtr<ID3D11RenderTargetView>	m_pRTV_PBR[ECast(ERenderTarget_PBR::Size)] = { nullptr };		// PBR Àü¿ë ·»´õÅ¸±ê
+	ComPtr<ID3D11RenderTargetView>	m_pRTV_Common[ECast(ERenderTarget_Common::Size)] = { nullptr };	// ±âÅ¸ °øÅë ·»´õ Å¸±ê
 
 	
 

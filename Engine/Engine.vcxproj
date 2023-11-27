@@ -288,6 +288,7 @@
     <ClInclude Include="Public\System\AnimationMgr.h" />
     <ClInclude Include="Public\System\BlackBoardMgr.h" />
     <ClInclude Include="Public\System\BlackBoardPtr.h" />
+    <ClInclude Include="Public\System\CamViewMgr.h" />
     <ClInclude Include="Public\System\Data\BoneAnimData.h" />
     <ClInclude Include="Public\System\Data\MeshData.h" />
     <ClInclude Include="Public\System\Data\BoneData.h" />
@@ -321,6 +322,7 @@
     <ClInclude Include="Public\System\TextureMgr.h" />
     <ClInclude Include="Public\System\Timer.h" />
     <ClInclude Include="Public\System\TimerMgr.h" />
+    <ClInclude Include="Public\System\Define\CamViewMgr_Define.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\BaseClass\BlackBoard.cpp" />
@@ -360,6 +362,7 @@
     <ClCompile Include="Private\System\AnimationMgr.cpp" />
     <ClCompile Include="Private\System\BlackBoardMgr.cpp" />
     <ClCompile Include="Private\System\BlackBoardPtr.cpp" />
+    <ClCompile Include="Private\System\CamViewMgr.cpp" />
     <ClCompile Include="Private\System\Data\BoneAnimData.cpp" />
     <ClCompile Include="Private\System\Data\MeshData.cpp" />
     <ClCompile Include="Private\System\Data\BoneData.cpp" />

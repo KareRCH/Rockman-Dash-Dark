@@ -15,7 +15,7 @@ HRESULT CGameObject::Initialize(void* Arg)
 
 void CGameObject::Priority_Tick(const _float& fTimeDelta)
 {
-	_uint iIndex = Cast_EnumDef(ECompTickType::Priority);
+	_uint iIndex = ECast(ECompTickType::Priority);
 
 	if (m_listUpdateComp[iIndex].empty())
 		return;
@@ -28,7 +28,7 @@ void CGameObject::Priority_Tick(const _float& fTimeDelta)
 
 _int CGameObject::Tick(const _float& fTimeDelta)
 {
-	_uint iIndex = Cast_EnumDef(ECompTickType::Tick);
+	_uint iIndex = ECast(ECompTickType::Tick);
 
 	for (auto iter = m_listUpdateComp[iIndex].begin(); iter != m_listUpdateComp[iIndex].end(); ++iter)
 	{
@@ -40,7 +40,7 @@ _int CGameObject::Tick(const _float& fTimeDelta)
 
 void CGameObject::Late_Tick(const _float& fTimeDelta)
 {
-	_uint iIndex = Cast_EnumDef(ECompTickType::Late);
+	_uint iIndex = ECast(ECompTickType::Late);
 
 	for (auto iter = m_listUpdateComp[iIndex].begin(); iter != m_listUpdateComp[iIndex].end(); ++iter)
 	{
@@ -50,8 +50,8 @@ void CGameObject::Late_Tick(const _float& fTimeDelta)
 
 void CGameObject::Render()
 {
-	for (auto iter = m_listUpdateComp[Cast_EnumDef(ECompTickType::Render)].begin();
-		iter != m_listUpdateComp[Cast_EnumDef(ECompTickType::Render)].end(); ++iter)
+	for (auto iter = m_listUpdateComp[ECast(ECompTickType::Render)].begin();
+		iter != m_listUpdateComp[ECast(ECompTickType::Render)].end(); ++iter)
 	{
 		(*iter)->Render();
 	}
@@ -70,10 +70,10 @@ void CGameObject::Free()
 
 void CGameObject::Delete_Tag(const EGObjTag eTagType, const wstring& strTag)
 {
-	auto iter = m_setTag[Cast_EnumDef(eTagType)].find(strTag);
+	auto iter = m_setTag[ECast(eTagType)].find(strTag);
 
-	if (iter != m_setTag[Cast_EnumDef(eTagType)].end())
-		m_setTag[Cast_EnumDef(eTagType)].erase(iter);
+	if (iter != m_setTag[ECast(eTagType)].end())
+		m_setTag[ECast(eTagType)].erase(iter);
 }
 
 
@@ -134,7 +134,7 @@ CPrimitiveComponent* CGameObject::Get_Component(const wstring& strName)
 
 void CGameObject::OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue)
 {
-	_uint iIndex = Cast_EnumDef(ECompTickType::Tick);
+	_uint iIndex = ECast(ECompTickType::Tick);
 
 	auto iter = find_if(m_listUpdateComp[iIndex].begin(), m_listUpdateComp[iIndex].end(),
 		[&pComp](CPrimitiveComponent* _pComp) {
@@ -155,7 +155,7 @@ void CGameObject::OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, 
 
 void CGameObject::OnStateLateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue)
 {
-	_uint iIndex = Cast_EnumDef(ECompTickType::Late);
+	_uint iIndex = ECast(ECompTickType::Late);
 
 	auto iter = find_if(m_listUpdateComp[iIndex].begin(),
 		m_listUpdateComp[iIndex].end(),
@@ -177,7 +177,7 @@ void CGameObject::OnStateLateUpdate_Updated(const CPrimitiveComponent* const pCo
 
 void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue)
 {
-	constexpr _uint iIndex = Cast_EnumDef(ECompTickType::Render);
+	constexpr _uint iIndex = ECast(ECompTickType::Render);
 
 	auto iter = find_if(m_listUpdateComp[0].begin(),
 		m_listUpdateComp[0].end(),

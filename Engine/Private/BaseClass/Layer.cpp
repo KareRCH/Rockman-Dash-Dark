@@ -98,7 +98,7 @@ void CLayer::Priority_Tick(const _float& fTimeDelta)
 		m_listPriorityObject.push_back(item.second);
 
 	// Tick 우선도 기반 정렬
-	_uint iIndex = Cast_EnumDef(EGObjTickPriority::Tick);
+	_uint iIndex = ECast(EGObjTickPriority::Tick);
 
 	m_listPriorityObject.sort(
 		[&iIndex](CGameObject* const pDst, CGameObject* const pSrc) {

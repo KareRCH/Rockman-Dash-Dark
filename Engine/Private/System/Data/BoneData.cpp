@@ -1,4 +1,5 @@
 #include "System/Data/BoneData.h"
+#include "BoneData.h"
 
 FBoneNodeBaseData::FBoneNodeBaseData(const FBoneNodeBaseData& rhs)
 	: iID(rhs.iID), eType(rhs.eType), eBoneType(rhs.eBoneType)
@@ -216,6 +217,19 @@ HRESULT FArmatureData::Add_NodeData(const wstring& strModelNodeKey, FBoneNodeDat
 	mapModelNodeData.emplace(strModelNodeKey, pNode);
 
 	return S_OK;
+}
+
+vector<const _float4x4*> FArmatureData::Provide_FinalTransforms()
+{
+	vector<const _float4x4*> vecFinalTransforms;
+	vecFinalTransforms.reserve(vecModelNodeIndex.size());
+
+	for (_uint i = 0; i < vecModelNodeIndex.size(); i++)
+	{
+		vecFinalTransforms.push_back(&vecModelNodeIndex[i]->matTransform);
+	}
+
+	return vecFinalTransforms;
 }
 
 

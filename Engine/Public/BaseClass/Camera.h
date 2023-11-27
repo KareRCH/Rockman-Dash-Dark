@@ -10,6 +10,14 @@ BEGIN(Engine)
 class ENGINE_DLL CCamera abstract : public CGameObject
 {
 	DERIVED_CLASS(CGameObject, CCamera)
+
+public:
+	struct FCameraDesc
+	{
+		_float3		vEye, vAt, vUp;
+		_float		fFov, fAspect, fNear, fFar;
+	};
+
 protected:
 	explicit CCamera();
 	explicit CCamera(const CCamera& rhs);
@@ -28,6 +36,9 @@ protected:
 protected:
 	_float3		m_vAt;
 	_float3		m_vUp;
+	_float		m_fFov;
+	_float		m_fAspect;
+
 	_float4x4	m_matPersView;
 	_float4x4	m_matPersProj;
 };

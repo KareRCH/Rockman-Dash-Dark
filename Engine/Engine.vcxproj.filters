@@ -238,6 +238,9 @@
     <Filter Include="02. Utility\02. Component\03. InternalComponent\03. AnimationComponent\Interface">
       <UniqueIdentifier>{3b8c65af-af2d-47ad-b09a-0a7a3831e1a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\07. CamViewMgr">
+      <UniqueIdentifier>{0024b94d-0c81-453d-a43f-07fade65c2e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -510,6 +513,12 @@
     <ClInclude Include="Public\Component\Interface\ITeamAgentComp.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\05. TeamAgentComponent\Interface</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\CamViewMgr.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\Define\CamViewMgr_Define.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -718,6 +727,9 @@
     </ClCompile>
     <ClCompile Include="Private\Component\SkinnedModelComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\01. SkinnedModelComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\CamViewMgr.cpp">
+      <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

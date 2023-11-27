@@ -52,19 +52,35 @@ void CAnimationComponent::Free()
 
 }
 
-HRESULT CAnimationComponent::Apply_BoneAnimation(const wstring& strAnimName, FArmatureData* const pArmatureData)
+void CAnimationComponent::Apply_MaskTime(_uint iIndex, const wstring& strAnimName, _float fCurTime)
 {
-
-
-	return S_OK;
-}
-
-void CAnimationComponent::Increase_CurTime(const _float& fTimeDelta)
-{
-	if (m_pAnimGroup == nullptr)
+	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
 		return;
 
-	//m_pAnimGroup->Find_AnimData()
+	m_vecAnimMask[iIndex].fCurTime = fCurTime;
+	m_vecAnimMask[iIndex].strAnimName = strAnimName;
+}
+
+void CAnimationComponent::Apply_MaskTime(const wstring& strMaskName, const wstring& strAnimName, _float fCurTime)
+{
+	_uint iIndex = 0;
+
+	_bool bFound = false;
+	for (_uint i = 0; i < m_vecAnimMask.size(); i++)
+	{
+		if (m_vecAnimMask[i].strName == strMaskName)
+		{
+			iIndex = i;
+			bFound = true;
+			break;
+		}
+	}
+
+	if (!bFound)
+		return;
+
+	m_vecAnimMask[iIndex].fCurTime = fCurTime;
+	m_vecAnimMask[iIndex].strAnimName = strAnimName;
 }
 
 void CAnimationComponent::Apply_FinalMask()
@@ -75,7 +91,7 @@ void CAnimationComponent::Apply_FinalMask()
 	vector<_float> vecBoneWeights;
 
 	// 뼈에 대한 가중치 계산을 한다.
-	for (_uint i = Cast<_uint>(m_vecAnimMask.size() - 1); i >= 0; --i)
+	for (_int i = Cast<_int>(m_vecAnimMask.size() - 1); i >= 0; --i)
 	{
 		if (vecBoneWeights.empty())
 			vecBoneWeights.resize(m_vecAnimMask[i].vecBoneMasks.size(), 0.f);
@@ -84,10 +100,15 @@ void CAnimationComponent::Apply_FinalMask()
 		{
 			// 이전 가중치를 최대치로 잡고 계산한다.
 			// 남은 가중치가 없다면 0으로 조정된다.
-			vecBoneWeights[j] = min((1.f - vecBoneWeights[j]), 0.f) 
+			vecBoneWeights[j] = max((1.f - vecBoneWeights[j]), 0.f) 
 				+ min(Cast<_float>(m_vecAnimMask[i].vecBoneMasks[j]) * m_vecAnimMask[i].fWeight, (1.f - vecBoneWeights[j]));
 		}
 	}
 
 	
+}
+
+void CAnimationComponent::Apply_BoneAnimationWithMask(FArmatureData* const pArmatureData)
+{
+
 }

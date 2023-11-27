@@ -660,7 +660,7 @@ HRESULT CGameInstance::Initialize_BlackBoardMgr()
 	if (nullptr != m_pBlackBoardMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pBlackBoardMgr = CBlackBoardMgr::Create(), E_FAIL);
+	NULL_CHECK_RETURN(m_pBlackBoardMgr = CCloudStationMgr::Create(), E_FAIL);
 
 	return S_OK;
 }

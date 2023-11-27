@@ -31,7 +31,7 @@ CShaderMgr* CShaderMgr::Create(const DX11DEVICE_T tDevice, const wstring& strMai
 void CShaderMgr::Free()
 {
 	// 셰이더 코드 해제
-	for (size_t i = 0; i < Cast_EnumDef(EShaderType::Size); i++)
+	for (size_t i = 0; i < ECast(EShaderType::Size); i++)
 	{
 		for (auto& Pair : m_mapShaderData[i])
 			Pair.second->Free();
@@ -42,7 +42,7 @@ void CShaderMgr::Free()
 
 HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey)
 {
-	_uint iIndex = Cast_EnumDef(eType);
+	_uint iIndex = ECast(eType);
 	if (eType == EShaderType::Size)
 		return E_FAIL;
 
@@ -156,7 +156,7 @@ ID3DBlob* CShaderMgr::Read_ShaderBinary(const wstring& strFile)
 
 const ComPtr<ID3DBlob>& CShaderMgr::Get_ShaderByte(const EShaderType eType, const wstring& strName) const
 {
-	_uint iIndex = Cast_EnumDef(eType);
+	_uint iIndex = ECast(eType);
 
 	auto iter = m_mapShaderData[iIndex].find(strName);
 	if (iter == m_mapShaderData[iIndex].end() || !(*iter).second->IsLoaded())

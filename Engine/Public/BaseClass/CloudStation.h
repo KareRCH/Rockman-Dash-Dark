@@ -15,12 +15,12 @@ BEGIN(Engine)
 /// 각종 계산을 때려넣어도 좋다.
 /// 활용은 사용자에게 맡긴다.
 /// </summary>
-class ENGINE_DLL CBlackBoard abstract : public CBase
+class ENGINE_DLL CCloudStation abstract : public CBase
 {
 protected:
-    explicit CBlackBoard();
-    explicit CBlackBoard(const CBlackBoard& rhs);
-    virtual ~CBlackBoard() = default;
+    explicit CCloudStation();
+    explicit CCloudStation(const CCloudStation& rhs);
+    virtual ~CCloudStation() = default;
 
 private:
     virtual void		Free() PURE;

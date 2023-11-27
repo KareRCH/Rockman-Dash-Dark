@@ -13,11 +13,11 @@ class FArmatureData;
 struct FAnimMask
 {
 	wstring	strName;			// 마스크 이름
-	_float fWeight;			// 마스크 적용 가중치
+	_float fWeight;				// 마스크 적용 가중치
 	vector<_bool> vecBoneMasks;	// 마스크 적용 뼈
 
 	wstring strAnimName;		// 애니메이션 이름
-	_float fCurFrame;			// 현재 재생 프레임, 시스템 시간이 아닌 프레임 값임
+	_float fCurTime;			// 현재 재생 중인 시간, 시스템 시간 기준
 };
 
 /// <summary>
@@ -43,26 +43,24 @@ protected:
 	virtual void	Free() override;
 
 
-public:
-	// 뼈에 대해 애니메이션을 적용해준다.
-	HRESULT Apply_BoneAnimation(const wstring& strAnimName, FArmatureData* const pArmatureData);
-	// 뼈에 대한 애니메이션을 적용할 때 어떤 뼈에 대한 정보만을 적용하는지에 대한 정보를 받는다. 매개변수 필요
-	HRESULT Apply_BoneAnimation(const wstring& strAnimName, FArmatureData* const pArmatureData);
-
-	// 시스템의 시간 변화율로 애니메이션의 현재 재생시간을 변화하는 함수
-	void Increase_CurTime(const _float& fTimeDelta);
 private:
 	FBoneAnimGroup* m_pAnimGroup = { nullptr };			// 단 하나의 뼈에 대한 애니메이션 정보를 가진다.
-	FBoneAnimData* m_pFinalAnim = { nullptr };			// 최종적으로 적용되는 애니메이션
-
-
+														// 이 녀석이 설정되어 있어야 기능을 할 수 있다.
 
 public:
+	// 해당 마스크에 현재 재생 프레임을 전달하여, 적용될 애니메이션 시간을 정한다.
+	void Apply_MaskTime(_uint iIndex, const wstring& strAnimName, _float fCurTime);
+	void Apply_MaskTime(const wstring& strMaskName, const wstring& strAnimName, _float fCurTime);
+
 	// 마스크에 적용되어 있는 값에 따라 각 뼈에 대한 가중치를 계산해낸다.
 	void Apply_FinalMask();
 
+	// 마스크를 통해 결정된 애니메이션에 따라 뼈의 최종 행렬을 계산해준다.
+	void Apply_BoneAnimationWithMask(FArmatureData* const pArmatureData);
+
 private:
-	vector<FAnimMask>	m_vecAnimMask;			// 애니메이션이 적용되는 마스크, 기본적으로 0번 마스크에 적용되어 작동한다.
+	vector<FAnimMask>	m_vecAnimMask;					// 애니메이션이 적용되는 마스크, 기본적으로 0번 마스크에 적용되어 작동한다.
+	FBoneAnimData*		m_pFinalAnim = { nullptr };		// 최종적으로 적용되는 애니메이션 정보
 
 	// 애니메이션은 뼈와 동기화되어 작동한다.
 	// 뼈에 대해 적용할 때 속도를 위해 인덱스를 사용하는 방식을 사용한다.

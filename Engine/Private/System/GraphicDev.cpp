@@ -35,11 +35,11 @@ HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
     m_vecRTV.reserve(6);
     m_vecRTV.clear();
     m_vecRTV.push_back(m_pRTV_SwapChain);
-    m_vecRTV.push_back(m_pRTV_PBR[Cast_EnumDef(ERenderTarget_PBR::Albedo)]);
-    m_vecRTV.push_back(m_pRTV_PBR[Cast_EnumDef(ERenderTarget_PBR::Normal)]);
-    m_vecRTV.push_back(m_pRTV_PBR[Cast_EnumDef(ERenderTarget_PBR::Metallic)]);
-    m_vecRTV.push_back(m_pRTV_PBR[Cast_EnumDef(ERenderTarget_PBR::Roughness)]);
-    m_vecRTV.push_back(m_pRTV_PBR[Cast_EnumDef(ERenderTarget_Common::Emission)]);
+    m_vecRTV.push_back(m_pRTV_PBR[ECast(ERenderTarget_PBR::Albedo)]);
+    m_vecRTV.push_back(m_pRTV_PBR[ECast(ERenderTarget_PBR::Normal)]);
+    m_vecRTV.push_back(m_pRTV_PBR[ECast(ERenderTarget_PBR::Metallic)]);
+    m_vecRTV.push_back(m_pRTV_PBR[ECast(ERenderTarget_PBR::Roughness)]);
+    m_vecRTV.push_back(m_pRTV_PBR[ECast(ERenderTarget_Common::Emission)]);
 
     ID3D11RenderTargetView* pRTV[] = { m_vecRTV[0].Get(), m_vecRTV[1].Get(), m_vecRTV[2].Get(), m_vecRTV[3].Get(), m_vecRTV[4].Get() };
 
@@ -223,7 +223,7 @@ HRESULT CGraphicDev::Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit)
     pRTV.Reset();
 
     // PBR 坊歹鸥标 积己
-    for (_uint i = 0; i < Cast_EnumDef(ERenderTarget_Legacy::Size); i++)
+    for (_uint i = 0; i < ECast(ERenderTarget_Legacy::Size); i++)
     {
         if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
             return E_FAIL;
@@ -238,7 +238,7 @@ HRESULT CGraphicDev::Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit)
     }
 
     // PBR 坊歹鸥标 积己
-    for (_uint i = 0; i < Cast_EnumDef(ERenderTarget_PBR::Size); i++)
+    for (_uint i = 0; i < ECast(ERenderTarget_PBR::Size); i++)
     {
         if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
             return E_FAIL;
@@ -253,7 +253,7 @@ HRESULT CGraphicDev::Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit)
     }
 
     // Emission, SSAO
-    for (_uint i = 0; i < Cast_EnumDef(ERenderTarget_Common::Size); i++)
+    for (_uint i = 0; i < ECast(ERenderTarget_Common::Size); i++)
     {
         if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
             return E_FAIL;
