@@ -82,20 +82,7 @@ HRESULT CTriBufferComp::Initialize(void* Arg)
 	return S_OK;
 }
 
-void CTriBufferComp::Priority_Tick(const _float& fTimeDelta)
-{
-}
-
-_int CTriBufferComp::Tick(const _float& fTimeDelta)
-{
-	return 0;
-}
-
-void CTriBufferComp::Late_Tick(const _float& fTimeDelta)
-{
-}
-
-void CTriBufferComp::Render()
+void CTriBufferComp::Render_Buffer()
 {
 	_uint iStride = sizeof(VTXCOL);
 	_uint iOffset = 0;

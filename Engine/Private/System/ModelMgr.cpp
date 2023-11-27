@@ -15,8 +15,8 @@ FModelGroup* FModelGroup::Create(const _bool bLoaded)
 
 	pInstance->pMeshGroup = FMeshGroup::Create();
 	pInstance->pBoneGroup = FBoneGroup::Create();
-	pInstance->pAnimGroup = FAnimGroup::Create();
-	pInstance->pModelNodeGroup = FModelNodeGroup::Create();
+	pInstance->pAnimGroup = FBoneAnimGroup::Create();
+	pInstance->pBoneGroup = FBoneGroup::Create();
 	pInstance->bLoaded = bLoaded;
 
 	return pInstance;
@@ -27,7 +27,7 @@ void FModelGroup::Free()
 	Safe_Release(pMeshGroup);
 	Safe_Release(pBoneGroup);
 	Safe_Release(pAnimGroup);
-	Safe_Release(pModelNodeGroup);
+	Safe_Release(pBoneGroup);
 }
 
 // ----------------------- ModelMgr ---------------------
@@ -110,7 +110,7 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 	Load_MeshBoneMaterial(pModelGroup);
 
 	// 애니메이션 로드
-	Load_Anim(pModelGroup->pAnimGroup);
+	Load_Anim(pModelGroup);
 
 	// 계층 로드
 	//Load_Hierarchi(pModelGroup->pModelNodeGroup, m_pRootArmature);
@@ -168,7 +168,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 		if (pMesh->HasBones())
 		{
 			m_pRootArmature = pMesh->mBones[0]->mArmature;
-			Load_Hierarchi(pModelGroup->pModelNodeGroup, m_pRootArmature);
+			Load_Hierarchi(pModelGroup->pBoneGroup, m_pRootArmature);
 		}
 
 		// 점
@@ -209,7 +209,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
 			wstring strNodeKey = Make_Wstring(pMesh->mBones[j]->mName.C_Str());
-			auto pModelNode = pModelGroup->pModelNodeGroup->Find_NodeData(strArmatureKey, strNodeKey);
+			auto pModelNode = pModelGroup->pBoneGroup->Find_NodeData(strArmatureKey, strNodeKey);
 
 			_int iBoneID = pModelNode->iID;
 			aiBone* pBone = pMesh->mBones[j];
@@ -285,9 +285,12 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 	m_vecMesh.clear();
 }
 
-void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
+void CModelMgr::Load_Anim(FModelGroup* pModelGroup)
 {
-	if (!pAnimGroup)
+	FBoneAnimGroup* pAnimGroup = pModelGroup->pAnimGroup;
+	FBoneGroup* pModelNodeGroup = pModelGroup->pBoneGroup;
+
+	if (!pAnimGroup || !pModelNodeGroup)
 		return;
 
 	// 애니메이션
@@ -296,7 +299,7 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 		aiAnimation* pAnimAI = m_pScene->mAnimations[i];
 
 		// 애님 데이터 생성
-		FAnimData* pAnimData = FAnimData::Create();
+		FBoneAnimData* pAnimData = FBoneAnimData::Create();
 		wstring AnimNameWithTK = Make_Wstring(pAnimAI->mName.C_Str());
 		pAnimData->dfDuration = pAnimAI->mDuration;
 		pAnimData->dfTickPerSecond = pAnimAI->mTicksPerSecond;
@@ -309,7 +312,7 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 		for (_uint j = 0; j < pAnimAI->mNumChannels; j++)
 		{
 			aiNodeAnim* pNodeAnimAI = pAnimAI->mChannels[j];
-			FAnimNodeData* pAnimNodeData = FAnimNodeData::Create();
+			FBoneAnimNodeData* pAnimNodeData = FBoneAnimNodeData::Create();
 			wstring AnimNodeName = Make_Wstring(pNodeAnimAI->mNodeName.C_Str());
 
 			pAnimNodeData->vecPositions.reserve(pNodeAnimAI->mNumPositionKeys);
@@ -321,7 +324,7 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 			{
 				auto fTime = pNodeAnimAI->mPositionKeys[k].mTime;
 				auto vPos = pNodeAnimAI->mPositionKeys[k].mValue;
-				FAnimNodeData::FAnimPosition tPosition = {
+				FBoneAnimNodeData::FPosition tPosition = {
 					Cast<_float>(fTime),
 					{ vPos.x, vPos.y, vPos.z }
 				};
@@ -333,7 +336,7 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 			{
 				auto fTime = pNodeAnimAI->mRotationKeys[k].mTime;
 				auto vRot = pNodeAnimAI->mRotationKeys[k].mValue;
-				FAnimNodeData::FAnimRotation tRotation = {
+				FBoneAnimNodeData::FRotation tRotation = {
 					Cast<_float>(fTime),
 					{ vRot.w, vRot.x, vRot.y, vRot.z }
 				};
@@ -345,7 +348,7 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 			{
 				auto fTime = pNodeAnimAI->mScalingKeys[k].mTime;
 				auto vScale = pNodeAnimAI->mScalingKeys[k].mValue;
-				FAnimNodeData::FAnimScale tScale = {
+				FBoneAnimNodeData::FScale tScale = {
 					Cast<_float>(fTime),
 					{ vScale.x, vScale.y, vScale.z }
 				};
@@ -355,12 +358,12 @@ void CModelMgr::Load_Anim(FAnimGroup* pAnimGroup)
 			pAnimData->Add_AnimNodeData(AnimNodeName, pAnimNodeData);
 		}
 		pAnimGroup->Add_AnimData(AnimName, pAnimData);
-		size_t test = pAnimData->mapNodeAnim.size() + pAnimData->mapNodeAnim.bucket_count();
+
 		int t = 1;
 	}
 }
 
-void CModelMgr::Load_Hierarchi(FModelNodeGroup* pModelNodeGroup,  aiNode* pArmatureNode)
+void CModelMgr::Load_Hierarchi(FBoneGroup* pModelNodeGroup,  aiNode* pArmatureNode)
 {
 	if (pArmatureNode)
 	{
@@ -379,7 +382,7 @@ void CModelMgr::Load_Hierarchi(FModelNodeGroup* pModelNodeGroup,  aiNode* pArmat
 		m_iNodeID = 0;
 
 		// ID 지정
-		FModelNodeData* pRootNodeData = pModelNodeGroup->Create_NodeData(strKey, strKey);
+		FBoneNodeData* pRootNodeData = pModelNodeGroup->Create_NodeData(strKey, strKey);
 		pRootNodeData->iID = m_iNodeID ++;
 		pRootNodeData->eType = EModelNodeType::Armature;
 		pRootNodeData->eBoneType = EModelBoneType::Null;
@@ -399,14 +402,14 @@ void CModelMgr::Load_Hierarchi(FModelNodeGroup* pModelNodeGroup,  aiNode* pArmat
 	m_pRootArmature = nullptr;
 }
 
-void CModelMgr::Load_HierarchiNode(FModelNodeGroup* pModelNodeGroup, aiNode* pBoneNode, FModelNodeData* pRootNode, FModelNodeData* pParentNode)
+void CModelMgr::Load_HierarchiNode(FBoneGroup* pModelNodeGroup, aiNode* pBoneNode, FBoneNodeData* pRootNode, FBoneNodeData* pParentNode)
 {
 	if (pBoneNode)
 	{
 		wstring strArmatureKey = pRootNode->strName;
 		wstring strNodeKey = Make_Wstring(pBoneNode->mName.C_Str());
 
-		FModelNodeData* pNodeData = pModelNodeGroup->Create_NodeData(strArmatureKey, strNodeKey);
+		FBoneNodeData* pNodeData = pModelNodeGroup->Create_NodeData(strArmatureKey, strNodeKey);
 		pNodeData->iID = m_iNodeID++;
 		pNodeData->eType = EModelNodeType::Bone;
 		pNodeData->eBoneType = EModelBoneType::Base;
@@ -437,6 +440,18 @@ const FMeshData* const CModelMgr::Get_Mesh(const EModelGroupIndex eGroupIndex, c
 	return (*iter).second->pMeshGroup->Get_Mesh(strMeshKey);
 }
 
+FArmatureData* CModelMgr::Find_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey)
+{
+	_uint iIndex = Cast_EnumDef(eGroupIndex);
+
+	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
+	if (iter == m_mapModelGroup[iIndex].end())
+		return nullptr;
+
+	FModelGroup* pModelGroup = (*iter).second;
+	return pModelGroup->pBoneGroup->Find_ArmatureData(strModelNodeKey);
+}
+
 FArmatureData* CModelMgr::Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey)
 {
 	_uint iIndex = Cast_EnumDef(eGroupIndex);
@@ -446,7 +461,7 @@ FArmatureData* CModelMgr::Clone_Armature(const EModelGroupIndex eGroupIndex, con
 		return nullptr;
 
 	FModelGroup* pModelGroup = (*iter).second;
-	return pModelGroup->pModelNodeGroup->Clone_ArmatureData(strModelNodeKey);
+	return pModelGroup->pBoneGroup->Clone_ArmatureData(strModelNodeKey);
 }
 
 FModelGroup* CModelMgr::Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
@@ -496,7 +511,7 @@ FBoneGroup* CModelMgr::Get_BoneGroup(const EModelGroupIndex eGroupIndex, const w
 	return (*iter).second->pBoneGroup;
 }
 
-FAnimGroup* CModelMgr::Get_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
+FBoneAnimGroup* CModelMgr::Get_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
 	_uint iIndex = Cast_EnumDef(eGroupIndex);
 
@@ -507,7 +522,7 @@ FAnimGroup* CModelMgr::Get_AnimGroup(const EModelGroupIndex eGroupIndex, const w
 	return (*iter).second->pAnimGroup;
 }
 
-FModelNodeGroup* CModelMgr::Get_ModelNodeGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
+FBoneGroup* CModelMgr::Get_ModelNodeGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
 	_uint iIndex = Cast_EnumDef(eGroupIndex);
 
@@ -515,7 +530,7 @@ FModelNodeGroup* CModelMgr::Get_ModelNodeGroup(const EModelGroupIndex eGroupInde
 	if (iter == m_mapModelGroup[iIndex].end())
 		return nullptr;
 
-	return (*iter).second->pModelNodeGroup;
+	return (*iter).second->pBoneGroup;
 }
 
 _float4x4 CModelMgr::ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix)

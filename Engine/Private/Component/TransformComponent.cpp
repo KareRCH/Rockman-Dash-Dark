@@ -28,9 +28,9 @@ CTransformComponent* CTransformComponent::Create()
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("CGraphicDev Create Failed");
-		
+		Safe_Release(pInstance);
+
 		return nullptr;
 	}
 
@@ -43,8 +43,8 @@ CComponent* CTransformComponent::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("TransformComponent Copy Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}

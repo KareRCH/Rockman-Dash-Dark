@@ -1,6 +1,7 @@
-#include "System/Data/AnimData.h"
+#include "System/Data/BoneAnimData.h"
+#include "BoneAnimData.h"
 
-FAnimNodeData* FAnimNodeData::Create()
+FBoneAnimNodeData* FBoneAnimNodeData::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -16,14 +17,14 @@ FAnimNodeData* FAnimNodeData::Create()
 	return pInstance;
 }
 
-void FAnimNodeData::Free()
+void FBoneAnimNodeData::Free()
 {
 	vecPositions.clear();
 	vecRotations.clear();
 	vecScales.clear();
 }
 
-_float4x4 FAnimNodeData::Interporated_Matrix(const _float& fCurTime)
+_float4x4 FBoneAnimNodeData::Interporated_Matrix(const _float& fCurTime)
 {
 	_uint iPivot;
 	_matrix matTransform = XMMatrixIdentity();
@@ -116,7 +117,7 @@ _float4x4 FAnimNodeData::Interporated_Matrix(const _float& fCurTime)
 	return matReturn;
 }
 
-_uint FAnimNodeData::Calculate_PivotPosition(const _float& fCurTime)
+_uint FBoneAnimNodeData::Calculate_PivotPosition(const _float& fCurTime)
 {
 	_uint iPivot;
 
@@ -150,7 +151,7 @@ _uint FAnimNodeData::Calculate_PivotPosition(const _float& fCurTime)
 	return iPivot;
 }
 
-_uint FAnimNodeData::Calculate_PivotRotation(const _float& fCurTime)
+_uint FBoneAnimNodeData::Calculate_PivotRotation(const _float& fCurTime)
 {
 	_uint iPivot;
 
@@ -183,7 +184,7 @@ _uint FAnimNodeData::Calculate_PivotRotation(const _float& fCurTime)
 	return iPivot;
 }
 
-_uint FAnimNodeData::Calculate_PivotScale(const _float& fCurTime)
+_uint FBoneAnimNodeData::Calculate_PivotScale(const _float& fCurTime)
 {
 	_uint iPivot;
 
@@ -217,7 +218,7 @@ _uint FAnimNodeData::Calculate_PivotScale(const _float& fCurTime)
 	return iPivot;
 }
 
-FAnimData* FAnimData::Create()
+FBoneAnimData* FBoneAnimData::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -233,14 +234,14 @@ FAnimData* FAnimData::Create()
 	return pInstance;
 }
 
-void FAnimData::Free()
+void FBoneAnimData::Free()
 {
 	for (auto& Pair : mapNodeAnim)
 		Safe_Release(Pair.second);
 	mapNodeAnim.clear();
 }
 
-const FAnimNodeData* const FAnimData::Get_AnimNodeData(const wstring& strNodeKey)
+const FBoneAnimNodeData* const FBoneAnimData::Find_AnimNodeData(const wstring& strNodeKey) const
 {
 	auto iter = mapNodeAnim.find(strNodeKey);
 	if (iter == mapNodeAnim.end())
@@ -249,8 +250,19 @@ const FAnimNodeData* const FAnimData::Get_AnimNodeData(const wstring& strNodeKey
 	return (*iter).second;
 }
 
-void FAnimData::Add_AnimNodeData(const wstring& strNodeKey, FAnimNodeData* pAnimNodeData)
+void FBoneAnimData::Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimNodeData* pAnimNodeData)
 {
+	if (pAnimNodeData->iBoneID >= vecAnim_BoneIndex.size())
+		vecAnim_BoneIndex.resize(Cast<_uint>(pAnimNodeData->iBoneID + 1), nullptr);
+
+	if (vecAnim_BoneIndex[pAnimNodeData->iBoneID] != nullptr)
+	{
+		Safe_Release(pAnimNodeData);
+		return;
+	}
+
+	vecAnim_BoneIndex[pAnimNodeData->iBoneID] = pAnimNodeData;
+
 	auto iter = mapNodeAnim.find(strNodeKey);
 	if (iter != mapNodeAnim.end())
 	{
@@ -261,7 +273,7 @@ void FAnimData::Add_AnimNodeData(const wstring& strNodeKey, FAnimNodeData* pAnim
 	mapNodeAnim.emplace(strNodeKey, pAnimNodeData);
 }
 
-_float FAnimData::Calculate_Time(const _float& fTimeDelta, _float fCurTime, _bool bMod)
+_float FBoneAnimData::Calculate_Time(const _float& fTimeDelta, _float fCurTime, _bool bMod) const
 {
 	_float fModedTIme = Cast<_float>((bMod) ? fmodf(fCurTime, Cast<_float>(dfDuration)) : min(fCurTime, Cast<_float>(dfDuration)));		// 정해진 시간 뒤로 가지 않게 한다.
 	_float fRatio = Cast<_float>(dfTickPerSecond) * fTimeDelta;		// 애니메이션과 시스템 시간변화율을 동기화한다.
@@ -270,7 +282,7 @@ _float FAnimData::Calculate_Time(const _float& fTimeDelta, _float fCurTime, _boo
 
 
 //---------------------------------- AnimGroup
-FAnimGroup* FAnimGroup::Create()
+FBoneAnimGroup* FBoneAnimGroup::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -286,7 +298,7 @@ FAnimGroup* FAnimGroup::Create()
 	return pInstance;
 }
 
-void FAnimGroup::Free()
+void FBoneAnimGroup::Free()
 {
 	for (auto& Pair : mapAnimData)
 		Safe_Release(Pair.second);
@@ -294,7 +306,7 @@ void FAnimGroup::Free()
 	mapAnimData.clear();
 }
 
-const FAnimData* const FAnimGroup::Get_AnimData(const wstring& strAnimKey)
+const FBoneAnimData* const FBoneAnimGroup::Find_AnimData(const wstring& strAnimKey)
 {
 	auto iter = mapAnimData.find(strAnimKey);
 	if (iter == mapAnimData.end())
@@ -303,7 +315,7 @@ const FAnimData* const FAnimGroup::Get_AnimData(const wstring& strAnimKey)
 	return (*iter).second;
 }
 
-void FAnimGroup::Add_AnimData(const wstring& strAnimKey, FAnimData* pAnimData)
+void FBoneAnimGroup::Add_AnimData(const wstring& strAnimKey, FBoneAnimData* pAnimData)
 {
 	auto iter = mapAnimData.find(strAnimKey);
 	if (iter != mapAnimData.end())

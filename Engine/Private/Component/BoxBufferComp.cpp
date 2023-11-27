@@ -88,20 +88,7 @@ HRESULT CBoxBufferComp::Initialize(void* Arg)
 	return S_OK;
 }
 
-void CBoxBufferComp::Priority_Tick(const _float& fTimeDelta)
-{
-}
-
-_int CBoxBufferComp::Tick(const _float& fTimeDelta)
-{
-	return 0;
-}
-
-void CBoxBufferComp::Late_Tick(const _float& fTimeDelta)
-{
-}
-
-void CBoxBufferComp::Render()
+void CBoxBufferComp::Render_Buffer()
 {
 	_uint iStride = sizeof(VERTEX_TEXTURE_T);
 	_uint iOffset = 0;

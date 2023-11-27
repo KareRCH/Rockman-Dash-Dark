@@ -88,20 +88,7 @@ HRESULT CRectBufferComp::Initialize(void* Arg)
 	return S_OK;
 }
 
-void CRectBufferComp::Priority_Tick(const _float& fTimeDelta)
-{
-}
-
-_int CRectBufferComp::Tick(const _float& fTimeDelta)
-{
-	return 0;
-}
-
-void CRectBufferComp::Late_Tick(const _float& fTimeDelta)
-{
-}
-
-void CRectBufferComp::Render()
+void CRectBufferComp::Render_Buffer()
 {
 	_uint iStride = sizeof(VERTEX_TEXTURE_T);
 	_uint iOffset = 0;

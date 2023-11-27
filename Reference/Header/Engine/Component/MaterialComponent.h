@@ -1,6 +1,7 @@
 #pragma once
 
 #include "InternalComponent.h"
+#include "Component/Interface/IMaterialComponent.h"
 
 BEGIN(Engine)
 

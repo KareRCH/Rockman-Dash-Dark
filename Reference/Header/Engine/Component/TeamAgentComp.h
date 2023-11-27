@@ -2,6 +2,7 @@
 
 #include "Component/GameObjectComp.h"
 
+#include "Component/Interface/ITeamAgentComp.h"
 
 BEGIN(Engine)
 

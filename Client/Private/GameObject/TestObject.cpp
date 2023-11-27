@@ -2,8 +2,9 @@
 
 #include "Component/TriBufferComp.h"
 #include "Component/ColorShaderComp.h"
-#include "Component/ModelBufferComp.h"
+#include "Component/SkinnedModelComp.h"
 #include "Component/ModelShaderComp.h"
+#include "Component/ModelBufferComp.h"
 
 #include "System/RenderMgr.h"
 
@@ -79,7 +80,7 @@ void CTestObject::Render()
     SUPER::Render();
 
     MATRIX_BUFFER_T matBuffer = { 
-        m_pModelBufferComp->Transform().Get_TransformMatrix() * Transform().Get_TransformMatrix(),
+        m_pModelComp->Transform().Get_TransformMatrix() * Transform().Get_TransformMatrix(),
         GI()->Get_PerspectiveViewMatrix(0), GI()->Get_PerspectiveProjMatrix(0)
     };
     CAMERA_BUFFER_T cameraBuffer = { _float3(6.f, 6.f, 6.f) };
@@ -87,7 +88,7 @@ void CTestObject::Render()
                                     _float(2.f), _float4(1.f, 0.2f, 0.2f, 1.f)};
     BONE_COMMON_BUFFER_T boneBuffer = {};
 
-    m_pModelBufferComp->Render();
+    m_pModelComp->Render();
     m_pModelShaderComp->Render(matBuffer, cameraBuffer, boneBuffer, lightBuffer);
 }
 
@@ -148,13 +149,13 @@ void CTestObject::Free()
 
 HRESULT CTestObject::Initialize_Component()
 {
-    FAILED_CHECK_RETURN(Add_Component(L"Buffer", m_pModelBufferComp = CModelBufferComp::Create()), E_FAIL);
-    m_pModelBufferComp->Initialize(EModelGroupIndex::Permanent, L"RockVolnutt", L"Body");
+    FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CSkinnedModelComp::Create()), E_FAIL);
+    Cast<CModelBufferComp*>(m_pModelComp->VIBufferComp())->Initialize(EModelGroupIndex::Permanent, L"RockVolnutt", L"Body");
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
     FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create(g_hWnd)), E_FAIL);
     //m_ColorShaderComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
-    m_pModelShaderComp->Set_IndexCount(m_pModelBufferComp->Get_IndexCount());
+    m_pModelShaderComp->Set_IndexCount(m_pModelComp->VIBufferComp()->Get_IndexCount());
     ID3D11ShaderResourceView* pTest= GameInstance()->Get_Texture(L"RockVolnutt", L"Body-BaseColor");
     m_pModelShaderComp->Set_Texture(pTest);
 

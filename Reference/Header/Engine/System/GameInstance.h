@@ -59,6 +59,7 @@ public:		// 그래픽 디바이스
 #pragma endregion
 
 
+
 #pragma region 인풋 디바이스
 public:		// 인풋 디바이스
 	HRESULT Initialize_InputDev(HINSTANCE hInst, HWND hWnd);
@@ -67,6 +68,7 @@ public:		// 인풋 디바이스
 	_byte	Get_DIMouseState(MOUSEKEYSTATE eMouse);
 	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState);
 #pragma endregion
+
 
 
 #pragma region 키 매니저
@@ -94,10 +96,12 @@ public:		// 피직스 매니저
 #pragma endregion
 
 
+
 #pragma region 사운드 매니저
 public:		// 사운드 매니저
 	HRESULT Initialize_SoundMgr();
 #pragma endregion
+
 
 
 #pragma region 폰트 매니저
@@ -106,6 +110,7 @@ public:		// 폰트 매니저
 	HRESULT Create_Font(const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight);
 	void	Render_Font(const _tchar* pFontTag, const _tchar* pString, const _float2* pPos, D3DCOLOR Color);
 #pragma endregion
+
 
 
 #pragma region 프레임 매니저
@@ -117,6 +122,7 @@ public:		// 프레임 매니저
 #pragma endregion
 
 
+
 #pragma region 타이머 매니저
 public:		// 타이머 매니저
 	HRESULT Initialize_TimerMgr();
@@ -125,12 +131,15 @@ public:		// 타이머 매니저
 	void	Tick_Timer(const _tchar* pTimeTag);
 #pragma endregion
 
+
+
 #pragma region 레벨 매니저
 public:
 	HRESULT Initialize_LevelMgr();
 	HRESULT Open_Level(_uint iCurrentLevelIndex, class CLevel* pNewLevel);
-
 #pragma endregion
+
+
 
 #pragma region 오브젝트 매니저
 public:		// 매니지먼트
@@ -150,6 +159,7 @@ public:		// 매니지먼트
 #pragma endregion
 
 
+
 #pragma region 컴포넌트 매니저
 public:		// 컴포넌트 매니저
 	HRESULT				Initialize_ComponentMgr();
@@ -159,10 +169,12 @@ public:		// 컴포넌트 매니저
 #pragma endregion
 
 
+
 #pragma region 블랙보드 매니저
 public:		// 블랙보드 매니저
 	HRESULT Initialize_BlackBoardMgr();
 #pragma endregion
+
 
 
 #pragma region 텍스처 매니저
@@ -171,6 +183,7 @@ public:		// 텍스처 매니저
 	HRESULT Load_Texture(const wstring& strFileName, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent);
 	ID3D11ShaderResourceView* Get_Texture(const wstring& strGroupKey, const wstring& strTextureKey);
 #pragma endregion
+
 
 
 #pragma region 렌더 매니저
@@ -190,14 +203,16 @@ public:		// 렌더 매니저
 #pragma endregion
 
 
+
 #pragma region 모델 매니저
 public:		// 모델 매니저
 	HRESULT	Initialize_ModelMgr(const string& strMainPath);
 	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
 	const FMeshData* const Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
 	class FArmatureData* Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey);
-
+	class FArmatureData* Find_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey);
 #pragma endregion
+
 
 
 #pragma region 셰이더 매니저
