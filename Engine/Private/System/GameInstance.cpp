@@ -887,6 +887,14 @@ FArmatureData* CGameInstance::Clone_Armature(const EModelGroupIndex eGroupIndex,
 	return m_pModelMgr->Clone_Armature(eGroupIndex, strGroupKey, strArmatureKey);
 }
 
+FArmatureData* CGameInstance::Find_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey)
+{
+	if (nullptr == m_pModelMgr)
+		return nullptr;
+
+	return m_pModelMgr->Find_Armature(eGroupIndex, strGroupKey, strArmatureKey);
+}
+
 HRESULT CGameInstance::Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)
 {
 	if (nullptr != m_pShaderMgr)

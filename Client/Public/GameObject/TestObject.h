@@ -6,7 +6,7 @@
 BEGIN(Engine)
 
 class CTriBufferComp;
-class CModelBufferComp;
+class CSkinnedModelComp;
 class CColorShaderComp;
 class CModelShaderComp;
 
@@ -47,7 +47,7 @@ private:
 
 private:
 	CTriBufferComp* m_pTriBufferComp = nullptr;
-	CModelBufferComp* m_pModelBufferComp = nullptr;
+	CSkinnedModelComp* m_pModelComp = nullptr;
 	CColorShaderComp* m_pColorShaderComp = nullptr;
 	CModelShaderComp* m_pModelShaderComp = nullptr;
 };

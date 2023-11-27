@@ -2,6 +2,8 @@
 
 #include "InternalComponent.h"
 
+#include "Component/Interface/ID3D11DeviceComp.h"
+
 /// <summary>
 /// 다이렉트11 그래픽 장치를 저장하는 컴포넌트.
 /// 프로토타입을 생성하고

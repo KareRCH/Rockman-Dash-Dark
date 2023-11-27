@@ -25,8 +25,8 @@ CMaterialComponent* CMaterialComponent::Create()
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("CMaterialComponent Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}
@@ -40,8 +40,8 @@ CComponent* CMaterialComponent::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("CMaterialComponent Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}

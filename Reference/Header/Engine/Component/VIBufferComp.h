@@ -1,12 +1,15 @@
 #pragma once
 
-#include "SceneComponent.h"
+#include "Component/InternalComponent.h"
+#include "Component/Interface/IVIBufferComp.h"
+#include "Component/D3D11DeviceComp.h"
 
 BEGIN(Engine)
 
-class ENGINE_DLL CVIBufferComp abstract : public CSceneComponent
+class ENGINE_DLL CVIBufferComp abstract : public CInternalComponent, public ID3D11DeviceComp
 {
-	DERIVED_CLASS(CSceneComponent, CVIBufferComp)
+	DERIVED_CLASS(CInternalComponent, CVIBufferComp)
+
 protected:
 	explicit CVIBufferComp() = default;
 	explicit CVIBufferComp(const CVIBufferComp& rhs);
@@ -15,10 +18,6 @@ protected:
 public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr);
-	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
-	virtual _int	Tick(const _float& fTimeDelta);
-	virtual void	Late_Tick(const _float& fTimeDelta) PURE;
-	virtual void	Render() PURE;
 
 public:
 	virtual CComponent*	Clone(void* Arg = nullptr) PURE;
@@ -35,6 +34,19 @@ protected:
 	ComPtr<ID3D11Buffer> m_pIndexBuffer = { nullptr };
 	_uint m_iVtxCount = 0;
 	_uint m_iIndexCount = 0;
+
+
+
+
+#pragma region 디바이스 컴포넌트
+protected:
+	virtual ID3D11Device* const D3D11Device() const override { return m_pDeviceComp->Get_Device(); }
+	virtual ID3D11DeviceContext* const D3D11Context() const override { return m_pDeviceComp->Get_Context(); }
+
+private:
+	CD3D11DeviceComp* m_pDeviceComp = { nullptr };
+#pragma endregion
+
 };
 
 END

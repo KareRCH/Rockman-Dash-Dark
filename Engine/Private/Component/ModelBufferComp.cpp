@@ -28,7 +28,6 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 
 	m_iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
 	m_iIndexCount = Cast<_uint>(pMesh->vecIndices.size());
-	Transform().Set_Transform(pMesh->matTransform);
 
 	VERTEX_MODEL_SKIN_T* vertices = new VERTEX_MODEL_SKIN_T[m_iVtxCount];
 	if (!vertices)
@@ -104,20 +103,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 	return S_OK;
 }
 
-void CModelBufferComp::Priority_Tick(const _float& fTimeDelta)
-{
-}
-
-_int CModelBufferComp::Tick(const _float& fTimeDelta)
-{
-    return 0;
-}
-
-void CModelBufferComp::Late_Tick(const _float& fTimeDelta)
-{
-}
-
-void CModelBufferComp::Render()
+void CModelBufferComp::Render_Buffer()
 {
 	_uint iStride = sizeof(VERTEX_MODEL_SKIN_T);
 	_uint iOffset = 0;

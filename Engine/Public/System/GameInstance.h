@@ -210,6 +210,7 @@ public:		// ¸ðµ¨ ¸Å´ÏÀú
 	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
 	const FMeshData* const Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
 	class FArmatureData* Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey);
+	class FArmatureData* Find_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey);
 #pragma endregion
 
 
