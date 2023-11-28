@@ -13,6 +13,7 @@ struct FDEVICE_INIT;
 enum class EMANAGE_SCENE : _uint;
 enum class ERenderGroup : _uint;
 class FMeshData;
+class FMeshGroup;
 
 class CLevel;
 class FCollisionPrimitive;
@@ -209,6 +210,7 @@ public:		// 모델 매니저
 	HRESULT	Initialize_ModelMgr(const string& strMainPath);
 	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
 	const FMeshData* const Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
+	const FMeshGroup* const Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 	class FArmatureData* Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey);
 	class FArmatureData* Find_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey);
 #pragma endregion
@@ -219,7 +221,7 @@ public:		// 모델 매니저
 public:		// 셰이더 매니저
 	HRESULT Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
 	HRESULT	Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey);
-	const ComPtr<ID3DBlob>& Get_ShaderByte(const EShaderType eType, const wstring& strKey);
+	const ComPtr<ID3DBlob> Get_ShaderByte(const EShaderType eType, const wstring& strKey);
 	template<EShaderType Type>
 	inline ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strKey);
 #pragma endregion
@@ -240,7 +242,7 @@ private:
 	class CObjectMgr*		m_pObjectMgr = nullptr;
 	class CComponentMgr*	m_pComponentMgr = nullptr;
 	class CRenderMgr*		m_pRenderMgr = nullptr;
-	class CBlackBoardMgr*	m_pBlackBoardMgr = nullptr;
+	class CCloudStationMgr*	m_pBlackBoardMgr = nullptr;
 	
 	class CModelMgr*		m_pModelMgr = nullptr;
 	class CTextureMgr*		m_pTextureMgr = nullptr;

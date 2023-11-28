@@ -82,10 +82,10 @@ private:
 	FModelGroup*	Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 	FModelGroup*	Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 
+public:
 	FMeshGroup*		Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 	FBoneGroup*		Get_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 	FBoneAnimGroup* Get_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
-	FBoneGroup*		Get_ModelNodeGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 
 private:
 	_float4x4	ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);
@@ -102,7 +102,7 @@ private:
 
 private:
 	// 모델 정보, 메쉬, 뼈, 머터리얼, 애니메이션
-	_unmap<wstring, FModelGroup*>	m_mapModelGroup[Cast_EnumDef(EModelGroupIndex::Size)];
+	_unmap<wstring, FModelGroup*>	m_mapModelGroup[ECast(EModelGroupIndex::Size)];
 
 };
 

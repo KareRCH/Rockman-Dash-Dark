@@ -125,9 +125,9 @@ CModelBufferComp* CModelBufferComp::Create()
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("ModelBufferComp Create Failed");
-
+		Safe_Release(pInstance);
+		
 		return nullptr;
 	}
 
@@ -140,8 +140,8 @@ CComponent* CModelBufferComp::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize(Arg)))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("ModelBufferComp Copy Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}

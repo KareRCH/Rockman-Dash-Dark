@@ -22,5 +22,5 @@ HRESULT CVIBufferComp::Initialize(void* Arg)
 
 void CVIBufferComp::Free()
 {
-
+	Safe_Release(m_pDeviceComp);
 }

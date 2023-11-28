@@ -82,10 +82,10 @@ private:
 	FModelGroup*	Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 	FModelGroup*	Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 
+public:
 	FMeshGroup*		Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 	FBoneGroup*		Get_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 	FBoneAnimGroup* Get_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
-	FBoneGroup*		Get_ModelNodeGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 
 private:
 	_float4x4	ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);

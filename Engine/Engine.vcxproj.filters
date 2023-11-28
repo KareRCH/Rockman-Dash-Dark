@@ -166,9 +166,6 @@
     <Filter Include="01. System\01. Manager\02. GamePipeline\04. RenderMgr">
       <UniqueIdentifier>{c5c4caf4-c2c6-4ceb-8c5c-ec31d184f521}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr">
-      <UniqueIdentifier>{5538bfdf-d833-40e1-88ba-f9c4510f0d7e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. System\01. Manager\02. GamePipeline\06. ImGuiMgr">
       <UniqueIdentifier>{c873a54f-a8d7-4a42-ae22-e612778fd043}</UniqueIdentifier>
     </Filter>
@@ -240,6 +237,18 @@
     </Filter>
     <Filter Include="01. System\01. Manager\02. GamePipeline\07. CamViewMgr">
       <UniqueIdentifier>{0024b94d-0c81-453d-a43f-07fade65c2e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\05. CloudStationMgr">
+      <UniqueIdentifier>{5538bfdf-d833-40e1-88ba-f9c4510f0d7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. GameObjectComp\02. CloudStationComp">
+      <UniqueIdentifier>{a7ec7022-c985-47dd-a270-5c326741e543}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\01. BufferComponent\05. MultiMesh">
+      <UniqueIdentifier>{31d50f1e-2a33-44fc-94a3-cc02b873388c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\03. SkinnedModelShaderComp">
+      <UniqueIdentifier>{05a27c81-7598-494c-a0b0-f8a83a332f1b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -321,14 +330,14 @@
     <ClInclude Include="Public\System\GameInstance.h">
       <Filter>01. System\01. Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Public\BaseClass\BlackBoard.h">
-      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
+    <ClInclude Include="Public\BaseClass\CloudStation.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\05. CloudStationMgr</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System\BlackBoardMgr.h">
-      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
+    <ClInclude Include="Public\System\CloudStationMgr.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\05. CloudStationMgr</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System\BlackBoardPtr.h">
-      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
+    <ClInclude Include="Public\System\CloudStationPtr.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\05. CloudStationMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\KeyMgr.h">
       <Filter>01. System\01. Manager\00. Main\03. Key</Filter>
@@ -441,7 +450,7 @@
     <ClInclude Include="Public\Component\RectBufferComp.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\02. Rect</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Component\Component_Define.h">
+    <ClInclude Include="Public\Component\Define\Component_Define.h">
       <Filter>02. Utility\02. Component</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\BoxBufferComp.h">
@@ -519,6 +528,15 @@
     <ClInclude Include="Public\System\Define\CamViewMgr_Define.h">
       <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\CloudStationComp.h">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\02. CloudStationComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\MultiMeshBufComp.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\05. MultiMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\SkinnedModelShaderComp.h">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\03. SkinnedModelShaderComp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -572,14 +590,14 @@
     <ClCompile Include="Private\System\GameInstance.cpp">
       <Filter>01. System\01. Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Private\BaseClass\BlackBoard.cpp">
-      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
+    <ClCompile Include="Private\BaseClass\CloudStation.cpp">
+      <Filter>01. System\01. Manager\02. GamePipeline\05. CloudStationMgr</Filter>
     </ClCompile>
-    <ClCompile Include="Private\System\BlackBoardMgr.cpp">
-      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
+    <ClCompile Include="Private\System\CloudStationMgr.cpp">
+      <Filter>01. System\01. Manager\02. GamePipeline\05. CloudStationMgr</Filter>
     </ClCompile>
-    <ClCompile Include="Private\System\BlackBoardPtr.cpp">
-      <Filter>01. System\01. Manager\02. GamePipeline\05. BlackBoardMgr</Filter>
+    <ClCompile Include="Private\System\CloudStationPtr.cpp">
+      <Filter>01. System\01. Manager\02. GamePipeline\05. CloudStationMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\KeyMgr.cpp">
       <Filter>01. System\01. Manager\00. Main\03. Key</Filter>
@@ -730,6 +748,15 @@
     </ClCompile>
     <ClCompile Include="Private\System\CamViewMgr.cpp">
       <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\CloudStationComp.cpp">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\02. CloudStationComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\MultiMeshBufComp.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\05. MultiMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\SkinnedModelShaderComp.cpp">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\03. SkinnedModelShaderComp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

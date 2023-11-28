@@ -233,7 +233,7 @@
   <ItemGroup>
     <ClInclude Include="LogicDeviceBasic.h" />
     <ClInclude Include="Public\Base.h" />
-    <ClInclude Include="Public\BaseClass\BlackBoard.h" />
+    <ClInclude Include="Public\BaseClass\CloudStation.h" />
     <ClInclude Include="Public\BaseClass\Camera.h" />
     <ClInclude Include="Public\BaseClass\GameObject.h" />
     <ClInclude Include="Public\BaseClass\GameObject_Define.h" />
@@ -243,10 +243,11 @@
     <ClInclude Include="Public\BaseClass\Terrain.h" />
     <ClInclude Include="Public\Component\AnimationComponent.h" />
     <ClInclude Include="Public\Component\BoxBufferComp.h" />
+    <ClInclude Include="Public\Component\CloudStationComp.h" />
     <ClInclude Include="Public\Component\ColliderComponent.h" />
     <ClInclude Include="Public\Component\ColorShaderComp.h" />
     <ClInclude Include="Public\Component\Component.h" />
-    <ClInclude Include="Public\Component\Component_Define.h" />
+    <ClInclude Include="Public\Component\Define\Component_Define.h" />
     <ClInclude Include="Public\Component\GameObjectComp.h" />
     <ClInclude Include="Public\Component\D3D11DeviceComp.h" />
     <ClInclude Include="Public\Component\Interface\IAnimationComponent.h" />
@@ -261,12 +262,14 @@
     <ClInclude Include="Public\Component\ModelBufferComp.h" />
     <ClInclude Include="Public\Component\ModelComponent.h" />
     <ClInclude Include="Public\Component\ModelShaderComp.h" />
+    <ClInclude Include="Public\Component\MultiMeshBufComp.h" />
     <ClInclude Include="Public\Component\PrimitiveComponent.h" />
     <ClInclude Include="Public\Component\RectBufferComp.h" />
     <ClInclude Include="Public\Component\SceneComponent.h" />
     <ClInclude Include="Public\Component\ShaderComponent.h" />
     <ClInclude Include="Public\Component\SkeletalComponent.h" />
     <ClInclude Include="Public\Component\SkinnedModelComp.h" />
+    <ClInclude Include="Public\Component\SkinnedModelShaderComp.h" />
     <ClInclude Include="Public\Component\TeamAgentComp.h" />
     <ClInclude Include="Public\Component\TextureComponent.h" />
     <ClInclude Include="Public\Component\TransformComponent.h" />
@@ -286,8 +289,8 @@
     <ClInclude Include="Public\Physics\ForceGenerator.h" />
     <ClInclude Include="Public\Physics\PhysicsCore.h" />
     <ClInclude Include="Public\System\AnimationMgr.h" />
-    <ClInclude Include="Public\System\BlackBoardMgr.h" />
-    <ClInclude Include="Public\System\BlackBoardPtr.h" />
+    <ClInclude Include="Public\System\CloudStationMgr.h" />
+    <ClInclude Include="Public\System\CloudStationPtr.h" />
     <ClInclude Include="Public\System\CamViewMgr.h" />
     <ClInclude Include="Public\System\Data\BoneAnimData.h" />
     <ClInclude Include="Public\System\Data\MeshData.h" />
@@ -325,7 +328,7 @@
     <ClInclude Include="Public\System\Define\CamViewMgr_Define.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Private\BaseClass\BlackBoard.cpp" />
+    <ClCompile Include="Private\BaseClass\CloudStation.cpp" />
     <ClCompile Include="Private\BaseClass\Camera.cpp" />
     <ClCompile Include="Private\BaseClass\ImGuiWin.cpp" />
     <ClCompile Include="Private\BaseClass\Layer.cpp" />
@@ -343,11 +346,13 @@
     <ClCompile Include="Private\Component\ModelBufferComp.cpp" />
     <ClCompile Include="Private\Component\ModelComponent.cpp" />
     <ClCompile Include="Private\Component\ModelShaderComp.cpp" />
+    <ClCompile Include="Private\Component\MultiMeshBufComp.cpp" />
     <ClCompile Include="Private\Component\RectBufferComp.cpp" />
     <ClCompile Include="Private\Component\SceneComponent.cpp" />
     <ClCompile Include="Private\Component\ShaderComponent.cpp" />
     <ClCompile Include="Private\Component\SkeletalComponent.cpp" />
     <ClCompile Include="Private\Component\SkinnedModelComp.cpp" />
+    <ClCompile Include="Private\Component\SkinnedModelShaderComp.cpp" />
     <ClCompile Include="Private\Component\TeamAgentComp.cpp" />
     <ClCompile Include="Private\Component\TextureComponent.cpp" />
     <ClCompile Include="Private\Component\TransformComponent.cpp" />
@@ -360,8 +365,8 @@
     <ClCompile Include="Private\Physics\ForceGenerator.cpp" />
     <ClCompile Include="Private\Physics\PhysicsCore.cpp" />
     <ClCompile Include="Private\System\AnimationMgr.cpp" />
-    <ClCompile Include="Private\System\BlackBoardMgr.cpp" />
-    <ClCompile Include="Private\System\BlackBoardPtr.cpp" />
+    <ClCompile Include="Private\System\CloudStationMgr.cpp" />
+    <ClCompile Include="Private\System\CloudStationPtr.cpp" />
     <ClCompile Include="Private\System\CamViewMgr.cpp" />
     <ClCompile Include="Private\System\Data\BoneAnimData.cpp" />
     <ClCompile Include="Private\System\Data\MeshData.cpp" />
@@ -395,6 +400,7 @@
     <ClCompile Include="Public\Base.inl" />
     <ClCompile Include="Private\BaseClass\GameObject.cpp" />
     <ClCompile Include="Private\Component\PrimitiveComponent.cpp" />
+    <ClCompile Include="Private\Component\CloudStationComp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\PS_Test1.hlsl">

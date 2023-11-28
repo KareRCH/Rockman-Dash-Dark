@@ -13,7 +13,7 @@
 #include "System/ObjectMgr.h"
 #include "System/ComponentMgr.h"
 
-#include "System/BlackBoardMgr.h"
+#include "System/CloudStationMgr.h"
 #include "System/TextureMgr.h"
 #include "System/RenderMgr.h"
 #include "System/ModelMgr.h"
@@ -879,6 +879,14 @@ const FMeshData* const CGameInstance::Get_Mesh(const EModelGroupIndex eGroupInde
 	return m_pModelMgr->Get_Mesh(eGroupIndex, strGroupKey, strMeshKey);
 }
 
+const FMeshGroup* const CGameInstance::Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
+{
+	if (nullptr == m_pModelMgr)
+		return nullptr;
+
+	return m_pModelMgr->Get_MeshGroup(eGroupIndex, strModelKey);
+}
+
 FArmatureData* CGameInstance::Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey)
 {
 	if (nullptr == m_pModelMgr)
@@ -914,7 +922,7 @@ HRESULT CGameInstance::Load_Shader(const wstring& strFileName, const EShaderType
 }
 
 
-const ComPtr<ID3DBlob>& CGameInstance::Get_ShaderByte(const EShaderType eType, const wstring& strKey)
+const ComPtr<ID3DBlob> CGameInstance::Get_ShaderByte(const EShaderType eType, const wstring& strKey)
 {
 	if (nullptr == m_pShaderMgr)
 		return nullptr;

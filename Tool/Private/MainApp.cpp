@@ -48,14 +48,10 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_GraphicDev(tDeviceInit), E_FAIL);
 
-	m_pDevice = m_pGameInstance->Get_GraphicDev();
-	Safe_AddRef(m_pDevice);
 
-	m_pDeviceContext = m_pGameInstance->Get_GraphicContext();
-	Safe_AddRef(m_pDeviceContext);
-
-	DX11DEVICE_T tDevice = { m_pDevice, m_pDeviceContext };
-
+	DX11DEVICE_T tDevice;
+	tDevice.pDevice = m_pGameInstance->Get_GraphicDev();
+	tDevice.pDeviceContext = m_pGameInstance->Get_GraphicContext();
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_InputDev(g_hInst, g_hWnd), E_FAIL);
 
@@ -82,8 +78,8 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_BlackBoardMgr(), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ProtoMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(tDevice), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ComponentMgr(), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(), E_FAIL);
 
 	return S_OK;
 }

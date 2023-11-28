@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseClass/GameObject_Define.h"
-#include "Component/Component_Define.h"
+#include "Component/Define/Component_Define.h"
 #include "Component/Component.h"
 #include "Component/Interface/ID3D11DeviceComp.h"
 
@@ -46,9 +46,9 @@ protected:
 	* 이를 통해 그래픽 디바이스는 자동적으로 관리됨을 시사합니다.
 	* 그래픽 디바이스 컴포넌트의 인터페이스가 제공되며, 이를 구현하여 디바이스를 얻어 쓰도록 만들어야 합니다.
 	*/
-public:
-	inline virtual ID3D11Device* const D3D11Device() const { return m_pDeviceComp->Get_Device(); }
-	inline virtual ID3D11DeviceContext* const D3D11Context() const { return m_pDeviceComp->Get_Context(); }
+protected:
+	virtual ID3D11Device* const D3D11Device() const { return m_pDeviceComp->Get_Device(); }
+	virtual ID3D11DeviceContext* const D3D11Context() const { return m_pDeviceComp->Get_Context(); }
 
 private:
 	class CD3D11DeviceComp* m_pDeviceComp = { nullptr };
@@ -57,11 +57,11 @@ private:
 
 #pragma region 기본 속성
 public:
-	_float Get_Priority(ECompTickType eType) { return m_fPriority[Cast_Enum(eType)]; }
-	void Set_Priority(ECompTickType eType, _float fPriority) { m_fPriority[Cast_Enum(eType)] = fPriority; }
+	_float Get_Priority(ECompTickType eType) { return m_fPriority[ECast(eType)]; }
+	void Set_Priority(ECompTickType eType, _float fPriority) { m_fPriority[ECast(eType)] = fPriority; }
 
 private:	// 기본 속성
-	_float					m_fPriority[Cast_Enum(ECompTickType::Size)];		// 우선도
+	_float					m_fPriority[ECast(ECompTickType::Size)];		// 우선도
 #pragma endregion
 
 
