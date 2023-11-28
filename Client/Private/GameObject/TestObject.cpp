@@ -157,7 +157,7 @@ HRESULT CTestObject::Initialize_Component()
     m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Arms");
     m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Legs");
     m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Head");
-    ID3D11ShaderReflectionVariable* pVariable = 
+    //ID3D11ShaderReflectionVariable* pVariable = 
     //m_pModelComp->m_pShaderComp->
     //ID3D11ShaderReflection*
     //FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create(g_hWnd)), E_FAIL);

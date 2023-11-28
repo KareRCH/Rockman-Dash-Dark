@@ -224,6 +224,8 @@ public:		// 셰이더 매니저
 	const ComPtr<ID3DBlob> Get_ShaderByte(const EShaderType eType, const wstring& strKey);
 	template<EShaderType Type>
 	inline ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strKey);
+	HRESULT Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
+	ID3DX11Effect* Find_Effect(const wstring& strKey) const;
 #pragma endregion
 
 

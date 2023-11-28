@@ -253,6 +253,9 @@
     <Filter Include="02. Utility\02. Component\03. InternalComponent\06. EffectComponent">
       <UniqueIdentifier>{0a3c6a8e-8769-417e-8609-357b17ab8f7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Shader\99. Test\EffectTest">
+      <UniqueIdentifier>{ccb7b8fe-4b1c-4906-bd9c-bf01fb12618b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -793,5 +796,10 @@
     <FxCompile Include="Shader\PS_Deferred_GBuffer.hlsl">
       <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\Shader\FX_ModelTest.hlsli">
+      <Filter>03. Shader\99. Test\EffectTest</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 
 CEffectComponent::CEffectComponent(const CEffectComponent& rhs)
     : Base(rhs)
+    , m_pDeviceComp(rhs.m_pDeviceComp)
     , m_pEffect(rhs.m_pEffect)
     , m_InputLayouts(rhs.m_InputLayouts)
     , m_TechniqueDesc(rhs.m_TechniqueDesc)
@@ -19,6 +20,8 @@ HRESULT CEffectComponent::Initialize_Prototype(void* Arg)
 
     //m_pEffect = 
 
+    m_pDeviceComp = CD3D11DeviceComp::Create();
+
 	return S_OK;
 }
 
@@ -27,7 +30,7 @@ HRESULT CEffectComponent::Initialize(void* Arg)
 	return S_OK;
 }
 
-CEffectComponent* CEffectComponent::Create(const FEffectCompDesc& tDesc)
+CEffectComponent* CEffectComponent::Create(FEffectCompDesc tDesc)
 {
     ThisClass* pInstance = new ThisClass();
 

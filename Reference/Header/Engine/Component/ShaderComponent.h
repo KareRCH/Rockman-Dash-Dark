@@ -41,8 +41,12 @@ public:
 	GETSET_1(_uint, m_iIndexCount, IndexCount, SET_C)
 
 protected:
-	ComPtr<ID3D11VertexShader>	m_pVertexShader = { nullptr };
-	ComPtr<ID3D11PixelShader>	m_pPixelShader = { nullptr };
+	ComPtr<ID3D11VertexShader>		m_pVertexShader = { nullptr };
+	ComPtr<ID3D11PixelShader>		m_pPixelShader = { nullptr };
+	ComPtr<ID3D11GeometryShader>	m_pGeometryShader = { nullptr };
+	ComPtr<ID3D11HullShader>		m_pHullShader = { nullptr };
+	ComPtr<ID3D11DomainShader>		m_pDomainShader = { nullptr };
+
 	ComPtr<ID3D11InputLayout>	m_pLayout = { nullptr };
 	ComPtr<ID3D11Buffer>		m_pMatrixBuffer = { nullptr };
 	ComPtr<ID3D11Buffer>		m_pCameraBuffer = { nullptr };

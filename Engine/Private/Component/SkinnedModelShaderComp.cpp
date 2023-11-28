@@ -99,7 +99,7 @@ HRESULT CSkinnedModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& str
     }
     
     ID3D11ShaderReflection* pReflection;
-    D3DReflect(pPixelShaderBuf->GetBufferPointer(), pPixelShaderBuf->GetBufferSize(), IID_ID3D11ShaderReflection, Cast<void**>(&pReflection));
+    D3DReflect(pPixelShaderBuf->GetBufferPointer(), pPixelShaderBuf->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)(&pReflection));
 
     D3D11_SHADER_VARIABLE_DESC variableDesc;
     ID3D11ShaderReflectionVariable* variable = pReflection->GetVariableByName("myVariable");

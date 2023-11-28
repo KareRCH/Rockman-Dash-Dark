@@ -85,7 +85,7 @@ public:
 		if (FAILED(pInstance->Initialize()))
 		{
 			MSG_BOX("RenderMgr Create Failed");
-			Safe_Delete(pInstance);
+			Safe_Release(pInstance);
 
 			return nullptr;
 		}
