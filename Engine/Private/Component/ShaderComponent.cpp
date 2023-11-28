@@ -2,17 +2,22 @@
 
 CShaderComponent::CShaderComponent(const CShaderComponent& rhs)
 	: Base(rhs)
+	, m_pDeviceComp(rhs.m_pDeviceComp)
 {
+	Safe_AddRef(m_pDeviceComp);
+}
+
+
+HRESULT CShaderComponent::Initialize_Prototype(void* Arg)
+{
+	m_pDeviceComp = CD3D11DeviceComp::Create();
+
+	return S_OK;
 }
 
 void CShaderComponent::Free()
 {
-	SUPER::Free();
-
-	Safe_Release(m_pLayout);
-	Safe_Release(m_pMatrixBuffer);
-	Safe_Release(m_pCameraBuffer);
-	Safe_Release(m_pLightBuffer);
+	Safe_Release(m_pDeviceComp);
 }
 
 void CShaderComponent::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hWnd, const _tchar* pShaderFileName)

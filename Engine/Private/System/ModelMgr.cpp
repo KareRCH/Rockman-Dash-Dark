@@ -522,17 +522,6 @@ FBoneAnimGroup* CModelMgr::Get_AnimGroup(const EModelGroupIndex eGroupIndex, con
 	return (*iter).second->pAnimGroup;
 }
 
-FBoneGroup* CModelMgr::Get_ModelNodeGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
-{
-	_uint iIndex = ECast(eGroupIndex);
-
-	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
-	if (iter == m_mapModelGroup[iIndex].end())
-		return nullptr;
-
-	return (*iter).second->pBoneGroup;
-}
-
 _float4x4 CModelMgr::ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix)
 {
 	_float4x4	matOffsetTG = _float4x4(

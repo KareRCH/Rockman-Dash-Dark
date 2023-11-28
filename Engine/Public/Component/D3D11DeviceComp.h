@@ -43,8 +43,8 @@ protected:
 	virtual void	Free() {}
 
 public:
-	GETSET_1(ID3D11Device*, m_pDevice.Get(), Device, GET_REF_C)
-	GETSET_1(ID3D11DeviceContext*, m_pContext.Get(), Context, GET_REF_C)
+	GETSET_1(ID3D11Device*, m_pDevice.Get(), Device, GET__C)
+	GETSET_1(ID3D11DeviceContext*, m_pContext.Get(), Context, GET__C)
 
 private:
 	ComPtr<ID3D11Device>			m_pDevice = { nullptr };		// ·»´õ ÀåÄ¡

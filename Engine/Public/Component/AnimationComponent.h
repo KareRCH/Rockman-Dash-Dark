@@ -22,6 +22,7 @@ struct FAnimMask
 
 /// <summary>
 /// 애니메이션에 대한 처리를 담당하는 컴포넌트
+/// 뼈 하나에 대응하는 
 /// </summary>
 class ENGINE_DLL CAnimationComponent final : public CInternalComponent
 {

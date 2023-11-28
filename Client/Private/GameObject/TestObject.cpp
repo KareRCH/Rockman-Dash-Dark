@@ -150,14 +150,21 @@ void CTestObject::Free()
 HRESULT CTestObject::Initialize_Component()
 {
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CSkinnedModelComp::Create()), E_FAIL);
-    Cast<CModelBufferComp*>(m_pModelComp->VIBufferComp())->Initialize(EModelGroupIndex::Permanent, L"RockVolnutt", L"Body");
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create(g_hWnd)), E_FAIL);
-    //m_ColorShaderComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
-    m_pModelShaderComp->Set_IndexCount(m_pModelComp->VIBufferComp()->Get_IndexCount());
-    ID3D11ShaderResourceView* pTest= GameInstance()->Get_Texture(L"RockVolnutt", L"Body-BaseColor");
-    m_pModelShaderComp->Set_Texture(pTest);
+    m_pModelComp->m_pVIBufferComp->Bind_Model(EModelGroupIndex::Permanent, L"RockVolnutt");
+    m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Body");
+    m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Arms");
+    m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Legs");
+    m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Head");
+
+    m_pModelComp->m_pS
+
+    //FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create(g_hWnd)), E_FAIL);
+    ////m_ColorShaderComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
+    //m_pModelShaderComp->Set_IndexCount(m_pModelComp->VIBufferComp()->Get_IndexCount());
+    //ID3D11ShaderResourceView* pTest= GameInstance()->Get_Texture(L"RockVolnutt", L"Body-BaseColor");
+    //m_pModelShaderComp->Set_Texture(pTest);
 
     return S_OK;
 }

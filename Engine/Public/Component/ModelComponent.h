@@ -2,7 +2,6 @@
 
 #include "SceneComponent.h"
 
-#include "Component/VIBufferComp.h"
 #include "Component/MaterialComponent.h"
 
 
@@ -13,7 +12,7 @@ BEGIN(Engine)
 /// 일반 모델 컴포넌트는 단순히 모델을 표시하기 위한 버퍼와, 재질 정도를 가집니다.
 /// 뼈, 애니메이션을 포함하는 객체를 만드려면 이 객체를 상속받아 정의 하십시오.
 /// </summary>
-class ENGINE_DLL CModelComponent abstract : public CSceneComponent, public IVIBufferComp, public IMaterialComponent
+class ENGINE_DLL CModelComponent : public CSceneComponent, public IMaterialComponent
 {
 	DERIVED_CLASS(CSceneComponent, CModelComponent)
 
@@ -35,19 +34,6 @@ public:
 
 protected:
 	virtual void	Free() override;
-
-
-
-
-#pragma region VIBuffer 컴포넌트
-public:
-	virtual CVIBufferComp* VIBufferComp() override { return m_pVIBufferComp; }
-
-private:
-	CVIBufferComp* m_pVIBufferComp = { nullptr };
-#pragma endregion
-
-
 
 
 #pragma region 머터리얼 컴포넌트

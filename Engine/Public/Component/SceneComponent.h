@@ -38,8 +38,9 @@ protected:
 	// 씬 컴포넌트는 계층관계를 가진다. 자식을 여럿 가질 수 있으며, 그에 대한 기능을 제공한다.
 public:
 	GETSET_1(CSceneComponent*, m_pParentSceneComp, ParentSceneComp, GET)
-		CSceneComponent* Get_FirstChildSceneComp();
-	CSceneComponent* Get_ChildSceneComp(_uint iIndex);
+
+	CSceneComponent*	Get_FirstChildSceneComp();
+	CSceneComponent*	Get_ChildSceneComp(_uint iIndex);
 	void				Add_ChildSceneComp(CSceneComponent* const pComp);
 	_bool				Insert_ChildSceneComp(_uint iIndex, CSceneComponent* const pComp);
 
@@ -53,8 +54,8 @@ protected:
 	// 트랜스폼 컴포넌트에 대한 함수 정의, 씬 컴포넌트는 항상 트랜스폼을 요소로 가진다.
 public:
 	// 반드시 초기화가 되었을 때 사용해야 함.
-	inline virtual CTransformComponent& Transform() override { return (*m_pTransformComp); }
-	inline virtual void Release_Transform() override { Safe_Release(m_pTransformComp); }
+	virtual CTransformComponent& Transform() override { return (*m_pTransformComp); }
+	virtual void Release_Transform() override { Safe_Release(m_pTransformComp); }
 
 private:
 	CTransformComponent* m_pTransformComp = { nullptr };			// 내부 트랜스폼 컴포넌트 포함  

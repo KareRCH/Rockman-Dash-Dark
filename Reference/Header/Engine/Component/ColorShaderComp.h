@@ -16,10 +16,6 @@ public:
 	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual HRESULT	Initialize(HWND hWnd);
-	virtual void	Priority_Tick(const _float& fTimeDelta) override;
-	virtual _int	Tick(const _float& fTimeDelta) override;
-	virtual void	Late_Tick(const _float& fTimeDelta) override {}
-	virtual void	Render() override {}
 	virtual void	Render(const _matrix& matWorld, const _matrix& matView, const _matrix& matProj);
 
 public:

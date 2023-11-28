@@ -24,15 +24,6 @@ HRESULT CColorShaderComp::Initialize(HWND hWnd)
     return S_OK;
 }
 
-void CColorShaderComp::Priority_Tick(const _float& fTimeDelta)
-{
-}
-
-_int CColorShaderComp::Tick(const _float& fTimeDelta)
-{
-    return 0;
-}
-
 void CColorShaderComp::Render(const _matrix& matWorld, const _matrix& matView, const _matrix& matProj)
 {
     if (Set_ShaderParameter(matWorld, matView, matProj) == E_FAIL)
@@ -49,9 +40,8 @@ CColorShaderComp* CColorShaderComp::Create(HWND hWnd)
 
     if (FAILED(pInstance->Initialize(hWnd)))
     {
-        Engine::Safe_Release(pInstance);
-
         MSG_BOX("ColorShaderComp Create Failed");
+        Safe_Release(pInstance);
         
         return nullptr;
     }
@@ -65,9 +55,8 @@ CComponent* CColorShaderComp::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        Engine::Safe_Release(pInstance);
-
         MSG_BOX("ColorShaderComp Copy Failed");
+        Safe_Release(pInstance);
 
         return nullptr;
     }
@@ -175,7 +164,7 @@ HRESULT CColorShaderComp::Set_ShaderParameter(XMMATRIX matWorld, XMMATRIX matVie
 
     // 상수 버퍼의 내용을 쓸 수 있도록 잠금
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pMatrixBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     // 상수 버퍼의 데이터에 대한 포인터를 가져옴
     MATRIX_BUFFER_T* pDataPtr = Cast<MATRIX_BUFFER_T*>(mappedResource.pData);
@@ -186,7 +175,7 @@ HRESULT CColorShaderComp::Set_ShaderParameter(XMMATRIX matWorld, XMMATRIX matVie
     pDataPtr->matProj = matProj;
 
     // 상수 버퍼의 잠금 풀기
-    D3D11Context()->Unmap(m_pMatrixBuffer, 0);
+    D3D11Context()->Unmap(m_pMatrixBuffer.Get(), 0);
 
     // 정점 셰이더에서의 상수 버퍼의 위치를 설정
     _uint iBufferNumber = 0;
@@ -198,7 +187,7 @@ HRESULT CColorShaderComp::Set_ShaderParameter(XMMATRIX matWorld, XMMATRIX matVie
 
 void CColorShaderComp::Render_Shader(_int iIndexCount)
 {
-    D3D11Context()->IASetInputLayout(m_pLayout);
+    D3D11Context()->IASetInputLayout(m_pLayout.Get());
 
     D3D11Context()->VSSetShader(m_pVertexShader.Get(), NULL, 0);
     D3D11Context()->PSSetShader(m_pPixelShader.Get(), NULL, 0);

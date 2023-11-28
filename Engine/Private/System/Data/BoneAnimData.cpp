@@ -1,5 +1,4 @@
 #include "System/Data/BoneAnimData.h"
-#include "BoneAnimData.h"
 
 FBoneAnimNodeData* FBoneAnimNodeData::Create()
 {
@@ -7,9 +6,8 @@ FBoneAnimNodeData* FBoneAnimNodeData::Create()
 
 	if (!pInstance)
 	{
-		Safe_Release(pInstance);
-
 		MSG_BOX("FAnimNodeData Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}

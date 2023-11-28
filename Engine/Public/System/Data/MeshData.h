@@ -55,7 +55,7 @@ public:
 	virtual void Free() override;
 	
 public:
-	const FMeshData* const	Get_Mesh(const wstring& strMeshKey);
+	const FMeshData* const	Get_Mesh(const wstring& strMeshKey) const;
 	void Add_Mesh(const wstring& strMeshKey, FMeshData* const pMeshData);
 	
 public:

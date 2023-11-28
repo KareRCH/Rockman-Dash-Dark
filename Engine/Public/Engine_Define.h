@@ -29,6 +29,8 @@
 #include <directxmath.h>
 #include <wrl/client.h>
 
+#include <d3dx11effect.h>
+
 
 // 사운드 라이브러리
 #include <fmod.h>

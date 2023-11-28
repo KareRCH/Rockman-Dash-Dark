@@ -2,7 +2,7 @@
 
 #include "Base.h"
 #include "Component/TransformComponent.h"
-#include "Component/Component_Define.h"
+#include "Component/Define/Component_Define.h"
 #include "Component/Interface/ITransform.h"
 
 #include "BaseClass/GameObject_Define.h"

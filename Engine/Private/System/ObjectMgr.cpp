@@ -145,7 +145,7 @@ CGameObject* CObjectMgr::Find_GameObject(_uint iFindID)
 		return nullptr;
 
 	_float fRatio = (Cast<_float>(iFindID) / (Cast<_float>(iMaxID) - Cast<_float>(iMinID)));
-	_uint iPivotIndex = iMaxIndex * fRatio;
+	_uint iPivotIndex = Cast<_uint>(iMaxIndex * fRatio);
 
 	auto iter = m_vecGameObjects.begin() + iPivotIndex;
 
@@ -168,12 +168,12 @@ CGameObject* CObjectMgr::Find_GameObject(_uint iFindID)
 			if (iID < iFindID)
 			{
 				fRatio = Cast<_float>(iFindID - iMinID) / (Cast<_float>(iID - iMinID));
-				iPivotIndex -= iPivotIndex * fRatio;
+				iPivotIndex -= Cast<_uint>(iPivotIndex * fRatio);
 			}
 			else if (iID > iFindID)
 			{
 				fRatio = Cast<_float>(iID - iFindID) / (Cast<_float>(iMaxID - iID));
-				iPivotIndex += (iMaxIndex - iPivotIndex) * fRatio;
+				iPivotIndex += Cast<_uint>((iMaxIndex - iPivotIndex) * fRatio);
 			}
 		}
 

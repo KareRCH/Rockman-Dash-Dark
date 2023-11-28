@@ -17,7 +17,7 @@ protected:
 
 public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
-	virtual HRESULT Initialize(void* Arg = nullptr);
+	virtual HRESULT Initialize(void* Arg = nullptr) override;
 
 public:
 	virtual CComponent*	Clone(void* Arg = nullptr) PURE;

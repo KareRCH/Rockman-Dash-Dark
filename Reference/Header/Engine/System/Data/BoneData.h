@@ -82,6 +82,7 @@ public:
 	FBoneNodeData* Create_NodeData(const wstring& strModelNodeKey);
 	void Appoint_ArmatureNode(const wstring& strModelNodeKey);
 	HRESULT Add_NodeData(const wstring& strModelNodeKey, FBoneNodeData* pNode);
+	vector<const _float4x4*>	Provide_FinalTransforms();
 
 private:
 	// 아마추어 노드도 같이 저장된다.

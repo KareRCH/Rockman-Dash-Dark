@@ -49,7 +49,7 @@ void FMeshGroup::Free()
 	mapMeshData.clear();
 }
 
-const FMeshData* const FMeshGroup::Get_Mesh(const wstring& strMeshKey)
+const FMeshData* const FMeshGroup::Get_Mesh(const wstring& strMeshKey) const
 {
 	auto iter = mapMeshData.find(strMeshKey);
 	if (iter == mapMeshData.end())

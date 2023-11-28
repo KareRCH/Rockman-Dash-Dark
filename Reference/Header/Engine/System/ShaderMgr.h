@@ -96,7 +96,7 @@ public:
 	// 파일이름을 통해 셰이더를 로드
 	HRESULT	Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey);
 	// 로드된 셰이더가 있다면 그 값을 반환한다.
-	const ComPtr<ID3DBlob>& Get_ShaderByte(const EShaderType eType, const wstring& strName) const;
+	const ComPtr<ID3DBlob> Get_ShaderByte(const EShaderType eType, const wstring& strName) const;
 	template <EShaderType Type>
 	ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strName) const;
 
@@ -105,7 +105,7 @@ private:
 
 private:
 	wstring								m_strMainPath;
-	_unmap<wstring, FShaderData*>		m_mapShaderData[Cast_EnumDef(EShaderType::Size)];
+	_unmap<wstring, FShaderData*>		m_mapShaderData[ECast(EShaderType::Size)];
 };
 
 
@@ -114,7 +114,7 @@ private:
 template <EShaderType Type>
 ComPtr<ShaderType<Type>> CShaderMgr::Get_ShaderBuffer(const wstring& strName) const
 {
-	constexpr _uint iIndex = Cast_EnumDef(Type);
+	constexpr _uint iIndex = ECast(Type);
 
 	auto iter = m_mapShaderData[iIndex].find(strName);
 	if (iter == m_mapShaderData[iIndex].end() || !(*iter).second->IsLoaded())

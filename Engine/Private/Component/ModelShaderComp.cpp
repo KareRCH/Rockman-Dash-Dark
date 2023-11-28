@@ -31,15 +31,6 @@ HRESULT CModelShaderComp::Initialize(void* Arg)
     return S_OK;
 }
 
-void CModelShaderComp::Priority_Tick(const _float& fTimeDelta)
-{
-}
-
-_int CModelShaderComp::Tick(const _float& fTimeDelta)
-{
-    return 0;
-}
-
 void CModelShaderComp::Render(const MATRIX_BUFFER_T& tMatrixBuf, const CAMERA_BUFFER_T tCameraBuf, 
     const BONE_COMMON_BUFFER_T tBoneBuf, const LIGHT_BUFFER_T& tLightBuf)
 {
@@ -59,9 +50,8 @@ CModelShaderComp* CModelShaderComp::Create(HWND hWnd)
 
     if (FAILED(pInstance->Initialize_Prototype(&Arg)))
     {
-        Engine::Safe_Release(pInstance);
-
         MSG_BOX("ModelShaderComp Create Failed");
+        Safe_Release(pInstance);
 
         return nullptr;
     }
@@ -75,9 +65,8 @@ CComponent* CModelShaderComp::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        Engine::Safe_Release(pInstance);
-
         MSG_BOX("ModelShaderComp Copy Failed");
+        Safe_Release(pInstance);
 
         return nullptr;
     }
@@ -175,7 +164,7 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     /***********
     * 행렬 버퍼
     ************/
-    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pMatrixBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     // 상수 버퍼의 데이터에 대한 포인터를 가져옴
     MATRIX_BUFFER_T* pDataPtr = Cast<MATRIX_BUFFER_T*>(mappedResource.pData);
@@ -186,7 +175,7 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     pDataPtr->matProj = tMatrixBuf.matProj;
 
     // 상수 버퍼의 잠금 풀기
-    D3D11Context()->Unmap(m_pMatrixBuffer, 0);
+    D3D11Context()->Unmap(m_pMatrixBuffer.Get(), 0);
 
     // 정점 셰이더에서의 상수 버퍼의 위치를 설정
     _uint iBufferNumber = 0;
@@ -197,13 +186,13 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     /*************
     * 카메라 버퍼
     **************/
-    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pCameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pCameraBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
     CAMERA_BUFFER_T* dataPtr3 = Cast<CAMERA_BUFFER_T*>(mappedResource.pData);
 
     dataPtr3->vPosition = tCameraBuf.vPosition;
     dataPtr3->fPadding = 0.f;
 
-    D3D11Context()->Unmap(m_pCameraBuffer, 0);
+    D3D11Context()->Unmap(m_pCameraBuffer.Get(), 0);
 
     iBufferNumber = 1;
 
@@ -215,7 +204,7 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     /*************
     * 뼈 버퍼
     **************/
-    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pBoneBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pBoneBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
     BONE_COMMON_BUFFER_T* dataPtr4 = Cast<BONE_COMMON_BUFFER_T*>(mappedResource.pData);
 
     for (size_t i = 0; i < 128; i++)
@@ -223,7 +212,7 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
         dataPtr4->matTransform[i] = tBoneBuf.matTransform[i];
     }
     
-    D3D11Context()->Unmap(m_pCameraBuffer, 0);
+    D3D11Context()->Unmap(m_pCameraBuffer.Get(), 0);
 
     iBufferNumber = 2;
 
@@ -233,7 +222,7 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     /*********
     * 빛 버퍼
     ***********/
-    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
+    FAILED_CHECK_RETURN(D3D11Context()->Map(m_pLightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource), E_FAIL);
 
     LIGHT_BUFFER_T* dataPtr2 = Cast<LIGHT_BUFFER_T*>(mappedResource.pData);
 
@@ -243,7 +232,7 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
     dataPtr2->fSpecularPower = tLightBuf.fSpecularPower;
     dataPtr2->vSpecularColor = tLightBuf.vSpecularColor;
 
-    D3D11Context()->Unmap(m_pLightBuffer, 0);
+    D3D11Context()->Unmap(m_pLightBuffer.Get(), 0);
 
     iBufferNumber = 0;
 
@@ -255,7 +244,7 @@ HRESULT CModelShaderComp::Set_ShaderParameter(MATRIX_BUFFER_T tMatrixBuf, CAMERA
 
 void CModelShaderComp::Render_Shader(_int iIndexCount)
 {
-    D3D11Context()->IASetInputLayout(m_pLayout);
+    D3D11Context()->IASetInputLayout(m_pLayout.Get());
 
     D3D11Context()->VSSetShader(m_pVertexShader.Get(), NULL, 0);
     D3D11Context()->PSSetShader(m_pPixelShader.Get(), NULL, 0);

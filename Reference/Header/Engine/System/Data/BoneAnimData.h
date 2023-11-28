@@ -65,7 +65,7 @@ class ENGINE_DLL FBoneAnimData final : public CBase
 {
 	DERIVED_CLASS(CBase, FBoneAnimData)
 private:
-	explicit FBoneAnimData() {}
+	explicit FBoneAnimData() = default;
 	virtual ~FBoneAnimData() = default;
 
 public:
@@ -73,12 +73,12 @@ public:
 	virtual void Free() override;
 
 public:
-	const FBoneAnimNodeData* const Get_AnimNodeData(const wstring& strNodeKey);
+	const FBoneAnimNodeData* const Find_AnimNodeData(const wstring& strNodeKey) const;
 	void Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimNodeData* pAnimNodeData);
 
 public:
 	// 시간 변화율로 애니메이션 타임라인의 현재 시간을 구해주는 함수, Mod를 켜면 반복됨
-	_float Calculate_Time(const _float& fTimeDelta, _float fCurTime, _bool bMod = true);
+	_float Calculate_Time(const _float& fTimeDelta, _float fCurTime, _bool bMod = true) const;
 	
 public:
 	_double dfDuration = 0.0;									// 진행 길이
@@ -89,7 +89,7 @@ public:
 };
 
 /// <summary>
-/// 어떤 모델에 대한 그룹
+/// 뼈 애니메이션들을 저장하는 그룹
 /// </summary>
 class ENGINE_DLL FBoneAnimGroup final : public CBase
 {
@@ -105,7 +105,7 @@ public:
 public:
 	const FBoneAnimData* const	Find_AnimData(const wstring& strAnimKey);
 	void Add_AnimData(const wstring& strAnimKey, FBoneAnimData* pAnimData);
-	
+
 private:
 	_unmap<wstring, FBoneAnimData*> mapAnimData;		// 애니메이션 저장 맵, 키는 애니메이션 이름
 	

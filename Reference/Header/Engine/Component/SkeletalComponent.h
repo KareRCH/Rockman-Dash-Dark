@@ -39,11 +39,22 @@ protected:
 	virtual void	Free() override;
 
 public:
-	HRESULT Load_BoneRootNode(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey);
+	// 아마추어를 로드한다.
+	HRESULT Load_Armature(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strArmatureKey);
+
+	// 최종 트랜스폼의 주소를 저장한 벡터를 내보내, 버퍼에 전달 할 수 있도록 해준다.
+	vector<const _float4x4*>	Get_FinalTransforms();
+
+	// 뼈 정보에 대한 여러가지 기능들을 제공한다.
+	_float4x4 Get_BoneTrasformFloat4x4(const wstring& strBoneKey);
 
 private:	// 뼈 정보
-	class FArmatureData* m_pArmature = { nullptr };
-	
+	class FArmatureData* m_pArmature = { nullptr };		// 아마추어, 이 녀석이 뼈의 계층구조와 직렬화된 배열을 가지고 있다.
+
+	// 애니메이션 컴포넌트로부터 계산된 결과물을 뼈의 FinalTransform에 적용한다.
+	// 그 뒤에 계층구조로 인한 결과물을 FinalTransform에 적용해준다. 애니메이션은 계층에 대한 영향을 주지 않기 때문.
+	// 최종 결과물에 대한 행렬을 배열로 뽑을 수 있도록 할 수 있다.
+														
 	// 뼈 정보는 계층 정보를 제공해야한다.
 	// 뼈 정보는 빠른 참조를 하기 위해 다음과 같은 검색 정보를 제공해야한다.
 	// 뼈는 그 그룹이 되는 Armature의 이름으로 찾아진 다음, ID를 통해 찾을 수 있어야 한다.

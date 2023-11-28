@@ -2,10 +2,14 @@
 
 #include "Component/ModelComponent.h"
 
+#include "Component/MultiMeshBufComp.h"
+#include "Component/SkinnedModelShaderComp.h"
 #include "Component/SkeletalComponent.h"
 #include "Component/AnimationComponent.h"
 
+
 BEGIN(Engine)
+
 
 
 /// <summary>
@@ -35,6 +39,21 @@ public:
 protected:
 	virtual void	Free() override;
 
+public:
+
+
+#pragma region ¸ÖÆ¼ ¸Þ½Ã ¹öÆÛ
+
+public:
+	CMultiMeshBufComp* m_pVIBufferComp = { nullptr };
+#pragma endregion
+
+
+#pragma region »À¿Í ÇÔ²² ¼ÎÀÌµù µÇ´Â ¼ÎÀÌ´õ
+
+public:
+	CSkinnedModelShaderComp* m_pShaderComp = { nullptr };
+#pragma endregion
 
 
 #pragma region ½ºÄÌ·¹Å» ÄÄÆ÷³ÍÆ®

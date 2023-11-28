@@ -23,10 +23,6 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr);
-	virtual void	Priority_Tick(const _float& fTimeDelta);
-	virtual _int	Tick(const _float& fTimeDelta);
-	virtual void	Late_Tick(const _float& fTimeDelta) {}
-	virtual void	Render() {}
 	virtual void	Render(const MATRIX_BUFFER_T& tMatrixBuf, const CAMERA_BUFFER_T tCameraBuf, const BONE_COMMON_BUFFER_T tBoneBuf, const LIGHT_BUFFER_T& tLightBuf);
 
 public:
@@ -49,7 +45,7 @@ private:
 	ComPtr<ID3D11SamplerState> m_pSamplereState = { nullptr };
 	ComPtr<ID3D11ShaderResourceView> m_pTexture = { nullptr };
 
-	ID3D11Buffer*	m_pBoneBuffer = { nullptr };
+	ComPtr<ID3D11Buffer>	m_pBoneBuffer = { nullptr };
 };
 
 END

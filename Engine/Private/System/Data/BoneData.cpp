@@ -1,5 +1,4 @@
 #include "System/Data/BoneData.h"
-#include "BoneData.h"
 
 FBoneNodeBaseData::FBoneNodeBaseData(const FBoneNodeBaseData& rhs)
 	: iID(rhs.iID), eType(rhs.eType), eBoneType(rhs.eBoneType)
@@ -117,9 +116,8 @@ FArmatureData* FArmatureData::Create()
 
 	if (!pInstance)
 	{
-		Safe_Release(pInstance);
-
 		MSG_BOX("FArmatureData Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}
@@ -133,9 +131,8 @@ FArmatureData* FArmatureData::Clone()
 
 	if (!pInstance)
 	{
-		Safe_Release(pInstance);
-
 		MSG_BOX("FBoneNodeData Copy Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}

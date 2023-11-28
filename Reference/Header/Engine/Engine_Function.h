@@ -124,9 +124,16 @@ namespace Engine
 		return reinterpret_cast<Return>(value);
 	}
 
+	// const_cast¹öÀü
+	template<typename Return, typename T>
+	constexpr Return ConCast(T value)
+	{
+		return const_cast<Return>(value);
+	}
+
 	template<typename T, typename = enable_if_t<is_enum<T>::value>,
 		typename Return = underlying_type_t<T>>
-	constexpr Return Cast_EnumDef(T value)
+	constexpr Return ECast(T value)
 	{
 		return static_cast<Return>(value);
 	}

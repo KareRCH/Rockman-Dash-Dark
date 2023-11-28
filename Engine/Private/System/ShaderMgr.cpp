@@ -133,6 +133,37 @@ HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eT
 	return S_OK;
 }
 
+
+HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const wstring& strKey)
+{
+
+	_uint		iHlslFlag = 0;
+
+#ifdef _DEBUG
+	iHlslFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+	iHlslFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
+#endif
+
+	ComPtr<ID3DX11Effect> pEffect;
+	if (FAILED(D3DX11CompileEffectFromFile(strFileName.c_str(), nullptr,
+		D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice.Get(), pEffect.GetAddressOf(), nullptr)))
+		return E_FAIL;
+
+	ID3DX11EffectTechnique* pTechnique = pEffect->GetTechniqueByIndex(0);
+	if (nullptr == pTechnique)
+		return E_FAIL;
+
+	pTechnique->GetDesc(&m_TechniqueDesc);
+
+	return S_OK;
+}
+
+ID3DX11Effect* CShaderMgr::Find_Effect(const wstring& strKey) const
+{
+	return nullptr;
+}
+
 ID3DBlob* CShaderMgr::Read_ShaderBinary(const wstring& strFile)
 {
 	ifstream fin(strFile, ios::binary);
@@ -154,7 +185,9 @@ ID3DBlob* CShaderMgr::Read_ShaderBinary(const wstring& strFile)
 }
 
 
-const ComPtr<ID3DBlob>& CShaderMgr::Get_ShaderByte(const EShaderType eType, const wstring& strName) const
+
+
+const ComPtr<ID3DBlob> CShaderMgr::Get_ShaderByte(const EShaderType eType, const wstring& strName) const
 {
 	_uint iIndex = ECast(eType);
 
