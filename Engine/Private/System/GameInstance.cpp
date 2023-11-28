@@ -930,3 +930,19 @@ const ComPtr<ID3DBlob> CGameInstance::Get_ShaderByte(const EShaderType eType, co
 	return m_pShaderMgr->Get_ShaderByte(eType, strKey);
 }
 
+HRESULT CGameInstance::Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
+{
+	if (nullptr == m_pShaderMgr)
+		return E_FAIL;
+
+	return m_pShaderMgr->Load_Effect(strFileName, strKey, pElements, iNumElements);
+}
+
+ID3DX11Effect* CGameInstance::Find_Effect(const wstring& strKey) const
+{
+	if (nullptr == m_pShaderMgr)
+		return nullptr;
+
+	return m_pShaderMgr->Find_Effect(strKey);
+}
+

@@ -6,6 +6,7 @@
 #include "Component/SkinnedModelShaderComp.h"
 #include "Component/SkeletalComponent.h"
 #include "Component/AnimationComponent.h"
+#include "Component/EffectComponent.h"
 
 
 BEGIN(Engine)
@@ -53,6 +54,9 @@ public:
 
 public:
 	CSkinnedModelShaderComp* m_pShaderComp = { nullptr };
+
+public:
+	CEffectComponent* m_pEffectComp = { nullptr };
 #pragma endregion
 
 

@@ -477,6 +477,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\Shader\FX_ModelTest.hlsli" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

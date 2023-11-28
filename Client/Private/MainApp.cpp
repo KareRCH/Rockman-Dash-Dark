@@ -70,6 +70,7 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
 	GameInstance()->Load_Shader(L"PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
 	GameInstance()->Load_Shader(L"VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
+	GI()->Load_Effect(L"FX_ModelTest.hlsli", L"FX_ModelTest", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
 	
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_KeyMgr(), E_FAIL);

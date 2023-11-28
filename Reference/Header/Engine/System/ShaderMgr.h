@@ -66,6 +66,42 @@ private:
 	ComPtr<ID3D11DeviceChild>		pShaderBuffer = { nullptr };	// 셰이더 버퍼
 };
 
+class FEffectData final : public CBase
+{
+	DERIVED_CLASS(CBase, FEffectData)
+
+private:
+	FEffectData() = default;
+	~FEffectData() = default;
+
+public:
+	HRESULT Initialize() { return S_OK; }
+
+public:
+	static FEffectData* Create()
+	{
+		ThisClass* pInstance = new ThisClass();
+
+		if (FAILED(pInstance->Initialize()))
+		{
+			MSG_BOX("RenderMgr Create Failed");
+			Safe_Release(pInstance);
+
+			return nullptr;
+		}
+
+		return pInstance;
+	}
+
+public:
+	virtual void Free() {}
+
+public:
+	D3DX11_TECHNIQUE_DESC				tTechniqueDesc;		// 테크니션 설명 객체
+	ComPtr<ID3DX11Effect>				pEffect;			// FX 셰이더 버퍼
+	vector<ComPtr<ID3D11InputLayout>>	pInputLayouts;		// 레이아웃 벡터
+};
+
 
 /// <summary>
 /// 셰이더 코드를 저장하는 클래스
@@ -106,6 +142,16 @@ private:
 private:
 	wstring								m_strMainPath;
 	_unmap<wstring, FShaderData*>		m_mapShaderData[ECast(EShaderType::Size)];
+
+public:
+	HRESULT Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
+	ID3DX11Effect* Find_Effect(const wstring& strKey) const;
+
+#pragma region Effect11 전용
+private:
+	_unmap<wstring, FEffectData*>	m_mapEffects;		// Effect11로 만들어진 셰이더 저장소.
+#pragma endregion
+
 };
 
 
