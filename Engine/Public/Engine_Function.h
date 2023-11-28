@@ -138,6 +138,12 @@ namespace Engine
 		return static_cast<Return>(value);
 	}
 
+	template<typename T>
+	constexpr void* VPCast(T value)
+	{
+		return static_cast<void*>(value);
+	}
+
 	// 아래는 각 타입별로 만든 제네릭 생략 버전
 	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
 	constexpr _int Cast_Int(T value)

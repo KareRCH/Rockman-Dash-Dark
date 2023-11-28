@@ -134,36 +134,6 @@ HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eT
 }
 
 
-HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const wstring& strKey)
-{
-
-	_uint		iHlslFlag = 0;
-
-#ifdef _DEBUG
-	iHlslFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#else
-	iHlslFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
-#endif
-
-	ComPtr<ID3DX11Effect> pEffect;
-	if (FAILED(D3DX11CompileEffectFromFile(strFileName.c_str(), nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice.Get(), pEffect.GetAddressOf(), nullptr)))
-		return E_FAIL;
-
-	ID3DX11EffectTechnique* pTechnique = pEffect->GetTechniqueByIndex(0);
-	if (nullptr == pTechnique)
-		return E_FAIL;
-
-	pTechnique->GetDesc(&m_TechniqueDesc);
-
-	return S_OK;
-}
-
-ID3DX11Effect* CShaderMgr::Find_Effect(const wstring& strKey) const
-{
-	return nullptr;
-}
-
 ID3DBlob* CShaderMgr::Read_ShaderBinary(const wstring& strFile)
 {
 	ifstream fin(strFile, ios::binary);
@@ -185,8 +155,6 @@ ID3DBlob* CShaderMgr::Read_ShaderBinary(const wstring& strFile)
 }
 
 
-
-
 const ComPtr<ID3DBlob> CShaderMgr::Get_ShaderByte(const EShaderType eType, const wstring& strName) const
 {
 	_uint iIndex = ECast(eType);
@@ -197,3 +165,64 @@ const ComPtr<ID3DBlob> CShaderMgr::Get_ShaderByte(const EShaderType eType, const
 
 	return (*iter).second->Get_ShaderByte();
 }
+
+
+HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
+{
+	auto iter = m_mapEffects.find(strKey);
+	if (iter != m_mapEffects.end())
+		return E_FAIL;
+
+	_uint		iHlslFlag = 0;
+
+#ifdef _DEBUG
+	iHlslFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+	iHlslFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
+#endif
+
+	ComPtr<ID3DX11Effect> pEffect;
+	if (FAILED(D3DX11CompileEffectFromFile(strFileName.c_str(), nullptr,
+		D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice.Get(), pEffect.GetAddressOf(), nullptr)))
+		return E_FAIL;
+
+	ID3DX11EffectTechnique* pTechnique = pEffect->GetTechniqueByIndex(0);
+	if (nullptr == pTechnique)
+		return E_FAIL;
+
+	D3DX11_TECHNIQUE_DESC tTechniqueDesc;
+	pTechnique->GetDesc(&tTechniqueDesc);
+
+
+	FEffectData* pEffectData = FEffectData::Create();
+	pEffectData->tTechniqueDesc = tTechniqueDesc;
+	pEffectData->pEffect = pEffect;
+
+	for (_uint i = 0; i < tTechniqueDesc.Passes; i++)
+	{
+		ID3DX11EffectPass* pPass = pTechnique->GetPassByIndex(i);
+
+		D3DX11_PASS_DESC	tPassDesc;
+		pPass->GetDesc(&tPassDesc);
+
+		ID3D11InputLayout* pInputLayout = nullptr;
+		if (FAILED(m_pDevice->CreateInputLayout(pElements, iNumElements, tPassDesc.pIAInputSignature, tPassDesc.IAInputSignatureSize, &pInputLayout)))
+			return E_FAIL;
+
+
+		pEffectData->pInputLayouts.push_back(pInputLayout);
+	}
+	m_mapEffects.emplace(strKey, pEffectData);
+
+	return S_OK;
+}
+
+ID3DX11Effect* CShaderMgr::Find_Effect(const wstring& strKey) const
+{
+	auto iter = m_mapEffects.find(strKey);
+	if (iter == m_mapEffects.end())
+		return nullptr;
+
+	return (*iter).second->pEffect.Get();
+}
+

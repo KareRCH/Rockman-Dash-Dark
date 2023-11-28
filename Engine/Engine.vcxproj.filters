@@ -250,6 +250,9 @@
     <Filter Include="02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\03. SkinnedModelShaderComp">
       <UniqueIdentifier>{05a27c81-7598-494c-a0b0-f8a83a332f1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\06. EffectComponent">
+      <UniqueIdentifier>{0a3c6a8e-8769-417e-8609-357b17ab8f7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -537,6 +540,9 @@
     <ClInclude Include="Public\Component\SkinnedModelShaderComp.h">
       <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\03. SkinnedModelShaderComp</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\EffectComponent.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\06. EffectComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -757,6 +763,9 @@
     </ClCompile>
     <ClCompile Include="Private\Component\SkinnedModelShaderComp.cpp">
       <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\03. SkinnedModelShaderComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\EffectComponent.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\06. EffectComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
