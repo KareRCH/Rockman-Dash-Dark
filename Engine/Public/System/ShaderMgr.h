@@ -97,9 +97,9 @@ public:
 	virtual void Free() {}
 
 public:
-	D3DX11_TECHNIQUE_DESC				tTechniqueDesc;
-	ComPtr<ID3DX11Effect>				pEffect;
-	vector<ComPtr<ID3D11InputLayout>>	pInputLayouts;
+	D3DX11_TECHNIQUE_DESC				tTechniqueDesc;		// 테크니션 설명 객체
+	ComPtr<ID3DX11Effect>				pEffect;			// FX 셰이더 버퍼
+	vector<ComPtr<ID3D11InputLayout>>	pInputLayouts;		// 레이아웃 벡터
 };
 
 
@@ -143,10 +143,8 @@ private:
 	wstring								m_strMainPath;
 	_unmap<wstring, FShaderData*>		m_mapShaderData[ECast(EShaderType::Size)];
 
-
-
 public:
-	HRESULT Load_Effect(const wstring& strFileName, const wstring& strKey);
+	HRESULT Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
 	ID3DX11Effect* Find_Effect(const wstring& strKey) const;
 
 #pragma region Effect11 전용
