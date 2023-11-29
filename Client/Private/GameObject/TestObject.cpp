@@ -13,8 +13,9 @@ CTestObject::CTestObject()
     Set_Name(L"TestObject");
 }
 
-CTestObject::CTestObject(const CGameObject& rhs)
+CTestObject::CTestObject(const CTestObject& rhs)
     : Base(rhs)
+    , m_pModelComp(rhs.m_pModelComp)
 {
 }
 
@@ -89,7 +90,6 @@ void CTestObject::Render()
     BONE_COMMON_BUFFER_T boneBuffer = {};
 
     m_pModelComp->Render();
-    m_pModelShaderComp->Render(matBuffer, cameraBuffer, boneBuffer, lightBuffer);
 }
 
 CTestObject* CTestObject::Create()
@@ -98,9 +98,8 @@ CTestObject* CTestObject::Create()
 
     if (FAILED(pInstance->Initialize()))
     {
-        Engine::Safe_Release(pInstance);
-
         MSG_BOX("TestObject Create Failed");
+        Safe_Release(pInstance);
 
         return nullptr;
     }
@@ -114,9 +113,8 @@ CTestObject* CTestObject::Create(const _float3 vPos)
 
     if (FAILED(pInstance->Initialize(vPos)))
     {
-        Engine::Safe_Release(pInstance);
-
         MSG_BOX("TestObject Create Failed");
+        Safe_Release(pInstance);
 
         return nullptr;
     }
@@ -130,9 +128,8 @@ CGameObject* CTestObject::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        Engine::Safe_Release(pInstance);
-
         MSG_BOX("TestObject Create Failed");
+        Safe_Release(pInstance);
 
         return nullptr;
     }
@@ -145,6 +142,8 @@ CGameObject* CTestObject::Clone(void* Arg)
 void CTestObject::Free()
 {
     SUPER::Free();
+
+    Safe_Release(m_pModelComp);
 }
 
 HRESULT CTestObject::Initialize_Component()
@@ -152,11 +151,14 @@ HRESULT CTestObject::Initialize_Component()
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CSkinnedModelComp::Create()), E_FAIL);
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    m_pModelComp->m_pMultiMeshBufComp->Bind_Model(EModelGroupIndex::Permanent, L"RockVolnutt");
-    m_pModelComp->m_pMultiMeshBufComp->Add_MeshByOne(L"Body");
-    m_pModelComp->m_pMultiMeshBufComp->Add_MeshByOne(L"Arms");
-    m_pModelComp->m_pMultiMeshBufComp->Add_MeshByOne(L"Legs");
-    m_pModelComp->m_pMultiMeshBufComp->Add_MeshByOne(L"Head");
+    m_pModelComp->Bind_Model(EModelGroupIndex::Permanent, L"RockVolnutt");
+    m_pModelComp->Bind_Mesh(L"Body");
+    m_pModelComp->Bind_Mesh(L"Arms");
+    m_pModelComp->Bind_Mesh(L"Legs");
+    m_pModelComp->Bind_Mesh(L"Head");
+    m_pModelComp->Bind_Effect(L"FX_ModelTest");
+    m_pModelComp->Bind_Skeletal(L"Armature");
+
     //ID3D11ShaderReflectionVariable* pVariable = 
     //m_pModelComp->m_pShaderComp->
     //ID3D11ShaderReflection*

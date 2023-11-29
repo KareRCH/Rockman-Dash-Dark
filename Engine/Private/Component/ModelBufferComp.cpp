@@ -24,7 +24,7 @@ HRESULT CModelBufferComp::Initialize(void* Arg)
 
 HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strModelKey)
 {
-	const FMeshData* pMesh = GameInstance()->Get_Mesh(eGroupIndex, strGroupKey, strModelKey);
+	const FMeshData* pMesh = GameInstance()->Find_MeshData(eGroupIndex, strGroupKey, strModelKey);
 
 	m_iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
 	m_iIndexCount = Cast<_uint>(pMesh->vecIndices.size());

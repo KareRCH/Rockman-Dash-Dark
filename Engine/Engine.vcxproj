@@ -243,6 +243,7 @@
     <ClInclude Include="Public\BaseClass\Terrain.h" />
     <ClInclude Include="Public\Component\AnimationComponent.h" />
     <ClInclude Include="Public\Component\BoxBufferComp.h" />
+    <ClInclude Include="Public\Component\CamViewComp.h" />
     <ClInclude Include="Public\Component\CloudStationComp.h" />
     <ClInclude Include="Public\Component\ColliderComponent.h" />
     <ClInclude Include="Public\Component\ColorShaderComp.h" />
@@ -337,6 +338,7 @@
     <ClCompile Include="Private\BaseClass\Terrain.cpp" />
     <ClCompile Include="Private\Component\AnimationComponent.cpp" />
     <ClCompile Include="Private\Component\BoxBufferComp.cpp" />
+    <ClCompile Include="Private\Component\CamViewComp.cpp" />
     <ClCompile Include="Private\Component\ColliderComponent.cpp" />
     <ClCompile Include="Private\Component\ColorShaderComp.cpp" />
     <ClCompile Include="Private\Component\Component.cpp" />
@@ -478,7 +480,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resource\Shader\FX_ModelTest.hlsli" />
+    <None Include="Resource\Shader\FX_ModelTest.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

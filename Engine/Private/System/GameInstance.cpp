@@ -8,6 +8,7 @@
 #include "System/FrameMgr.h"
 #include "System/TimerMgr.h"
 #include "System/FontMgr.h"
+#include "System/CamViewMgr.h"
 
 #include "System/LevelMgr.h"
 #include "System/ObjectMgr.h"
@@ -530,7 +531,32 @@ void CGameInstance::Tick_Timer(const _tchar* pTimerTag)
 //----------------------------------------------------------------
 
 
+#pragma region Ä·ºä ¸Å´ÏÀú
+
+HRESULT CGameInstance::Initialize_CamViewMgr()
+{
+	if (nullptr != m_pCamViewMgr)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(m_pCamViewMgr = CCamViewMgr::Create(), E_FAIL);
+
+	return S_OK;
+}
+
+CCamViewMgr* CGameInstance::Get_CamViewMgr()
+{
+	return m_pCamViewMgr;
+}
+
+#pragma endregion
+
+
+
+
+//----------------------------------------------------------------
+
 #pragma region ·¹º§ ¸Å´ÏÀú
+
 HRESULT CGameInstance::Initialize_LevelMgr()
 {
 	if (nullptr != m_pLevelMgr)
@@ -871,36 +897,44 @@ void CGameInstance::Load_Model(const EModelGroupIndex eGroupIndex, const string&
 	m_pModelMgr->Load_Model(eGroupIndex, strFileName, strGroupKey);
 }
 
-const FMeshData* const CGameInstance::Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey)
+const FModelData* const CGameInstance::Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
-	return m_pModelMgr->Get_Mesh(eGroupIndex, strGroupKey, strMeshKey);
+	return m_pModelMgr->Find_ModelData(eGroupIndex, strModelKey);
 }
 
-const FMeshGroup* const CGameInstance::Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
+const FMeshData* const CGameInstance::Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
-	return m_pModelMgr->Get_MeshGroup(eGroupIndex, strModelKey);
+	return m_pModelMgr->Find_MeshData(eGroupIndex, strModelKey, strMeshKey);
 }
 
-FArmatureData* CGameInstance::Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey)
+const FMeshGroup* const CGameInstance::Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
-	return m_pModelMgr->Clone_Armature(eGroupIndex, strGroupKey, strArmatureKey);
+	return m_pModelMgr->Find_MeshGroup(eGroupIndex, strModelKey);
 }
 
-FArmatureData* CGameInstance::Find_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey)
+FSkeletalData* CGameInstance::Clone_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strSkeletalKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
-	return m_pModelMgr->Find_Armature(eGroupIndex, strGroupKey, strArmatureKey);
+	return m_pModelMgr->Clone_Skeletal(eGroupIndex, strModelKey, strSkeletalKey);
+}
+
+FSkeletalData* CGameInstance::Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strSkeletalKey)
+{
+	if (nullptr == m_pModelMgr)
+		return nullptr;
+
+	return m_pModelMgr->Find_Skeletal(eGroupIndex, strModelKey, strSkeletalKey);
 }
 
 HRESULT CGameInstance::Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)

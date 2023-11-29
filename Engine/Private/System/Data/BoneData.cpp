@@ -40,7 +40,7 @@ FBoneNodeData* FBoneNodeData::Create()
 	return pInstance;
 }
 
-FBoneNodeBaseData* FBoneNodeData::Clone(FArmatureData* pArg)
+FBoneNodeBaseData* FBoneNodeData::Clone(FSkeletalData* pArg)
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
@@ -60,7 +60,7 @@ FBoneNodeBaseData* FBoneNodeData::Clone(FArmatureData* pArg)
 			FBoneNodeBaseData* pNode = pInstance->vecChildren[i]->Clone(pArg);
 			pNode->pParent = pInstance;
 			vecChildren[i] = Cast<FBoneNodeData*>(pNode);
-			pArg->Add_NodeData(pNode->strName, Cast<FBoneNodeData*>(pNode));
+			pArg->Add_BoneNodeData(pNode->strName, Cast<FBoneNodeData*>(pNode));
 		}
 	}
 
@@ -105,12 +105,12 @@ FBoneNodeData* FBoneNodeData::Find_NodeFromID(_int iID)
 
 // ------------------------ ArmatureData ---------------------------
 
-FArmatureData::FArmatureData(const FArmatureData& rhs)
-	: pArmatureNode(rhs.pArmatureNode), mapModelNodeData(rhs.mapModelNodeData)
+FSkeletalData::FSkeletalData(const FSkeletalData& rhs)
+	: pSkeletalRootNode(rhs.pSkeletalRootNode), mapBoneNodeDatas(rhs.mapBoneNodeDatas)
 {
 }
 
-FArmatureData* FArmatureData::Create()
+FSkeletalData* FSkeletalData::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -125,7 +125,7 @@ FArmatureData* FArmatureData::Create()
 	return pInstance;
 }
 
-FArmatureData* FArmatureData::Clone()
+FSkeletalData* FSkeletalData::Clone()
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
@@ -137,93 +137,93 @@ FArmatureData* FArmatureData::Clone()
 		return nullptr;
 	}
 
-	if (!pInstance->pArmatureNode)
+	if (!pInstance->pSkeletalRootNode)
 	{
-		mapModelNodeData.clear();
-		pInstance->pArmatureNode = Cast<FBoneNodeData*>(pInstance->pArmatureNode->Clone(this));
+		mapBoneNodeDatas.clear();
+		pInstance->pSkeletalRootNode = Cast<FBoneNodeData*>(pInstance->pSkeletalRootNode->Clone(this));
 	}
 
 	return pInstance;
 }
 
-void FArmatureData::Free()
+void FSkeletalData::Free()
 {
-	for (auto& Pair : mapModelNodeData)
+	for (auto& Pair : mapBoneNodeDatas)
 	{
 		Safe_Release(Pair.second);
 	}
-	mapModelNodeData.clear();
+	mapBoneNodeDatas.clear();
 }
 
-FBoneNodeData* FArmatureData::Find_NodeData(_int iID)
+FBoneNodeData* FSkeletalData::Find_BoneNodeData(_int iID)
 {
-	if (iID < 0 || iID >= vecModelNodeIndex.size())
+	if (iID < 0 || iID >= vecBoneNodeIndexes.size())
 		return nullptr;
 
-	return vecModelNodeIndex[iID];
+	return vecBoneNodeIndexes[iID];
 }
 
-FBoneNodeData* FArmatureData::Find_NodeData(const wstring& strModelNodeKey)
+FBoneNodeData* FSkeletalData::Find_BoneNodeData(const wstring& strBoneNodeKey)
 {
-	auto iter = mapModelNodeData.find(strModelNodeKey);
-	if (iter == mapModelNodeData.end())
+	auto iter = mapBoneNodeDatas.find(strBoneNodeKey);
+	if (iter == mapBoneNodeDatas.end())
 		return nullptr;
 
 	return (*iter).second;
 }
 
 
-FBoneNodeData* FArmatureData::Create_NodeData(const wstring& strModelNodeKey)
+FBoneNodeData* FSkeletalData::Create_NodeData(const wstring& strBoneNodeKey)
 {
-	auto iter = mapModelNodeData.find(strModelNodeKey);
-	if (iter != mapModelNodeData.end())
+	auto iter = mapBoneNodeDatas.find(strBoneNodeKey);
+	if (iter != mapBoneNodeDatas.end())
 		return (*iter).second;
 
 	auto pNode = FBoneNodeData::Create();
-	mapModelNodeData.emplace(strModelNodeKey, pNode);
+	mapBoneNodeDatas.emplace(strBoneNodeKey, pNode);
 
 	return pNode;
 }
 
 // 아마추어 노드 지정
-void FArmatureData::Appoint_ArmatureNode(const wstring& strModelNodeKey)
+void FSkeletalData::Appoint_SkeletalRootNode(const wstring& strBoneNodeKey)
 {
-	auto iter = mapModelNodeData.find(strModelNodeKey);
-	if (iter == mapModelNodeData.end())
+	auto iter = mapBoneNodeDatas.find(strBoneNodeKey);
+	if (iter == mapBoneNodeDatas.end())
 		return;
 
-	pArmatureNode = (*iter).second;
+	pSkeletalRootNode = (*iter).second;
 }
 
-HRESULT FArmatureData::Add_NodeData(const wstring& strModelNodeKey, FBoneNodeData* pNode)
+HRESULT FSkeletalData::Add_BoneNodeData(const wstring& strBoneNodeKey, FBoneNodeData* pNode)
 {
-	if (pNode->iID >= vecModelNodeIndex.size())
-		vecModelNodeIndex.resize(pNode->iID + 1, nullptr);
+	if (pNode->iID >= vecBoneNodeIndexes.size())
+		vecBoneNodeIndexes.resize(pNode->iID + 1, nullptr);
 
 	// ID 중복은 치명적인 오류임
-	if (vecModelNodeIndex[pNode->iID] != nullptr)
+	if (vecBoneNodeIndexes[pNode->iID] != nullptr)
 		return E_FAIL;
 
-	vecModelNodeIndex[pNode->iID] = pNode;
+	vecBoneNodeIndexes[pNode->iID] = pNode;
 
 	// 맵에 추가
-	auto iter = mapModelNodeData.find(strModelNodeKey);
-	if (iter != mapModelNodeData.end())
+	auto iter = mapBoneNodeDatas.find(strBoneNodeKey);
+	if (iter != mapBoneNodeDatas.end())
 		return E_FAIL;
 
-	mapModelNodeData.emplace(strModelNodeKey, pNode);
+	mapBoneNodeDatas.emplace(strBoneNodeKey, pNode);
 
 	return S_OK;
 }
 
-vector<const _float4x4*> FArmatureData::Provide_FinalTransforms()
+vector<const _float4x4*> FSkeletalData::Provide_FinalTransforms()
 {
 	vector<const _float4x4*> vecFinalTransforms;
-	vecFinalTransforms.reserve(vecModelNodeIndex.size());
+	vecFinalTransforms.reserve(vecBoneNodeIndexes.size());
 
-	for (_uint i = 0; i < vecModelNodeIndex.size(); i++)
+	for (_uint i = 0; i < vecBoneNodeIndexes.size(); i++)
 	{
-		vecFinalTransforms.push_back(&vecModelNodeIndex[i]->matTransform);
+		vecFinalTransforms.push_back(&vecBoneNodeIndexes[i]->matTransform);
 	}
 
 	return vecFinalTransforms;
@@ -250,70 +250,70 @@ FBoneGroup* FBoneGroup::Create()
 
 void FBoneGroup::Free()
 {
-	for (auto& Pair : mapArmatureData)
+	for (auto& Pair : mapSkeletaDatas)
 		Safe_Release(Pair.second);
-	mapArmatureData.clear();
+	mapSkeletaDatas.clear();
 }
 
-FArmatureData* FBoneGroup::Clone_ArmatureData(const wstring& strArmatureKey)
+FSkeletalData* FBoneGroup::Clone_SkeletalData(const wstring& strSkeletalKey)
 {
-	auto iter = mapArmatureData.find(strArmatureKey);
-	if (iter == mapArmatureData.end())
+	auto iter = mapSkeletaDatas.find(strSkeletalKey);
+	if (iter == mapSkeletaDatas.end())
 		return nullptr;
 
 	return (*iter).second->Clone();
 }
 
 
-FArmatureData* FBoneGroup::Find_ArmatureData(const wstring& strArmatureKey)
+FSkeletalData* FBoneGroup::Find_SkeletalData(const wstring& strSkeletalKey)
 {
-	auto iter = mapArmatureData.find(strArmatureKey);
-	if (iter == mapArmatureData.end())
+	auto iter = mapSkeletaDatas.find(strSkeletalKey);
+	if (iter == mapSkeletaDatas.end())
 		return nullptr;
 
 	return (*iter).second;
 }
 
 
-FArmatureData* FBoneGroup::Create_ArmatureData(const wstring& strArmatureKey)
+FSkeletalData* FBoneGroup::Create_SkeletalData(const wstring& strSkeletalKey)
 {
-	auto iter = mapArmatureData.find(strArmatureKey);
-	if (iter != mapArmatureData.end())
+	auto iter = mapSkeletaDatas.find(strSkeletalKey);
+	if (iter != mapSkeletaDatas.end())
 		return (*iter).second;
 
-	auto pArmature = FArmatureData::Create();
-	mapArmatureData.emplace(strArmatureKey, pArmature);
+	auto pArmature = FSkeletalData::Create();
+	mapSkeletaDatas.emplace(strSkeletalKey, pArmature);
 
 	return pArmature;
 }
 
 
-void FBoneGroup::Appoint_ArmatureNode(const wstring& strArmatureKey, const wstring& strModelNodeKey)
+void FBoneGroup::Appoint_SkeletalRootNode(const wstring& strSkeletalKey, const wstring& strBoneNodeKey)
 {
-	auto iter = mapArmatureData.find(strArmatureKey);
-	if (iter == mapArmatureData.end())
+	auto iter = mapSkeletaDatas.find(strSkeletalKey);
+	if (iter == mapSkeletaDatas.end())
 		return;
 
-	(*iter).second->Appoint_ArmatureNode(strModelNodeKey);
+	(*iter).second->Appoint_SkeletalRootNode(strBoneNodeKey);
 }
 
 
-FBoneNodeData* FBoneGroup::Find_NodeData(const wstring& strArmatureKey, const wstring& strModelNodeKey)
+FBoneNodeData* FBoneGroup::Find_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey)
 {
-	auto iter = mapArmatureData.find(strArmatureKey);
-	if (iter == mapArmatureData.end())
+	auto iter = mapSkeletaDatas.find(strSkeletalKey);
+	if (iter == mapSkeletaDatas.end())
 		return nullptr;
 
-	return (*iter).second->Find_NodeData(strModelNodeKey);
+	return (*iter).second->Find_BoneNodeData(strBoneNodeKey);
 }
 
 
-FBoneNodeData* FBoneGroup::Create_NodeData(const wstring& strArmatureKey, const wstring& strModelNodeKey)
+FBoneNodeData* FBoneGroup::Create_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey)
 {
-	auto iter = mapArmatureData.find(strArmatureKey);
-	if (iter == mapArmatureData.end())
+	auto iter = mapSkeletaDatas.find(strSkeletalKey);
+	if (iter == mapSkeletaDatas.end())
 		return nullptr;
 
-	return (*iter).second->Create_NodeData(strModelNodeKey);
+	return (*iter).second->Create_NodeData(strBoneNodeKey);
 }
 

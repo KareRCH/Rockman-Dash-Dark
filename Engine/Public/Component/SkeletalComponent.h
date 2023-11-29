@@ -16,12 +16,7 @@ enum class EModelGroupIndex : _uint;
 class ENGINE_DLL CSkeletalComponent final : public CInternalComponent
 {
 	DERIVED_CLASS(CInternalComponent, CSkeletalComponent)
-	struct FInitData
-	{
-		EModelGroupIndex eGroupIndex;
-		wstring strGroupKey;
-		wstring strArmatureKey;
-	};
+	
 protected:
 	explicit CSkeletalComponent() = default;
 	explicit CSkeletalComponent(const CSkeletalComponent& rhs);
@@ -39,14 +34,17 @@ protected:
 	virtual void	Free() override;
 
 public:
+	// 참조할 모델 데이터를 추가한다.
+	void Set_ModelData(class FModelData* pModelData);
 	// 아마추어를 로드한다.
-	HRESULT Load_Armature(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strArmatureKey);
+	HRESULT Load_Skeletal(const wstring& strSkeletalKey);
 
 	// 최종 트랜스폼의 주소를 저장한 벡터를 내보내, 버퍼에 전달 할 수 있도록 해준다.
 	vector<const _float4x4*>	Get_FinalTransforms();
 
 private:	// 뼈 정보
-	class FArmatureData* m_pArmature = { nullptr };		// 아마추어, 이 녀석이 뼈의 계층구조와 직렬화된 배열을 가지고 있다.
+	class FModelData* m_pModelData = { nullptr };		// 모델 데이터, 해당 모델을 바인딩 시켜놓기 위해 해놓는다.
+	class FSkeletalData* m_pSkeletalData = { nullptr };		// 아마추어, 이 녀석이 뼈의 계층구조와 직렬화된 배열을 가지고 있다.
 	
 };
 

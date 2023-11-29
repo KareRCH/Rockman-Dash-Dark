@@ -44,26 +44,33 @@ FMeshGroup* FMeshGroup::Create()
 
 void FMeshGroup::Free()
 {
-	for (auto& Pair : mapMeshData)
+	for (auto& Pair : mapMeshDatas)
 		Safe_Release(Pair.second);
-	mapMeshData.clear();
+	mapMeshDatas.clear();
 }
 
-const FMeshData* const FMeshGroup::Get_Mesh(const wstring& strMeshKey) const
+const FMeshData* const FMeshGroup::Find_MeshData(const wstring& strMeshKey) const
 {
-	auto iter = mapMeshData.find(strMeshKey);
-	if (iter == mapMeshData.end())
+	auto iter = mapMeshDatas.find(strMeshKey);
+	if (iter == mapMeshDatas.end())
 		return nullptr;
 
 	return (*iter).second;
 }
 
-void FMeshGroup::Add_Mesh(const wstring& strMeshKey, FMeshData* const pMeshData)
+HRESULT FMeshGroup::Add_MeshData(const wstring& strMeshKey, FMeshData* const pMeshData)
 {
-	auto iter = mapMeshData.find(strMeshKey);
-	if (iter != mapMeshData.end())
-		return;
+	// 맵 컨테이너
+	auto iter = mapMeshDatas.find(strMeshKey);
+	if (iter != mapMeshDatas.end())
+		return E_FAIL;
 
-	mapMeshData.emplace(strMeshKey, pMeshData);
+	mapMeshDatas.emplace(strMeshKey, pMeshData);
+
+	// 벡터 컨테이너
+	vecMeshDatas.resize(pMeshData->iID + 1, nullptr);
+	vecMeshDatas[pMeshData->iID] = pMeshData;
+
+	return S_OK;
 }
 

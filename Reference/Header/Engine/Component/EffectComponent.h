@@ -18,12 +18,6 @@ class CEffectComponent : public CInternalComponent, public ID3D11DeviceComp
 {
 	DERIVED_CLASS(CInternalComponent, CEffectComponent)
 
-public:
-	struct FEffectCompDesc
-	{
-		wstring strEffectName;
-	};
-
 protected:
 	explicit CEffectComponent() = default;
 	explicit CEffectComponent(const CEffectComponent& rhs);
@@ -36,7 +30,7 @@ public:
 protected:
 	// 로드시 이미 만들어진 셰이더를 활용한다.
 	// 셰이더 코드는 이미 컴파일 되어 만들어져 있다는 가정하에 로드한다.
-	static CEffectComponent* Create(FEffectCompDesc tDesc);
+	static CEffectComponent* Create();
 	virtual CComponent* Clone(void* Arg = nullptr) override;
 
 protected:
@@ -51,6 +45,11 @@ private:
 	CD3D11DeviceComp* m_pDeviceComp = { nullptr };
 #pragma endregion
 
+	
+public:	// 외부용 함수
+	HRESULT Bind_Effect(const wstring& strEffectKey);
+	HRESULT Unbind_Effect();
+
 public:
 	// 패스 선택
 	HRESULT Begin(_uint iPassIndex);
@@ -60,6 +59,8 @@ public:
 	// 텍스처 바인딩
 	HRESULT Bind_SRV(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
 	HRESULT Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView** ppSRV, _uint iNumTextures);
+	// 일반 변수 바인딩
+	HRESULT Bind_RawValue(const _char* pConstantName, const void* pData, _uint iSize);
 
 
 private:

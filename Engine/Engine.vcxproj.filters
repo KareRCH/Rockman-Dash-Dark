@@ -256,6 +256,9 @@
     <Filter Include="03. Shader\99. Test\EffectTest">
       <UniqueIdentifier>{ccb7b8fe-4b1c-4906-bd9c-bf01fb12618b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\07. CamViewComponent">
+      <UniqueIdentifier>{5da46c9f-d97e-4069-b876-8bb38a757515}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -546,6 +549,9 @@
     <ClInclude Include="Public\Component\EffectComponent.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\06. EffectComponent</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\CamViewComp.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\07. CamViewComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -770,6 +776,9 @@
     <ClCompile Include="Private\Component\EffectComponent.cpp">
       <Filter>02. Utility\02. Component\03. InternalComponent\06. EffectComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Component\CamViewComp.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\07. CamViewComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\PS_ModelTest.hlsl">
@@ -798,7 +807,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resource\Shader\FX_ModelTest.hlsli">
+    <None Include="Resource\Shader\FX_ModelTest.hlsl">
       <Filter>03. Shader\99. Test\EffectTest</Filter>
     </None>
   </ItemGroup>

@@ -4,6 +4,11 @@
 
 CSkinnedModelComp::CSkinnedModelComp(const CSkinnedModelComp& rhs)
     : Base(rhs)
+    , m_pModelData(rhs.m_pModelData)
+    , m_pMultiMeshBufComp(rhs.m_pMultiMeshBufComp)
+    , m_pSkeletalComponent(rhs.m_pSkeletalComponent)
+    , m_pAnimationComponent(rhs.m_pAnimationComponent)
+    , m_pEffectComp(rhs.m_pEffectComp)
 {
 }
 
@@ -36,6 +41,9 @@ void CSkinnedModelComp::Late_Tick(const _float& fTimeDelta)
 
 void CSkinnedModelComp::Render()
 {
+    // ¿©±â¼­ 
+
+
 }
 
 CSkinnedModelComp* CSkinnedModelComp::Create()
@@ -76,12 +84,19 @@ void CSkinnedModelComp::Free()
 
 HRESULT CSkinnedModelComp::Bind_Model(EModelGroupIndex eGroup, const wstring& strModelKey)
 {
-    if (!m_pMultiMeshBufComp)
+    if (!m_pMultiMeshBufComp
+        || !m_pSkeletalComponent
+        || !m_pAnimationComponent)
         return E_FAIL;
 
-    m_pModelData = GI()->Get_Model(eGroup, strModelKey);
+    m_pModelData = ConCast<FModelData*>(GI()->Find_ModelData(eGroup, strModelKey));
+    Safe_AddRef(m_pModelData);
 
-    return m_pMultiMeshBufComp->Bind_Model(eGroup, strModelKey);
+    m_pMultiMeshBufComp->Set_ModelData(m_pModelData);
+    m_pSkeletalComponent->Set_ModelData(m_pModelData);
+    m_pAnimationComponent->Set_ModelData(m_pModelData);
+
+    return S_OK;
 }
 
 HRESULT CSkinnedModelComp::Bind_Mesh(const wstring& strMeshKey)
@@ -111,7 +126,7 @@ void CSkinnedModelComp::Unbind_AllMeshes()
 HRESULT CSkinnedModelComp::Bind_Effect(const wstring& strEffectKey)
 {
     if (!m_pEffectComp)
-        return;
+        return E_FAIL;
 
     return m_pEffectComp->Bind_Effect(strEffectKey);
 }
@@ -119,17 +134,9 @@ HRESULT CSkinnedModelComp::Bind_Effect(const wstring& strEffectKey)
 HRESULT CSkinnedModelComp::Unbind_Effect()
 {
     if (!m_pEffectComp)
-        return;
+        return E_FAIL;
 
     return m_pEffectComp->Unbind_Effect();
-}
-
-HRESULT CSkinnedModelComp::Render_Effect()
-{
-    if (!m_pEffectComp)
-        return;
-
-    return m_pEffectComp->Render_Effect();
 }
 
 HRESULT CSkinnedModelComp::Bind_Skeletal(const wstring& strSkeletalKey)
@@ -137,9 +144,7 @@ HRESULT CSkinnedModelComp::Bind_Skeletal(const wstring& strSkeletalKey)
     if (!m_pSkeletalComponent)
         return E_FAIL;
 
-    m_pSkeletalComponent->Load_Armature
-
-    return E_NOTIMPL;
+    return m_pSkeletalComponent->Load_Skeletal(strSkeletalKey);
 }
 
 

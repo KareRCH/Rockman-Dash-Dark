@@ -1,11 +1,15 @@
 #include "Component/MultiMeshBufComp.h"
 
 #include "System/GameInstance.h"
-#include "System/Data/MeshData.h"
+#include "System/ModelMgr.h"
 
 CMultiMeshBufComp::CMultiMeshBufComp(const CMultiMeshBufComp& rhs)
 	: Base(rhs)
+	, m_pModelData(rhs.m_pModelData)
+	, m_pMeshGroup(rhs.m_pMeshGroup)
 {
+	Safe_AddRef(m_pModelData);
+	Safe_AddRef(m_pMeshGroup);
 }
 
 HRESULT CMultiMeshBufComp::Initialize_Prototype(void* Arg)
@@ -22,27 +26,68 @@ HRESULT CMultiMeshBufComp::Initialize(void* Arg)
 	return S_OK;
 }
 
-HRESULT CMultiMeshBufComp::Bind_Model(EModelGroupIndex eGroup, const wstring& strModelKey)
+CMultiMeshBufComp* CMultiMeshBufComp::Create()
 {
-	// 기존에 바인딩 되어 있던 것이 있으면 해제 시켜준다.
-	if (m_strBindedModel != L"")
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		m_strBindedModel = L"";
-		m_vecMeshes.clear();
-		Safe_Release(m_pMeshGroup);
-		m_pMeshGroup = nullptr;
-		m_strBindedMeshs.clear();
+		MSG_BOX("MultiMeshBufComp Create Failed");
+		Safe_Release(pInstance);
+
+		return nullptr;
 	}
 
-	const FMeshGroup* pMeshGroup = GI()->Get_MeshGroup(eGroup, strModelKey);
+	return pInstance;
+}
 
-	if (!pMeshGroup)
+CComponent* CMultiMeshBufComp::Clone(void* Arg)
+{
+	ThisClass* pInstance = new ThisClass(*this);
+
+	if (FAILED(pInstance->Initialize(Arg)))
+	{
+		MSG_BOX("MultiMeshBufComp Copy Failed");
+		Safe_Release(pInstance);
+
+		return nullptr;
+	}
+
+	return Cast<CComponent*>(pInstance);
+}
+
+void CMultiMeshBufComp::Free()
+{
+	SUPER::Free();
+
+	Safe_Release(m_pModelData);
+	Safe_Release(m_pMeshGroup);
+}
+
+
+HRESULT CMultiMeshBufComp::Set_ModelData(FModelData* pModelData)
+{
+	// 기존에 바인딩 되어 있던 것이 있으면 해제 시켜준다.
+	if (!m_pModelData)
+	{
+		Safe_Release(m_pModelData);
+		m_pModelData = nullptr;
+		Safe_Release(m_pMeshGroup);
+		m_pMeshGroup = nullptr;
+		m_vecMeshes.clear();
+		m_strBindedMeshes.clear();
+	}
+
+	FMeshGroup* pMeshGroup = pModelData->pMeshGroup;
+
+	if (!pMeshGroup || !pModelData)
 		return E_FAIL;
 
-	m_strBindedModel = strModelKey;
-	m_pMeshGroup = ConCast<FMeshGroup*>(pMeshGroup);
+	m_pModelData = pModelData;
+	Safe_AddRef(m_pModelData);
+	m_pMeshGroup = pMeshGroup;
 	Safe_AddRef(m_pMeshGroup);
-	m_vecMeshes.resize(m_pMeshGroup->mapMeshData.size(), {});
+	m_vecMeshes.resize(m_pMeshGroup->mapMeshDatas.size(), {});
 
 	return S_OK;
 }
@@ -54,12 +99,12 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 		return E_FAIL;
 
 	// 중복 메쉬 검사
-	auto Pair = m_strBindedMeshs.emplace(strMeshKey);
-	if (!Pair.second)
+	auto iter = m_strBindedMeshes.find(strMeshKey);
+	if (iter != m_strBindedMeshes.end())
 		return E_FAIL;
 
 	// 메쉬 얻어오기
-	const FMeshData* pMesh = m_pMeshGroup->Get_Mesh(strMeshKey);
+	const FMeshData* pMesh = m_pMeshGroup->Find_MeshData(strMeshKey);
 	if (!pMesh)
 		return E_FAIL;
 
@@ -145,6 +190,7 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 
 
 	// 다 만들었으니 메쉬 버퍼 정보를 벡터에 넣어준다.
+	tMeshBuffer.bBinded = true;
 	m_vecMeshes.push_back(tMeshBuffer);
 
 	return S_OK;
@@ -155,19 +201,24 @@ HRESULT CMultiMeshBufComp::Bind_MeshAll()
 	if (!m_pMeshGroup)
 		return E_FAIL;
 
+	for (auto iter = m_pMeshGroup->mapMeshDatas.begin(); iter != m_pMeshGroup->mapMeshDatas.end(); ++iter)
+	{
+		Bind_Mesh((*iter).first);
+	}
 
 	return S_OK;
 }
 
 HRESULT CMultiMeshBufComp::Unbind_Mesh(const wstring& strMeshKey)
 {
-	auto iter = m_strBindedMeshs.find(strMeshKey);
-	if (iter == m_strBindedMeshs.end())
+	auto iter = m_strBindedMeshes.find(strMeshKey);
+	if (iter == m_strBindedMeshes.end())
 		return E_FAIL;
 
 	_uint iIndex = (*iter).second;
 
-	//m_vecMeshes.
+	m_vecMeshes[iIndex] = {};
+	m_vecMeshes[iIndex].bBinded = false;
 
 	return S_OK;
 }
@@ -192,39 +243,4 @@ void CMultiMeshBufComp::Render_Buffer(_uint iBufferIndex)
 	D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-CMultiMeshBufComp* CMultiMeshBufComp::Create()
-{
-	ThisClass* pInstance = new ThisClass();
 
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_BOX("MultiMeshBufComp Create Failed");
-		Safe_Release(pInstance);
-
-		return nullptr;
-	}
-
-	return pInstance;
-}
-
-CComponent* CMultiMeshBufComp::Clone(void* Arg)
-{
-	ThisClass* pInstance = new ThisClass(*this);
-
-	if (FAILED(pInstance->Initialize(Arg)))
-	{
-		MSG_BOX("MultiMeshBufComp Copy Failed");
-		Safe_Release(pInstance);
-
-		return nullptr;
-	}
-
-	return Cast<CComponent*>(pInstance);
-}
-
-void CMultiMeshBufComp::Free()
-{
-	SUPER::Free();
-
-	Safe_Release(m_pMeshGroup);
-}
