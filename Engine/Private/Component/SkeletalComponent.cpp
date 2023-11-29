@@ -5,7 +5,11 @@
 
 CSkeletalComponent::CSkeletalComponent(const CSkeletalComponent& rhs)
     : Base(rhs)
+    , m_pModelData(rhs.m_pModelData)
+    , m_pSkeletalData(rhs.m_pSkeletalData)
 {
+    Safe_AddRef(m_pModelData);
+    Safe_AddRef(m_pSkeletalData);
 }
 
 HRESULT CSkeletalComponent::Initialize_Prototype(void* Arg)
@@ -15,11 +19,6 @@ HRESULT CSkeletalComponent::Initialize_Prototype(void* Arg)
 
 HRESULT CSkeletalComponent::Initialize(void* Arg)
 {
-    FInitData tInit = {};
-    
-    if (nullptr != Arg)
-        tInit = (*ReCast<FInitData*>(Arg));
-
     return S_OK;
 }
 
@@ -55,26 +54,36 @@ CComponent* CSkeletalComponent::Clone(void* Arg)
 
 void CSkeletalComponent::Free()
 {
-    Safe_Release(m_pArmature);
+    Safe_Release(m_pModelData);
+    Safe_Release(m_pSkeletalData);
 }
 
-HRESULT CSkeletalComponent::Load_Armature(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strArmatureKey)
+void CSkeletalComponent::Set_ModelData(FModelData* pModelData)
 {
-    FArmatureData* pArmatureData = GI()->Find_Armature(eGroupIndex, strModelKey, strArmatureKey);
+    m_pModelData = pModelData;
+    Safe_AddRef(m_pModelData);
+}
 
-    if (!pArmatureData)
+HRESULT CSkeletalComponent::Load_Skeletal(const wstring& strSkeletalKey)
+{
+    if (!m_pModelData)
+        return E_FAIL;
+
+    FSkeletalData* pSkeletalData = m_pModelData->pBoneGroup->Find_SkeletalData(strSkeletalKey);
+
+    if (!pSkeletalData)
         return E_FAIL;
     
-    m_pArmature = pArmatureData;
-    Safe_AddRef(m_pArmature);
+    m_pSkeletalData = pSkeletalData;
+    Safe_AddRef(m_pSkeletalData);
 
     return S_OK;
 }
 
 vector<const _float4x4*> CSkeletalComponent::Get_FinalTransforms()
 {
-    if (!m_pArmature)
+    if (!m_pSkeletalData)
         return vector<const _float4x4*>();
 
-    return m_pArmature->Provide_FinalTransforms();
+    return m_pSkeletalData->Provide_FinalTransforms();
 }

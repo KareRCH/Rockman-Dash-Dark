@@ -1,9 +1,9 @@
 #pragma once
 
-#include "System/Define/ModelMgr_Define.h"
-#include "System/Data/MeshData.h"
-#include "System/Data/BoneData.h"
-#include "System/Data/BoneAnimData.h"
+#include <System/Define/ModelMgr_Define.h>
+#include <System/Data/MeshData.h>
+#include <System/Data/BoneData.h>
+#include <System/Data/BoneAnimData.h>
 
 
 BEGIN(Engine)
@@ -11,15 +11,15 @@ BEGIN(Engine)
 /// <summary>
 /// 어떤 모델에 대한 그룹
 /// </summary>
-class FModelGroup final : public CBase
+class ENGINE_DLL FModelData final : public CBase
 {
-	DERIVED_CLASS(CBase, FModelGroup)
+	DERIVED_CLASS(CBase, FModelData)
 private:
-	explicit FModelGroup() {}
-	virtual ~FModelGroup() = default;
+	explicit FModelData() {}
+	virtual ~FModelData() = default;
 
 public:
-	static FModelGroup* Create( const _bool bLoaded);
+	static FModelData* Create( const _bool bLoaded);
 	
 private:
 	virtual void Free() override;
@@ -28,11 +28,14 @@ public:
 	void Set_AllLoaded() { bLoaded = true; }
 
 public:
+
+
+public:
 	_bool			bLoaded = false;						// 로드 되었는가
 
 	FMeshGroup*		pMeshGroup = { nullptr };				// 메쉬를 모아놓은 그룹
 	FBoneAnimGroup* pAnimGroup = { nullptr };				// 애니메이션 그룹
-	FBoneGroup*		pBoneGroup = { nullptr };				// 노드 정보 그룹
+	FBoneGroup*		pBoneGroup = { nullptr };				// 뼈 정보 그룹
 };
 
 /// <summary>
@@ -64,28 +67,28 @@ private:
 	virtual void Free() override;
 
 private:
-	string	m_strMainDir = "";			// 참조할 메인 디렉터리
+	string	m_strMainDir = { "" };			// 참조할 메인 디렉터리
 
 public:
-	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
-	void	Load_MeshBoneMaterial(FModelGroup* pModelGroup);
-	void	Load_Anim(FModelGroup* pModelGroup);
-	void	Load_Hierarchi(FBoneGroup* pModelNodeGroup, aiNode* pArmatureNode);
-	void	Load_HierarchiNode(FBoneGroup* pModelNodeGroup, aiNode* pBoneNode, FBoneNodeData* pRootNode, FBoneNodeData* pParentNode);
+	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strModelKey);
+	void	Load_MeshBoneMaterial(FModelData* pModelData);
+	void	Load_Anim(FModelData* pModelData);
+	void	Load_Hierarchi(FBoneGroup* pBoneGroup, aiNode* pArmatureNode);
+	void	Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FBoneNodeData* pRootNode, FBoneNodeData* pParentNode);
 
 
-	const FMeshData* const	Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
-	FArmatureData*			Find_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey);
-	FArmatureData*			Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey);
-
-private:
-	FModelGroup*	Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
-	FModelGroup*	Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey);
+	FSkeletalData*			Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring strModelNodeKey);
+	FSkeletalData*			Clone_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring strModelNodeKey);
 
 public:
-	FMeshGroup*		Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
-	FBoneGroup*		Get_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
-	FBoneAnimGroup* Get_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	const FModelData* const	Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	FModelData*	Add_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+
+public:
+	FMeshGroup*		Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	FBoneGroup*		Find_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	FBoneAnimGroup* Find_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 
 private:
 	_float4x4	ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);
@@ -102,7 +105,7 @@ private:
 
 private:
 	// 모델 정보, 메쉬, 뼈, 머터리얼, 애니메이션
-	_unmap<wstring, FModelGroup*>	m_mapModelGroup[ECast(EModelGroupIndex::Size)];
+	_unmap<wstring, FModelData*>	m_mapModelDatas[ECast(EModelGroupIndex::Size)];
 
 };
 

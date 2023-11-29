@@ -1,9 +1,9 @@
 #pragma once
 
-#include "System/Define/ModelMgr_Define.h"
-#include "System/Data/MeshData.h"
-#include "System/Data/BoneData.h"
-#include "System/Data/BoneAnimData.h"
+#include <System/Define/ModelMgr_Define.h>
+#include <System/Data/MeshData.h>
+#include <System/Data/BoneData.h>
+#include <System/Data/BoneAnimData.h>
 
 
 BEGIN(Engine)
@@ -11,7 +11,7 @@ BEGIN(Engine)
 /// <summary>
 /// 어떤 모델에 대한 그룹
 /// </summary>
-class FModelData final : public CBase
+class ENGINE_DLL FModelData final : public CBase
 {
 	DERIVED_CLASS(CBase, FModelData)
 private:
@@ -26,6 +26,9 @@ private:
 	
 public:
 	void Set_AllLoaded() { bLoaded = true; }
+
+public:
+
 
 public:
 	_bool			bLoaded = false;						// 로드 되었는가
@@ -64,28 +67,28 @@ private:
 	virtual void Free() override;
 
 private:
-	string	m_strMainDir = "";			// 참조할 메인 디렉터리
+	string	m_strMainDir = { "" };			// 참조할 메인 디렉터리
 
 public:
-	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
-	void	Load_MeshBoneMaterial(FModelData* pModelGroup);
-	void	Load_Anim(FModelData* pModelGroup);
-	void	Load_Hierarchi(FBoneGroup* pModelNodeGroup, aiNode* pArmatureNode);
-	void	Load_HierarchiNode(FBoneGroup* pModelNodeGroup, aiNode* pBoneNode, FBoneNodeData* pRootNode, FBoneNodeData* pParentNode);
+	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strModelKey);
+	void	Load_MeshBoneMaterial(FModelData* pModelData);
+	void	Load_Anim(FModelData* pModelData);
+	void	Load_Hierarchi(FBoneGroup* pBoneGroup, aiNode* pArmatureNode);
+	void	Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FBoneNodeData* pRootNode, FBoneNodeData* pParentNode);
 
 
-	const FMeshData* const	Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
-	FArmatureData*			Find_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey);
-	FArmatureData*			Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey);
-
-private:
-	FModelData*	Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
-	FModelData*	Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey);
+	FSkeletalData*			Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring strModelNodeKey);
+	FSkeletalData*			Clone_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring strModelNodeKey);
 
 public:
-	FMeshGroup*		Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
-	FBoneGroup*		Get_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
-	FBoneAnimGroup* Get_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	const FModelData* const	Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	FModelData*	Add_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+
+public:
+	FMeshGroup*		Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	FBoneGroup*		Find_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	FBoneAnimGroup* Find_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 
 private:
 	_float4x4	ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);

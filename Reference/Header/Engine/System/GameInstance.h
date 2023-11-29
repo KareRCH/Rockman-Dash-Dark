@@ -12,6 +12,7 @@ BEGIN(Engine)
 struct FDEVICE_INIT;
 enum class EMANAGE_SCENE : _uint;
 enum class ERenderGroup : _uint;
+class FModelData;
 class FMeshData;
 class FMeshGroup;
 
@@ -134,6 +135,20 @@ public:		// 타이머 매니저
 
 
 
+
+
+#pragma region 캠뷰 매니저
+	friend class CCamViewComp;
+public:		// 타이머 매니저
+	HRESULT Initialize_CamViewMgr();
+
+private:
+	class CCamViewMgr* Get_CamViewMgr();
+#pragma endregion
+
+
+
+
 #pragma region 레벨 매니저
 public:
 	HRESULT Initialize_LevelMgr();
@@ -209,10 +224,11 @@ public:		// 렌더 매니저
 public:		// 모델 매니저
 	HRESULT	Initialize_ModelMgr(const string& strMainPath);
 	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
-	const FMeshData* const Get_Mesh(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strMeshKey);
-	const FMeshGroup* const Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
-	class FArmatureData* Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey);
-	class FArmatureData* Find_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strArmatureKey);
+	const FModelData* const Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	const FMeshData* const Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey);
+	const FMeshGroup* const Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	class FSkeletalData* Clone_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strSkeletalKey);
+	class FSkeletalData* Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strSkeletalKey);
 #pragma endregion
 
 
@@ -239,6 +255,7 @@ private:
 	class CFontMgr*			m_pFontMgr = nullptr;
 	class CFrameMgr*		m_pFrameMgr = nullptr;
 	class CTimerMgr*		m_pTimerMgr = nullptr;
+	class CCamViewMgr*		m_pCamViewMgr = nullptr;
 
 	class CLevelMgr*		m_pLevelMgr = nullptr;
 	class CObjectMgr*		m_pObjectMgr = nullptr;

@@ -20,9 +20,10 @@ BEGIN(Client)
 class CTestObject final : public CGameObject
 {
 	DERIVED_CLASS(CGameObject, CTestObject)
+
 protected:
 	explicit CTestObject();
-	explicit CTestObject(const CGameObject& rhs);
+	explicit CTestObject(const CTestObject& rhs);
 	virtual ~CTestObject() = default;
 
 public:
@@ -46,10 +47,7 @@ private:
 	HRESULT	Initialize_Component();
 
 private:
-	CTriBufferComp* m_pTriBufferComp = nullptr;
-	CSkinnedModelComp* m_pModelComp = nullptr;
-	CColorShaderComp* m_pColorShaderComp = nullptr;
-	CModelShaderComp* m_pModelShaderComp = nullptr;
+	CSkinnedModelComp* m_pModelComp = { nullptr };
 };
 
 END

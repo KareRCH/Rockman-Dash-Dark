@@ -7,7 +7,8 @@ BEGIN(Engine)
 
 class FBoneAnimGroup;
 class FBoneAnimData;
-class FArmatureData;
+class FSkeletalData;
+class FModelData;
 
 
 struct FAnimMask
@@ -19,6 +20,7 @@ struct FAnimMask
 	wstring strAnimName;		// 애니메이션 이름
 	_float fCurTime;			// 현재 재생 중인 시간, 시스템 시간 기준
 };
+
 
 /// <summary>
 /// 애니메이션에 대한 처리를 담당하는 컴포넌트
@@ -43,12 +45,11 @@ public:
 protected:
 	virtual void	Free() override;
 
-
-private:
-	FBoneAnimGroup* m_pAnimGroup = { nullptr };			// 단 하나의 뼈에 대한 애니메이션 정보를 가진다.
-														// 이 녀석이 설정되어 있어야 기능을 할 수 있다.
-
 public:
+	void Set_ModelData(FModelData* pModelData);
+
+	HRESULT Bind_AnimGroup();
+
 	// 해당 마스크에 현재 재생 프레임을 전달하여, 적용될 애니메이션 시간을 정한다.
 	void Apply_MaskTime(_uint iIndex, const wstring& strAnimName, _float fCurTime);
 	void Apply_MaskTime(const wstring& strMaskName, const wstring& strAnimName, _float fCurTime);
@@ -57,16 +58,15 @@ public:
 	void Apply_FinalMask();
 
 	// 마스크를 통해 결정된 애니메이션에 따라 뼈의 최종 행렬을 계산해준다.
-	void Apply_BoneAnimationWithMask(FArmatureData* const pArmatureData);
+	void Apply_BoneAnimationWithMask(FSkeletalData* const pArmatureData);
 
 private:
+	FModelData*			m_pModelData = { nullptr };		// 모델 데이터, 해당 모델을 바인딩 시켜놓기 위해 해놓는다.
+	FBoneAnimGroup*		m_pAnimGroup = { nullptr };		// 단 하나의 뼈에 대한 애니메이션 정보를 가진다.
+														// 이 녀석이 설정되어 있어야 기능을 할 수 있다.
+	
 	vector<FAnimMask>	m_vecAnimMask;					// 애니메이션이 적용되는 마스크, 기본적으로 0번 마스크에 적용되어 작동한다.
-	FBoneAnimData*		m_pFinalAnim = { nullptr };		// 최종적으로 적용되는 애니메이션 정보
 
-	// 애니메이션은 뼈와 동기화되어 작동한다.
-	// 뼈에 대해 적용할 때 속도를 위해 인덱스를 사용하는 방식을 사용한다.
-	// 때문에 뼈는 인덱싱이 완료된 상태여야 하며, 애니메이션 또한 뼈에 대한 인덱싱이 완료된 데이터를 사용해야 한다.
-	// 이는 모델 매니저에서 로드한 정보대로 작동하도록 한다.
 };
 
 END

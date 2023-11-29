@@ -18,7 +18,7 @@ protected:
 	virtual ~FBoneNodeBaseData() = default;
 
 protected:
-	virtual FBoneNodeBaseData* Clone(FArmatureData* pArg) PURE;
+	virtual FBoneNodeBaseData* Clone(FSkeletalData* pArg) PURE;
 	virtual void Free() override;
 
 public:
@@ -52,7 +52,7 @@ public:
 
 public:
 	static FBoneNodeData* Create();
-	virtual FBoneNodeBaseData* Clone(FArmatureData* pArg) override;
+	virtual FBoneNodeBaseData* Clone(FSkeletalData* pArg) override;
 	virtual void Free() override;
 
 };
@@ -62,33 +62,33 @@ public:
 /// 단, 아마추어 노드도 따로 노드로 저장하는데.
 /// 이는 계층 구조를 만들어 저장하기 위함이다.
 /// </summary>
-class ENGINE_DLL FArmatureData final : public CBase
+class ENGINE_DLL FSkeletalData final : public CBase
 {
-	DERIVED_CLASS(CBase, FArmatureData)
+	DERIVED_CLASS(CBase, FSkeletalData)
 
 private:
-	explicit FArmatureData() {}
-	explicit FArmatureData(const FArmatureData& rhs);
-	virtual ~FArmatureData() = default;
+	explicit FSkeletalData() {}
+	explicit FSkeletalData(const FSkeletalData& rhs);
+	virtual ~FSkeletalData() = default;
 
 public:
-	static FArmatureData* Create();
-	virtual FArmatureData* Clone();
+	static FSkeletalData* Create();
+	virtual FSkeletalData* Clone();
 	virtual void Free() override;
 
 public:
-	FBoneNodeData* Find_NodeData(_int iID);
-	FBoneNodeData* Find_NodeData(const wstring& strModelNodeKey);
-	FBoneNodeData* Create_NodeData(const wstring& strModelNodeKey);
-	void Appoint_ArmatureNode(const wstring& strModelNodeKey);
-	HRESULT Add_NodeData(const wstring& strModelNodeKey, FBoneNodeData* pNode);
+	FBoneNodeData* Find_BoneNodeData(_int iID);
+	FBoneNodeData* Find_BoneNodeData(const wstring& strBoneNodeKey);
+	FBoneNodeData* Create_NodeData(const wstring& strBoneNodeKey);
+	void Appoint_SkeletalRootNode(const wstring& strBoneNodeKey);
+	HRESULT Add_BoneNodeData(const wstring& strBoneNodeKey, FBoneNodeData* pNode);
 	vector<const _float4x4*>	Provide_FinalTransforms();
 
 private:
 	// 아마추어 노드도 같이 저장된다.
-	FBoneNodeData*						pArmatureNode = { nullptr };	// 루트 노드를 바로 찾을 수 있게 해놓았다.
-	map<const wstring, FBoneNodeData*>	mapModelNodeData;				// 뼈 이름 검색
-	vector<FBoneNodeData*>				vecModelNodeIndex;				// 뼈 인덱싱
+	FBoneNodeData*						pSkeletalRootNode = { nullptr };	// 루트 노드를 바로 찾을 수 있게 해놓았다.
+	map<const wstring, FBoneNodeData*>	mapBoneNodeDatas;					// 뼈 이름 검색
+	vector<FBoneNodeData*>				vecBoneNodeIndexes;					// 뼈 인덱싱
 
 };
 
@@ -107,16 +107,16 @@ public:
 	virtual void Free() override;
 
 public:
-	FArmatureData* Clone_ArmatureData(const wstring& strArmatureKey);
-	FArmatureData* Find_ArmatureData(const wstring& strArmatureKey);
-	FArmatureData* Create_ArmatureData(const wstring& strArmatureKey);
-	void Appoint_ArmatureNode(const wstring& strArmatureKey, const wstring& strModelNodeKey);
+	FSkeletalData* Clone_SkeletalData(const wstring& strSkeletalKey);
+	FSkeletalData* Find_SkeletalData(const wstring& strSkeletalKey);
+	FSkeletalData* Create_SkeletalData(const wstring& strSkeletalKey);
+	void Appoint_SkeletalRootNode(const wstring& strSkeletalKey, const wstring& strBoneNodeKey);
 
-	FBoneNodeData* Find_NodeData(const wstring& strArmatureKey, const wstring& strModelNodeKey);
-	FBoneNodeData* Create_NodeData(const wstring& strArmatureKey, const wstring& strModelNodeKey);
+	FBoneNodeData* Find_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey);
+	FBoneNodeData* Create_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey);
 
 private:
-	_unmap<wstring, FArmatureData*> mapArmatureData;	// 메시 저장 맵
+	_unmap<wstring, FSkeletalData*> mapSkeletaDatas;	// 스켈레탈 저장 맵
 };
 
 END

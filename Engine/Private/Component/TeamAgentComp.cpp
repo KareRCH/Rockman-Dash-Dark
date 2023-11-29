@@ -37,8 +37,8 @@ CTeamAgentComp* CTeamAgentComp::Create()
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        Engine::Safe_Release(pInstance);
         MSG_BOX("CTeamAgentComp Create Failed");
+        Safe_Release(pInstance);
 
         return nullptr;
     }
@@ -52,8 +52,8 @@ CComponent* CTeamAgentComp::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        Engine::Safe_Release(pInstance);
         MSG_BOX("CSkeletonComponent Create Failed");
+        Safe_Release(pInstance);
 
         return nullptr;
     }

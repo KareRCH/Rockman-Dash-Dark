@@ -33,6 +33,7 @@ public:
 	virtual void Free() override;
 	
 public:
+	_uint						iID;
 	vector<FMeshVertexData>		vecVertices;
 	vector<_uint>				vecIndices;
 	_float4x4					matTransform;
@@ -55,11 +56,12 @@ public:
 	virtual void Free() override;
 	
 public:
-	const FMeshData* const	Get_Mesh(const wstring& strMeshKey) const;
-	void Add_Mesh(const wstring& strMeshKey, FMeshData* const pMeshData);
+	const FMeshData* const	Find_MeshData(const wstring& strMeshKey) const;
+	HRESULT Add_MeshData(const wstring& strMeshKey, FMeshData* const pMeshData);
 	
 public:
-	_unmap<wstring, FMeshData*> mapMeshData;	// 메시 저장 맵
+	_unmap<wstring, FMeshData*> mapMeshDatas;	// 메시 저장 맵
+	vector<FMeshData*>			vecMeshDatas;
 };
 
 

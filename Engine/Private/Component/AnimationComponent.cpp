@@ -1,10 +1,15 @@
 #include "Component/AnimationComponent.h"
 
 #include "System/Data/BoneAnimData.h"
+#include "System/ModelMgr.h"
 
 CAnimationComponent::CAnimationComponent(const CAnimationComponent& rhs)
 	: Base(rhs)
+	, m_pModelData(rhs.m_pModelData)
+	, m_pAnimGroup(rhs.m_pAnimGroup)
 {
+	Safe_AddRef(m_pModelData);
+	Safe_AddRef(m_pAnimGroup);
 }
 
 HRESULT CAnimationComponent::Initialize_Prototype(void* Arg)
@@ -49,7 +54,27 @@ CComponent* CAnimationComponent::Clone(void* Arg)
 
 void CAnimationComponent::Free()
 {
+	Safe_Release(m_pModelData);
+	Safe_Release(m_pAnimGroup);
+}
 
+void CAnimationComponent::Set_ModelData(FModelData* pModelData)
+{
+	m_pModelData = pModelData;
+	Safe_AddRef(m_pModelData);
+
+	Bind_AnimGroup();
+}
+
+HRESULT CAnimationComponent::Bind_AnimGroup()
+{
+	if (!m_pModelData)
+		return E_FAIL;
+
+	m_pAnimGroup = m_pModelData->pAnimGroup;
+	Safe_AddRef(m_pAnimGroup);
+
+	return E_NOTIMPL;
 }
 
 void CAnimationComponent::Apply_MaskTime(_uint iIndex, const wstring& strAnimName, _float fCurTime)
@@ -108,7 +133,7 @@ void CAnimationComponent::Apply_FinalMask()
 	
 }
 
-void CAnimationComponent::Apply_BoneAnimationWithMask(FArmatureData* const pArmatureData)
+void CAnimationComponent::Apply_BoneAnimationWithMask(FSkeletalData* const pArmatureData)
 {
 
 }

@@ -13,13 +13,7 @@ CEffectComponent::CEffectComponent(const CEffectComponent& rhs)
 
 HRESULT CEffectComponent::Initialize_Prototype(void* Arg)
 {
-    FEffectCompDesc tDesc = {};
-
-    if (Arg) { tDesc = (*ReCast<FEffectCompDesc*>(Arg)); }
-    else { return E_FAIL; }
-
     m_pDeviceComp = CD3D11DeviceComp::Create();
-    m_pEffect = GI()->Find_Effect(tDesc.strEffectName);
 
 	return S_OK;
 }
@@ -29,11 +23,11 @@ HRESULT CEffectComponent::Initialize(void* Arg)
 	return S_OK;
 }
 
-CEffectComponent* CEffectComponent::Create(FEffectCompDesc tDesc)
+CEffectComponent* CEffectComponent::Create()
 {
     ThisClass* pInstance = new ThisClass();
 
-    if (FAILED(pInstance->Initialize_Prototype(VPCast(&tDesc))))
+    if (FAILED(pInstance->Initialize_Prototype()))
     {
         MSG_BOX("EffectComponent Copy Failed");
         Safe_Release(pInstance);
@@ -61,7 +55,23 @@ CComponent* CEffectComponent::Clone(void* Arg)
 
 void CEffectComponent::Free()
 {
+    Safe_Release(m_pDeviceComp);
+}
 
+HRESULT CEffectComponent::Bind_Effect(const wstring& strEffectKey)
+{
+    m_pEffect = GI()->Find_Effect(strEffectKey);
+    if (m_pEffect == nullptr)
+        return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CEffectComponent::Unbind_Effect()
+{
+    m_pEffect.Reset();
+
+    return S_OK;
 }
 
 HRESULT CEffectComponent::Begin(_uint iPassIndex)
@@ -125,4 +135,9 @@ HRESULT CEffectComponent::Bind_SRV(const _char* pConstantName, ID3D11ShaderResou
 HRESULT CEffectComponent::Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView** ppSRV, _uint iNumTextures)
 {
     return E_NOTIMPL;
+}
+
+HRESULT CEffectComponent::Bind_RawValue(const _char* pConstantName, const void* pData, _uint iSize)
+{
+    return S_OK;
 }
