@@ -152,11 +152,11 @@ HRESULT CTestObject::Initialize_Component()
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CSkinnedModelComp::Create()), E_FAIL);
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    m_pModelComp->m_pVIBufferComp->Bind_Model(EModelGroupIndex::Permanent, L"RockVolnutt");
-    m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Body");
-    m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Arms");
-    m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Legs");
-    m_pModelComp->m_pVIBufferComp->Add_MeshByOne(L"Head");
+    m_pModelComp->m_pMultiMeshBufComp->Bind_Model(EModelGroupIndex::Permanent, L"RockVolnutt");
+    m_pModelComp->m_pMultiMeshBufComp->Add_MeshByOne(L"Body");
+    m_pModelComp->m_pMultiMeshBufComp->Add_MeshByOne(L"Arms");
+    m_pModelComp->m_pMultiMeshBufComp->Add_MeshByOne(L"Legs");
+    m_pModelComp->m_pMultiMeshBufComp->Add_MeshByOne(L"Head");
     //ID3D11ShaderReflectionVariable* pVariable = 
     //m_pModelComp->m_pShaderComp->
     //ID3D11ShaderReflection*

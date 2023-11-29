@@ -11,15 +11,15 @@ BEGIN(Engine)
 /// <summary>
 /// 어떤 모델에 대한 그룹
 /// </summary>
-class FModelGroup final : public CBase
+class FModelData final : public CBase
 {
-	DERIVED_CLASS(CBase, FModelGroup)
+	DERIVED_CLASS(CBase, FModelData)
 private:
-	explicit FModelGroup() {}
-	virtual ~FModelGroup() = default;
+	explicit FModelData() {}
+	virtual ~FModelData() = default;
 
 public:
-	static FModelGroup* Create( const _bool bLoaded);
+	static FModelData* Create( const _bool bLoaded);
 	
 private:
 	virtual void Free() override;
@@ -32,7 +32,7 @@ public:
 
 	FMeshGroup*		pMeshGroup = { nullptr };				// 메쉬를 모아놓은 그룹
 	FBoneAnimGroup* pAnimGroup = { nullptr };				// 애니메이션 그룹
-	FBoneGroup*		pBoneGroup = { nullptr };				// 노드 정보 그룹
+	FBoneGroup*		pBoneGroup = { nullptr };				// 뼈 정보 그룹
 };
 
 /// <summary>
@@ -68,8 +68,8 @@ private:
 
 public:
 	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
-	void	Load_MeshBoneMaterial(FModelGroup* pModelGroup);
-	void	Load_Anim(FModelGroup* pModelGroup);
+	void	Load_MeshBoneMaterial(FModelData* pModelGroup);
+	void	Load_Anim(FModelData* pModelGroup);
 	void	Load_Hierarchi(FBoneGroup* pModelNodeGroup, aiNode* pArmatureNode);
 	void	Load_HierarchiNode(FBoneGroup* pModelNodeGroup, aiNode* pBoneNode, FBoneNodeData* pRootNode, FBoneNodeData* pParentNode);
 
@@ -79,8 +79,8 @@ public:
 	FArmatureData*			Clone_Armature(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring strModelNodeKey);
 
 private:
-	FModelGroup*	Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
-	FModelGroup*	Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	FModelData*	Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	FModelData*	Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 
 public:
 	FMeshGroup*		Get_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
@@ -102,7 +102,7 @@ private:
 
 private:
 	// 모델 정보, 메쉬, 뼈, 머터리얼, 애니메이션
-	_unmap<wstring, FModelGroup*>	m_mapModelGroup[ECast(EModelGroupIndex::Size)];
+	_unmap<wstring, FModelData*>	m_mapModelDatas[ECast(EModelGroupIndex::Size)];
 
 };
 

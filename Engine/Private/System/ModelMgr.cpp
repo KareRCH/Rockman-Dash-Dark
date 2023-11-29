@@ -1,6 +1,6 @@
 #include "System/ModelMgr.h"
 
-FModelGroup* FModelGroup::Create(const _bool bLoaded)
+FModelData* FModelData::Create(const _bool bLoaded)
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -8,7 +8,7 @@ FModelGroup* FModelGroup::Create(const _bool bLoaded)
 	{
 		Safe_Release(pInstance);
 
-		MSG_BOX("FModelGroup Create Failed");
+		MSG_BOX("FModelData Create Failed");
 
 		return nullptr;
 	}
@@ -22,7 +22,7 @@ FModelGroup* FModelGroup::Create(const _bool bLoaded)
 	return pInstance;
 }
 
-void FModelGroup::Free()
+void FModelData::Free()
 {
 	Safe_Release(pMeshGroup);
 	Safe_Release(pBoneGroup);
@@ -63,11 +63,11 @@ void CModelMgr::Free()
 {
 	for (_uint i = 0; i < ECast(EModelGroupIndex::Size); i++)
 	{
-		for (auto& Pair : m_mapModelGroup[i])
+		for (auto& Pair : m_mapModelDatas[i])
 		{
 			Safe_Release(Pair.second);
 		}
-		m_mapModelGroup[i].clear();
+		m_mapModelDatas[i].clear();
 	}
 	
 }
@@ -104,7 +104,7 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 	}
 	
 
-	FModelGroup* pModelGroup = Add_ModelGroup(eGroupIndex, strGroupKey);	// 모델 그룹 로드, 없으면 추가후 로드
+	FModelData* pModelGroup = Add_ModelGroup(eGroupIndex, strGroupKey);	// 모델 그룹 로드, 없으면 추가후 로드
 	
 	// 메쉬, 뼈, 재질 로드
 	Load_MeshBoneMaterial(pModelGroup);
@@ -116,7 +116,7 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 	//Load_Hierarchi(pModelGroup->pModelNodeGroup, m_pRootArmature);
 }
 
-void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
+void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelGroup)
 {
 	// 임시 메쉬 벡터
 	m_vecMesh.resize(m_pScene->mNumMeshes);
@@ -285,7 +285,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelGroup* pModelGroup)
 	m_vecMesh.clear();
 }
 
-void CModelMgr::Load_Anim(FModelGroup* pModelGroup)
+void CModelMgr::Load_Anim(FModelData* pModelGroup)
 {
 	FBoneAnimGroup* pAnimGroup = pModelGroup->pAnimGroup;
 	FBoneGroup* pModelNodeGroup = pModelGroup->pBoneGroup;
@@ -433,8 +433,8 @@ const FMeshData* const CModelMgr::Get_Mesh(const EModelGroupIndex eGroupIndex, c
 {
 	_uint iIndex = ECast(eGroupIndex);
 
-	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
-	if (iter == m_mapModelGroup[iIndex].end())
+	auto iter = m_mapModelDatas[iIndex].find(strGroupKey);
+	if (iter == m_mapModelDatas[iIndex].end())
 		return nullptr;
 
 	return (*iter).second->pMeshGroup->Get_Mesh(strMeshKey);
@@ -444,11 +444,11 @@ FArmatureData* CModelMgr::Find_Armature(const EModelGroupIndex eGroupIndex, cons
 {
 	_uint iIndex = ECast(eGroupIndex);
 
-	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
-	if (iter == m_mapModelGroup[iIndex].end())
+	auto iter = m_mapModelDatas[iIndex].find(strGroupKey);
+	if (iter == m_mapModelDatas[iIndex].end())
 		return nullptr;
 
-	FModelGroup* pModelGroup = (*iter).second;
+	FModelData* pModelGroup = (*iter).second;
 	return pModelGroup->pBoneGroup->Find_ArmatureData(strModelNodeKey);
 }
 
@@ -456,35 +456,35 @@ FArmatureData* CModelMgr::Clone_Armature(const EModelGroupIndex eGroupIndex, con
 {
 	_uint iIndex = ECast(eGroupIndex);
 
-	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
-	if (iter == m_mapModelGroup[iIndex].end())
+	auto iter = m_mapModelDatas[iIndex].find(strGroupKey);
+	if (iter == m_mapModelDatas[iIndex].end())
 		return nullptr;
 
-	FModelGroup* pModelGroup = (*iter).second;
+	FModelData* pModelGroup = (*iter).second;
 	return pModelGroup->pBoneGroup->Clone_ArmatureData(strModelNodeKey);
 }
 
-FModelGroup* CModelMgr::Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
+FModelData* CModelMgr::Get_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
 	_uint iIndex = ECast(eGroupIndex);
 
-	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
-	if (iter == m_mapModelGroup[iIndex].end())
+	auto iter = m_mapModelDatas[iIndex].find(strGroupKey);
+	if (iter == m_mapModelDatas[iIndex].end())
 		return nullptr;
 
 	return (*iter).second;
 }
 
-FModelGroup* CModelMgr::Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
+FModelData* CModelMgr::Add_ModelGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey)
 {
 	_uint iIndex = ECast(eGroupIndex);
 
-	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
-	if (iter != m_mapModelGroup[iIndex].end())
+	auto iter = m_mapModelDatas[iIndex].find(strGroupKey);
+	if (iter != m_mapModelDatas[iIndex].end())
 		return (*iter).second;
 	
-	FModelGroup* pGroup = FModelGroup::Create(false);
-	m_mapModelGroup[iIndex].emplace(strGroupKey, pGroup);
+	FModelData* pGroup = FModelData::Create(false);
+	m_mapModelDatas[iIndex].emplace(strGroupKey, pGroup);
 
 	return pGroup;
 }
@@ -493,8 +493,8 @@ FMeshGroup* CModelMgr::Get_MeshGroup(const EModelGroupIndex eGroupIndex, const w
 {
 	_uint iIndex = ECast(eGroupIndex);
 
-	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
-	if (iter == m_mapModelGroup[iIndex].end())
+	auto iter = m_mapModelDatas[iIndex].find(strGroupKey);
+	if (iter == m_mapModelDatas[iIndex].end())
 		return nullptr;
 
 	return (*iter).second->pMeshGroup;
@@ -504,8 +504,8 @@ FBoneGroup* CModelMgr::Get_BoneGroup(const EModelGroupIndex eGroupIndex, const w
 {
 	_uint iIndex = ECast(eGroupIndex);
 
-	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
-	if (iter == m_mapModelGroup[iIndex].end())
+	auto iter = m_mapModelDatas[iIndex].find(strGroupKey);
+	if (iter == m_mapModelDatas[iIndex].end())
 		return nullptr;
 
 	return (*iter).second->pBoneGroup;
@@ -515,8 +515,8 @@ FBoneAnimGroup* CModelMgr::Get_AnimGroup(const EModelGroupIndex eGroupIndex, con
 {
 	_uint iIndex = ECast(eGroupIndex);
 
-	auto iter = m_mapModelGroup[iIndex].find(strGroupKey);
-	if (iter == m_mapModelGroup[iIndex].end())
+	auto iter = m_mapModelDatas[iIndex].find(strGroupKey);
+	if (iter == m_mapModelDatas[iIndex].end())
 		return nullptr;
 
 	return (*iter).second->pAnimGroup;
