@@ -13,8 +13,8 @@ CComponentMgr* CComponentMgr::Create()
 
     if (FAILED(pInstance->Initialize()))
     {
-        Engine::Safe_Release(pInstance);
         MSG_BOX("ProtoMgr Create Failed");
+        Safe_Release(pInstance);
 
         return nullptr;
     }
@@ -39,8 +39,9 @@ HRESULT CComponentMgr::Add_Prototype(const wstring& strProtoKey, CComponent* pPr
     
     if (nullptr != pInstance)
     {
-        Safe_Release(pPrototype);
         MSG_BOX("Add Component Proto Failed");
+        Safe_Release(pPrototype);
+
         return E_FAIL;
     }
 
@@ -63,7 +64,20 @@ CComponent* CComponentMgr::Clone_Prototype(const wstring& strProtoKey, void* pAr
     if (nullptr == pComponent)
         return nullptr;
     
-    return Cast<CComponent*>(pComponent);
+    return pComponent;
+}
+
+CComponent* CComponentMgr::Reference_Prototype(const wstring& strProtoKey)
+{
+    // 프로토타입을 참조하는 형태로 사용할 경우 이 함수를 이용한다.
+    CComponent* pPrototype = Find_Prototype(strProtoKey);
+
+    if (nullptr == pPrototype)
+        return nullptr;
+
+    Safe_AddRef(pPrototype);
+
+    return pPrototype;
 }
 
 void CComponentMgr::Clear_Prototypes(const wstring& strContainTag)
@@ -96,7 +110,7 @@ CComponent* CComponentMgr::Find_Prototype(const wstring& strProtoKey)
     if (iter == m_mapPrototypes.end())
         return nullptr;
 
-    return iter->second;
+    return Cast<CComponent*>(iter->second);
 }
 
 

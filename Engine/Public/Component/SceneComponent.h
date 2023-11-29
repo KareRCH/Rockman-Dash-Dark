@@ -2,7 +2,7 @@
 
 #include "Component/PrimitiveComponent.h"
 #include "Component/TransformComponent.h"
-#include "Component/Interface/ITransform.h"
+#include "Component/CamViewComp.h"
 
 BEGIN(Engine)
 
@@ -50,7 +50,7 @@ protected:
 #pragma endregion
 
 
-#pragma region 트랜스폼
+#pragma region 트랜스폼 컴포넌트
 	// 트랜스폼 컴포넌트에 대한 함수 정의, 씬 컴포넌트는 항상 트랜스폼을 요소로 가진다.
 public:
 	// 반드시 초기화가 되었을 때 사용해야 함.
@@ -60,6 +60,16 @@ public:
 private:
 	CTransformComponent* m_pTransformComp = { nullptr };			// 내부 트랜스폼 컴포넌트 포함  
 #pragma endregion
+
+
+#pragma region 캠뷰 컴포넌트
+protected:
+	CCamViewComp& CamViewComp() { return (*m_pCamViewComp); }
+
+private:
+	CCamViewComp* m_pCamViewComp = { nullptr };
+#pragma endregion
+
 
 
 

@@ -1,5 +1,7 @@
 #include "Component/ShaderComponent.h"
 
+#include "System/GameInstance.h"
+
 CShaderComponent::CShaderComponent(const CShaderComponent& rhs)
 	: Base(rhs)
 	, m_pDeviceComp(rhs.m_pDeviceComp)
@@ -10,7 +12,7 @@ CShaderComponent::CShaderComponent(const CShaderComponent& rhs)
 
 HRESULT CShaderComponent::Initialize_Prototype(void* Arg)
 {
-	m_pDeviceComp = CD3D11DeviceComp::Create();
+	m_pDeviceComp = Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp"));
 
 	return S_OK;
 }

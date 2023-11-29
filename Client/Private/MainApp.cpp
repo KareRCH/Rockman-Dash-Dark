@@ -22,9 +22,8 @@ CMainApp* CMainApp::Create()
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("MainApp Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}
@@ -34,32 +33,12 @@ CMainApp* CMainApp::Create()
 
 HRESULT CMainApp::Initialize()
 {
-	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(), E_FAIL);
-
-	FDEVICE_INIT tDeviceInit;
-	tDeviceInit.hWnd = g_hWnd;
-	tDeviceInit.bVSync = false;
-	tDeviceInit.bFullScreen = false;
-	tDeviceInit.iScreenWidth = g_iWindowSizeX;
-	tDeviceInit.iScreenHeight = g_iWindowSizeY;
-	tDeviceInit.fScreenDepth = 1000.f;
-	tDeviceInit.fScreenNear = 0.1f;
-	
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_GraphicDev(tDeviceInit), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(g_hInst, g_hWnd), E_FAIL);
 
 	m_pDevice = m_pGameInstance->Get_GraphicDev();
 	m_pDeviceContext = m_pGameInstance->Get_GraphicContext();
 	DX11DEVICE_T tDevice = { m_pDevice.Get(), m_pDeviceContext.Get()};
 
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_InputDev(g_hInst, g_hWnd), E_FAIL);
-	
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_RenderMgr(tDevice), E_FAIL);
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_PhysicsMgr(1), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_SoundMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_FontMgr(tDevice), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Default", L"¹ÙÅÁ", 15, 20, FW_HEAVY), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Jinji", L"±Ã¼­", 30, 30, FW_THIN), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Thin_Jinji", L"±Ã¼­", 18, 30, FW_THIN), E_FAIL);
@@ -72,20 +51,11 @@ HRESULT CMainApp::Initialize()
 	GameInstance()->Load_Shader(L"VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
 	GI()->Load_Effect(L"FX_ModelTest.hlsli", L"FX_ModelTest", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
 	
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_KeyMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_FrameMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Frame(L"Frame", 60.f), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TimerMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Timer(L"Timer_Immediate"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Timer(L"Timer_FPS"), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_BlackBoardMgr(), E_FAIL);
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ComponentMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_LevelMgr(), E_FAIL);
 	m_pGameInstance->Open_Level(0, CTestScene::Create());
 	
 

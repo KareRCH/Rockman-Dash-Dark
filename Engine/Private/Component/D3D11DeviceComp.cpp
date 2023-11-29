@@ -27,8 +27,8 @@ CD3D11DeviceComp* CD3D11DeviceComp::Create()
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("D3D11DeviceComp Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}
@@ -42,8 +42,8 @@ CComponent* CD3D11DeviceComp::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize(Arg)))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("D3D11DeviceComp Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}

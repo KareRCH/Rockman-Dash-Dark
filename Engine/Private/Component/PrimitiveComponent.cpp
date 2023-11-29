@@ -1,6 +1,7 @@
 #include "Component/PrimitiveComponent.h"
 
 #include "Component/D3D11DeviceComp.h"
+#include "System/GameInstance.h"
 
 CPrimitiveComponent::CPrimitiveComponent(const CPrimitiveComponent& rhs)
 	: Base(rhs)
@@ -11,7 +12,7 @@ CPrimitiveComponent::CPrimitiveComponent(const CPrimitiveComponent& rhs)
 
 HRESULT CPrimitiveComponent::Initialize_Prototype(void* Arg)
 {
-	m_pDeviceComp = CD3D11DeviceComp::Create();
+	m_pDeviceComp = Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp"));
 
 	return S_OK;
 }
@@ -21,6 +22,7 @@ void CPrimitiveComponent::Free()
 	for (auto& Pair : m_mapPrimComponent)
 		Safe_Release(Pair.second);
 	m_mapPrimComponent.clear();
+
 	Safe_Release(m_pDeviceComp);
 }
 
