@@ -9,11 +9,12 @@ CEffectComponent::CEffectComponent(const CEffectComponent& rhs)
     , m_InputLayouts(rhs.m_InputLayouts)
     , m_TechniqueDesc(rhs.m_TechniqueDesc)
 {
+    Safe_AddRef(m_pDeviceComp);
 }
 
 HRESULT CEffectComponent::Initialize_Prototype(void* Arg)
 {
-    m_pDeviceComp = CD3D11DeviceComp::Create();
+    m_pDeviceComp = Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp"));
 
 	return S_OK;
 }

@@ -58,7 +58,7 @@ CInputDev* CInputDev::Create(HINSTANCE hInst, HWND hWnd)
 	if (FAILED(pInstance->Initialize(hInst, hWnd)))
 	{
 		MSG_BOX("InputDev Create Failed");
-		Engine::Safe_Release(pInstance);
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}

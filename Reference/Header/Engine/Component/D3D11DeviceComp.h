@@ -6,25 +6,14 @@
 
 /// <summary>
 /// 다이렉트11 그래픽 장치를 저장하는 컴포넌트.
-/// 프로토타입을 생성하고
+/// 디바이스와 컨텍스트에만 관심있는 컴포넌트라
+/// 그래픽 디바이스 객체 따위는 관심없고
+/// 위에서 말한거만 가져온다.
 /// </summary>
 class CD3D11DeviceComp : public CInternalComponent
 {
 	DERIVED_CLASS(CInternalComponent, CD3D11DeviceComp)
 
-	struct FInitData
-	{
-		ID3D11Device* pDevice;
-		ID3D11DeviceContext* pContext;
-
-		FInitData& operator=(const FInitData& tData)
-		{
-			this->pDevice = tData.pDevice;
-			this->pContext = tData.pContext;
-
-			return (*this);
-		}
-	};
 protected:
 	explicit CD3D11DeviceComp() = default;
 	explicit CD3D11DeviceComp(const CD3D11DeviceComp& rhs);

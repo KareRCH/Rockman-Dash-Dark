@@ -30,8 +30,43 @@ CGameInstance::CGameInstance()
 {
 }
 
-HRESULT CGameInstance::Initialize()
+HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd)
 {
+	// 공통되는 시스템을 로드한다.
+	FDEVICE_INIT tDeviceInit;
+	tDeviceInit.hWnd = hWnd;
+	tDeviceInit.bVSync = false;
+	tDeviceInit.bFullScreen = false;
+	tDeviceInit.iScreenWidth = g_iWindowSizeX;
+	tDeviceInit.iScreenHeight = g_iWindowSizeY;
+	tDeviceInit.fScreenDepth = 1000.f;
+	tDeviceInit.fScreenNear = 0.1f;
+
+	FAILED_CHECK_RETURN(Initialize_GraphicDev(tDeviceInit), E_FAIL);
+
+	DX11DEVICE_T tDevice = { Get_GraphicDev().Get(), Get_GraphicContext().Get() };
+
+	FAILED_CHECK_RETURN(Initialize_InputDev(hInst, hWnd), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_RenderMgr(tDevice), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_CamViewMgr(), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_SoundMgr(), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_PhysicsMgr(1), E_FAIL);
+
+	FAILED_CHECK_RETURN(Initialize_KeyMgr(), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_FrameMgr(), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_TimerMgr(), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_FontMgr(tDevice), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_CloudStationMgr(), E_FAIL);
+
+	FAILED_CHECK_RETURN(Initialize_ComponentMgr(), E_FAIL);
+	Add_PrototypeComp(L"GraphicDevComp", CD3D11DeviceComp::Create());
+	Add_PrototypeComp(L"CamViewComp", CCamViewComp::Create());
+
+	FAILED_CHECK_RETURN(Initialize_ObjectMgr(), E_FAIL);
+	
+
+	FAILED_CHECK_RETURN(Initialize_LevelMgr(), E_FAIL);
+
 	return S_OK;
 }
 
@@ -681,7 +716,7 @@ void CGameInstance::Clear_GameObject(const wstring& strLayerTag)
 
 #pragma region 블랙보드 매니저
 
-HRESULT CGameInstance::Initialize_BlackBoardMgr()
+HRESULT CGameInstance::Initialize_CloudStationMgr()
 {
 	if (nullptr != m_pBlackBoardMgr)
 		return E_FAIL;
@@ -760,6 +795,14 @@ CComponent* CGameInstance::Clone_PrototypeComp(const wstring& strProtoKey, void*
 		return nullptr;
 
 	return m_pComponentMgr->Clone_Prototype(strProtoKey, pArg);
+}
+
+CComponent* CGameInstance::Reference_PrototypeComp(const wstring& strProtoKey)
+{
+	if (nullptr == m_pComponentMgr)
+		return nullptr;
+
+	return m_pComponentMgr->Reference_Prototype(strProtoKey);
 }
 
 void CGameInstance::Clear_PrototypeComps(const wstring& strContainTag)

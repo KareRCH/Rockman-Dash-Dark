@@ -1,14 +1,25 @@
 #include "BaseClass/GameObject.h"
 
 #include "Component/PrimitiveComponent.h"
+#include "System/GameInstance.h"
 
 CGameObject::CGameObject(const CGameObject& rhs)
+	: m_pCamViewComp(rhs.m_pCamViewComp)
 {
+	Safe_AddRef(m_pCamViewComp);
+}
+
+HRESULT CGameObject::Initialize_Prototype()
+{
+	m_pTransformComp = CTransformComponent::Create();
+	m_pCamViewComp = Cast<CCamViewComp*>(GI()->Reference_PrototypeComp(L"CamViewComp"));
+
+	return S_OK;
 }
 
 HRESULT CGameObject::Initialize(void* Arg)
 {
-	FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
+	m_pTransformComp = CTransformComponent::Create();
 
 	return S_OK;
 }
@@ -66,6 +77,7 @@ void CGameObject::Free()
 	m_vecComponent.clear();
 
 	Release_Transform();
+	Safe_Release(m_pCamViewComp);
 }
 
 void CGameObject::Delete_Tag(const EGObjTag eTagType, const wstring& strTag)
@@ -197,9 +209,3 @@ void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, 
 	}
 }
 
-HRESULT CGameObject::Initialize_Component()
-{
-	m_pTransformComp = CTransformComponent::Create();
-
-	return S_OK;
-}

@@ -2,9 +2,9 @@
 
 #include "Base.h"
 #include "Component/TransformComponent.h"
-#include "Component/Define/Component_Define.h"
-#include "Component/Interface/ITransform.h"
+#include "Component/CamViewComp.h"
 
+#include "Component/Define/Component_Define.h"
 #include "BaseClass/GameObject_Define.h"
 
 BEGIN(Engine)
@@ -25,7 +25,7 @@ protected:
 	virtual ~CGameObject() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() PURE;
+	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* Arg = nullptr);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual _int	Tick(const _float& fTimeDelta);
@@ -92,9 +92,6 @@ public:
 	}
 	CPrimitiveComponent* Get_Component(const wstring& strName);
 
-private:
-	HRESULT Initialize_Component();
-
 public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
 	void OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue);
 	void OnStateLateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue);
@@ -113,13 +110,24 @@ private:	// 컴포넌트 속성
 
 
 #pragma region 트랜스폼 컴포넌트
-public:		// 트랜스폼 컴포넌트에 대한 함수 정의
+	// 트랜스폼 컴포넌트에 대한 함수 정의
+public:
 	// 반드시 초기화가 되었을 때 사용해야 함.
 	inline virtual CTransformComponent& Transform() override { return (*m_pTransformComp); }
 	inline virtual void Release_Transform() override { Safe_Release(m_pTransformComp); }
 
 private:	// 게임 오브젝트 기본 정의 컴포넌트
-	CTransformComponent* m_pTransformComp = nullptr;
+	CTransformComponent* m_pTransformComp = { nullptr };
+#pragma endregion
+
+
+
+#pragma region 캠뷰 컴포넌트
+protected:
+	CCamViewComp& CamViewComp() { return (*m_pCamViewComp); }
+
+private:
+	CCamViewComp* m_pCamViewComp = { nullptr };
 #pragma endregion
 
 

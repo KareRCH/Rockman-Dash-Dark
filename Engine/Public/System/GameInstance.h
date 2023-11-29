@@ -37,7 +37,7 @@ private:
 	virtual ~CGameInstance() = default;
 
 public:
-	HRESULT Initialize();
+	HRESULT Initialize(HINSTANCE hInst, HWND hWnd);
 
 private:
 	virtual void Free() override;
@@ -180,7 +180,8 @@ public:		// 매니지먼트
 public:		// 컴포넌트 매니저
 	HRESULT				Initialize_ComponentMgr();
 	HRESULT				Add_PrototypeComp(const wstring& strProtoKey, class CComponent* pPrototype);
-	class CComponent*	Clone_PrototypeComp(const wstring& strProtoKey, void* pArg);
+	class CComponent*	Clone_PrototypeComp(const wstring& strProtoKey, void* pArg = nullptr);
+	class CComponent*	Reference_PrototypeComp(const wstring& strProtoKey);
 	void				Clear_PrototypeComps(const wstring& strContainTag);
 #pragma endregion
 
@@ -188,7 +189,7 @@ public:		// 컴포넌트 매니저
 
 #pragma region 블랙보드 매니저
 public:		// 블랙보드 매니저
-	HRESULT Initialize_BlackBoardMgr();
+	HRESULT Initialize_CloudStationMgr();
 #pragma endregion
 
 

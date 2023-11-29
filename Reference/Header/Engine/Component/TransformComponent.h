@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component/InternalComponent.h"
+#include "Component/Interface/ITransform.h"
 
 BEGIN(Engine)
 

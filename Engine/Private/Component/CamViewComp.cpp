@@ -7,6 +7,7 @@ CCamViewComp::CCamViewComp(const CCamViewComp& rhs)
     : Base(rhs)
     , m_pCamViewMgr(rhs.m_pCamViewMgr)
 {
+    Safe_AddRef(m_pCamViewMgr);
 }
 
 HRESULT CCamViewComp::Initialize_Prototype(void* Arg)
