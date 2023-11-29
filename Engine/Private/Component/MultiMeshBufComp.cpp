@@ -42,11 +42,12 @@ HRESULT CMultiMeshBufComp::Bind_Model(EModelGroupIndex eGroup, const wstring& st
 	m_strBindedModel = strModelKey;
 	m_pMeshGroup = ConCast<FMeshGroup*>(pMeshGroup);
 	Safe_AddRef(m_pMeshGroup);
+	m_vecMeshes.resize(m_pMeshGroup->mapMeshData.size(), {});
 
 	return S_OK;
 }
 
-HRESULT CMultiMeshBufComp::Add_MeshByOne(const wstring& strMeshKey)
+HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 {
 	// 메쉬 그룹이 바인딩 되어 있는지 확인
 	if (!m_pMeshGroup)
@@ -149,10 +150,31 @@ HRESULT CMultiMeshBufComp::Add_MeshByOne(const wstring& strMeshKey)
 	return S_OK;
 }
 
-HRESULT CMultiMeshBufComp::Add_MeshFromModel()
+HRESULT CMultiMeshBufComp::Bind_MeshAll()
 {
+	if (!m_pMeshGroup)
+		return E_FAIL;
+
 
 	return S_OK;
+}
+
+HRESULT CMultiMeshBufComp::Unbind_Mesh(const wstring& strMeshKey)
+{
+	auto iter = m_strBindedMeshs.find(strMeshKey);
+	if (iter == m_strBindedMeshs.end())
+		return E_FAIL;
+
+	_uint iIndex = (*iter).second;
+
+	//m_vecMeshes.
+
+	return S_OK;
+}
+
+void CMultiMeshBufComp::Unbind_AllMeshes()
+{
+
 }
 
 void CMultiMeshBufComp::Render_Buffer(_uint iBufferIndex)
