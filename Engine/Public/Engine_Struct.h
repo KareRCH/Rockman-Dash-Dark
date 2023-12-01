@@ -112,25 +112,10 @@ namespace Engine
 		};
 	};
 
-	
-	
-	struct MESH
-	{
-		vector<VERTEX_MODEL_T> vecVertices;
-		vector<_uint>		vecIndices;
-		_uint				iMaterIndex;
-		_float4x4			matTransform;
-	};
-
 	struct DX11DEVICE_T
 	{
 		ComPtr<ID3D11Device> pDevice;
 		ComPtr<ID3D11DeviceContext> pDeviceContext;
-	};
-
-	struct Test
-	{
-		static constexpr D3D11_INPUT_ELEMENT_DESC Test2[] = { {}, {} };
 	};
 
 	//typedef struct tagVertexTexture

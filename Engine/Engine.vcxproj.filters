@@ -531,10 +531,10 @@
     <ClInclude Include="Public\Component\Interface\ITeamAgentComp.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\05. TeamAgentComponent\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System\CamViewMgr.h">
+    <ClInclude Include="Public\System\PipelineMgr.h">
       <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System\Define\CamViewMgr_Define.h">
+    <ClInclude Include="Public\System\Define\PipelineMgr_Define.h">
       <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\CloudStationComp.h">
@@ -549,7 +549,7 @@
     <ClInclude Include="Public\Component\EffectComponent.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\06. EffectComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Component\CamViewComp.h">
+    <ClInclude Include="Public\Component\PipelineComp.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\07. CamViewComponent</Filter>
     </ClInclude>
   </ItemGroup>
@@ -761,7 +761,7 @@
     <ClCompile Include="Private\Component\SkinnedModelComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\01. SkinnedModelComp</Filter>
     </ClCompile>
-    <ClCompile Include="Private\System\CamViewMgr.cpp">
+    <ClCompile Include="Private\System\PipelineMgr.cpp">
       <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\CloudStationComp.cpp">
@@ -776,7 +776,7 @@
     <ClCompile Include="Private\Component\EffectComponent.cpp">
       <Filter>02. Utility\02. Component\03. InternalComponent\06. EffectComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Component\CamViewComp.cpp">
+    <ClCompile Include="Private\Component\PipelineComp.cpp">
       <Filter>02. Utility\02. Component\03. InternalComponent\07. CamViewComponent</Filter>
     </ClCompile>
   </ItemGroup>
@@ -805,10 +805,8 @@
     <FxCompile Include="Shader\PS_Deferred_GBuffer.hlsl">
       <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resource\Shader\FX_ModelTest.hlsl">
+    <FxCompile Include="Resource\Shader\FX_ModelTest.hlsl">
       <Filter>03. Shader\99. Test\EffectTest</Filter>
-    </None>
+    </FxCompile>
   </ItemGroup>
 </Project>

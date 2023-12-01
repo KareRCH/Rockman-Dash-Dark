@@ -138,12 +138,12 @@ public:		// 타이머 매니저
 
 
 #pragma region 캠뷰 매니저
-	friend class CCamViewComp;
+	friend class CPipelineComp;
 public:		// 타이머 매니저
-	HRESULT Initialize_CamViewMgr();
+	HRESULT Initialize_PipelineMgr();
 
 private:
-	class CCamViewMgr* Get_CamViewMgr();
+	class CPipelineMgr* Get_PipelineMgr();
 #pragma endregion
 
 
@@ -197,8 +197,9 @@ public:		// 블랙보드 매니저
 #pragma region 텍스처 매니저
 public:		// 텍스처 매니저
 	HRESULT Initialize_TextureMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
-	HRESULT Load_Texture(const wstring& strFileName, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent);
-	ID3D11ShaderResourceView* Get_Texture(const wstring& strGroupKey, const wstring& strTextureKey);
+	HRESULT Load_Texture(const wstring& strFileName, const _bool bPermanent);
+	ID3D11Texture2D*			Find_Texture2D(const wstring& strTextureKey);
+	ID3D11ShaderResourceView* Find_SRV(const wstring& strTextureKey);
 #pragma endregion
 
 
@@ -243,6 +244,7 @@ public:		// 셰이더 매니저
 	inline ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strKey);
 	HRESULT Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
 	ID3DX11Effect* Find_Effect(const wstring& strKey) const;
+	class FEffectData* Find_EffectData(const wstring& strKey) const;
 #pragma endregion
 
 
@@ -256,7 +258,7 @@ private:
 	class CFontMgr*			m_pFontMgr = nullptr;
 	class CFrameMgr*		m_pFrameMgr = nullptr;
 	class CTimerMgr*		m_pTimerMgr = nullptr;
-	class CCamViewMgr*		m_pCamViewMgr = nullptr;
+	class CPipelineMgr*		m_pPipelineMgr = nullptr;
 
 	class CLevelMgr*		m_pLevelMgr = nullptr;
 	class CObjectMgr*		m_pObjectMgr = nullptr;

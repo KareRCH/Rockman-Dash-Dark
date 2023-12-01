@@ -81,10 +81,10 @@ public:		// 외부 설정용
 	HRESULT Bind_Skeletal(const wstring& strSkeletalKey);
 
 public:
-	virtual CSkeletalComponent* SkeletalComp() override { return m_pSkeletalComponent; }
+	virtual CSkeletalComponent* SkeletalComp() override { return m_pSkeletalComp; }
 
 private:
-	CSkeletalComponent* m_pSkeletalComponent = { nullptr };
+	CSkeletalComponent* m_pSkeletalComp = { nullptr };
 #pragma endregion
 
 
@@ -100,10 +100,10 @@ public:
 	HRESULT Apply_Pose();
 
 public:
-	virtual CAnimationComponent* AnimComp() override { return m_pAnimationComponent; }
+	virtual CAnimationComponent* AnimComp() override { return m_pAnimationComp; }
 
 private:
-	CAnimationComponent* m_pAnimationComponent = { nullptr };
+	CAnimationComponent* m_pAnimationComp = { nullptr };
 #pragma endregion
 
 

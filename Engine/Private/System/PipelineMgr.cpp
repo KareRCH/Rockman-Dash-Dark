@@ -1,6 +1,6 @@
-#include "System/CamViewMgr.h"
+#include "System/PipelineMgr.h"
 
-HRESULT CCamViewMgr::Initialize()
+HRESULT CPipelineMgr::Initialize()
 {
     _float4x4 matIdentity;
     XMStoreFloat4x4(&matIdentity, XMMatrixIdentity());
@@ -30,12 +30,12 @@ HRESULT CCamViewMgr::Initialize()
     return S_OK;
 }
 
-void CCamViewMgr::Tick()
+void CPipelineMgr::Tick()
 {
 
 }
 
-CCamViewMgr* CCamViewMgr::Create()
+CPipelineMgr* CPipelineMgr::Create()
 {
     ThisClass* pInstance = new ThisClass();
 
@@ -50,11 +50,11 @@ CCamViewMgr* CCamViewMgr::Create()
     return pInstance;
 }
 
-void CCamViewMgr::Free()
+void CPipelineMgr::Free()
 {
 }
 
-const _float4x4 CCamViewMgr::Get_ProjInvFloat4x4(ECamType eType, ECamNum eNum) const
+const _float4x4 CPipelineMgr::Get_ProjInvFloat4x4(ECamType eType, ECamNum eNum) const
 {
     _matrix matInv = XMLoadFloat4x4(&m_matProjs[ECast(eType)][ECast(eNum)]);
     _float4x4 matResult;
@@ -66,7 +66,7 @@ const _float4x4 CCamViewMgr::Get_ProjInvFloat4x4(ECamType eType, ECamNum eNum) c
     return matResult;
 }
 
-const _matrix CCamViewMgr::Get_ProjInvMatrix(ECamType eType, ECamNum eNum) const
+const _matrix CPipelineMgr::Get_ProjInvMatrix(ECamType eType, ECamNum eNum) const
 {
     _matrix matInv = XMLoadFloat4x4(&m_matProjs[ECast(eType)][ECast(eNum)]);
     _vector vDeterminant = XMMatrixDeterminant(matInv);

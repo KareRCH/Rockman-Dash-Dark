@@ -44,6 +44,23 @@ namespace Engine
 		return dwRefCnt;
 	}
 
+	template<typename T>
+	_uint Safe_ReleaseAndUnlink(T& pInstance)
+	{
+		_uint		dwRefCnt = 0;
+
+		if (nullptr != pInstance)
+		{
+			dwRefCnt = static_cast<_uint>(pInstance->Release());
+
+			if (0 == dwRefCnt)
+				pInstance = nullptr;
+		}
+		pInstance = nullptr;
+
+		return dwRefCnt;
+	}
+
 	// 완전해제 함수
 	template<typename T>
 	_uint Perfect_Release(T& pInstance)

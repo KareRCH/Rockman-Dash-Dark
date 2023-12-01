@@ -59,6 +59,7 @@ public:
 	void Unbind_AllMeshes();
 
 	_uint	Get_MeshesCounts() { return Cast<_uint>(m_vecMeshes.size()); }
+	void	Bind_Buffer(_uint iBufferIndex);
 	void	Render_Buffer(_uint iBufferIndex);
 
 private:

@@ -8,7 +8,7 @@
 #include "System/FrameMgr.h"
 #include "System/TimerMgr.h"
 #include "System/FontMgr.h"
-#include "System/CamViewMgr.h"
+#include "System/PipelineMgr.h"
 
 #include "System/LevelMgr.h"
 #include "System/ObjectMgr.h"
@@ -48,7 +48,7 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd)
 
 	FAILED_CHECK_RETURN(Initialize_InputDev(hInst, hWnd), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_RenderMgr(tDevice), E_FAIL);
-	FAILED_CHECK_RETURN(Initialize_CamViewMgr(), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_PipelineMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_SoundMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_PhysicsMgr(1), E_FAIL);
 
@@ -60,7 +60,7 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd)
 
 	FAILED_CHECK_RETURN(Initialize_ComponentMgr(), E_FAIL);
 	Add_PrototypeComp(L"GraphicDevComp", CD3D11DeviceComp::Create());
-	Add_PrototypeComp(L"CamViewComp", CCamViewComp::Create());
+	Add_PrototypeComp(L"CamViewComp", CPipelineComp::Create());
 
 	FAILED_CHECK_RETURN(Initialize_ObjectMgr(), E_FAIL);
 	
@@ -72,6 +72,7 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd)
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pModelMgr);
 	Safe_Release(m_pRenderMgr);
 	Safe_Release(m_pComponentMgr);
 	Safe_Release(m_pObjectMgr);
@@ -80,10 +81,11 @@ void CGameInstance::Free()
 	
 	Safe_Release(m_pParticleMgr);
 	Safe_Release(m_pShaderMgr);
-	Safe_Release(m_pModelMgr);
+	
 
 	Safe_Release(m_pFontMgr);
 	Safe_Release(m_pTextureMgr);
+	Safe_Release(m_pPipelineMgr);
 
 	Safe_Release(m_pPhysicsMgr);
 	Safe_Release(m_pSoundMgr);
@@ -568,19 +570,19 @@ void CGameInstance::Tick_Timer(const _tchar* pTimerTag)
 
 #pragma region Ä·ºä ¸Å´ÏÀú
 
-HRESULT CGameInstance::Initialize_CamViewMgr()
+HRESULT CGameInstance::Initialize_PipelineMgr()
 {
-	if (nullptr != m_pCamViewMgr)
+	if (nullptr != m_pPipelineMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pCamViewMgr = CCamViewMgr::Create(), E_FAIL);
+	NULL_CHECK_RETURN(m_pPipelineMgr = CPipelineMgr::Create(), E_FAIL);
 
 	return S_OK;
 }
 
-CCamViewMgr* CGameInstance::Get_CamViewMgr()
+CPipelineMgr* CGameInstance::Get_PipelineMgr()
 {
-	return m_pCamViewMgr;
+	return m_pPipelineMgr;
 }
 
 #pragma endregion
@@ -746,20 +748,28 @@ HRESULT CGameInstance::Initialize_TextureMgr(const DX11DEVICE_T tDevice, const w
 	return S_OK;
 }
 
-HRESULT CGameInstance::Load_Texture(const wstring& strFileName, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent)
+HRESULT CGameInstance::Load_Texture(const wstring& strFileName, const _bool bPermanent)
 {
 	if (nullptr == m_pTextureMgr)
 		return E_FAIL;
 
-	return m_pTextureMgr->Load_Texture(strFileName, strGroupKey, strTextureKey, bPermanent);
+	return m_pTextureMgr->Load_Texture(strFileName, bPermanent);
 }
 
-ID3D11ShaderResourceView* CGameInstance::Get_Texture(const wstring& strGroupKey, const wstring& strTextureKey)
+ID3D11Texture2D* CGameInstance::Find_Texture2D(const wstring& strTextureKey)
 {
 	if (nullptr == m_pTextureMgr)
 		return nullptr;
 
-	return m_pTextureMgr->Get_Texture(strGroupKey, strTextureKey);
+	return m_pTextureMgr->Find_Texture2D(strTextureKey);
+}
+
+ID3D11ShaderResourceView* CGameInstance::Find_SRV(const wstring& strTextureKey)
+{
+	if (nullptr == m_pTextureMgr)
+		return nullptr;
+
+	return m_pTextureMgr->Find_SRV(strTextureKey);
 }
 
 #pragma endregion
@@ -1007,6 +1017,8 @@ const ComPtr<ID3DBlob> CGameInstance::Get_ShaderByte(const EShaderType eType, co
 	return m_pShaderMgr->Get_ShaderByte(eType, strKey);
 }
 
+
+
 HRESULT CGameInstance::Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
 	if (nullptr == m_pShaderMgr)
@@ -1023,3 +1035,10 @@ ID3DX11Effect* CGameInstance::Find_Effect(const wstring& strKey) const
 	return m_pShaderMgr->Find_Effect(strKey);
 }
 
+FEffectData* CGameInstance::Find_EffectData(const wstring& strKey) const
+{
+	if (nullptr == m_pShaderMgr)
+		return nullptr;
+
+	return m_pShaderMgr->Find_EffectData(strKey);
+}

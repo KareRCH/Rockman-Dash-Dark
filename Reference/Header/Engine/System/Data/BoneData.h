@@ -79,7 +79,6 @@ public:
 public:
 	FBoneNodeData* Find_BoneNodeData(_int iID);
 	FBoneNodeData* Find_BoneNodeData(const wstring& strBoneNodeKey);
-	FBoneNodeData* Create_NodeData(const wstring& strBoneNodeKey);
 	void Appoint_SkeletalRootNode(const wstring& strBoneNodeKey);
 	HRESULT Add_BoneNodeData(const wstring& strBoneNodeKey, FBoneNodeData* pNode);
 	vector<const _float4x4*>	Provide_FinalTransforms();
@@ -113,7 +112,7 @@ public:
 	void Appoint_SkeletalRootNode(const wstring& strSkeletalKey, const wstring& strBoneNodeKey);
 
 	FBoneNodeData* Find_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey);
-	FBoneNodeData* Create_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey);
+	HRESULT Add_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey, FBoneNodeData* pNode);
 
 private:
 	_unmap<wstring, FSkeletalData*> mapSkeletaDatas;	// ½ºÄÌ·¹Å» ÀúÀå ¸Ê

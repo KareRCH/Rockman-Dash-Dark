@@ -24,6 +24,7 @@ protected:
 	virtual ~CCamera() = default;
 
 public:
+	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize();
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual _int	Tick(const _float& fTimeDelta);

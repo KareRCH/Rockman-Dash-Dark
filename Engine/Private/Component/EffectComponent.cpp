@@ -5,11 +5,10 @@
 CEffectComponent::CEffectComponent(const CEffectComponent& rhs)
     : Base(rhs)
     , m_pDeviceComp(rhs.m_pDeviceComp)
-    , m_pEffect(rhs.m_pEffect)
-    , m_InputLayouts(rhs.m_InputLayouts)
-    , m_TechniqueDesc(rhs.m_TechniqueDesc)
+    , m_pEffectData(rhs.m_pEffectData)
 {
     Safe_AddRef(m_pDeviceComp);
+    Safe_AddRef(m_pEffectData);
 }
 
 HRESULT CEffectComponent::Initialize_Prototype(void* Arg)
@@ -57,30 +56,34 @@ CComponent* CEffectComponent::Clone(void* Arg)
 void CEffectComponent::Free()
 {
     Safe_Release(m_pDeviceComp);
+    Safe_Release(m_pEffectData);
 }
 
 HRESULT CEffectComponent::Bind_Effect(const wstring& strEffectKey)
 {
-    m_pEffect = GI()->Find_Effect(strEffectKey);
-    if (m_pEffect == nullptr)
+    FEffectData* pEffectData = GI()->Find_EffectData(strEffectKey);
+    if (!pEffectData)
         return E_FAIL;
+
+    m_pEffectData = pEffectData;
+    Safe_AddRef(m_pEffectData);
 
     return S_OK;
 }
 
 HRESULT CEffectComponent::Unbind_Effect()
 {
-    m_pEffect.Reset();
+    Safe_ReleaseAndUnlink(m_pEffectData);
 
     return S_OK;
 }
 
 HRESULT CEffectComponent::Begin(_uint iPassIndex)
 {
-    if (iPassIndex >= m_TechniqueDesc.Passes)
+    if (iPassIndex >= m_pEffectData->tTechniqueDesc.Passes)
         return E_FAIL;
 
-    ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
+    ID3DX11EffectTechnique* pTechnique = m_pEffectData->pEffect->GetTechniqueByIndex(0);
     if (nullptr == pTechnique)
         return E_FAIL;
 
@@ -88,7 +91,7 @@ HRESULT CEffectComponent::Begin(_uint iPassIndex)
 
     pPass->Apply(0, D3D11Context());
 
-    D3D11Context()->IASetInputLayout(m_InputLayouts[iPassIndex].Get());
+    D3D11Context()->IASetInputLayout(m_pEffectData->pInputLayouts[iPassIndex].Get());
 
     return S_OK;
 }
@@ -96,7 +99,7 @@ HRESULT CEffectComponent::Begin(_uint iPassIndex)
 HRESULT CEffectComponent::Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix)
 {
     /* 이 셰이더에 선언되어있는 전역변수의 핸들을 얻어온다.*/
-    ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(pConstantName);
+    ID3DX11EffectVariable* pVariable = m_pEffectData->pEffect->GetVariableByName(pConstantName);
     if (nullptr == pVariable)
         return E_FAIL;
 
@@ -109,7 +112,7 @@ HRESULT CEffectComponent::Bind_Matrix(const _char* pConstantName, const _float4x
 
 HRESULT CEffectComponent::Bind_Matrices(const _char* pConstantName, const _float4x4* pMatrix, _uint iNumMatrices)
 {
-    ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(pConstantName);
+    ID3DX11EffectVariable* pVariable = m_pEffectData->pEffect->GetVariableByName(pConstantName);
     if (nullptr == pVariable)
         return E_FAIL;
 
@@ -122,7 +125,7 @@ HRESULT CEffectComponent::Bind_Matrices(const _char* pConstantName, const _float
 
 HRESULT CEffectComponent::Bind_SRV(const _char* pConstantName, ID3D11ShaderResourceView* pSRV)
 {
-    ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(pConstantName);
+    ID3DX11EffectVariable* pVariable = m_pEffectData->pEffect->GetVariableByName(pConstantName);
     if (nullptr == pVariable)
         return E_FAIL;
 
@@ -135,10 +138,22 @@ HRESULT CEffectComponent::Bind_SRV(const _char* pConstantName, ID3D11ShaderResou
 
 HRESULT CEffectComponent::Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView** ppSRV, _uint iNumTextures)
 {
-    return E_NOTIMPL;
+    ID3DX11EffectVariable* pVariable = m_pEffectData->pEffect->GetVariableByName(pConstantName);
+    if (nullptr == pVariable)
+        return E_FAIL;
+
+    ID3DX11EffectShaderResourceVariable* pSRVariable = pVariable->AsShaderResource();
+    if (nullptr == pSRVariable)
+        return E_FAIL;
+
+    return pSRVariable->SetResourceArray(ppSRV, 0, iNumTextures);
 }
 
 HRESULT CEffectComponent::Bind_RawValue(const _char* pConstantName, const void* pData, _uint iSize)
 {
-    return S_OK;
+    ID3DX11EffectVariable* pVariable = m_pEffectData->pEffect->GetVariableByName(pConstantName);
+    if (nullptr == pVariable)
+        return E_FAIL;
+
+    return pVariable->SetRawValue(pData, 0, iSize);
 }

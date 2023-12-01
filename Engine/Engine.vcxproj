@@ -243,7 +243,7 @@
     <ClInclude Include="Public\BaseClass\Terrain.h" />
     <ClInclude Include="Public\Component\AnimationComponent.h" />
     <ClInclude Include="Public\Component\BoxBufferComp.h" />
-    <ClInclude Include="Public\Component\CamViewComp.h" />
+    <ClInclude Include="Public\Component\PipelineComp.h" />
     <ClInclude Include="Public\Component\CloudStationComp.h" />
     <ClInclude Include="Public\Component\ColliderComponent.h" />
     <ClInclude Include="Public\Component\ColorShaderComp.h" />
@@ -293,7 +293,7 @@
     <ClInclude Include="Public\System\AnimationMgr.h" />
     <ClInclude Include="Public\System\CloudStationMgr.h" />
     <ClInclude Include="Public\System\CloudStationPtr.h" />
-    <ClInclude Include="Public\System\CamViewMgr.h" />
+    <ClInclude Include="Public\System\PipelineMgr.h" />
     <ClInclude Include="Public\System\Data\BoneAnimData.h" />
     <ClInclude Include="Public\System\Data\MeshData.h" />
     <ClInclude Include="Public\System\Data\BoneData.h" />
@@ -327,7 +327,7 @@
     <ClInclude Include="Public\System\TextureMgr.h" />
     <ClInclude Include="Public\System\Timer.h" />
     <ClInclude Include="Public\System\TimerMgr.h" />
-    <ClInclude Include="Public\System\Define\CamViewMgr_Define.h" />
+    <ClInclude Include="Public\System\Define\PipelineMgr_Define.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\BaseClass\CloudStation.cpp" />
@@ -338,7 +338,7 @@
     <ClCompile Include="Private\BaseClass\Terrain.cpp" />
     <ClCompile Include="Private\Component\AnimationComponent.cpp" />
     <ClCompile Include="Private\Component\BoxBufferComp.cpp" />
-    <ClCompile Include="Private\Component\CamViewComp.cpp" />
+    <ClCompile Include="Private\Component\PipelineComp.cpp" />
     <ClCompile Include="Private\Component\ColliderComponent.cpp" />
     <ClCompile Include="Private\Component\ColorShaderComp.cpp" />
     <ClCompile Include="Private\Component\Component.cpp" />
@@ -371,7 +371,7 @@
     <ClCompile Include="Private\System\AnimationMgr.cpp" />
     <ClCompile Include="Private\System\CloudStationMgr.cpp" />
     <ClCompile Include="Private\System\CloudStationPtr.cpp" />
-    <ClCompile Include="Private\System\CamViewMgr.cpp" />
+    <ClCompile Include="Private\System\PipelineMgr.cpp" />
     <ClCompile Include="Private\System\Data\BoneAnimData.cpp" />
     <ClCompile Include="Private\System\Data\MeshData.cpp" />
     <ClCompile Include="Private\System\Data\BoneData.cpp" />
@@ -480,7 +480,15 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resource\Shader\FX_ModelTest.hlsl" />
+    <FxCompile Include="Resource\Shader\FX_ModelTest.hlsl">
+      <FileType>Document</FileType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Effect</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,7 +2,7 @@
 
 #include "Base.h"
 #include "Component/TransformComponent.h"
-#include "Component/CamViewComp.h"
+#include "Component/PipelineComp.h"
 
 #include "Component/Define/Component_Define.h"
 #include "BaseClass/GameObject_Define.h"
@@ -124,10 +124,10 @@ private:	// 게임 오브젝트 기본 정의 컴포넌트
 
 #pragma region 캠뷰 컴포넌트
 protected:
-	CCamViewComp& CamViewComp() { return (*m_pCamViewComp); }
+	CPipelineComp& PipelineComp() { return (*m_pPipelineComp); }
 
 private:
-	CCamViewComp* m_pCamViewComp = { nullptr };
+	CPipelineComp* m_pPipelineComp = { nullptr };
 #pragma endregion
 
 

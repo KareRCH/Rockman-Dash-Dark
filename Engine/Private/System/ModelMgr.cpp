@@ -16,7 +16,6 @@ FModelData* FModelData::Create(const _bool bLoaded)
 	pInstance->pMeshGroup = FMeshGroup::Create();
 	pInstance->pBoneGroup = FBoneGroup::Create();
 	pInstance->pAnimGroup = FBoneAnimGroup::Create();
-	pInstance->pBoneGroup = FBoneGroup::Create();
 	pInstance->bLoaded = bLoaded;
 
 	return pInstance;
@@ -27,7 +26,6 @@ void FModelData::Free()
 	Safe_Release(pMeshGroup);
 	Safe_Release(pBoneGroup);
 	Safe_Release(pAnimGroup);
-	Safe_Release(pBoneGroup);
 }
 
 // ----------------------- ModelMgr ---------------------
@@ -77,7 +75,7 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 	Assimp::Importer importer;
 	
 	_uint iFlag;
-	iFlag = //aiProcess_JoinIdenticalVertices |   // 동일한 꼭지점 결합, 인덱싱 최적화
+	iFlag = aiProcess_JoinIdenticalVertices |   // 동일한 꼭지점 결합, 인덱싱 최적화
 		aiProcess_ValidateDataStructure |       // 로더의 출력을 검증
 		aiProcess_ImproveCacheLocality |        // 출력 정점의 캐쉬위치를 개선
 		aiProcess_RemoveRedundantMaterials |    // 중복된 매터리얼 제거
@@ -109,11 +107,11 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 	// 메쉬, 뼈, 재질 로드
 	Load_MeshBoneMaterial(pModelData);
 
+	// 계층 로드
+	Load_Hierarchi(pModelData->pBoneGroup, m_pRootArmature);
+
 	// 애니메이션 로드
 	Load_Anim(pModelData);
-
-	// 계층 로드
-	//Load_Hierarchi(pModelGroup->pModelNodeGroup, m_pRootArmature);
 }
 
 void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelData)
@@ -250,6 +248,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelData)
 		
 
 		// 면 (인덱싱)
+		m_vecMesh[i]->vecIndices.reserve(pMesh->mNumFaces);
 		for (_uint j = 0; j < pMesh->mNumFaces; j++)
 		{
 			aiFace& face = pMesh->mFaces[j];
@@ -291,9 +290,9 @@ void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelData)
 void CModelMgr::Load_Anim(FModelData* pModelData)
 {
 	FBoneAnimGroup* pAnimGroup = pModelData->pAnimGroup;
-	FBoneGroup* pModelNodeGroup = pModelData->pBoneGroup;
+	FBoneGroup* pBoneGroup = pModelData->pBoneGroup;
 
-	if (!pAnimGroup || !pModelNodeGroup)
+	if (!pAnimGroup || !pBoneGroup)
 		return;
 
 	// 애니메이션
@@ -309,6 +308,7 @@ void CModelMgr::Load_Anim(FModelData* pModelData)
 
 		// 애니메이션 이름 추출
 		size_t iTokkenInd = AnimNameWithTK.find_first_of(L'|') + Cast<size_t>(1);
+		wstring SkeletalName = AnimNameWithTK.substr(0, iTokkenInd - 1);
 		wstring AnimName = AnimNameWithTK.substr(iTokkenInd);
 
 		// 애니메이션 채널
@@ -317,7 +317,9 @@ void CModelMgr::Load_Anim(FModelData* pModelData)
 			aiNodeAnim* pNodeAnimAI = pAnimAI->mChannels[j];
 			FBoneAnimNodeData* pAnimNodeData = FBoneAnimNodeData::Create();
 			wstring AnimNodeName = Make_Wstring(pNodeAnimAI->mNodeName.C_Str());
+			FBoneNodeData* pBoneNodeData = pBoneGroup->Find_BoneNodeData(SkeletalName, AnimNodeName);
 
+			pAnimNodeData->iBoneID = pBoneNodeData->iID;
 			pAnimNodeData->vecPositions.reserve(pNodeAnimAI->mNumPositionKeys);
 			pAnimNodeData->vecRotations.reserve(pNodeAnimAI->mNumRotationKeys);
 			pAnimNodeData->vecScales.reserve(pNodeAnimAI->mNumScalingKeys);
@@ -385,7 +387,7 @@ void CModelMgr::Load_Hierarchi(FBoneGroup* pBoneGroup,  aiNode* pArmatureNode)
 		m_iNodeID = 0;
 
 		// ID 지정
-		FBoneNodeData* pRootNodeData = pBoneGroup->Create_BoneNodeData(strKey, strKey);
+		FBoneNodeData* pRootNodeData = FBoneNodeData::Create();
 		pRootNodeData->iID = m_iNodeID ++;
 		pRootNodeData->eType = EModelNodeType::Armature;
 		pRootNodeData->eBoneType = EModelBoneType::Null;
@@ -393,6 +395,7 @@ void CModelMgr::Load_Hierarchi(FBoneGroup* pBoneGroup,  aiNode* pArmatureNode)
 		pRootNodeData->pParent = nullptr;
 		pRootNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pArmatureNode->mTransformation);
 		pRootNodeData->matTransform = pRootNodeData->matOffset;
+		pBoneGroup->Add_BoneNodeData(strKey, strKey, pRootNodeData);
 
 		for (_uint i = 0; i < pArmatureNode->mNumChildren; i++)
 		{
@@ -412,7 +415,7 @@ void CModelMgr::Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FB
 		wstring strArmatureKey = pRootNode->strName;
 		wstring strNodeKey = Make_Wstring(pBoneNode->mName.C_Str());
 
-		FBoneNodeData* pNodeData = pBoneGroup->Create_BoneNodeData(strArmatureKey, strNodeKey);
+		FBoneNodeData* pNodeData = FBoneNodeData::Create();
 		pNodeData->iID = m_iNodeID++;
 		pNodeData->eType = EModelNodeType::Bone;
 		pNodeData->eBoneType = EModelBoneType::Base;
@@ -421,6 +424,7 @@ void CModelMgr::Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FB
 		pNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);
 		pNodeData->matTransform = pNodeData->matOffset;
 		pParentNode->vecChildren.push_back(pNodeData);
+		pBoneGroup->Add_BoneNodeData(pRootNode->strName, strNodeKey, pNodeData);
 		
 		if (pBoneNode->mNumChildren == 0)
 			pNodeData->eBoneType = EModelBoneType::End;

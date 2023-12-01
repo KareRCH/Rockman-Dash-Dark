@@ -1,28 +1,28 @@
 #pragma once
 
 #include "Base.h"
-#include "System/Define/CamViewMgr_Define.h"
+#include "System/Define/PipelineMgr_Define.h"
 
 BEGIN(Engine)
 
 /// <summary>
 /// 카메라의 뷰, 행렬을 저장하고, 역행렬을 쉽게 얻을 수 있도록 하는 파이프라인 객체
 /// </summary>
-class CCamViewMgr : public CBase
+class CPipelineMgr : public CBase
 {
-	DERIVED_CLASS(CBase, CCamViewMgr)
+	DERIVED_CLASS(CBase, CPipelineMgr)
 
 private:
-	explicit CCamViewMgr() = default;
-	explicit CCamViewMgr(const CCamViewMgr& rhs) = delete;
-	virtual ~CCamViewMgr() = default;
+	explicit CPipelineMgr() = default;
+	explicit CPipelineMgr(const CPipelineMgr& rhs) = delete;
+	virtual ~CPipelineMgr() = default;
 
 public:
 	HRESULT				Initialize();
 	void				Tick();
 
 public:
-	static CCamViewMgr*	Create();
+	static CPipelineMgr*	Create();
 private:
 	virtual void		Free();
 
@@ -41,7 +41,7 @@ public:
 	const _matrix		Get_ProjInvMatrix(ECamType eType, ECamNum eNum) const;
 
 
-private:
+public:
 	void	Set_ViewMatrix(ECamType eType, ECamNum eNum, _float4x4 mat) { m_matViews[ECast(eType)][ECast(eNum)] = mat; }
 	void	Set_ViewMatrix(ECamType eType, ECamNum eNum, _matrix mat) { XMStoreFloat4x4(&m_matViews[ECast(eType)][ECast(eNum)], mat); }
 

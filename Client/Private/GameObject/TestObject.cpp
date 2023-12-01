@@ -64,7 +64,7 @@ _int CTestObject::Tick(const _float& fTimeDelta)
     if (GI()->IsKey_Pressed(DIK_BACK))
         Set_Dead();
     
-    Transform().Set_Scale(_float3(2.f, 2.f, 2.f));
+    Transform().Set_Scale(_float3(1.f, 1.f, 1.f));
     
     _float3 t = Transform().Get_RotationEulerFloat3();
 
@@ -79,15 +79,6 @@ void CTestObject::Late_Tick(const _float& fTimeDelta)
 void CTestObject::Render()
 {
     SUPER::Render();
-
-    MATRIX_BUFFER_T matBuffer = { 
-        m_pModelComp->Transform().Get_TransformMatrix() * Transform().Get_TransformMatrix(),
-        GI()->Get_PerspectiveViewMatrix(0), GI()->Get_PerspectiveProjMatrix(0)
-    };
-    CAMERA_BUFFER_T cameraBuffer = { _float3(6.f, 6.f, 6.f) };
-    LIGHT_BUFFER_T lightBuffer = { _float4(0.2f, 0.2f, 0.2f, 1.f), _float4(0.2f, 0.2f, 0.2f, 1.f), _float3(-1.f, 0.f, 0.f),
-                                    _float(2.f), _float4(1.f, 0.2f, 0.2f, 1.f)};
-    BONE_COMMON_BUFFER_T boneBuffer = {};
 
     m_pModelComp->Render();
 }
@@ -165,7 +156,7 @@ HRESULT CTestObject::Initialize_Component()
     //FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create(g_hWnd)), E_FAIL);
     ////m_ColorShaderComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
     //m_pModelShaderComp->Set_IndexCount(m_pModelComp->VIBufferComp()->Get_IndexCount());
-    //ID3D11ShaderResourceView* pTest= GameInstance()->Get_Texture(L"RockVolnutt", L"Body-BaseColor");
+    //ID3D11ShaderResourceView* pTest = GameInstance()->Get_Texture(L"RockVolnutt", L"Body-BaseColor");
     //m_pModelShaderComp->Set_Texture(pTest);
 
     return S_OK;

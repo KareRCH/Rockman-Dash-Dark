@@ -7,14 +7,14 @@
 
 HRESULT CTestScene::Initialize()
 {
-    FAILED_CHECK_RETURN(SUPER::Initialize(), E_FAIL);
+    FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
 
-    GI()->Load_Texture(L"Model/Character/RockVolnutt/Body.png", L"RockVolnutt", L"Body-BaseColor", true);
-    GI()->Load_Texture(L"Model/Character/RockVolnutt/Head.png", L"RockVolnutt", L"Head-BaseColor", true);
+    GI()->Load_Texture(L"Model/Character/RockVolnutt/Body.png", true);
+    GI()->Load_Texture(L"Model/Character/RockVolnutt/Head.png", true);
     GI()->Load_Model(EModelGroupIndex::Permanent, "Character/RockVolnutt/Test.fbx", L"RockVolnutt");
 
-    GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 10.f)));
-    GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 9.f)));
+    GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 0.f)));
+    GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
     GI()->Add_GameObject(CDynamicCamera::Create());
 
     return S_OK;

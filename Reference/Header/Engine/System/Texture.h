@@ -43,7 +43,7 @@ public:
 	void	UnLoad()
 	{
 		Safe_Release(pTexture);
-		Safe_Release(pTextureView);
+		Safe_Release(pSRV);
 		bLoaded = false;
 	}
 
@@ -60,13 +60,13 @@ public:
 		}
 
 		Safe_Release(pTexture);
-		Safe_Release(pTextureView);
+		Safe_Release(pSRV);
 
 		pTexture = _pTexture;
-		pTextureView = _pTextureView;
+		pSRV = _pTextureView;
 
 		// 둘중 하나가 nullptr이면 로드되지 않았음.
-		if (pTexture && pTextureView)
+		if (pTexture && pSRV)
 			bLoaded = true;
 
 		return S_OK;
@@ -74,11 +74,12 @@ public:
 
 	void Set_Permanent(const _bool value) { bPermanent = value; }
 	const _bool& Is_Loaded() const { return bLoaded; }
-	ID3D11ShaderResourceView* const Get_Texture() { return pTextureView; }
+	ID3D11Texture2D* const Get_Texture() { return pTexture; }
+	ID3D11ShaderResourceView* const Get_SRV() { return pSRV; }
 
 private:
-	ID3D11Texture2D*			pTexture = nullptr;
-	ID3D11ShaderResourceView*	pTextureView = nullptr;
+	ID3D11Texture2D*			pTexture = nullptr;			// CPU용 텍스처
+	ID3D11ShaderResourceView*	pSRV = nullptr;				// 셰이더 샘플러
 	_bool						bLoaded = false;			// 로드된 텍스처 체크용
 	_bool						bPermanent = false;			// 영구 유지 텍스처 설정, 전역으로 사용되는 용도
 };
@@ -87,7 +88,7 @@ private:
 /// 텍스처 데이터 저장용 클래스
 /// 추상클래스
 /// </summary>
-class CTexture abstract : public CBase
+class CTexture : public CBase
 {
 	DERIVED_CLASS(CBase, CTexture)
 
@@ -97,20 +98,38 @@ protected:
 	virtual ~CTexture() = default;
 
 public:
-	virtual HRESULT		Initialize() PURE;
-
-protected:
-	virtual void		Free();
+	virtual HRESULT		Initialize();
 
 public:
-	virtual	HRESULT						Reserve(const wstring& strTextureKey, _bool bPermanent) PURE;
-	virtual HRESULT						Insert_Texture(const wstring& strFilePath, const wstring& strTextureKey, const _bool bPermanent) PURE;
-	virtual ID3D11ShaderResourceView*	Get_Texture(const wstring& strTextureKey) PURE;
-	virtual void						Transfer_Texture() PURE;
+	static	CTexture* Create(const DX11DEVICE_T tDevice);
+	
+protected:
+	virtual void		Free();
 
 protected:
 	ComPtr<ID3D11Device>				m_pDevice = { nullptr };					// 장치
 	ComPtr<ID3D11DeviceContext>			m_pDeviceContext = { nullptr };				// 장치 컨텍스트
+
+public:
+	// 메모리만 해제할 때 사용.
+	void	UnLoad();
+	HRESULT	Load(ID3D11Texture2D* _pTexture, ID3D11ShaderResourceView* _pSRV);
+	
+public:
+	virtual HRESULT						Insert_Texture(const wstring& strFilePath, const wstring& strName, const _bool bPermanent);
+
+public:
+	void								Set_Permanent(const _bool value) { m_bPermanent = value; }
+	const _bool&						Is_Loaded() const { return m_bLoaded; }
+	ID3D11Texture2D* const				Get_Texture() { return m_pTexture.Get(); }
+	ID3D11ShaderResourceView* const		Get_SRV() { return m_pSRV.Get(); }
+
+private:
+	wstring								m_strName = { L"" };		// 텍스처 이름	(확장자 제거시 이름)
+	ComPtr<ID3D11Texture2D>				m_pTexture = { nullptr };	// CPU용 텍스처
+	ComPtr<ID3D11ShaderResourceView>	m_pSRV = { nullptr };		// 셰이더 샘플러
+	_bool								m_bLoaded = false;			// 로드된 텍스처 체크용
+	_bool								m_bPermanent = false;		// 영구 유지 텍스처 설정, 전역으로 사용되는 용도
 
 };
 
