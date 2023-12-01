@@ -81,7 +81,7 @@ public:
 	FBoneNodeData* Find_BoneNodeData(const wstring& strBoneNodeKey);
 	void Appoint_SkeletalRootNode(const wstring& strBoneNodeKey);
 	HRESULT Add_BoneNodeData(const wstring& strBoneNodeKey, FBoneNodeData* pNode);
-	vector<const _float4x4*>	Provide_FinalTransforms();
+	vector<_float4x4>	Provide_FinalTransforms();
 
 private:
 	// 아마추어 노드도 같이 저장된다.

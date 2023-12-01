@@ -112,6 +112,8 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 
 	// 애니메이션 로드
 	Load_Anim(pModelData);
+
+	importer.FreeScene();
 }
 
 void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelData)
