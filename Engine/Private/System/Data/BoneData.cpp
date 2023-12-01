@@ -172,19 +172,6 @@ FBoneNodeData* FSkeletalData::Find_BoneNodeData(const wstring& strBoneNodeKey)
 	return (*iter).second;
 }
 
-
-FBoneNodeData* FSkeletalData::Create_NodeData(const wstring& strBoneNodeKey)
-{
-	auto iter = mapBoneNodeDatas.find(strBoneNodeKey);
-	if (iter != mapBoneNodeDatas.end())
-		return (*iter).second;
-
-	auto pNode = FBoneNodeData::Create();
-	mapBoneNodeDatas.emplace(strBoneNodeKey, pNode);
-
-	return pNode;
-}
-
 // 아마추어 노드 지정
 void FSkeletalData::Appoint_SkeletalRootNode(const wstring& strBoneNodeKey)
 {
@@ -307,13 +294,13 @@ FBoneNodeData* FBoneGroup::Find_BoneNodeData(const wstring& strSkeletalKey, cons
 	return (*iter).second->Find_BoneNodeData(strBoneNodeKey);
 }
 
-
-FBoneNodeData* FBoneGroup::Create_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey)
+HRESULT FBoneGroup::Add_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey, FBoneNodeData* pNode)
 {
 	auto iter = mapSkeletaDatas.find(strSkeletalKey);
 	if (iter == mapSkeletaDatas.end())
-		return nullptr;
+		return E_FAIL;
 
-	return (*iter).second->Create_NodeData(strBoneNodeKey);
+	return (*iter).second->Add_BoneNodeData(strBoneNodeKey, pNode);
 }
+
 

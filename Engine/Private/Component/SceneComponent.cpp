@@ -1,7 +1,10 @@
 #include "Component/SceneComponent.h"
 
+#include "System/GameInstance.h"
+
 CSceneComponent::CSceneComponent(const CSceneComponent& rhs)
 	: Base(rhs)
+	, m_pPipelineComp(rhs.m_pPipelineComp)
 {
 }
 
@@ -11,6 +14,7 @@ HRESULT CSceneComponent::Initialize_Prototype(void* Arg)
 		return E_FAIL;
 
 	m_pTransformComp = CTransformComponent::Create();
+	m_pPipelineComp = Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp"));
 
 	return S_OK;
 }
@@ -34,6 +38,7 @@ void CSceneComponent::Free()
 	SUPER::Free();
 
 	Release_Transform();
+	Safe_Release(m_pPipelineComp);
 }
 
 CSceneComponent* CSceneComponent::Get_FirstChildSceneComp()
@@ -75,4 +80,26 @@ _bool CSceneComponent::Insert_ChildSceneComp(_uint iIndex, CSceneComponent* cons
 	m_vecChildSceneComp.insert(iter, pComp);
 
 	return true;
+}
+
+_matrix CSceneComponent::Calculate_TransformMatrixFromParent()
+{
+	_matrix matCalc = Transform().Get_TransformMatrix();
+
+	if (m_pParentSceneComp)
+		matCalc *= Calculate_TransformMatrixFromParent();
+	else if (Get_OwnerObject())
+		matCalc *= Get_OwnerObject()->Transform().Get_TransformMatrix();
+	
+	return matCalc;
+}
+
+_float4x4 CSceneComponent::Calculate_TransformFloat4x4FromParent()
+{
+	_matrix matCalc = Calculate_TransformMatrixFromParent();
+
+	_float4x4 matResult = {};
+	XMStoreFloat4x4(&matResult, matCalc);
+
+	return matResult;
 }

@@ -1,7 +1,10 @@
 #include "Component/TextureComponent.h"
 
+#include "System/GameInstance.h"
+
 CTextureComponent::CTextureComponent(const CTextureComponent& rhs)
     : Base(rhs)
+	, m_pTexture(rhs.m_pTexture), m_pSRV(rhs.m_pSRV)
 {
 }
 
@@ -15,31 +18,14 @@ HRESULT CTextureComponent::Initialize(void* Arg)
     return S_OK;
 }
 
-void CTextureComponent::Priority_Tick(const _float& fTimeDelta)
-{
-}
-
-_int CTextureComponent::Tick(const _float& fTimeDelta)
-{
-    return 0;
-}
-
-void CTextureComponent::Late_Tick(const _float& fTimeDelta)
-{
-}
-
-void CTextureComponent::Render()
-{
-}
-
 CTextureComponent* CTextureComponent::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("TextureComponent Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}
@@ -53,8 +39,8 @@ CComponent* CTextureComponent::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("TextureComponent Copy Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}
@@ -64,5 +50,16 @@ CComponent* CTextureComponent::Clone(void* Arg)
 
 void CTextureComponent::Free()
 {
-    SUPER::Free();
+
+}
+
+HRESULT CTextureComponent::Bind_TextureFromManager(const wstring& strFilePath)
+{
+	ID3D11ShaderResourceView* pSRV = GI()->Find_SRV(strFilePath);
+	if (!pSRV)
+		return E_FAIL;
+
+	m_pSRV = pSRV;
+
+	return S_OK;
 }

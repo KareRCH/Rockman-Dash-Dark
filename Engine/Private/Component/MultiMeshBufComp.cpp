@@ -130,19 +130,10 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 		vertices[i].vNormal = pMesh->vecVertices[i].vNormal;
 		vertices[i].vTexCoord = pMesh->vecVertices[i].vTexCoord;
 		vertices[i].vTangent = pMesh->vecVertices[i].vTangent;
-		for (_uint j = 0; j < (_uint)pMesh->vecVertices[j].vecBoneID.size() / 4; j++)
-		{
-			_uint iIndex = j * 4;
-			vertices[i].vBoneID.x = pMesh->vecVertices[i].vecBoneID[iIndex];
-			vertices[i].vBoneID.y = pMesh->vecVertices[i].vecBoneID[iIndex + 1];
-			vertices[i].vBoneID.z = pMesh->vecVertices[i].vecBoneID[iIndex + 2];
-			vertices[i].vBoneID.w = pMesh->vecVertices[i].vecBoneID[iIndex + 3];
 
-			vertices[i].vWeight.x = pMesh->vecVertices[i].vecWeights[iIndex];
-			vertices[i].vWeight.y = pMesh->vecVertices[i].vecWeights[iIndex + 1];
-			vertices[i].vWeight.z = pMesh->vecVertices[i].vecWeights[iIndex + 2];
-			vertices[i].vWeight.w = pMesh->vecVertices[i].vecWeights[iIndex + 3];
-		}
+		memcpy_s(&vertices[i].vBoneID, sizeof(_int4), pMesh->vecVertices[i].vecBoneID.data(), sizeof(_int4));
+		memcpy_s(&vertices[i].vWeight, sizeof(_float4), pMesh->vecVertices[i].vecWeights.data(), sizeof(_float4));
+		_int t = 0;
 	}
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
@@ -191,7 +182,7 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 
 	// 다 만들었으니 메쉬 버퍼 정보를 벡터에 넣어준다.
 	tMeshBuffer.bBinded = true;
-	m_vecMeshes.push_back(tMeshBuffer);
+	m_vecMeshes[pMesh->iID] = (tMeshBuffer);
 
 	return S_OK;
 }
@@ -228,7 +219,7 @@ void CMultiMeshBufComp::Unbind_AllMeshes()
 
 }
 
-void CMultiMeshBufComp::Render_Buffer(_uint iBufferIndex)
+void CMultiMeshBufComp::Bind_Buffer(_uint iBufferIndex)
 {
 	_uint iStride = sizeof(VERTEX_MODEL_SKIN_T);
 	_uint iOffset = 0;
@@ -241,6 +232,11 @@ void CMultiMeshBufComp::Render_Buffer(_uint iBufferIndex)
 
 	// 정점 버퍼 삼각형 리스트
 	D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void CMultiMeshBufComp::Render_Buffer(_uint iBufferIndex)
+{
+	D3D11Context()->DrawIndexed(m_vecMeshes[iBufferIndex].iIndCount, 0, 0);
 }
 
 

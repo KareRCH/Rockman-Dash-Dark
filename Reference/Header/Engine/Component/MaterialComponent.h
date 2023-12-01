@@ -26,6 +26,9 @@ public:
 
 protected:
 	virtual void	Free() override;
+
+public:
+
 };
 
 END

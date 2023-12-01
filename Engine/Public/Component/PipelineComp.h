@@ -1,9 +1,7 @@
 #pragma once
 
 #include "InternalComponent.h"
-#include "System/Define/CamViewMgr_Define.h"
-
-
+#include "System/Define/PipelineMgr_Define.h"
 
 
 BEGIN(Engine)
@@ -17,21 +15,21 @@ BEGIN(Engine)
 /// 
 /// [게임 인스턴스 - 캠뷰 매니저] 결합
 /// </summary>
-class ENGINE_DLL CCamViewComp : public CInternalComponent
+class ENGINE_DLL CPipelineComp : public CInternalComponent
 {
-	DERIVED_CLASS(CInternalComponent, CCamViewComp)
+	DERIVED_CLASS(CInternalComponent, CPipelineComp)
 
 protected:
-	explicit CCamViewComp() = default;
-	explicit CCamViewComp(const CCamViewComp& rhs);
-	virtual ~CCamViewComp() = default;
+	explicit CPipelineComp() = default;
+	explicit CPipelineComp(const CPipelineComp& rhs);
+	virtual ~CPipelineComp() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 
 public:
-	static CCamViewComp* Create();
+	static CPipelineComp* Create();
 protected:
 	// 로드시 이미 만들어진 셰이더를 활용한다.
 	// 셰이더 코드는 이미 컴파일 되어 만들어져 있다는 가정하에 로드한다.
@@ -54,10 +52,17 @@ public:
 	const _matrix		Get_ProjInvMatrix(ECamType eType, ECamNum eNum) const;
 
 public:
+	void	Set_ViewMatrix(ECamType eType, ECamNum eNum, _float4x4 mat);
+	void	Set_ViewMatrix(ECamType eType, ECamNum eNum, _matrix mat);
+
+	void	Set_ProjMatrix(ECamType eType, ECamNum eNum, _float4x4 mat);
+	void	Set_ProjMatrix(ECamType eType, ECamNum eNum, _matrix mat);
+
+public:
 	const D3D11_VIEWPORT Get_Viewport(EViewportNum eNum);
 
 private:
-	class CCamViewMgr* m_pCamViewMgr = { nullptr };			// 캠뷰 매니저 접근  
+	class CPipelineMgr* m_pPipelineMgr = { nullptr };			// 캠뷰 매니저 접근  
 #pragma endregion
 
 

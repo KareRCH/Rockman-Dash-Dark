@@ -4,15 +4,15 @@
 #include "System/GameInstance.h"
 
 CGameObject::CGameObject(const CGameObject& rhs)
-	: m_pCamViewComp(rhs.m_pCamViewComp)
+	: m_pPipelineComp(rhs.m_pPipelineComp)
 {
-	Safe_AddRef(m_pCamViewComp);
+	Safe_AddRef(m_pPipelineComp);
 }
 
 HRESULT CGameObject::Initialize_Prototype()
 {
 	m_pTransformComp = CTransformComponent::Create();
-	m_pCamViewComp = Cast<CCamViewComp*>(GI()->Reference_PrototypeComp(L"CamViewComp"));
+	m_pPipelineComp = Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp"));
 
 	return S_OK;
 }
@@ -77,7 +77,7 @@ void CGameObject::Free()
 	m_vecComponent.clear();
 
 	Release_Transform();
-	Safe_Release(m_pCamViewComp);
+	Safe_Release(m_pPipelineComp);
 }
 
 void CGameObject::Delete_Tag(const EGObjTag eTagType, const wstring& strTag)
@@ -111,6 +111,7 @@ HRESULT CGameObject::Add_Component(const wstring& strName, CPrimitiveComponent* 
 
 	// 완료시 벡터에 컴포넌트 추가
 	m_vecComponent.push_back(pComponent);
+	pComponent->Set_OwnerObject(this);
 
 	pComponent->Set_StateUpdate_Event<ThisClass>(this, &ThisClass::OnStateUpdate_Updated);
 	pComponent->Set_StateLateUpdate_Event<ThisClass>(this, &ThisClass::OnStateLateUpdate_Updated);

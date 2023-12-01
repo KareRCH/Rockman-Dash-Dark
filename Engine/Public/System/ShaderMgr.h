@@ -146,6 +146,7 @@ private:
 public:
 	HRESULT Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
 	ID3DX11Effect* Find_Effect(const wstring& strKey) const;
+	FEffectData* Find_EffectData(const wstring& strKey) const;
 
 #pragma region Effect11 Àü¿ë
 private:

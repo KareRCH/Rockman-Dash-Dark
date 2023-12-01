@@ -26,7 +26,7 @@ CTextureMgr* CTextureMgr::Create(const DX11DEVICE_T tDevice, const wstring& strM
 
 void CTextureMgr::Free()
 {
-	for (auto item : m_mapTextureGroup)
+	for (auto item : m_mapTextures)
 	{
 		Safe_Release(item.second);
 	}
@@ -39,13 +39,57 @@ HRESULT CTextureMgr::Initialize(const wstring& strMainPath)
 	return S_OK;
 }
 
-ID3D11ShaderResourceView* CTextureMgr::Get_Texture(const wstring& strGroupKey, const wstring& strTextureKey)
+ID3D11Texture2D* CTextureMgr::Find_Texture2D(const wstring& strTextureKey)
 {
-	auto iter = m_mapTextureGroup.find(strGroupKey);
-	if (iter == m_mapTextureGroup.end())
+	auto iter = m_mapTextures.find(strTextureKey);
+	if (iter == m_mapTextures.end())
 		return nullptr;
 
-	return (*iter).second->Get_Texture(strTextureKey);
+	return (*iter).second->Get_Texture();
+}
+
+ID3D11ShaderResourceView* CTextureMgr::Find_SRV(const wstring& strTextureKey)
+{
+	auto iter = m_mapTextures.find(strTextureKey);
+	if (iter == m_mapTextures.end())
+		return nullptr;
+
+	return (*iter).second->Get_SRV();
+}
+
+HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _bool bPermanent)
+{
+	CTexture* pTexture;
+	HRESULT hr = S_OK;
+
+	{
+		//lock_guard<mutex> lock(m_mapMutex);			// 이 코드블록만 보호한다.
+
+		size_t iSlash = strFilePath.find_last_of(L"/") + 1;
+		wstring strPath = strFilePath.substr(0, iSlash);
+		wstring strFileName = strFilePath.substr(iSlash);
+
+		size_t iPeriod = strFileName.find_first_of(L".");
+		wstring strName = strFileName.substr(0, iPeriod);
+
+		auto iter = m_mapTextures.find(strFilePath);
+
+		// 텍스처가 없으니 새로만든다.
+		if (iter == m_mapTextures.end())
+		{
+			pTexture = CTexture::Create({ m_pDevice, m_pDeviceContext });
+			m_mapTextures.emplace(strFilePath, pTexture);
+		}
+		// 텍스처가 있으니 기존에 것에 추가한다.
+		else
+		{
+			pTexture = iter->second;
+		}
+
+		hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, strName, bPermanent);
+	}
+
+	return hr;
 }
 
 HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent)
@@ -64,13 +108,13 @@ HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const wstring& str
 	{
 		//lock_guard<mutex> lock(m_mapMutex);			// 이 코드블록만 보호한다.
 
-		auto iter = m_mapTextureGroup.find(strGroupKey);
+		auto iter = m_mapTextures.find(strGroupKey);
 
 		// 텍스처가 없으니 새로만든다.
-		if (iter == m_mapTextureGroup.end())
+		if (iter == m_mapTextures.end())
 		{
 			pTexture = CMultiStateTexture::Create({ m_pDevice, m_pDeviceContext });
-			m_mapTextureGroup.emplace(strGroupKey, pTexture);
+			m_mapTextures.emplace(strGroupKey, pTexture);
 		}
 		// 텍스처가 있으니 기존에 것에 추가한다.
 		else
@@ -80,16 +124,14 @@ HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const wstring& str
 	}
 
 	hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, strTextureKey, bPermanent);
-	if (FAILED(hr))
-		return E_FAIL;
 
 	return hr;
 }
 
-HRESULT CTextureMgr::Transfer_Texture(vector<ID3D11Texture2D>* pVecTexture, const wstring& strGroupKey, const wstring& strTextureKey)
+HRESULT CTextureMgr::Transfer_Texture(vector<ID3D11Texture2D>* pVecTexture, const wstring& strTextureKey)
 {
-	auto iter = m_mapTextureGroup.find(strGroupKey);
-	FALSE_CHECK_RETURN(iter != m_mapTextureGroup.end(), E_FAIL);		// 키 없으면 실패
+	auto iter = m_mapTextures.find(strTextureKey);
+	FALSE_CHECK_RETURN(iter != m_mapTextures.end(), E_FAIL);		// 키 없으면 실패
 
 	CTexture* pTexture = iter->second;
 

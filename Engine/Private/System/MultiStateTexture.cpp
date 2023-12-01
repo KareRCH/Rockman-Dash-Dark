@@ -51,13 +51,13 @@ HRESULT CMultiStateTexture::Reserve(const wstring& strTextureKey, _bool bPermane
 	return S_OK;
 }
 
-ID3D11ShaderResourceView* CMultiStateTexture::Get_Texture(const wstring& strTextureKey)
+ID3D11ShaderResourceView* CMultiStateTexture::Find_SRV(const wstring& strTextureKey)
 {
 	auto iter = m_mapTexture.find(strTextureKey);
 	if (iter == m_mapTexture.end())
 		return nullptr;
 
-	return (*iter).second->Get_Texture();
+	return (*iter).second->Get_SRV();
 }
 
 HRESULT CMultiStateTexture::Insert_Texture(const wstring& strFilePath, const wstring& strTextureKey, const _bool bPermanent)
@@ -112,7 +112,7 @@ HRESULT CMultiStateTexture::Insert_Texture(const wstring& strFilePath, const wst
 
 	m_pDeviceContext->UpdateSubresource(pTexture, 0, nullptr, texData->pixels, Cast<_uint>(texData->rowPitch), 0);
 
-	ID3D11ShaderResourceView* pTextureView = nullptr;
+	ID3D11ShaderResourceView* pTextureView = { nullptr };
 	hr = CreateShaderResourceView(m_pDevice.Get(), image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pTextureView);
 	if (FAILED(hr))
 	{
@@ -135,7 +135,7 @@ HRESULT CMultiStateTexture::Insert_Texture(const wstring& strFilePath, const wst
 	return S_OK;
 }
 
-void CMultiStateTexture::Transfer_Texture(ID3D11ShaderResourceView* pTexture, const wstring& strTextureKey)
+void CMultiStateTexture::Transfer_SRV(ID3D11ShaderResourceView* pTexture, const wstring& strTextureKey)
 {
 	if (m_mapTexture.empty())
 		return;
@@ -144,5 +144,5 @@ void CMultiStateTexture::Transfer_Texture(ID3D11ShaderResourceView* pTexture, co
 	if (iter == m_mapTexture.end())
 		return;
 
-	pTexture = (*iter).second->Get_Texture();
+	pTexture = (*iter).second->Get_SRV();
 }

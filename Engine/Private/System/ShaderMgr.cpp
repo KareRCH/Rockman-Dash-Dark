@@ -18,9 +18,8 @@ CShaderMgr* CShaderMgr::Create(const DX11DEVICE_T tDevice, const wstring& strMai
 
 	if (FAILED(pInstance->Initialize(strMainPath)))
 	{
-		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("RenderMgr Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}
@@ -38,6 +37,9 @@ void CShaderMgr::Free()
 		m_mapShaderData[i].clear();
 	}
 	
+	for (auto& Pair : m_mapEffects)
+		Safe_Release(Pair.second);
+	m_mapEffects.clear();
 }
 
 HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey)
@@ -167,6 +169,7 @@ const ComPtr<ID3DBlob> CShaderMgr::Get_ShaderByte(const EShaderType eType, const
 }
 
 
+
 HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
 	auto iter = m_mapEffects.find(strKey);
@@ -182,7 +185,7 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const wstring& strKe
 #endif
 
 	ComPtr<ID3DX11Effect> pEffect;
-	if (FAILED(D3DX11CompileEffectFromFile(strFileName.c_str(), nullptr,
+	if (FAILED(D3DX11CompileEffectFromFile((m_strMainPath + strFileName).c_str(), nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice.Get(), pEffect.GetAddressOf(), nullptr)))
 		return E_FAIL;
 
@@ -226,3 +229,11 @@ ID3DX11Effect* CShaderMgr::Find_Effect(const wstring& strKey) const
 	return (*iter).second->pEffect.Get();
 }
 
+FEffectData* CShaderMgr::Find_EffectData(const wstring& strKey) const
+{
+	auto iter = m_mapEffects.find(strKey);
+	if (iter == m_mapEffects.end())
+		return nullptr;
+
+	return (*iter).second;
+}

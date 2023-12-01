@@ -2,7 +2,8 @@
 
 #include "Component/PrimitiveComponent.h"
 #include "Component/TransformComponent.h"
-#include "Component/CamViewComp.h"
+#include "Component/PipelineComp.h"
+#include "BaseClass/GameObject.h"
 
 BEGIN(Engine)
 
@@ -57,6 +58,9 @@ public:
 	virtual CTransformComponent& Transform() override { return (*m_pTransformComp); }
 	virtual void Release_Transform() override { Safe_Release(m_pTransformComp); }
 
+	_matrix Calculate_TransformMatrixFromParent();
+	_float4x4 Calculate_TransformFloat4x4FromParent();
+
 private:
 	CTransformComponent* m_pTransformComp = { nullptr };			// ³»ºÎ Æ®·£½ºÆû ÄÄÆ÷³ÍÆ® Æ÷ÇÔ  
 #pragma endregion
@@ -64,10 +68,10 @@ private:
 
 #pragma region Ä·ºä ÄÄÆ÷³ÍÆ®
 protected:
-	CCamViewComp& CamViewComp() { return (*m_pCamViewComp); }
+	CPipelineComp& PipelineComp() { return (*m_pPipelineComp); }
 
 private:
-	CCamViewComp* m_pCamViewComp = { nullptr };
+	CPipelineComp* m_pPipelineComp = { nullptr };
 #pragma endregion
 
 

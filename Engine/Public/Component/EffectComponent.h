@@ -27,7 +27,7 @@ public:
 	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 
-protected:
+public:
 	// 로드시 이미 만들어진 셰이더를 활용한다.
 	// 셰이더 코드는 이미 컴파일 되어 만들어져 있다는 가정하에 로드한다.
 	static CEffectComponent* Create();
@@ -64,9 +64,7 @@ public:
 
 
 private:
-	D3DX11_TECHNIQUE_DESC				m_TechniqueDesc;			// 테크닉 설명서
-	ComPtr<ID3DX11Effect>				m_pEffect = { nullptr };	// 이펙트 버퍼
-	vector<ComPtr<ID3D11InputLayout>>	m_InputLayouts;				// 레이아웃
+	FEffectData* m_pEffectData = { nullptr };	// 이펙트 데이터
 };
 
 END
