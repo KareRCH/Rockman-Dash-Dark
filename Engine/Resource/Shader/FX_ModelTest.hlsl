@@ -79,7 +79,7 @@ PS_INPUT VS_MAIN(VS_INPUT input)
         matBoneTransfrom += g_matBones[input.vBoneID[3]] * input.vWeight[3];
     }
     
-    output.vPosition = mul(float4(input.vPosition.xyz, 1.f), mul(matBoneTransfrom, g_matWorld));
+    output.vPosition = mul(float4(input.vPosition.xyz + matBoneTransfrom[3].xyz, 1.f), g_matWorld);
     output.vPosition = mul(output.vPosition, g_matView);
     output.vPosition = mul(output.vPosition, g_matProj);
     

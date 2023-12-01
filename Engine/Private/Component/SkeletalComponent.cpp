@@ -80,10 +80,10 @@ HRESULT CSkeletalComponent::Load_Skeletal(const wstring& strSkeletalKey)
     return S_OK;
 }
 
-vector<const _float4x4*> CSkeletalComponent::Get_FinalTransforms()
+vector<_float4x4> CSkeletalComponent::Get_FinalTransforms()
 {
     if (!m_pSkeletalData)
-        return vector<const _float4x4*>();
+        return vector<_float4x4>();
 
     return m_pSkeletalData->Provide_FinalTransforms();
 }

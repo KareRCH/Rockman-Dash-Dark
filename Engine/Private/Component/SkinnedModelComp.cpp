@@ -66,11 +66,12 @@ void CSkinnedModelComp::Render()
     BONE_COMMON_BUFFER_T boneBuffer = {};
 
     _float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
+    vector<_float4x4> vecBones = m_pSkeletalComp->Get_FinalTransforms();
 
     m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
     m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_ViewFloat4x4(ECamType::Pers, ECamNum::One)));
     m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_ProjFloat4x4(ECamType::Pers, ECamNum::One)));
-    m_pEffectComp->Bind_Matrices("g_matBones", *m_pSkeletalComp->Get_FinalTransforms().data(), (_uint)m_pSkeletalComp->Get_FinalTransforms().size());
+    m_pEffectComp->Bind_Matrices("g_matBones", vecBones.data(), (_uint)vecBones.size());
     m_pEffectComp->Bind_RawValue("g_colDiffuse", VPCast(&lightBuffer.vDiffuseColor), sizeof(_float4));
     m_pEffectComp->Bind_RawValue("g_colAmbient", VPCast(&lightBuffer.vAmbientColor), sizeof(_float4));
     m_pEffectComp->Bind_RawValue("g_colSpecular", VPCast(&lightBuffer.vSpecularColor), sizeof(_float4));

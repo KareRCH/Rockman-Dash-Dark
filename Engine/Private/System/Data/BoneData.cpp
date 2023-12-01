@@ -203,14 +203,14 @@ HRESULT FSkeletalData::Add_BoneNodeData(const wstring& strBoneNodeKey, FBoneNode
 	return S_OK;
 }
 
-vector<const _float4x4*> FSkeletalData::Provide_FinalTransforms()
+vector<_float4x4> FSkeletalData::Provide_FinalTransforms()
 {
-	vector<const _float4x4*> vecFinalTransforms;
+	vector<_float4x4> vecFinalTransforms;
 	vecFinalTransforms.reserve(vecBoneNodeIndexes.size());
 
 	for (_uint i = 0; i < vecBoneNodeIndexes.size(); i++)
 	{
-		vecFinalTransforms.push_back(&vecBoneNodeIndexes[i]->matTransform);
+		vecFinalTransforms.push_back(vecBoneNodeIndexes[i]->matTransform);
 	}
 
 	return vecFinalTransforms;
