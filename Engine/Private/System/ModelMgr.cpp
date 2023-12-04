@@ -351,7 +351,7 @@ void CModelMgr::Load_Anim(FModelData* pModelData)
 				auto vRot = pNodeAnimAI->mRotationKeys[k].mValue;
 				FBoneAnimNodeData::FRotation tRotation = {
 					Cast<_float>(fTime),
-					{ vRot.w, vRot.x, vRot.y, vRot.z }
+					{ vRot.x, vRot.y, vRot.z, vRot.w }
 				};
 				pAnimNodeData->vecRotations.push_back(tRotation);
 			}
@@ -429,10 +429,18 @@ void CModelMgr::Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FB
 		pNodeData->eBoneType = EModelBoneType::Base;
 		pNodeData->strName = strNodeKey;
 		pNodeData->pParent = pParentNode;
-		pNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation.Inverse());	// 뼈는 역행렬이 중요하다.
-		pNodeData->matTransform = pNodeData->matOffset;
+		pNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);	// 뼈는 역행렬이 중요하다.
+		XMStoreFloat4x4(&pNodeData->matOffset, XMMatrixInverse(nullptr, XMLoadFloat4x4(&pNodeData->matOffset)));
+		pNodeData->matTransform = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);
 		pParentNode->vecChildren.push_back(pNodeData);
 		pBoneGroup->Add_BoneNodeData(pRootNode->strName, strNodeKey, pNodeData);
+
+		_float4x4 matTemp = {};
+		XMStoreFloat4x4(&matTemp, XMLoadFloat4x4(&pNodeData->matTransform));// * XMLoadFloat4x4(&pNodeData->matTransform));
+
+		_float3 vPos = Get_PosFromMatrix(matTemp);
+		_float3 vRot = Get_RotEulerFromMatrix(matTemp);
+		_float3 vScale = Get_ScaleFromMatrix(matTemp);
 		
 		if (pBoneNode->mNumChildren == 0)
 			pNodeData->eBoneType = EModelBoneType::End;

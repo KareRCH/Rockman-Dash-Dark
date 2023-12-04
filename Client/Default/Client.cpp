@@ -12,7 +12,7 @@
 #define MAX_LOADSTRING 100
 
 // 콘솔창 키고 싶으면 이거 1로 설정
-#define _DEBUG_CONSOLE 0
+#define _DEBUG_CONSOLE 1
 
 // 전역 변수:
 HWND	    g_hWnd;                             // 윈도우 창 변수입니다.

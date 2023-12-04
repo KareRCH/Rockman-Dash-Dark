@@ -102,6 +102,10 @@ public:
 	void Active_BoneMask(_uint iIndex, const wstring& strBoneName);
 	// 마스크의 애니메이션을 설정한다.
 	void Set_MaskAnimation(_uint iIndex, const wstring& strAnimName);
+	// 마스크의 애니메이션 시간을 설정한다.
+	void Set_MaskTime(_uint iIndex, _float fTime);
+	// 애니메이션의 기준이 되는 시간변화율을 설정한다. Tick에서 
+	void Set_TickDeltaTime(_float fDeltaTime);
 	// 애니메이션의 최종 포즈의 행렬을 뼈에 적용한다. 
 	HRESULT Apply_Pose();
 

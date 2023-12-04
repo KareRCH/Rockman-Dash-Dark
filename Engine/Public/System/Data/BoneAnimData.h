@@ -79,7 +79,7 @@ public:
 
 public:
 	// 시간 변화율로 애니메이션 타임라인의 현재 시간을 구해주는 함수, Mod를 켜면 반복됨
-	_float Calculate_Time(const _float& fTimeDelta, _float fCurTime, _bool bMod = true) const;
+	_float Calculate_Time(_float fCurTime, _bool bMod = true) const;
 	
 public:
 	_double dfDuration = 0.0;									// 진행 길이

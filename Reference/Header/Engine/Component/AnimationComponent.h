@@ -59,6 +59,8 @@ public:
 	void Active_BoneMask(_uint iIndex, const wstring& strBoneName);
 
 	void Set_MaskAnimation(_uint iIndex, const wstring& strAnimName);
+	void Set_MaskTime(_uint iIndex, _float fTime);
+	void Set_TickDeltaTime(_float fDeltaTime);
 
 	// 해당 마스크에 현재 재생 프레임을 전달하여, 적용될 애니메이션 시간을 정한다.
 	void Apply_MaskTime(_uint iIndex, const wstring& strAnimName, _float fCurTime);
@@ -76,7 +78,7 @@ private:
 														// 이 녀석이 설정되어 있어야 기능을 할 수 있다.
 	
 	vector<FAnimMask>	m_vecAnimMask;					// 애니메이션이 적용되는 마스크, 기본적으로 0번 마스크에 적용되어 작동한다.
-	_float				m_fTickDeltaTime;				// 1 프레임당 속도값
+	_float				m_fSystemTPS;				// 1 프레임당 속도값
 };
 
 END
