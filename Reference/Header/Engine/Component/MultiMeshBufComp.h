@@ -18,6 +18,7 @@ struct FMeshBuffer
 	ComPtr<ID3D11Buffer>	pIndBuffer;
 	_uint					iVtxCount;
 	_uint					iIndCount;
+	const _float4x4*		matTransform;
 };
 
 /// <summary>
@@ -59,6 +60,7 @@ public:
 	void Unbind_AllMeshes();
 
 	_uint	Get_MeshesCounts() { return Cast<_uint>(m_vecMeshes.size()); }
+	_float4x4	Get_MeshTransform(_uint iIndex) { return *m_vecMeshes[iIndex].matTransform; }
 	void	Bind_Buffer(_uint iBufferIndex);
 	void	Render_Buffer(_uint iBufferIndex);
 

@@ -17,6 +17,7 @@ struct FAnimMask
 	_float fWeight;				// 마스크 적용 가중치
 	vector<_bool> vecBoneMasks;	// 마스크 적용 뼈
 
+	wstring strSkeletaName;		// 스켈레탈 이름
 	wstring strAnimName;		// 애니메이션 이름
 	_float fCurTime;			// 현재 재생 중인 시간, 시스템 시간 기준
 };
@@ -50,6 +51,15 @@ public:
 
 	HRESULT Bind_AnimGroup();
 
+	// 마스크 생성
+	HRESULT Create_Mask(const wstring& strMaskName, const wstring& strSkeletalName, _bool bInitBoneActive);
+	FAnimMask* Get_Mask(_uint iIndex);
+
+	void Deactive_BoneMask(_uint iIndex, const wstring& strBoneName);
+	void Active_BoneMask(_uint iIndex, const wstring& strBoneName);
+
+	void Set_MaskAnimation(_uint iIndex, const wstring& strAnimName);
+
 	// 해당 마스크에 현재 재생 프레임을 전달하여, 적용될 애니메이션 시간을 정한다.
 	void Apply_MaskTime(_uint iIndex, const wstring& strAnimName, _float fCurTime);
 	void Apply_MaskTime(const wstring& strMaskName, const wstring& strAnimName, _float fCurTime);
@@ -58,7 +68,7 @@ public:
 	void Apply_FinalMask();
 
 	// 마스크를 통해 결정된 애니메이션에 따라 뼈의 최종 행렬을 계산해준다.
-	void Apply_BoneAnimationWithMask(FSkeletalData* const pArmatureData);
+	void Apply_BoneAnimationWithMask();
 
 private:
 	FModelData*			m_pModelData = { nullptr };		// 모델 데이터, 해당 모델을 바인딩 시켜놓기 위해 해놓는다.
@@ -66,7 +76,7 @@ private:
 														// 이 녀석이 설정되어 있어야 기능을 할 수 있다.
 	
 	vector<FAnimMask>	m_vecAnimMask;					// 애니메이션이 적용되는 마스크, 기본적으로 0번 마스크에 적용되어 작동한다.
-
+	_float				m_fTickDeltaTime;				// 1 프레임당 속도값
 };
 
 END

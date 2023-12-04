@@ -14,13 +14,17 @@ private:
 
 public:
 	HRESULT				Initialize(HINSTANCE hInst, HWND hWnd);
-	void				Tick(void);
+	void				Tick();
+	void				Late_Tick();
 
 public:
 	static CInputDev*	Create(HINSTANCE hInst, HWND hWnd);
 
 private:
 	virtual void		Free(void);
+
+private:
+	HWND	m_hWnd;
 
 public:
 	_byte	Get_DIKeyState(_ubyte byKeyID)
@@ -50,6 +54,14 @@ private:
 	DIMOUSESTATE			m_tMouseState;
 
 
+public:
+	void		Toggle_LockMouseCenter()
+	{
+		m_bLockMouseCenter = !m_bLockMouseCenter;
+	}
+
+private:
+	_bool		m_bLockMouseCenter = false;
 };
 
 END

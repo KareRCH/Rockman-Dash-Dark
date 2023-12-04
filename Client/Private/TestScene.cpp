@@ -14,7 +14,7 @@ HRESULT CTestScene::Initialize()
     GI()->Load_Model(EModelGroupIndex::Permanent, "Character/RockVolnutt/Test.fbx", L"RockVolnutt");
 
     GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 0.f)));
-    GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
+    //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
     GI()->Add_GameObject(CDynamicCamera::Create());
 
     return S_OK;

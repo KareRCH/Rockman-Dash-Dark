@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "System/Define/PipelineMgr_Define.h"
 
 BEGIN(Engine)
 
@@ -34,14 +35,21 @@ public:
 protected:
 	virtual void	Free();
 
-protected:
-	_float3		m_vAt;
-	_float3		m_vUp;
-	_float		m_fFov;
-	_float		m_fAspect;
+public:
+	void Apply_ViewProjMatrix();
 
-	_float4x4	m_matPersView;
-	_float4x4	m_matPersProj;
+protected:
+	ECamType	m_eCamType;			// 사용 카메라 종류 (원근, 직교)
+	ECamNum		m_eCamID;			// 사용 카메라 넘버 (0~7, 뷰포트와 동기화됨)
+
+	_float3		m_vAt;				// 바라보는 지점
+	_float		m_fFov;				// 시야각
+	_float		m_fAspect;			// 비율
+	_float		m_fNear;			// 카메라 최소거리
+	_float		m_fFar;				// 카메라 최대거리
+
+	_float4x4	m_matView;			// 저장용 뷰 행렬
+	_float4x4	m_matProj;			// 저장용 투영 행렬
 };
 
 END

@@ -3,11 +3,14 @@
 
 #include "Engine_Typedef.h"
 
+using namespace DirectX;
+
 namespace Engine
 {
 	// 템플릿은 기능의 정해져있으나 자료형은 정해져있지 않은 것
 	// 기능을 인스턴스화 하기 위하여 만들어두는 틀
 
+#pragma region 힙 메모리
 	template<typename T>
 	void	Safe_Delete(T& Pointer)
 	{
@@ -23,11 +26,14 @@ namespace Engine
 	{
 		if (nullptr != Pointer)
 		{
-			delete [] Pointer;
+			delete[] Pointer;
 			Pointer = nullptr;
 		}
 	}
+#pragma endregion
 
+
+#pragma region 레퍼런스 카운트
 	template<typename T>
 	_uint Safe_Release(T& pInstance)
 	{
@@ -66,7 +72,7 @@ namespace Engine
 	_uint Perfect_Release(T& pInstance)
 	{
 		_uint		dwRefCnt = 0;
-		
+
 		while (nullptr != pInstance)
 		{
 			dwRefCnt = static_cast<_uint>(pInstance->Release());
@@ -99,17 +105,23 @@ namespace Engine
 
 		return dwRefCnt;
 	}
+#pragma endregion
 
+
+#pragma region 문자열 함수
 	/// <summary>
-	/// string to wstring 업그레이드 함수
-	/// </summary>
-	/// <param name="str">string</param>
-	/// <returns></returns>
+/// string to wstring 업그레이드 함수
+/// </summary>
+/// <param name="str">string</param>
+/// <returns></returns>
 	wstring Make_Wstring(const string& str)
 	{
 		return wstring(str.begin(), str.end());
 	}
+#pragma endregion
 
+
+#pragma region 마우스
 	inline POINT Get_MousePos_Client(const HWND& hWnd)
 	{
 		POINT mouse;
@@ -119,35 +131,55 @@ namespace Engine
 		return mouse;
 	}
 
+	inline POINT GetClientCenter(const HWND& hWnd) {
+		RECT clientRect;
+		GetClientRect(hWnd, &clientRect);
+
+		POINT center;
+		center.x = clientRect.left + (clientRect.right - clientRect.left) / 2;
+		center.y = clientRect.top + (clientRect.bottom - clientRect.top) / 2;
+
+		return center;
+	}
+
+	inline void CenterMouse(const HWND& hWnd) {
+		POINT center = GetClientCenter(hWnd);
+		ClientToScreen(hWnd, &center);
+		SetCursorPos(center.x, center.y);
+	}
+#pragma endregion
+
+
 #pragma region 컴파일러용 캐스팅 함수
-	// static_cast버전
+	// static_cast
 	template<typename Return, typename T>
 	constexpr Return Cast(T value)
 	{
 		return static_cast<Return>(value);
 	}
 
-	// 다이나믹 캐스트 버전
+	// 다이나믹 캐스트
 	template<typename Return, typename T>
 	constexpr Return DynCast(T value)
 	{
 		return dynamic_cast<Return>(value);
 	}
 
-	// reinterpret_cast버전
+	// reinterpret_cast
 	template<typename Return, typename T>
 	constexpr Return ReCast(T value)
 	{
 		return reinterpret_cast<Return>(value);
 	}
 
-	// const_cast버전
+	// const_cast
 	template<typename Return, typename T>
 	constexpr Return ConCast(T value)
 	{
 		return const_cast<Return>(value);
 	}
 
+	// Default Enum 타입 변환기
 	template<typename T, typename = enable_if_t<is_enum<T>::value>,
 		typename Return = underlying_type_t<T>>
 	constexpr Return ECast(T value)
@@ -155,73 +187,67 @@ namespace Engine
 		return static_cast<Return>(value);
 	}
 
+	// void* 변환기
 	template<typename T>
 	constexpr void* VPCast(T value)
 	{
 		return static_cast<void*>(value);
 	}
+#pragma endregion
 
-	// 아래는 각 타입별로 만든 제네릭 생략 버전
-	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
-	constexpr _int Cast_Int(T value)
+
+#pragma region 디버깅용 행렬 요소 추출기
+	// 행렬로부터 위치값 추출
+	inline _float3 Get_PosFromMatrix(_float4x4 mat)
 	{
-		return static_cast<_int>(value);
+		return _float3(mat._41, mat._42, mat._43);
 	}
 
-	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
-	constexpr _uint Cast_Uint(T value)
+	// 행렬로부터 회전값 추출
+	inline _float3 Get_RotEulerFromMatrix(_float4x4 mat)
 	{
-		return static_cast<_uint>(value);
+		_matrix matRot = {
+			mat._11, mat._12, mat._13, 0,
+			mat._21, mat._22, mat._23, 0,
+			mat._31, mat._32, mat._33, 0,
+			0, 0, 0, 1
+		};
+
+		_vector vRot = XMQuaternionRotationMatrix(matRot);
+		_float3 vEuler = {};
+		_float pitch, yaw, roll;
+		_float t0, t1;
+		t0 = 2.f * (vRot.m128_f32[3] * vRot.m128_f32[0] + vRot.m128_f32[1] * vRot.m128_f32[2]);
+		t1 = 1.f - 2.f * (vRot.m128_f32[0] * vRot.m128_f32[0] + vRot.m128_f32[1] * vRot.m128_f32[1]);
+		pitch = atan2(t0, t1);
+
+		_float t2;
+		t2 = 2.f * (vRot.m128_f32[3] * vRot.m128_f32[1] - vRot.m128_f32[2] * vRot.m128_f32[0]);
+		t2 = (t2 > 1.f) ? 1.f : t2;
+		t2 = (t2 < -1.f) ? -1.f : t2;
+		yaw = asin(t2);
+
+		_float t3, t4;
+		t3 = 2.f * (vRot.m128_f32[3] * vRot.m128_f32[2] + vRot.m128_f32[0] * vRot.m128_f32[1]);
+		t4 = 1.f - 2.f * (vRot.m128_f32[1] * vRot.m128_f32[1] + vRot.m128_f32[2] * vRot.m128_f32[2]);
+		roll = atan2(t3, t4);
+
+		return _float3(XMConvertToDegrees(pitch), XMConvertToDegrees(yaw), XMConvertToDegrees(roll));
 	}
 
-	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
-	constexpr _int_8 Cast_Int8(T value)
+	// 행렬로부터 크기값 추출
+	inline _float3 Get_ScaleFromMatrix(_float4x4 mat)
 	{
-		return static_cast<_int_8>(value);
-	}
+		_vector vLength[3] = {
+			XMVectorSet(mat._11, mat._12, mat._13, 0.f),
+			XMVectorSet(mat._21, mat._22, mat._23, 0.f),
+			XMVectorSet(mat._31, mat._32, mat._33, 0.f)
+		};
 
-	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
-	constexpr _uint_8 Cast_Uint8(T value)
-	{
-		return static_cast<_uint_8>(value);
-	}
-
-	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
-	constexpr _int_16 Cast_Int16(T value)
-	{
-		return static_cast<_int_16>(value);
-	}
-
-	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
-	constexpr _uint_16 Cast_Uint16(T value)
-	{
-		return static_cast<_uint_16>(value);
-	}
-
-	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
-	constexpr _int_64 Cast_Int64(T value)
-	{
-		return static_cast<_int_64>(value);
-	}
-
-	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
-	constexpr _uint_64 Cast_Uint64(T value)
-	{
-		return static_cast<_uint_64>(value);
-	}
-
-	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
-	constexpr _float Cast_Float(T value)
-	{
-		return static_cast<_float>(value);
-	}
-
-	template<typename T, typename = enable_if_t<is_arithmetic<T>::value || is_enum<T>::value>>
-	constexpr _double Cast_Double(T value)
-	{
-		return static_cast<_double>(value);
+		return _float3(XMVector3Length(vLength[0]).m128_f32[0], XMVector3Length(vLength[1]).m128_f32[1], XMVector3Length(vLength[2]).m128_f32[2]);
 	}
 #pragma endregion
+
 }
 
 #endif // Engine_Function_h__

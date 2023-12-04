@@ -66,9 +66,11 @@ public:		// 그래픽 디바이스
 public:		// 인풋 디바이스
 	HRESULT Initialize_InputDev(HINSTANCE hInst, HWND hWnd);
 	void	Tick_InputDev();
+	void	Late_Tick_InputDev();
 	_byte	Get_DIKeyState(_ubyte byKeyID);
 	_byte	Get_DIMouseState(MOUSEKEYSTATE eMouse);
 	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState);
+	void	Toggle_LockMouseCenter();
 #pragma endregion
 
 

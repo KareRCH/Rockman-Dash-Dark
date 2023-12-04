@@ -24,12 +24,12 @@ public:
 	/// </summary>
 	/// <param name="fTime">변환된 시간을 넣어주어야함</param>
 	/// <returns></returns>
-	_float4x4 Interporated_Matrix(const _float& fCurTime);
+	_float4x4 Interporated_Matrix(const _float& fCurTime) const;
 
 	// 각각 배열의 기준점을 찾아주는 함수, 해당 기준점을 통해
-	_uint Calculate_PivotPosition(const _float& fCurTime);
-	_uint Calculate_PivotRotation(const _float& fCurTime);
-	_uint Calculate_PivotScale(const _float& fCurTime);
+	_uint Calculate_PivotPosition(const _float& fCurTime) const;
+	_uint Calculate_PivotRotation(const _float& fCurTime) const;
+	_uint Calculate_PivotScale(const _float& fCurTime) const;
 	
 public:
 	struct FPosition
@@ -73,6 +73,7 @@ public:
 	virtual void Free() override;
 
 public:
+	const FBoneAnimNodeData* const Find_AnimNodeData(_uint iIndex) const;
 	const FBoneAnimNodeData* const Find_AnimNodeData(const wstring& strNodeKey) const;
 	void Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimNodeData* pAnimNodeData);
 

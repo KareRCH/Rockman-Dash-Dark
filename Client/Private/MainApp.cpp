@@ -49,7 +49,7 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
 	GameInstance()->Load_Shader(L"PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
 	GameInstance()->Load_Shader(L"VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
-	GI()->Load_Effect(L"FX_ModelTest.hlsl", L"FX_ModelTest", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
+	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", L"FX_ModelTest", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
 	
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Frame(L"Frame", 60.f), E_FAIL);
 
@@ -82,6 +82,7 @@ void CMainApp::Late_Tick(const _float& fTimeDelta)
 {
 	m_pGameInstance->Late_Tick_Object(fTimeDelta);
 	m_pGameInstance->Late_Tick_KeyMgr();
+	m_pGameInstance->Late_Tick_InputDev();
 }
 
 void CMainApp::Render()

@@ -75,21 +75,27 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 	Assimp::Importer importer;
 	
 	_uint iFlag;
-	iFlag = aiProcess_JoinIdenticalVertices |   // 동일한 꼭지점 결합, 인덱싱 최적화
-		aiProcess_ValidateDataStructure |       // 로더의 출력을 검증
-		aiProcess_ImproveCacheLocality |        // 출력 정점의 캐쉬위치를 개선
-		aiProcess_RemoveRedundantMaterials |    // 중복된 매터리얼 제거
-		aiProcess_GenUVCoords |                 // 구형, 원통형, 상자 및 평면 매핑을 적절한 UV로 변환
-		aiProcess_TransformUVCoords |           // UV 변환 처리기 (스케일링, 변환...)
-		aiProcess_FindInstances |               // 인스턴스된 매쉬를 검색하여 하나의 마스터에 대한 참조로 제거
-		aiProcess_LimitBoneWeights |            // 정점당 뼈의 가중치를 최대 4개로 제한
-		aiProcess_OptimizeMeshes |              // 가능한 경우 작은 매쉬를 조인
-		aiProcess_GenSmoothNormals |            // 부드러운 노말벡터(법선벡터) 생성
-		aiProcess_SplitLargeMeshes |			// 거대한 하나의 매쉬를 하위매쉬들로 분활(나눔)
-		aiProcess_Triangulate |                 // 3개 이상의 모서리를 가진 다각형 면을 삼각형으로 만듬(나눔)
-		aiProcess_ConvertToLeftHanded |         // D3D의 왼손좌표계로 변환
-		aiProcess_PopulateArmatureData |		// Aramature의 정보를 뼈에 기록할 수 있게 하는 플래그
-		aiProcess_SortByPType;					// 단일타입의 프리미티브로 구성된 '깨끗한' 매쉬를 만듬
+	iFlag = aiProcessPreset_TargetRealtime_Fast |
+		aiProcess_LimitBoneWeights |
+		aiProcess_Triangulate |
+		aiProcess_PopulateArmatureData |
+		aiProcess_ConvertToLeftHanded |
+		aiProcess_SortByPType;
+	//iFlag = aiProcess_JoinIdenticalVertices |   // 동일한 꼭지점 결합, 인덱싱 최적화
+	//	aiProcess_ValidateDataStructure |       // 로더의 출력을 검증
+	//	aiProcess_ImproveCacheLocality |        // 출력 정점의 캐쉬위치를 개선
+	//	aiProcess_RemoveRedundantMaterials |    // 중복된 매터리얼 제거
+	//	aiProcess_GenUVCoords |                 // 구형, 원통형, 상자 및 평면 매핑을 적절한 UV로 변환
+	//	aiProcess_TransformUVCoords |           // UV 변환 처리기 (스케일링, 변환...)
+	//	aiProcess_FindInstances |               // 인스턴스된 매쉬를 검색하여 하나의 마스터에 대한 참조로 제거
+	//	aiProcess_LimitBoneWeights |            // 정점당 뼈의 가중치를 최대 4개로 제한
+	//	aiProcess_OptimizeMeshes |              // 가능한 경우 작은 매쉬를 조인
+	//	aiProcess_GenSmoothNormals |            // 부드러운 노말벡터(법선벡터) 생성
+	//	aiProcess_SplitLargeMeshes |			// 거대한 하나의 매쉬를 하위매쉬들로 분활(나눔)
+	//	aiProcess_Triangulate |                 // 3개 이상의 모서리를 가진 다각형 면을 삼각형으로 만듬(나눔)
+	//	aiProcess_ConvertToLeftHanded |         // D3D의 왼손좌표계로 변환
+	//	aiProcess_PopulateArmatureData |		// Aramature의 정보를 뼈에 기록할 수 있게 하는 플래그
+	//	aiProcess_SortByPType;					// 단일타입의 프리미티브로 구성된 '깨끗한' 매쉬를 만듬
 	
 	m_pScene = importer.ReadFile((m_strMainDir + strFileName).c_str(), iFlag);
 
@@ -390,12 +396,12 @@ void CModelMgr::Load_Hierarchi(FBoneGroup* pBoneGroup,  aiNode* pArmatureNode)
 
 		// ID 지정
 		FBoneNodeData* pRootNodeData = FBoneNodeData::Create();
-		pRootNodeData->iID = m_iNodeID ++;
+		pRootNodeData->iID = m_iNodeID++;
 		pRootNodeData->eType = EModelNodeType::Armature;
 		pRootNodeData->eBoneType = EModelBoneType::Null;
 		pRootNodeData->strName = strKey;
 		pRootNodeData->pParent = nullptr;
-		pRootNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pArmatureNode->mTransformation);
+		pRootNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pArmatureNode->mTransformation);		// 스켈레탈은 일반 행렬이 중요하다.
 		pRootNodeData->matTransform = pRootNodeData->matOffset;
 		pBoneGroup->Add_BoneNodeData(strKey, strKey, pRootNodeData);
 
@@ -423,7 +429,7 @@ void CModelMgr::Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FB
 		pNodeData->eBoneType = EModelBoneType::Base;
 		pNodeData->strName = strNodeKey;
 		pNodeData->pParent = pParentNode;
-		pNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);
+		pNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation.Inverse());	// 뼈는 역행렬이 중요하다.
 		pNodeData->matTransform = pNodeData->matOffset;
 		pParentNode->vecChildren.push_back(pNodeData);
 		pBoneGroup->Add_BoneNodeData(pRootNode->strName, strNodeKey, pNodeData);
@@ -534,10 +540,10 @@ FBoneAnimGroup* CModelMgr::Find_AnimGroup(const EModelGroupIndex eGroupIndex, co
 _float4x4 CModelMgr::ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix)
 {
 	_float4x4	matOffsetTG = _float4x4(
-		matrix.a1, matrix.a2, matrix.a3, matrix.a4,
-		matrix.b1, matrix.b2, matrix.b3, matrix.b4,
-		matrix.c1, matrix.c2, matrix.c3, matrix.c4,
-		matrix.d1, matrix.d2, matrix.d3, matrix.d4
+		matrix.a1, matrix.b1, matrix.c1, matrix.d1,
+		matrix.a2, matrix.b2, matrix.c2, matrix.d2,
+		matrix.a3, matrix.b3, matrix.c3, matrix.d3,
+		matrix.a4, matrix.b4, matrix.c4, matrix.d4
 	);
 
 	return matOffsetTG;

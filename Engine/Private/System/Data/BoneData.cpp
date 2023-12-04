@@ -101,6 +101,34 @@ FBoneNodeData* FBoneNodeData::Find_NodeFromID(_int iID)
 	return nullptr;
 }
 
+void FBoneNodeData::Calculate_FinalTransform()
+{
+	_matrix matOffsetTransform, matParentTransform;
+	if (eType == EModelNodeType::Armature)
+		matOffsetTransform = XMLoadFloat4x4(&matOffset);
+	else if (eType == EModelNodeType::Bone)
+		matOffsetTransform = XMMatrixIdentity();
+
+
+	OutputDebugString((strName + L"\n").c_str());
+
+	_float3 vPos = Get_PosFromMatrix(matOffset);
+	_float3 vRot = Get_RotEulerFromMatrix(matOffset);
+	_float3 vScale = Get_ScaleFromMatrix(matOffset);
+
+	if (pParent)
+		matParentTransform = XMLoadFloat4x4(&pParent->matTransform);
+	else
+		matParentTransform = XMMatrixIdentity();
+
+	XMStoreFloat4x4(&matTransform, (matOffsetTransform * matParentTransform));
+
+	for (_uint i = 0; i < vecChildren.size(); i++)
+	{
+		vecChildren[i]->Calculate_FinalTransform();
+	}
+}
+
 
 
 // ------------------------ ArmatureData ---------------------------
@@ -153,6 +181,19 @@ void FSkeletalData::Free()
 		Safe_Release(Pair.second);
 	}
 	mapBoneNodeDatas.clear();
+}
+
+wstring FSkeletalData::Get_SkeletalName()
+{
+	if (!pSkeletalRootNode)
+		return wstring();
+
+	return pSkeletalRootNode->strName;
+}
+
+_uint FSkeletalData::Get_BoneNodeData_Count()
+{
+	return Cast<_uint>(vecBoneNodeIndexes.size());
 }
 
 FBoneNodeData* FSkeletalData::Find_BoneNodeData(_int iID)
@@ -208,12 +249,45 @@ vector<_float4x4> FSkeletalData::Provide_FinalTransforms()
 	vector<_float4x4> vecFinalTransforms;
 	vecFinalTransforms.reserve(vecBoneNodeIndexes.size());
 
+	Calculate_FinalTransforms();
+
 	for (_uint i = 0; i < vecBoneNodeIndexes.size(); i++)
 	{
 		vecFinalTransforms.push_back(vecBoneNodeIndexes[i]->matTransform);
 	}
 
 	return vecFinalTransforms;
+}
+
+void FSkeletalData::Add_Transforms(vector<_float4x4>* pVecMatrices) const
+{
+	if (pVecMatrices->size() != vecBoneNodeIndexes.size())
+		return;
+
+	// 적용전에 한번은 clear 된 상태여야 한다.
+	// 받은 행렬은 Weight가 곱해진 값이어야 한다.
+	for (_uint i = 0; i < vecBoneNodeIndexes.size(); i++)
+	{
+		// 행렬 더하기, Weight가 총합이 1이어야 한다.
+		XMStoreFloat4x4(&vecBoneNodeIndexes[i]->matTransform,
+			XMLoadFloat4x4(&(*pVecMatrices)[i]) + XMLoadFloat4x4(&vecBoneNodeIndexes[i]->matTransform));
+	}
+}
+
+void FSkeletalData::Clear_FinalTransforms()
+{
+	for (_uint i = 0; i < vecBoneNodeIndexes.size(); i++)
+	{
+		XMStoreFloat4x4(&vecBoneNodeIndexes[i]->matTransform, {});
+	}
+}
+
+void FSkeletalData::Calculate_FinalTransforms()
+{
+	if (!pSkeletalRootNode)
+		return;
+
+	pSkeletalRootNode->Calculate_FinalTransform();
 }
 
 
@@ -301,6 +375,11 @@ HRESULT FBoneGroup::Add_BoneNodeData(const wstring& strSkeletalKey, const wstrin
 		return E_FAIL;
 
 	return (*iter).second->Add_BoneNodeData(strBoneNodeKey, pNode);
+}
+
+_uint FBoneGroup::Get_Skeletal_Count()
+{
+	return mapSkeletaDatas.size();
 }
 
 

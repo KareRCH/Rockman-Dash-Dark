@@ -49,6 +49,7 @@ public:
 
 public:
 	FBoneNodeData* Find_NodeFromID(_int iID);
+	void Calculate_FinalTransform();
 
 public:
 	static FBoneNodeData* Create();
@@ -77,11 +78,19 @@ public:
 	virtual void Free() override;
 
 public:
+	wstring Get_SkeletalName();
+	_uint Get_BoneNodeData_Count();
 	FBoneNodeData* Find_BoneNodeData(_int iID);
 	FBoneNodeData* Find_BoneNodeData(const wstring& strBoneNodeKey);
 	void Appoint_SkeletalRootNode(const wstring& strBoneNodeKey);
 	HRESULT Add_BoneNodeData(const wstring& strBoneNodeKey, FBoneNodeData* pNode);
 	vector<_float4x4>	Provide_FinalTransforms();
+	// 행렬 웨이트값을 적용하기 위해 행렬값을 더하는 연산을 하는 함수
+	void Add_Transforms(vector<_float4x4>* pVecMatrices) const;
+	void Clear_FinalTransforms();
+	
+private:
+	void Calculate_FinalTransforms();
 
 private:
 	// 아마추어 노드도 같이 저장된다.
@@ -113,6 +122,7 @@ public:
 
 	FBoneNodeData* Find_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey);
 	HRESULT Add_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey, FBoneNodeData* pNode);
+	_uint Get_Skeletal_Count();
 
 private:
 	_unmap<wstring, FSkeletalData*> mapSkeletaDatas;	// 스켈레탈 저장 맵

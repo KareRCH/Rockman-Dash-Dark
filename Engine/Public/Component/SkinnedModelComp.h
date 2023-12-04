@@ -95,7 +95,13 @@ private:
 	// 외부 설정용
 public:
 	// 마스크 정보를 바인드 한다.
-	HRESULT Bind_Mask(_uint iIndex);
+	HRESULT Create_Mask(const wstring& strMaskName, const wstring& strSkeletalName, _bool bInitBoneActive);
+	// 마스크 뼈를 활성화 한다.
+	void Deactive_BoneMask(_uint iIndex, const wstring& strBoneName);
+	// 마스크 뼈를 활성화 한다.
+	void Active_BoneMask(_uint iIndex, const wstring& strBoneName);
+	// 마스크의 애니메이션을 설정한다.
+	void Set_MaskAnimation(_uint iIndex, const wstring& strAnimName);
 	// 애니메이션의 최종 포즈의 행렬을 뼈에 적용한다. 
 	HRESULT Apply_Pose();
 
