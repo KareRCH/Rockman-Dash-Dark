@@ -41,6 +41,8 @@ void CSkinnedModelComp::Priority_Tick(const _float& fTimeDelta)
 
 _int CSkinnedModelComp::Tick(const _float& fTimeDelta)
 {
+    m_pAnimationComp->Set_TickDeltaTime(fTimeDelta);
+
     return 0;
 }
 
@@ -56,7 +58,7 @@ void CSkinnedModelComp::Render()
         _float4(0.2f, 0.2f, 0.2f, 1.f), 
         _float4(0.2f, 0.2f, 0.2f, 1.f), 
         _float3(0.f, -0.2f, 1.f),                
-        _float(2.f), _float4(1.f, 0.2f, 0.2f, 1.f)
+        _float(50.f), _float4(1.f, 0.2f, 0.2f, 1.f)
     };
 
 
@@ -227,6 +229,22 @@ void CSkinnedModelComp::Set_MaskAnimation(_uint iIndex, const wstring& strAnimNa
         return;
 
     m_pAnimationComp->Set_MaskAnimation(iIndex, strAnimName);
+}
+
+void CSkinnedModelComp::Set_MaskTime(_uint iIndex, _float fTime)
+{
+    if (!m_pAnimationComp)
+        return;
+
+    m_pAnimationComp->Set_MaskTime(iIndex, fTime);
+}
+
+void CSkinnedModelComp::Set_TickDeltaTime(_float fDeltaTime)
+{
+    if (!m_pAnimationComp)
+        return;
+
+    m_pAnimationComp->Set_TickDeltaTime(fDeltaTime);
 }
 
 HRESULT CSkinnedModelComp::Apply_Pose()

@@ -231,7 +231,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="LogicDeviceBasic.h" />
+    <ClInclude Include="Public\Utility\LogicDeviceBasic.h" />
     <ClInclude Include="Public\Base.h" />
     <ClInclude Include="Public\BaseClass\CloudStation.h" />
     <ClInclude Include="Public\BaseClass\Camera.h" />

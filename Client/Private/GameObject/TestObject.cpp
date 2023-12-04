@@ -73,6 +73,10 @@ _int CTestObject::Tick(const _float& fTimeDelta)
     
     _float3 t = Transform().Get_RotationEulerFloat3();
 
+    if (m_Gauge.Increase(fTimeDelta))
+        m_Gauge.Reset();
+
+
     return 0;
 }
 
@@ -85,7 +89,9 @@ void CTestObject::Render()
 {
     SUPER::Render();
 
+    
     m_pModelComp->Set_MaskAnimation(0, L"Idle");
+    m_pModelComp->Set_MaskTime(0, m_Gauge.fCur);
     m_pModelComp->Apply_Pose();
     m_pModelComp->Render();
 }
@@ -162,6 +168,7 @@ HRESULT CTestObject::Initialize_Component()
     m_pModelComp->Active_BoneMask(2, L"Bone");
     m_pModelComp->Create_Mask(L"LeftArm", L"Armature", false);
     m_pModelComp->Create_Mask(L"RightArm", L"Armature", false);
+    m_pModelComp->Set_TickDeltaTime(60.f);
 
     return S_OK;
 }

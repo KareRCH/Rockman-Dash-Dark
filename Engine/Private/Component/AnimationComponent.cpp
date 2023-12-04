@@ -152,6 +152,19 @@ void CAnimationComponent::Set_MaskAnimation(_uint iIndex, const wstring& strAnim
 	m_vecAnimMask[iIndex].strAnimName = strAnimName;
 }
 
+void CAnimationComponent::Set_MaskTime(_uint iIndex, _float fTime)
+{
+	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
+		return;
+
+	m_vecAnimMask[iIndex].fCurTime = fTime;
+}
+
+void CAnimationComponent::Set_TickDeltaTime(_float fDeltaTime)
+{
+	m_fSystemTPS = fDeltaTime;
+}
+
 void CAnimationComponent::Apply_MaskTime(_uint iIndex, const wstring& strAnimName, _float fCurTime)
 {
 	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
@@ -215,7 +228,7 @@ void CAnimationComponent::Apply_FinalMask()
 			// 상위 레이어의 마스크가 우선적으로 조정된다.
 			// min 함수를 사용해서 남아있는 값으로만 웨이트가 정해지도록 조정한다.
 			_float fWeight = Cast<_float>(rAnimMask.vecBoneMasks[j]) * rAnimMask.fWeight;
-			fWeight = min(fWeight, (1.f - vecBoneRemainWeights[j]));						// 1이상으로 올라가지 않게 보정
+			fWeight = min(fWeight, (1.f - vecBoneRemainWeights[j]));	// 1이상으로 올라가지 않게 보정
 
 			// 베이스 마스크라면 남은 값을 다 가져가도록 한다.
 			if (i == 0)
@@ -225,14 +238,19 @@ void CAnimationComponent::Apply_FinalMask()
 		}
 
 		const FBoneAnimData* pBoneAnimData = m_pAnimGroup->Find_AnimData(rAnimMask.strAnimName);
-		_float fCurAnimTime = pBoneAnimData->Calculate_Time(m_fTickDeltaTime, rAnimMask.fCurTime);	// 변환된 시간 값
+		_float fCurAnimTime = pBoneAnimData->Calculate_Time(rAnimMask.fCurTime);	// 변환된 시간 값
 
 		// 행렬 계산
 		for (_uint j = 0; j < rAnimMask.vecBoneMasks.size(); j++)
 		{
-			const FBoneAnimNodeData* pBoneAnimNodeData= pBoneAnimData->Find_AnimNodeData(i);
-			vecBoneMatrices[j] = pBoneAnimNodeData->Interporated_Matrix(fCurAnimTime);
-
+			_float4x4 matTemp = {};
+			const FBoneAnimNodeData* pBoneAnimNodeData= pBoneAnimData->Find_AnimNodeData(j);
+			if (!pBoneAnimNodeData)
+				vecBoneMatrices[j] = {};
+			else
+				XMStoreFloat4x4(&vecBoneMatrices[j], 
+					XMLoadFloat4x4(&(matTemp = pBoneAnimNodeData->Interporated_Matrix(fCurAnimTime))) * vecBoneRemainWeights[j]);
+			int t = 0;
 		}
 
 		FSkeletalData* pSkeletal = ConCast<FSkeletalData*>(m_pModelData->pBoneGroup->Find_SkeletalData(rAnimMask.strSkeletaName));

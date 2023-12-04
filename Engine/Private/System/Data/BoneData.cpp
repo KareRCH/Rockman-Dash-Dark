@@ -103,25 +103,30 @@ FBoneNodeData* FBoneNodeData::Find_NodeFromID(_int iID)
 
 void FBoneNodeData::Calculate_FinalTransform()
 {
-	_matrix matOffsetTransform, matParentTransform;
-	if (eType == EModelNodeType::Armature)
-		matOffsetTransform = XMLoadFloat4x4(&matOffset);
-	else if (eType == EModelNodeType::Bone)
-		matOffsetTransform = XMMatrixIdentity();
-
-
-	OutputDebugString((strName + L"\n").c_str());
-
-	_float3 vPos = Get_PosFromMatrix(matOffset);
-	_float3 vRot = Get_RotEulerFromMatrix(matOffset);
-	_float3 vScale = Get_ScaleFromMatrix(matOffset);
+	_matrix matOffsetTransform, matParentTransform, matFinalTransform;
+	matOffsetTransform = XMLoadFloat4x4(&matOffset);
+	matFinalTransform = XMLoadFloat4x4(&matTransform);
 
 	if (pParent)
 		matParentTransform = XMLoadFloat4x4(&pParent->matTransform);
 	else
 		matParentTransform = XMMatrixIdentity();
 
-	XMStoreFloat4x4(&matTransform, (matOffsetTransform * matParentTransform));
+	OutputDebugString((strName + L"\n").c_str());
+
+	_float4x4 matTemp = {};
+	XMStoreFloat4x4(&matTemp, matOffsetTransform * matFinalTransform);
+
+	_float3 vPos = Get_PosFromMatrix(matTemp);
+	_float3 vRot = Get_RotEulerFromMatrix(matTemp);
+	_float3 vScale = Get_ScaleFromMatrix(matTemp);
+
+	if (eType == EModelNodeType::Armature)
+		XMStoreFloat4x4(&matTransform, (matOffsetTransform * matParentTransform));
+	else if (eType == EModelNodeType::Bone)
+		XMStoreFloat4x4(&matTransform, (matOffsetTransform * matFinalTransform * matParentTransform));
+
+	
 
 	for (_uint i = 0; i < vecChildren.size(); i++)
 	{
@@ -379,7 +384,7 @@ HRESULT FBoneGroup::Add_BoneNodeData(const wstring& strSkeletalKey, const wstrin
 
 _uint FBoneGroup::Get_Skeletal_Count()
 {
-	return mapSkeletaDatas.size();
+	return Cast<_uint>(mapSkeletaDatas.size());
 }
 
 

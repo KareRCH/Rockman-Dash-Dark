@@ -3,6 +3,8 @@
 #include "BaseClass/GameObject.h"
 #include "Client_Define.h"
 
+#include "Utility/LogicDeviceBasic.h"
+
 BEGIN(Engine)
 
 class CTriBufferComp;
@@ -48,6 +50,9 @@ private:
 
 private:
 	CSkinnedModelComp* m_pModelComp = { nullptr };
+
+private:
+	FGauge	m_Gauge = FGauge(30.f);
 };
 
 END

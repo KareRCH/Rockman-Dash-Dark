@@ -126,23 +126,33 @@ _uint FBoneAnimNodeData::Calculate_PivotPosition(const _float& fCurTime) const
 	// 비율을 구해 현재 시간을 구해 실제 기준점을 구한다.
 	iPivot = Cast<_uint>(fCurTime * (Cast<_float>(iSize) / Cast<_float>(iPivot)));
 
+	if (iPivot - 1 == UINT_MAX)
+		iPivot = 0;
+	if (iPivot >= iSize)
+		iPivot = iSize - 1;
+	
 	while (true)
 	{
+		// 현재 기준점에 해당하는 시간 값이 해당된다면, 더 작은 인덱스와의 비교 후에 결정한다.
+		// 현재 시간 값이 비교값을 넘을 때, 최대한 하위 인덱스와 비교하여 맞춘다.
 		if (fCurTime >= vecPositions[iPivot].fTime)
 		{
-			// 만약 현재 인덱스의 다음 값이 배열을 벗어나면, 현재 위치를 통해 보간한다.
-			if (iPivot + 1 >= iSize) { break; }
-			// 아니면 인덱스를 내려 기준점을 찾는다.
-			else { --iPivot; }
+			if (iPivot + 1 < iSize
+			&& fCurTime >= vecPositions[iPivot + 1].fTime)
+			{
+				++iPivot;
+			}
+			else { break; }
 		}
 		else
-			++iPivot;
-
-		// 기준점이 사이즈를 넘어가면 인덱스가 정해짐.
-		if (iPivot >= iSize)
 		{
-			--iPivot;
-			break;
+			// 여전히 시간 값이 작은 값이면 기준점을 내린다.
+			if (iPivot - 1 != UINT_MAX
+				&& fCurTime >= vecPositions[iPivot - 1].fTime)
+			{
+				--iPivot;
+			}
+			else { break; }
 		}
 	}
 
@@ -160,22 +170,33 @@ _uint FBoneAnimNodeData::Calculate_PivotRotation(const _float& fCurTime) const
 	// 비율을 구해 현재 시간을 구해 실제 기준점을 구한다.
 	iPivot = Cast<_uint>(fCurTime * (Cast<_float>(iSize) / Cast<_float>(iPivot)));
 
+	if (iPivot - 1 == UINT_MAX)
+		iPivot = 0;
+	if (iPivot >= iSize)
+		iPivot = iSize - 1;
+
 	while (true)
 	{
+		// 현재 기준점에 해당하는 시간 값이 해당된다면, 더 작은 인덱스와의 비교 후에 결정한다.
+		// 현재 시간 값이 비교값을 넘을 때, 최대한 하위 인덱스와 비교하여 맞춘다.
 		if (fCurTime >= vecRotations[iPivot].fTime)
 		{
-			// 만약 현재 인덱스의 다음 값이 배열을 벗어나면, 현재 위치를 통해 보간한다.
-			if (iPivot + 1 >= iSize) { break; }
-			// 아니면 인덱스를 내려 기준점을 찾는다.
-			else { --iPivot; }
+			if (iPivot + 1 < iSize
+				&& fCurTime >= vecRotations[iPivot + 1].fTime)
+			{
+				++iPivot;
+			}
+			else { break; }
 		}
-		else { ++iPivot; }
-
-		// 기준점이 사이즈를 넘어가면 인덱스가 정해짐.
-		if (iPivot >= iSize)
+		else
 		{
-			--iPivot;
-			break;
+			// 여전히 시간 값이 작은 값이면 기준점을 내린다.
+			if (iPivot - 1 != UINT_MAX
+				&& fCurTime >= vecRotations[iPivot - 1].fTime)
+			{
+				--iPivot;
+			}
+			else { break; }
 		}
 	}
 
@@ -193,23 +214,33 @@ _uint FBoneAnimNodeData::Calculate_PivotScale(const _float& fCurTime) const
 	// 비율을 구해 현재 시간을 구해 실제 기준점을 구한다.
 	iPivot = Cast<_uint>(fCurTime * (Cast<_float>(iSize) / Cast<_float>(iPivot)));
 
+	if (iPivot - 1 == UINT_MAX)
+		iPivot = 0;
+	if (iPivot >= iSize)
+		iPivot = iSize - 1;
+
 	while (true)
 	{
+		// 현재 기준점에 해당하는 시간 값이 해당된다면, 더 작은 인덱스와의 비교 후에 결정한다.
+		// 현재 시간 값이 비교값을 넘을 때, 최대한 하위 인덱스와 비교하여 맞춘다.
 		if (fCurTime >= vecScales[iPivot].fTime)
 		{
-			// 만약 현재 인덱스의 다음 값이 배열을 벗어나면, 현재 위치를 통해 보간한다.
-			if (iPivot + 1 >= iSize) { break; }
-			// 아니면 인덱스를 내려 기준점을 찾는다.
-			else { --iPivot; }
+			if (iPivot + 1 < iSize
+				&& fCurTime >= vecScales[iPivot + 1].fTime)
+			{
+				++iPivot;
+			}
+			else { break; }
 		}
 		else
-			++iPivot;
-
-		// 기준점이 사이즈를 넘어가면 인덱스가 정해짐.
-		if (iPivot >= iSize)
 		{
-			--iPivot;
-			break;
+			// 여전히 시간 값이 작은 값이면 기준점을 내린다.
+			if (iPivot - 1 != UINT_MAX
+				&& fCurTime >= vecScales[iPivot - 1].fTime)
+			{
+				--iPivot;
+			}
+			else { break; }
 		}
 	}
 
@@ -222,9 +253,8 @@ FBoneAnimData* FBoneAnimData::Create()
 
 	if (!pInstance)
 	{
-		Safe_Release(pInstance);
-
 		MSG_BOX("FAnimData Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}
@@ -279,11 +309,14 @@ void FBoneAnimData::Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimNodeDat
 	mapNodeAnim.emplace(strNodeKey, pAnimNodeData);
 }
 
-_float FBoneAnimData::Calculate_Time(const _float& fTimeDelta, _float fCurTime, _bool bMod) const
+_float FBoneAnimData::Calculate_Time(_float fCurTime, _bool bMod) const
 {
-	_float fModedTIme = Cast<_float>((bMod) ? fmodf(fCurTime, Cast<_float>(dfDuration)) : min(fCurTime, Cast<_float>(dfDuration)));		// 정해진 시간 뒤로 가지 않게 한다.
-	_float fRatio = Cast<_float>(dfTickPerSecond) * fTimeDelta;		// 애니메이션과 시스템 시간변화율을 동기화한다.
-	return fModedTIme * fRatio;
+	_float fDuration = Cast<_float>(dfDuration);
+	_float fTickPerSecond = Cast<_float>(dfTickPerSecond);
+	_float fConvCurTime = fCurTime * fTickPerSecond;
+
+	_float fModedTIme = Cast<_float>((bMod) ? fmodf(fConvCurTime, fDuration) : min(fConvCurTime, fDuration));		// 정해진 시간 뒤로 가지 않게 한다.
+	return fModedTIme;
 }
 
 
@@ -294,9 +327,8 @@ FBoneAnimGroup* FBoneAnimGroup::Create()
 
 	if (!pInstance)
 	{
-		Safe_Release(pInstance);
-
 		MSG_BOX("FAnimGroup Create Failed");
+		Safe_Release(pInstance);
 
 		return nullptr;
 	}
