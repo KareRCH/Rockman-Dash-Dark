@@ -26,7 +26,7 @@ struct PS_OUTPUT
 };
 
 PS_OUTPUT main(PS_INPUT input)
-{    
+{
     PS_OUTPUT output;
     
     // 베이스 컬러 세팅

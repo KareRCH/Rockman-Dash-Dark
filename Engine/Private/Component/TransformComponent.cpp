@@ -57,4 +57,64 @@ void CTransformComponent::Free()
 	
 }
 
+void CTransformComponent::MoveForward(_float fValue)
+{
+	_vector vLook = XMVector3Normalize(Get_LookVector());
+
+	Set_Position(Get_PositionVector() + (vLook * fValue));
+}
+
+void CTransformComponent::MoveUpward(_float fValue)
+{
+	_vector vUp = XMVector3Normalize(Get_UpVector());
+
+	Set_Position(Get_PositionVector() + (vUp * fValue));
+}
+
+void CTransformComponent::MoveRightward(_float fValue)
+{
+	_vector vRight = XMVector3Normalize(Get_RightVector());
+
+	Set_Position(Get_PositionVector() + (vRight * fValue));
+}
+
+void CTransformComponent::TurnRight(_float fRadian)
+{
+	_vector vRight = Get_RightVector();
+	_vector vUp = Get_UpVector();
+	_vector vLook = Get_LookVector();
+
+	_matrix matRotation = XMMatrixRotationAxis(XMVector3Normalize(vUp), fRadian);
+
+	Set_Right(XMVector3TransformNormal(vRight, matRotation));
+	Set_Up(XMVector3TransformNormal(vUp, matRotation));
+	Set_Look(XMVector3TransformNormal(vLook, matRotation));
+}
+
+void CTransformComponent::TurnUp(_float fRadian)
+{
+	_vector vRight = Get_RightVector();
+	_vector vUp = Get_UpVector();
+	_vector vLook = Get_LookVector();
+
+	_matrix matRotation = XMMatrixRotationAxis(XMVector3Normalize(vRight), fRadian);
+
+	Set_Right(XMVector3TransformNormal(vRight, matRotation));
+	Set_Up(XMVector3TransformNormal(vUp, matRotation));
+	Set_Look(XMVector3TransformNormal(vLook, matRotation));
+}
+
+void CTransformComponent::TurnAxis(_float3 vAxis, _float fRadian)
+{
+	_vector vRight = Get_RightVector();
+	_vector vUp = Get_UpVector();
+	_vector vLook = Get_LookVector();
+
+	_matrix matRotation = XMMatrixRotationAxis(XMVector3Normalize(XMLoadFloat3(&vAxis)), fRadian);
+
+	Set_Right(XMVector3TransformNormal(vRight, matRotation));
+	Set_Up(XMVector3TransformNormal(vUp, matRotation));
+	Set_Look(XMVector3TransformNormal(vLook, matRotation));
+}
+
 

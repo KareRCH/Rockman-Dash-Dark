@@ -112,6 +112,7 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 	tMeshBuffer.iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
 	tMeshBuffer.iIndCount = Cast<_uint>(pMesh->vecIndices.size());
 	tMeshBuffer.strMeshName = strMeshKey;
+	tMeshBuffer.matTransform = &pMesh->matTransform;
 
 	
 	// 정점, 인덱스 버퍼 만들기

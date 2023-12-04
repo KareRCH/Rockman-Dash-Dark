@@ -237,6 +237,14 @@ void CGameInstance::Tick_InputDev()
 	m_pInputDev->Tick();
 }
 
+void CGameInstance::Late_Tick_InputDev()
+{
+	if (nullptr == m_pInputDev)
+		return;
+
+	m_pInputDev->Late_Tick();
+}
+
 _byte CGameInstance::Get_DIKeyState(_ubyte byKeyID)
 {
 	if (nullptr == m_pInputDev)
@@ -259,6 +267,14 @@ _long CGameInstance::Get_DIMouseMove(MOUSEMOVESTATE eMouseState)
 		return (_byte)0;
 
 	return m_pInputDev->Get_DIMouseMove(eMouseState);
+}
+
+void CGameInstance::Toggle_LockMouseCenter()
+{
+	if (nullptr == m_pInputDev)
+		return;
+
+	m_pInputDev->Toggle_LockMouseCenter();
 }
 
 #pragma endregion

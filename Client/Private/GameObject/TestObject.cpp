@@ -54,10 +54,15 @@ _int CTestObject::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
-    if (GI()->IsKey_Pressing(DIK_W))
-        Transform().Set_PositionZ(Transform().Get_PositionFloat3().z + 5.f * fTimeDelta);
-    else if (GI()->IsKey_Pressing(DIK_S))
-        Transform().Set_PositionZ(Transform().Get_PositionFloat3().z - 5.f * fTimeDelta);
+    if (GI()->IsKey_Pressing(DIK_UP))
+        Transform().MoveForward(5.f * fTimeDelta);
+    else if (GI()->IsKey_Pressing(DIK_DOWN))
+        Transform().MoveForward(-5.f * fTimeDelta);
+
+    if (GI()->IsKey_Pressing(DIK_RIGHT))
+        Transform().TurnRight(5.f * fTimeDelta);
+    else if (GI()->IsKey_Pressing(DIK_LEFT))
+        Transform().TurnRight(-5.f * fTimeDelta);
 
     if (GI()->IsKey_Pressed(DIK_RETURN))
         Toggle_State(EGObjectState::Render);
@@ -80,6 +85,8 @@ void CTestObject::Render()
 {
     SUPER::Render();
 
+    m_pModelComp->Set_MaskAnimation(0, L"Idle");
+    m_pModelComp->Apply_Pose();
     m_pModelComp->Render();
 }
 
@@ -149,15 +156,12 @@ HRESULT CTestObject::Initialize_Component()
     m_pModelComp->Bind_Mesh(L"Head");
     m_pModelComp->Bind_Effect(L"FX_ModelTest");
     m_pModelComp->Bind_Skeletal(L"Armature");
-
-    //ID3D11ShaderReflectionVariable* pVariable = 
-    //m_pModelComp->m_pShaderComp->
-    //ID3D11ShaderReflection*
-    //FAILED_CHECK_RETURN(Add_Component(L"Shader", m_pModelShaderComp = CModelShaderComp::Create(g_hWnd)), E_FAIL);
-    ////m_ColorShaderComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
-    //m_pModelShaderComp->Set_IndexCount(m_pModelComp->VIBufferComp()->Get_IndexCount());
-    //ID3D11ShaderResourceView* pTest = GameInstance()->Get_Texture(L"RockVolnutt", L"Body-BaseColor");
-    //m_pModelShaderComp->Set_Texture(pTest);
+    m_pModelComp->Create_Mask(L"Main", L"Armature", true);
+    m_pModelComp->Create_Mask(L"Head", L"Armature", false);
+    m_pModelComp->Create_Mask(L"Leg", L"Armature", false);
+    m_pModelComp->Active_BoneMask(2, L"Bone");
+    m_pModelComp->Create_Mask(L"LeftArm", L"Armature", false);
+    m_pModelComp->Create_Mask(L"RightArm", L"Armature", false);
 
     return S_OK;
 }

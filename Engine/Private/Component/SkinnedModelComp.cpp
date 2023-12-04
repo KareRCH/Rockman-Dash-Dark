@@ -52,38 +52,37 @@ void CSkinnedModelComp::Render()
 {
     // 여기서 셰이더에 모든 정보를 넘겨주는 행위를 한다.
 
-    MATRIX_BUFFER_T matBuffer = {
-        Transform().Get_TransformMatrix(),
-        PipelineComp().Get_ViewMatrix(ECamType::Pers, ECamNum::One),
-        PipelineComp().Get_ProjMatrix(ECamType::Pers, ECamNum::One)
-    };
     LIGHT_BUFFER_T lightBuffer = { 
         _float4(0.2f, 0.2f, 0.2f, 1.f), 
         _float4(0.2f, 0.2f, 0.2f, 1.f), 
         _float3(0.f, -0.2f, 1.f),                
         _float(2.f), _float4(1.f, 0.2f, 0.2f, 1.f)
     };
-    BONE_COMMON_BUFFER_T boneBuffer = {};
 
-    _float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
+
     vector<_float4x4> vecBones = m_pSkeletalComp->Get_FinalTransforms();
-
-    m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
-    m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_ViewFloat4x4(ECamType::Pers, ECamNum::One)));
-    m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_ProjFloat4x4(ECamType::Pers, ECamNum::One)));
-    m_pEffectComp->Bind_Matrices("g_matBones", vecBones.data(), (_uint)vecBones.size());
-    m_pEffectComp->Bind_RawValue("g_colDiffuse", VPCast(&lightBuffer.vDiffuseColor), sizeof(_float4));
-    m_pEffectComp->Bind_RawValue("g_colAmbient", VPCast(&lightBuffer.vAmbientColor), sizeof(_float4));
-    m_pEffectComp->Bind_RawValue("g_colSpecular", VPCast(&lightBuffer.vSpecularColor), sizeof(_float4));
-    m_pEffectComp->Bind_RawValue("g_fSpecularPower", VPCast(&lightBuffer.fSpecularPower), sizeof(_float));
-    m_pEffectComp->Bind_RawValue("g_vLightDir", VPCast(&lightBuffer.vLightDirection), sizeof(_float3));
-    m_pEffectComp->Bind_SRV("g_texDiffuse", GI()->Find_SRV(L"Model/Character/RockVolnutt/Body.png"));
-
-    // 그리기 시작
-    m_pEffectComp->Begin(0);
-
     for (_uint i = 0; i < m_pMultiMeshBufComp->Get_MeshesCounts(); ++i)
     {
+        _float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
+        //_float4x4 matMesh = m_pMultiMeshBufComp->Get_MeshTransform(i);
+        //XMStoreFloat4x4(&matTemp, XMLoadFloat4x4(&matMesh) * XMLoadFloat4x4(&matTemp));
+        
+        m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
+        m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_ViewFloat4x4(ECamType::Pers, ECamNum::One)));
+        m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_ProjFloat4x4(ECamType::Pers, ECamNum::One)));
+        m_pEffectComp->Bind_Matrices("g_matBones", vecBones.data(), (_uint)vecBones.size());
+
+        m_pEffectComp->Bind_RawValue("g_colDiffuse", VPCast(&lightBuffer.vDiffuseColor), sizeof(_float4));
+        m_pEffectComp->Bind_RawValue("g_colAmbient", VPCast(&lightBuffer.vAmbientColor), sizeof(_float4));
+        m_pEffectComp->Bind_RawValue("g_colSpecular", VPCast(&lightBuffer.vSpecularColor), sizeof(_float4));
+        m_pEffectComp->Bind_RawValue("g_fSpecularPower", VPCast(&lightBuffer.fSpecularPower), sizeof(_float));
+        m_pEffectComp->Bind_RawValue("g_vLightDir", VPCast(&lightBuffer.vLightDirection), sizeof(_float3));
+
+        m_pEffectComp->Bind_SRV("g_texDiffuse", GI()->Find_SRV(L"Model/Character/RockVolnutt/Body.png"));
+
+        // 그리기 시작
+        m_pEffectComp->Begin(0);
+
         // 버퍼를 장치에 바인드
         m_pMultiMeshBufComp->Bind_Buffer(i);
 
@@ -196,6 +195,48 @@ HRESULT CSkinnedModelComp::Bind_Skeletal(const wstring& strSkeletalKey)
         return E_FAIL;
 
     return m_pSkeletalComp->Load_Skeletal(strSkeletalKey);
+}
+
+HRESULT CSkinnedModelComp::Create_Mask(const wstring& strMaskName, const wstring& strSkeletalName, _bool bInitBoneActive)
+{
+    if (!m_pAnimationComp)
+        return E_FAIL;
+
+    return m_pAnimationComp->Create_Mask(strMaskName, strSkeletalName, bInitBoneActive);
+}
+
+void CSkinnedModelComp::Deactive_BoneMask(_uint iIndex, const wstring& strBoneName)
+{
+    if (!m_pAnimationComp)
+        return;
+
+    m_pAnimationComp->Deactive_BoneMask(iIndex, strBoneName);
+}
+
+void CSkinnedModelComp::Active_BoneMask(_uint iIndex, const wstring& strBoneName)
+{
+    if (!m_pAnimationComp)
+        return;
+
+    m_pAnimationComp->Active_BoneMask(iIndex, strBoneName);
+}
+
+void CSkinnedModelComp::Set_MaskAnimation(_uint iIndex, const wstring& strAnimName)
+{
+    if (!m_pAnimationComp)
+        return;
+
+    m_pAnimationComp->Set_MaskAnimation(iIndex, strAnimName);
+}
+
+HRESULT CSkinnedModelComp::Apply_Pose()
+{
+    if (!m_pAnimationComp)
+        return E_FAIL;
+
+    m_pAnimationComp->Apply_FinalMask();
+
+    return S_OK;
 }
 
 

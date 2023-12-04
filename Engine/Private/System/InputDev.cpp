@@ -40,14 +40,24 @@ HRESULT Engine::CInputDev::Initialize(HINSTANCE hInst, HWND hWnd)
 	// 장치에 대한 access 버전을 받아오는 함수
 	m_pMouse->Acquire();
 
+	m_hWnd = hWnd;
 
 	return S_OK;
 }
 
-void Engine::CInputDev::Tick(void)
+void Engine::CInputDev::Tick()
 {
 	m_pKeyBoard->GetDeviceState(256, m_byKeyState);
 	m_pMouse->GetDeviceState(sizeof(m_tMouseState), &m_tMouseState);
+}
+
+void CInputDev::Late_Tick()
+{
+	// 마우스 화면 가운데 고정하기 옵션
+	if (m_bLockMouseCenter)
+	{
+		CenterMouse(m_hWnd);
+	}
 }
 
 

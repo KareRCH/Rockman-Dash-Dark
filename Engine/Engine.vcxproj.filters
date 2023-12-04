@@ -781,32 +781,34 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resource\Shader\PS_ModelTest.hlsl">
+    <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">
       <Filter>03. Shader\99. Test\ModelTest</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\VS_ModelTest.hlsl">
+    <FxCompile Include="Shader\Compiled\VS_ModelTest.hlsl">
       <Filter>03. Shader\99. Test\ModelTest</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\VS_Test1.hlsl">
+    <FxCompile Include="Shader\Compiled\VS_Test1.hlsl">
       <Filter>03. Shader\99. Test\Test1</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\PS_Test1.hlsl">
+    <FxCompile Include="Shader\Compiled\PS_Test1.hlsl">
       <Filter>03. Shader\99. Test\Test1</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\VS_Texture.hlsl">
+    <FxCompile Include="Shader\Compiled\VS_Texture.hlsl">
       <Filter>03. Shader\99. Test\Texture</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\PS_Texture.hlsl">
+    <FxCompile Include="Shader\Compiled\PS_Texture.hlsl">
       <Filter>03. Shader\99. Test\Texture</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\VS_Deferred_GBuffer.hlsl">
+    <FxCompile Include="Shader\Compiled\VS_Deferred_GBuffer.hlsl">
       <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\PS_Deferred_GBuffer.hlsl">
+    <FxCompile Include="Shader\Compiled\PS_Deferred_GBuffer.hlsl">
       <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
     </FxCompile>
-    <FxCompile Include="Resource\Shader\FX_ModelTest.hlsl">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Runtime\FX_ModelTest.hlsl">
       <Filter>03. Shader\99. Test\EffectTest</Filter>
-    </FxCompile>
+    </None>
   </ItemGroup>
 </Project>

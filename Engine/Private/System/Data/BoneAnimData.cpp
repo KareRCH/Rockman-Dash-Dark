@@ -22,7 +22,7 @@ void FBoneAnimNodeData::Free()
 	vecScales.clear();
 }
 
-_float4x4 FBoneAnimNodeData::Interporated_Matrix(const _float& fCurTime)
+_float4x4 FBoneAnimNodeData::Interporated_Matrix(const _float& fCurTime) const
 {
 	_uint iPivot;
 	_matrix matTransform = XMMatrixIdentity();
@@ -115,7 +115,7 @@ _float4x4 FBoneAnimNodeData::Interporated_Matrix(const _float& fCurTime)
 	return matReturn;
 }
 
-_uint FBoneAnimNodeData::Calculate_PivotPosition(const _float& fCurTime)
+_uint FBoneAnimNodeData::Calculate_PivotPosition(const _float& fCurTime) const
 {
 	_uint iPivot;
 
@@ -149,7 +149,7 @@ _uint FBoneAnimNodeData::Calculate_PivotPosition(const _float& fCurTime)
 	return iPivot;
 }
 
-_uint FBoneAnimNodeData::Calculate_PivotRotation(const _float& fCurTime)
+_uint FBoneAnimNodeData::Calculate_PivotRotation(const _float& fCurTime) const
 {
 	_uint iPivot;
 
@@ -182,7 +182,7 @@ _uint FBoneAnimNodeData::Calculate_PivotRotation(const _float& fCurTime)
 	return iPivot;
 }
 
-_uint FBoneAnimNodeData::Calculate_PivotScale(const _float& fCurTime)
+_uint FBoneAnimNodeData::Calculate_PivotScale(const _float& fCurTime) const
 {
 	_uint iPivot;
 
@@ -237,6 +237,14 @@ void FBoneAnimData::Free()
 	for (auto& Pair : mapNodeAnim)
 		Safe_Release(Pair.second);
 	mapNodeAnim.clear();
+}
+
+const FBoneAnimNodeData* const FBoneAnimData::Find_AnimNodeData(_uint iIndex) const
+{
+	if (iIndex < 0 || iIndex >= vecAnim_BoneIndex.size())
+		return nullptr;
+
+	return vecAnim_BoneIndex[iIndex];
 }
 
 const FBoneAnimNodeData* const FBoneAnimData::Find_AnimNodeData(const wstring& strNodeKey) const

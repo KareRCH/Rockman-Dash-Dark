@@ -28,8 +28,9 @@ public:
 protected:
 	virtual void	Free() override;
 
-#pragma region Transform
+
 public:
+#pragma region Position
 	inline const _vector Get_PositionVector()
 	{
 		return XMVectorSet(m_matTransform._41, m_matTransform._42, m_matTransform._43, m_matTransform._44);
@@ -59,7 +60,12 @@ public:
 	inline void Set_PositionX(const _float value) { m_matTransform._41 = value; }
 	inline void Set_PositionY(const _float value) { m_matTransform._42 = value; }
 	inline void Set_PositionZ(const _float value) { m_matTransform._43 = value; }
+#pragma endregion
 
+
+
+
+#pragma region Right UP Look
 	inline void Set_Right(_fvector vRight)
 	{
 		m_matTransform.m[0][0] = XMVectorGetX(vRight);
@@ -107,8 +113,12 @@ public:
 	{
 		return _float3(m_matTransform._31, m_matTransform._32, m_matTransform._33);
 	}
+#pragma endregion
 
 
+
+
+#pragma region Rotation
 	const _vector Get_RotationEulerVector()
 	{
 		_matrix matRot = {
@@ -188,7 +198,7 @@ public:
 		_float3 vRot = _float3(x, y, z);
 		Set_RotationEuler(XMLoadFloat3(&vRot));
 	}
-	void Set_RotationEulerX(const _float x) 
+	void Set_RotationEulerX(const _float x)
 	{
 		_float3 vRot = Get_RotationEulerFloat3();
 		vRot.x = x;
@@ -242,15 +252,19 @@ public:
 	{
 		Set_RotationQuaternion(XMLoadFloat4(&qtRot));
 	}
+#pragma endregion
+
+
 	
 
+#pragma region Scale
 	// 스케일
 	_vector Get_ScaleVector()
-	{ 
+	{
 		return XMVectorSet(m_vScale.x, m_vScale.y, m_vScale.z, 0.f);
 	}
 	_float3 Get_ScaleFloat3()
-	{ 
+	{
 		return m_vScale;
 	}
 	void Set_Scale(_fvector value)
@@ -298,12 +312,27 @@ public:
 		// 부동소수점 문제로 Scale값은 따로 저장
 		m_vScale.z = value;
 	}
+#pragma endregion
 
+
+
+
+#pragma region Transform
 	// 트랜스폼
 	const _float4x4& Get_TransformFloat4x4() const
 	{ return m_matTransform; }
 	const _matrix Get_TransformMatrix() const
 	{ return XMLoadFloat4x4(&m_matTransform); }
+	const _float4x4 Get_TransformInverseFloat4x4() const
+	{
+		_float4x4 matResult;
+		XMStoreFloat4x4(&matResult, XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_matTransform)));
+		return matResult;
+	}
+	const _matrix Get_TransformInverseMatrix() const
+	{
+		return XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_matTransform));
+	}
 	void Set_Transform(_fmatrix matTransform)
 	{
 		XMStoreFloat4x4(&m_matTransform, matTransform);
@@ -313,6 +342,26 @@ public:
 		m_matTransform = matTransform;
 	}
 #pragma endregion
+
+
+
+
+public:
+	// 기타 변환
+	// 앞쪽 방향으로 움직이게 하기, 음수면 뒤로 움직임
+	void MoveForward(_float fValue);
+	// 위쪽 방향으로 움직이게 하기, 음수면 아래로 움직임
+	void MoveUpward(_float fValue);
+	// 오른쪽 방향으로 움직이게 하기, 음수면 왼쪽으로 움직임
+	void MoveRightward(_float fValue);
+
+	// 오른쪽 방향으로 돌게 하기, 음수면 왼쪽이 됨
+	void TurnRight(_float fRadian);
+	// 위쪽 방향으로 돌게 하기, 음수면 아래쪽이 됨
+	void TurnUp(_float fRadian);
+	// 원하는 축으로 회전하게 하기
+	void TurnAxis(_float3 vAxis, _float fRadian);
+	
 
 private:
 	_float4		m_qtOrientation;	// 회전을 저장하는 쿼터니언

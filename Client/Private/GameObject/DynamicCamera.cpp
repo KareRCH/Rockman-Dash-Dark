@@ -1,5 +1,6 @@
 #include "GameObject/DynamicCamera.h"
 
+
 CDynamicCamera::CDynamicCamera()
 {
     Set_Name(L"DynamicCamera");
@@ -13,6 +14,12 @@ CDynamicCamera::CDynamicCamera(const CDynamicCamera& rhs)
 HRESULT CDynamicCamera::Initialize_Prototype()
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+
+    Transform().Set_Position(_float3(0.f, 0.f, -6.f));
+    _matrix matTransform = XMMatrixInverse(nullptr, 
+        XMMatrixLookAtLH(Transform().Get_PositionVector(), XMLoadFloat3(&m_vAt), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+    Transform().Set_Transform(matTransform);
+    Apply_ViewProjMatrix();
 
     return S_OK;
 }
@@ -36,24 +43,29 @@ _int CDynamicCamera::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
-    Transform().Set_Position(_float3(3.f, 3.f, -6.f));
+    if (GI()->IsKey_Pressing(DIK_W))
+        Transform().MoveForward(5.f * fTimeDelta);
+    else if (GI()->IsKey_Pressing(DIK_S))
+        Transform().MoveForward(-5.f * fTimeDelta);
 
-    _float3 vPos, vUp, vAt;
-    vPos = Transform().Get_PositionFloat3();
-    vAt = _float3(0.f, 0.f, 0.f);
-    vUp = _float3(0.f, 1.f, 0.f);
+    if (GI()->IsKey_Pressing(DIK_D))
+        Transform().MoveRightward(5.f * fTimeDelta);
+    else if (GI()->IsKey_Pressing(DIK_A))
+        Transform().MoveRightward(-5.f * fTimeDelta);
 
-    _matrix matPersView, matPersProj;
+    if (GI()->IsKey_Pressing(DIK_E))
+        Transform().MoveUpward(5.f * fTimeDelta);
+    else if (GI()->IsKey_Pressing(DIK_Q))
+        Transform().MoveUpward(-5.f * fTimeDelta);
 
-    matPersView = XMMatrixLookAtLH(XMLoadFloat3(&vPos), XMLoadFloat3(&vAt), XMLoadFloat3(&vUp));
-    matPersProj = XMMatrixPerspectiveFovLH(XM_PI * 0.25f, ((_float)g_iWindowSizeX / (_float)g_iWindowSizeY), 0.1f, 1000.f);
-    //m_matPersProj = XMMatrixOrthographicLH(g_iWindowSizeX, g_iWindowSizeY, 0.1f, 1000.f);
+    if (GI()->IsKey_Pressed(DIK_F3))
+        GI()->Toggle_LockMouseCenter();
 
-    XMStoreFloat4x4(&m_matPersView, matPersView);
-    XMStoreFloat4x4(&m_matPersProj, matPersProj);
+    Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
+    Transform().TurnUp(Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 0.1f * fTimeDelta);
 
-    PipelineComp().Set_ViewMatrix(ECamType::Pers, ECamNum::One, matPersView);
-    PipelineComp().Set_ProjMatrix(ECamType::Pers, ECamNum::One, matPersProj);
+    // 현재 카메라의 상태를 통해 전역 카메라 행렬을 업데이트 한다.
+    Apply_ViewProjMatrix();
 
     return 0;
 }

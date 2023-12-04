@@ -8,7 +8,7 @@ cbuffer MatrixBuffer : register(b0)
 };
 
 // 빛 정보를 저장하는 버퍼
-cbuffer LightBuffer
+cbuffer LightBuffer : register(b1)
 {
     float4  g_colDiffuse;
     float4  g_colAmbient;
@@ -19,7 +19,7 @@ cbuffer LightBuffer
 
 
 // 뼈 행렬들
-cbuffer BoneBuffer
+cbuffer BoneBuffer : register(b2)
 {
     float4x4 g_matBones[128];
 };
@@ -65,25 +65,25 @@ PS_INPUT VS_MAIN(VS_INPUT input)
 {
     PS_INPUT output = (PS_INPUT) 0;
     
-    float4x4 matBoneTransfrom = { 1.f, 0.f, 0.f, 0.f,
+    float4x4 matBoneTransform = { 1.f, 0.f, 0.f, 0.f,
                                   0.f, 1.f, 0.f, 0.f,
                                   0.f, 0.f, 1.f, 0.f,
                                   0.f, 0.f, 0.f, 1.f };
     
     // 하나라도 값이 들어가 있음
-    if (!all(input.vWeight))
+    //if (!all(input.vBoneID))
     {
-        matBoneTransfrom = g_matBones[input.vBoneID[0]] * input.vWeight[0];
-        matBoneTransfrom += g_matBones[input.vBoneID[1]] * input.vWeight[1];
-        matBoneTransfrom += g_matBones[input.vBoneID[2]] * input.vWeight[2];
-        matBoneTransfrom += g_matBones[input.vBoneID[3]] * input.vWeight[3];
+        matBoneTransform = g_matBones[input.vBoneID[0]] * input.vWeight[0];
+        matBoneTransform += g_matBones[input.vBoneID[1]] * input.vWeight[1];
+        matBoneTransform += g_matBones[input.vBoneID[2]] * input.vWeight[2];
+        matBoneTransform += g_matBones[input.vBoneID[3]] * input.vWeight[3];
     }
     
-    output.vPosition = mul(float4(input.vPosition.xyz + matBoneTransfrom[3].xyz, 1.f), g_matWorld);
+    output.vPosition = mul(float4(input.vPosition.xyz, 1.f), mul(matBoneTransform, g_matWorld));
     output.vPosition = mul(output.vPosition, g_matView);
     output.vPosition = mul(output.vPosition, g_matProj);
     
-    output.vNormal = mul(input.vNormal, (float3x3) g_matWorld);
+    output.vNormal = mul(input.vNormal, (float3x3) mul(matBoneTransform, g_matWorld));
     output.vNormal = normalize(output.vNormal);
     
     output.vTexCoord = input.vTexCoord;
