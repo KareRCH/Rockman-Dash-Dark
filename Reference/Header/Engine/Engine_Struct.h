@@ -84,6 +84,20 @@ namespace Engine
 		};
 	};
 
+	struct VERTEX_NORM_T
+	{
+		_float3		vPosition;
+		_float3		vNormal;
+		_float2		vTexcoord;
+
+		static constexpr unsigned int	iMaxIndex = 3;
+		static constexpr D3D11_INPUT_ELEMENT_DESC InputLayout[iMaxIndex] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+	};
+
 	struct VERTEX_MODEL_SKIN_T
 	{
 		_float3		vPosition;

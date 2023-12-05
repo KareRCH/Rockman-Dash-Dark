@@ -25,19 +25,6 @@ public:
 protected:
 	virtual void	Free();
 
-public:
-	GETSET_1(_uint, m_iVtxCount, VertexCount, GET_C_REF)
-	GETSET_1(_uint, m_iIndexCount, IndexCount, GET_C_REF)
-
-protected:
-	ComPtr<ID3D11Buffer> m_pVtxBuffer = { nullptr };
-	ComPtr<ID3D11Buffer> m_pIndexBuffer = { nullptr };
-	_uint m_iVtxCount = 0;
-	_uint m_iIndexCount = 0;
-
-
-
-
 #pragma region 디바이스 컴포넌트
 protected:
 	virtual ID3D11Device* const D3D11Device() const override { return m_pDeviceComp->Get_Device(); }
@@ -46,6 +33,33 @@ protected:
 private:
 	CD3D11DeviceComp* m_pDeviceComp = { nullptr };
 #pragma endregion
+
+
+public:
+	HRESULT Create_Buffer(_Inout_ ID3D11Buffer** ppBuffer);
+
+public:
+	GETSET_1(_uint, m_iNumVertices, VertexCount, GET_C_REF)
+	GETSET_1(_uint, m_iNumIndices, IndexCount, GET_C_REF)
+
+protected:
+	ComPtr<ID3D11Buffer> m_pVB = { nullptr };
+	ComPtr<ID3D11Buffer> m_pIB = { nullptr };
+
+	D3D11_BUFFER_DESC		m_BufferDesc;
+	D3D11_SUBRESOURCE_DATA	m_SubResourceData;
+
+protected:
+	_uint	m_iNumVertices = { 0 };
+	_uint	m_iStride = { 0 };
+	_uint	m_iNumVertexBuffers = { 0 };
+
+	_uint	m_iNumIndices = { 0 };
+	_uint	m_iIndexStride = { 0 };
+
+protected:
+	DXGI_FORMAT					m_eIndexFormat = { };
+	D3D11_PRIMITIVE_TOPOLOGY	m_eTopology = {};
 
 };
 

@@ -17,7 +17,9 @@ private:
 	virtual ~CImGuiWin() = default;
 
 public:
-	HRESULT	Initialize();
+	virtual HRESULT	Initialize() = 0;
+	virtual void	Tick(const _float& fTimeDelta) = 0;
+	virtual HRESULT	Render() = 0;
 
 private:
 	virtual void	Free();

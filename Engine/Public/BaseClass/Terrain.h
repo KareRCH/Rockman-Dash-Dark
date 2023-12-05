@@ -9,7 +9,7 @@ BEGIN(Engine)
 /// 지형 정보를 바탕으로 지형에 대한 기능을 가지도록 설계된 오브젝트
 /// 바리에이션 없이 이 객체 하나가 모든 기능을 다 가지도록 설계한다.
 /// </summary>
-class ENGINE_DLL CTerrain final : public CGameObject
+class ENGINE_DLL CTerrain : public CGameObject
 {
 	DERIVED_CLASS(CGameObject, CTerrain)
 

@@ -14,10 +14,9 @@ BEGIN(Engine)
 /// 
 /// 렌더링 파이프라인 바인딩이 필요하다.
 /// </summary>
-class CEffectComponent : public CInternalComponent, public ID3D11DeviceComp
+class CEffectComponent final : public CInternalComponent, public ID3D11DeviceComp
 {
 	DERIVED_CLASS(CInternalComponent, CEffectComponent)
-
 protected:
 	explicit CEffectComponent() = default;
 	explicit CEffectComponent(const CEffectComponent& rhs);
@@ -47,8 +46,12 @@ private:
 
 	
 public:	// 외부용 함수
+	// 이펙트 불러오기
 	HRESULT Bind_Effect(const wstring& strEffectKey);
+	// 이펙트 풀기
 	HRESULT Unbind_Effect();
+	// 외부에서 
+	HRESULT	IsRender_Ready();
 
 public:
 	// 패스 선택
@@ -62,9 +65,8 @@ public:
 	// 일반 변수 바인딩
 	HRESULT Bind_RawValue(const _char* pConstantName, const void* pData, _uint iSize);
 
-
 private:
-	FEffectData* m_pEffectData = { nullptr };	// 이펙트 데이터
+	class FEffectData* m_pEffectData = { nullptr };	// 이펙트 데이터
 };
 
 END

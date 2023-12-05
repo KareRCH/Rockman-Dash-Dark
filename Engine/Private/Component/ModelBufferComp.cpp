@@ -72,7 +72,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVtxBuffer.GetAddressOf()), E_FAIL);
+	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVB.GetAddressOf()), E_FAIL);
 
 	// 인덱스 버퍼 제작
 	for (_uint i = 0; i < m_iNumIndices; i++)
@@ -95,7 +95,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&indexBufferDesc, &indexData, m_pIndexBuffer.GetAddressOf()), E_FAIL);
+	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&indexBufferDesc, &indexData, m_pIB.GetAddressOf()), E_FAIL);
 
 	Safe_Delete_Array(vertices);
 	Safe_Delete_Array(indices);
@@ -105,17 +105,17 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 
 void CModelBufferComp::Render_Buffer()
 {
-	if (m_pVtxBuffer == nullptr || m_pIndexBuffer == nullptr)
+	if (m_pVB == nullptr || m_pIB == nullptr)
 		return;
 
 	_uint iStride = sizeof(VERTEX_MODEL_SKIN_T);
 	_uint iOffset = 0;
 
 	// 정점 버퍼 활성
-	D3D11Context()->IASetVertexBuffers(0, 1, m_pVtxBuffer.GetAddressOf(), &iStride, &iOffset);
+	D3D11Context()->IASetVertexBuffers(0, 1, m_pVB.GetAddressOf(), &iStride, &iOffset);
 
 	// 인텍스 버퍼 활성
-	D3D11Context()->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	D3D11Context()->IASetIndexBuffer(m_pIB.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// 정점 버퍼 삼각형 리스트
 	D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

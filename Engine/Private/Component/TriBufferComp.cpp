@@ -12,16 +12,16 @@ HRESULT CTriBufferComp::Initialize_Prototype(void* Arg)
 
 HRESULT CTriBufferComp::Initialize(void* Arg)
 {
-	m_iVtxCount = 3;
-	m_iIndexCount = 3;
+	m_iNumVertices = 3;
+	m_iNumIndices = 3;
 
-	VTXCOL* vertices = new VTXCOL[m_iVtxCount];
+	VTXCOL* vertices = new VTXCOL[m_iNumVertices];
 	if (!vertices)
 	{
 		return E_FAIL;
 	}
 
-	_uint* indices = new _uint[m_iIndexCount];
+	_uint* indices = new _uint[m_iNumIndices];
 	if (!indices)
 	{
 		return E_FAIL;
@@ -43,7 +43,7 @@ HRESULT CTriBufferComp::Initialize(void* Arg)
 	// 정적 정점 버퍼의 구조체를 설정
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VTXCOL) * m_iVtxCount;
+	vertexBufferDesc.ByteWidth = sizeof(VTXCOL) * m_iNumVertices;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -56,12 +56,12 @@ HRESULT CTriBufferComp::Initialize(void* Arg)
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVtxBuffer), E_FAIL);
+	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVB), E_FAIL);
 
 	// 정적 인덱스 버퍼의 구조체를 설정한다.
 	D3D11_BUFFER_DESC indexBufferDesc;
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(_uint) * m_iIndexCount;
+	indexBufferDesc.ByteWidth = sizeof(_uint) * m_iNumIndices;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -73,7 +73,7 @@ HRESULT CTriBufferComp::Initialize(void* Arg)
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&indexBufferDesc, &indexData, &m_pIndexBuffer), E_FAIL);
+	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&indexBufferDesc, &indexData, &m_pIB), E_FAIL);
 
 
 	Safe_Delete_Array(vertices);
@@ -88,10 +88,10 @@ void CTriBufferComp::Render_Buffer()
 	_uint iOffset = 0;
 
 	// 렌더링 할 수 있도록 입력 어셈블러에서 정점 버퍼를 활성으로 설정
-	D3D11Context()->IASetVertexBuffers(0, 1, &m_pVtxBuffer, &iStride, &iOffset);
+	D3D11Context()->IASetVertexBuffers(0, 1, &m_pVB, &iStride, &iOffset);
 
 	// 렌더링 할 수 있도록 입력 어셈블러에서 인덱스 버퍼를 활성으로 설정
-	D3D11Context()->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	D3D11Context()->IASetIndexBuffer(m_pIB.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// 정점 버퍼로 그릴 기본형 설정. 삼각형 설정
 	D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -132,6 +132,6 @@ void CTriBufferComp::Free()
 {
 	SUPER::Free();
 
-	Safe_Release(m_pVtxBuffer);
-	Safe_Release(m_pIndexBuffer);
+	Safe_Release(m_pVB);
+	Safe_Release(m_pIB);
 }

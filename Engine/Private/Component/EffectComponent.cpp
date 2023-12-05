@@ -78,6 +78,14 @@ HRESULT CEffectComponent::Unbind_Effect()
     return S_OK;
 }
 
+HRESULT CEffectComponent::IsRender_Ready()
+{
+    if (!m_pEffectData)
+        return E_FAIL;
+
+    return S_OK;
+}
+
 HRESULT CEffectComponent::Begin(_uint iPassIndex)
 {
     if (iPassIndex >= m_pEffectData->tTechniqueDesc.Passes)

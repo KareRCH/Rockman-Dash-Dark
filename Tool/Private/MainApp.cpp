@@ -34,52 +34,29 @@ CMainApp* CMainApp::Create()
 
 HRESULT CMainApp::Initialize()
 {
-	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(g_hInst, g_hWnd), E_FAIL);
 
-	FDEVICE_INIT tDeviceInit;
-	tDeviceInit.hWnd = g_hWnd;
-	tDeviceInit.bVSync = false;
-	tDeviceInit.bFullScreen = false;
-	tDeviceInit.iScreenWidth = g_iWindowSizeX;
-	tDeviceInit.iScreenHeight = g_iWindowSizeY;
-	tDeviceInit.fScreenDepth = 1000.f;
-	tDeviceInit.fScreenNear = 0.1f;
+	DX11DEVICE_T tDevice = { m_pGameInstance->Get_GraphicDev(), m_pGameInstance->Get_GraphicContext() };
 
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_GraphicDev(tDeviceInit), E_FAIL);
-
-
-	DX11DEVICE_T tDevice;
-	tDevice.pDevice = m_pGameInstance->Get_GraphicDev();
-	tDevice.pDeviceContext = m_pGameInstance->Get_GraphicContext();
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_InputDev(g_hInst, g_hWnd), E_FAIL);
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_RenderMgr(tDevice), E_FAIL);
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_PhysicsMgr(1), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_SoundMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_FontMgr(tDevice), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Default", L"¹ÙÅÁ", 15, 20, FW_HEAVY), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Jinji", L"±Ã¼­", 30, 30, FW_THIN), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"Font_Thin_Jinji", L"±Ã¼­", 18, 30, FW_THIN), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Font(L"MonsterUI", L"ÇÔÃÊ·Õ¹ÙÅÁ", 14, 25, FW_THIN), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(tDevice, L"../Client/Resource/"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ModelMgr("../Client/Resource/Model/"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(tDevice, L"Resource/"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ModelMgr("Resource/Model/"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
+	GameInstance()->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
+	GameInstance()->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
+	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", L"FX_ModelTest", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
+	GI()->Load_Effect(L"Runtime/FX_Terrain.hlsl", L"FX_Terrain", VERTEX_NORM_T::InputLayout, VERTEX_NORM_T::iMaxIndex);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_KeyMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_FrameMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Create_Frame(L"Frame", 120.f), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Create_Frame(L"Frame", 60.f), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TimerMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Timer(L"Timer_Immediate"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Timer(L"Timer_FPS"), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_CloudStationMgr(), E_FAIL);
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ComponentMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ObjectMgr(), E_FAIL);
+	//FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ImGuiMgr(), E_FAIL);
 
 	return S_OK;
 }
