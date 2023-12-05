@@ -14,6 +14,8 @@ class CModelShaderComp;
 
 END
 
+
+
 BEGIN(Client)
 
 /// <summary>

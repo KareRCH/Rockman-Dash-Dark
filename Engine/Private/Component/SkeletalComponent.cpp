@@ -80,10 +80,10 @@ HRESULT CSkeletalComponent::Load_Skeletal(const wstring& strSkeletalKey)
     return S_OK;
 }
 
-vector<_float4x4> CSkeletalComponent::Get_FinalTransforms()
+vector<_float4x4> CSkeletalComponent::Get_FinalTransforms(_bool bNoHierarchi)
 {
     if (!m_pSkeletalData)
         return vector<_float4x4>();
 
-    return m_pSkeletalData->Provide_FinalTransforms();
+    return m_pSkeletalData->Provide_FinalTransforms(bNoHierarchi);
 }

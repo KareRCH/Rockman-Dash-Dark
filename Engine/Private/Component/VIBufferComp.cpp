@@ -26,3 +26,8 @@ void CVIBufferComp::Free()
 {
 	Safe_Release(m_pDeviceComp);
 }
+
+HRESULT CVIBufferComp::Create_Buffer(_Inout_ ID3D11Buffer** ppBuffer)
+{
+	return D3D11Device()->CreateBuffer(&m_BufferDesc, &m_SubResourceData, ppBuffer);
+}

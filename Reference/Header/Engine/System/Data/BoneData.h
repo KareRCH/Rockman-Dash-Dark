@@ -84,13 +84,14 @@ public:
 	FBoneNodeData* Find_BoneNodeData(const wstring& strBoneNodeKey);
 	void Appoint_SkeletalRootNode(const wstring& strBoneNodeKey);
 	HRESULT Add_BoneNodeData(const wstring& strBoneNodeKey, FBoneNodeData* pNode);
-	vector<_float4x4>	Provide_FinalTransforms();
+	vector<_float4x4>	Provide_FinalTransforms(_bool bNoHierarchi = true);
 	// 행렬 웨이트값을 적용하기 위해 행렬값을 더하는 연산을 하는 함수
 	void Add_Transforms(vector<_float4x4>* pVecMatrices) const;
 	void Clear_FinalTransforms();
 	
 private:
 	void Calculate_FinalTransforms();
+	void Calculate_FinalTransformsNoHierarchi();
 
 private:
 	// 아마추어 노드도 같이 저장된다.

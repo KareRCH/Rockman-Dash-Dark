@@ -40,7 +40,7 @@ public:
 	HRESULT Load_Skeletal(const wstring& strSkeletalKey);
 
 	// 최종 트랜스폼의 주소를 저장한 벡터를 내보내, 버퍼에 전달 할 수 있도록 해준다.
-	vector<_float4x4>	Get_FinalTransforms();
+	vector<_float4x4>	Get_FinalTransforms(_bool bNoHierarchi = true);
 
 private:	// 뼈 정보
 	class FModelData* m_pModelData = { nullptr };		// 모델 데이터, 해당 모델을 바인딩 시켜놓기 위해 해놓는다.
