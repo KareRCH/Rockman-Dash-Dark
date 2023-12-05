@@ -231,6 +231,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Component\TerrainBufferComp.h" />
+    <ClInclude Include="Public\Component\TerrainModelComp.h" />
     <ClInclude Include="Public\Utility\LogicDeviceBasic.h" />
     <ClInclude Include="Public\Base.h" />
     <ClInclude Include="Public\BaseClass\CloudStation.h" />
@@ -358,6 +360,7 @@
     <ClCompile Include="Private\Component\SkinnedModelComp.cpp" />
     <ClCompile Include="Private\Component\SkinnedModelShaderComp.cpp" />
     <ClCompile Include="Private\Component\TeamAgentComp.cpp" />
+    <ClCompile Include="Private\Component\TerrainModelComp.cpp" />
     <ClCompile Include="Private\Component\TextureComponent.cpp" />
     <ClCompile Include="Private\Component\TransformComponent.cpp" />
     <ClCompile Include="Private\Component\TriBufferComp.cpp" />
@@ -405,6 +408,7 @@
     <ClCompile Include="Private\BaseClass\GameObject.cpp" />
     <ClCompile Include="Private\Component\PrimitiveComponent.cpp" />
     <ClCompile Include="Private\Component\CloudStationComp.cpp" />
+    <ClCompile Include="Private\Component\TerrainBufferComp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Compiled\PS_Test1.hlsl">
@@ -439,6 +443,15 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <None Include="Shader\Runtime\FX_Terrain.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
     <None Include="Shader\Runtime\FX_ModelTest.hlsl">
       <FileType>Document</FileType>
     </None>

@@ -2,6 +2,7 @@
 
 #include "GameObject/TestObject.h"
 #include "GameObject/DynamicCamera.h"
+#include "BaseClass/Terrain.h"
 #include "System/Define/ModelMgr_Define.h"
 #include "System/GameInstance.h"
 
@@ -16,6 +17,7 @@ HRESULT CTestScene::Initialize()
     GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 0.f)));
     //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
     GI()->Add_GameObject(CDynamicCamera::Create());
+    GI()->Add_GameObject(CTerrain::Create());
 
     return S_OK;
 }

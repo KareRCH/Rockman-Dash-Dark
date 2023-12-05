@@ -259,6 +259,12 @@
     <Filter Include="02. Utility\02. Component\03. InternalComponent\07. CamViewComponent">
       <UniqueIdentifier>{5da46c9f-d97e-4069-b876-8bb38a757515}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\02. TerrainModelComp">
+      <UniqueIdentifier>{f5490c59-123d-465b-b9e9-96e49d19b784}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\01. BufferComponent\06. Terrain">
+      <UniqueIdentifier>{7410f83b-89ab-4e3f-9abb-9d0af3c88997}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -552,6 +558,12 @@
     <ClInclude Include="Public\Component\PipelineComp.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\07. CamViewComponent</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\TerrainModelComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\02. TerrainModelComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\TerrainBufferComp.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\06. Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -779,6 +791,12 @@
     <ClCompile Include="Private\Component\PipelineComp.cpp">
       <Filter>02. Utility\02. Component\03. InternalComponent\07. CamViewComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Component\TerrainModelComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\02. TerrainModelComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\TerrainBufferComp.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\06. Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">
@@ -808,6 +826,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Runtime\FX_ModelTest.hlsl">
+      <Filter>03. Shader\99. Test\EffectTest</Filter>
+    </None>
+    <None Include="Shader\Runtime\FX_Terrain.hlsl">
       <Filter>03. Shader\99. Test\EffectTest</Filter>
     </None>
   </ItemGroup>

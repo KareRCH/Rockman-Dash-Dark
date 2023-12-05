@@ -5,7 +5,7 @@
 CVIBufferComp::CVIBufferComp(const CVIBufferComp& rhs)
 	: Base(rhs)
 	, m_pDeviceComp(rhs.m_pDeviceComp)
-	, m_pVtxBuffer(rhs.m_pVtxBuffer), m_pIndexBuffer(rhs.m_pIndexBuffer)
+	, m_pVB(rhs.m_pVB), m_pIB(rhs.m_pIB)
 {
 	Safe_AddRef(m_pDeviceComp);
 }

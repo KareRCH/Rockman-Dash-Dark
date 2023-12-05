@@ -177,6 +177,7 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const wstring& strKe
 		return E_FAIL;
 
 	_uint		iHlslFlag = 0;
+	HRESULT		hr = 0;
 
 #ifdef _DEBUG
 	iHlslFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -185,7 +186,7 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const wstring& strKe
 #endif
 
 	ComPtr<ID3DX11Effect> pEffect;
-	if (FAILED(D3DX11CompileEffectFromFile((m_strMainPath + strFileName).c_str(), nullptr,
+	if (FAILED(hr = D3DX11CompileEffectFromFile((m_strMainPath + strFileName).c_str(), nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice.Get(), pEffect.GetAddressOf(), nullptr)))
 		return E_FAIL;
 

@@ -38,9 +38,8 @@ private:
 
 
 private:		// 접근을 최소화하는 함수, 변수
-	CGameInstance*			m_pGameInstance = nullptr;
-	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
-	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
+	CGameInstance*					m_pGameInstance = nullptr;
+
 };
 
 END

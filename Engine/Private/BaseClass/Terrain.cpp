@@ -6,11 +6,25 @@ CTerrain::CTerrain(const CTerrain& rhs)
 
 HRESULT CTerrain::Initialize_Prototype()
 {
+    FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+    FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
+
+    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
+    TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
+    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
+
     return S_OK;
 }
 
 HRESULT CTerrain::Initialize(void* Arg)
 {
+    FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+    FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
+
+    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
+    TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
+    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
+
     return S_OK;
 }
 
@@ -73,7 +87,7 @@ HRESULT CTerrain::Initialize_Component()
 {
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pTerrainModelComp = CTerrainModelComp::Create()), E_FAIL);
 
-    m_pTerrainModelComp->Create_Buffer({L"HeightMap", 100, 100});
+    m_pTerrainModelComp->Create_Buffer({L"Resource/Textures/Study/Terrain/Height1.bmp", 1000, 25});
     m_pTerrainModelComp->Bind_Effect(L"FX_Terrain");
     
 

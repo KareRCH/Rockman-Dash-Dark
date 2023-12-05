@@ -1,16 +1,28 @@
 #include "Component/TerrainModelComp.h"
 
 CTerrainModelComp::CTerrainModelComp(const CTerrainModelComp& rhs)
+    : Base(rhs)
+    , m_pEffectComp(rhs.m_pEffectComp)
+    , m_pTerrainBufferComp(rhs.m_pTerrainBufferComp)
 {
+    Safe_AddRef(m_pEffectComp);
+    Safe_AddRef(m_pTerrainBufferComp);
 }
 
 HRESULT CTerrainModelComp::Initialize_Prototype(void* Arg)
 {
+    FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+
+    m_pTerrainBufferComp = CTerrainBufferComp::Create();
+    m_pEffectComp = CEffectComponent::Create();
+
 	return S_OK;
 }
 
 HRESULT CTerrainModelComp::Initialize(void* Arg)
 {
+    FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
+
 	return S_OK;
 }
 
@@ -71,15 +83,34 @@ CComponent* CTerrainModelComp::Clone(void* Arg)
 void CTerrainModelComp::Free()
 {
     SUPER::Free();
+
+    Safe_Release(m_pEffectComp);
+    Safe_Release(m_pTerrainBufferComp);
+}
+
+HRESULT CTerrainModelComp::IsRender_Ready()
+{
+    if (!m_pTerrainBufferComp || !m_pEffectComp)
+        return E_FAIL;
+
+    if (FAILED(m_pTerrainBufferComp->IsRender_Ready()))
+        return E_FAIL;
+
+    if (FAILED(m_pEffectComp->IsRender_Ready()))
+        return E_FAIL;
+
+    return S_OK;
 }
 
 HRESULT CTerrainModelComp::Bind_ShaderResources()
 {
+    _float4x4 matTemp = {};
+
     if (FAILED(m_pEffectComp->Bind_Matrix("g_WorldMatrix", &Transform().Get_TransformFloat4x4())))
         return E_FAIL;
-    if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &PipelineComp().Get_ViewFloat4x4(ECamType::Pers, ECamNum::One))))
+    if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_ViewFloat4x4(ECamType::Pers, ECamNum::One)))))
         return E_FAIL;
-    if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &PipelineComp().Get_ProjFloat4x4(ECamType::Pers, ECamNum::One))))
+    if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_ProjFloat4x4(ECamType::Pers, ECamNum::One)))))
         return E_FAIL;
 
     return S_OK;

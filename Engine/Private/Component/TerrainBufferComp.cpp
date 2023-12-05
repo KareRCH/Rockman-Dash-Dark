@@ -71,19 +71,26 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
     if (!ReadFile(hFile, &ih, sizeof ih, &dwByte, nullptr))
         return E_FAIL;
 
-    _ulong* pPixel = new _ulong[ih.biWidth * ih.biHeight];
-    if (!ReadFile(hFile, pPixel, sizeof(_ulong) * ih.biWidth * ih.biHeight, &dwByte, nullptr))
+    _uint* pPixel = new _uint[Cast<_uint>(ih.biWidth * ih.biHeight)];
+    if (!ReadFile(hFile, pPixel, sizeof(_uint) * ih.biWidth * ih.biHeight, &dwByte, nullptr))
         return E_FAIL;
 
     CloseHandle(hFile);
 
+    // 헤이트 맵 사이즈
     m_viNumTerrainVertices.x = ih.biWidth;
     m_viNumTerrainVertices.z = ih.biHeight;
 
+    // 점간의 거리
+    m_fIntervalX = Cast<_float>(tInit.iWidth) / Cast<_float>(m_viNumTerrainVertices.x);
+    m_fIntervalZ = Cast<_float>(tInit.iWidth) / Cast<_float>(m_viNumTerrainVertices.z);
+
+    // 정점 개수
     m_iNumVertexBuffers = 1;
     m_iNumVertices = m_viNumTerrainVertices.x * m_viNumTerrainVertices.z;
     m_iStride = sizeof(VERTEX_NORM_T);
 
+    // 인덱스 개수
     m_iNumIndices = (m_viNumTerrainVertices.x - 1) * (m_viNumTerrainVertices.z - 1) * 2 * 3;
     m_iIndexStride = m_iNumVertices >= 65535 ? 4 : 2;
     m_eIndexFormat = m_iIndexStride == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
@@ -94,13 +101,14 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
 #pragma region 버텍스 버퍼 생성
     VERTEX_NORM_T* pVertices = new VERTEX_NORM_T[m_iNumVertices];
 
-    for (size_t i = 0; i < m_viNumTerrainVertices.z; i++)
+    for (_uint i = 0; i < Cast<_uint>(m_viNumTerrainVertices.z); i++)
     {
-        for (size_t j = 0; j < m_viNumTerrainVertices.x; j++)
+        for (_uint j = 0; j < Cast<_uint>(m_viNumTerrainVertices.x); j++)
         {
             _uint		iIndex = (i * m_viNumTerrainVertices.x) + j;
+            _float      fCalcHeight = Cast<_float>((pPixel[iIndex] & 0x000000ff)) / 256.f * Cast<_float>(tInit.iHeight);
 
-            pVertices[iIndex].vPosition = _float3(j, (pPixel[iIndex] & 0x000000ff) / Cast<_float>(tInit.iHeight), i);
+            pVertices[iIndex].vPosition = _float3(j * m_fIntervalX, fCalcHeight, i * m_fIntervalZ);
             pVertices[iIndex].vNormal = _float3(0.0f, 0.0f, 0.f);
             pVertices[iIndex].vTexcoord = _float2(j / (m_viNumTerrainVertices.x - 1.0f), i / (m_viNumTerrainVertices.z - 1.0f));
         }
@@ -116,9 +124,9 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
 
     _uint		iNumIndices = 0;
 
-    for (_uint i = 0; i < m_viNumTerrainVertices.z - 1; i++)
+    for (_uint i = 0; i < Cast<_uint>(m_viNumTerrainVertices.z - 1); i++)
     {
-        for (_uint j = 0; j < m_viNumTerrainVertices.x - 1; j++)
+        for (_uint j = 0; j < Cast<_uint>(m_viNumTerrainVertices.x - 1); j++)
         {
             _uint		iIndex = i * m_viNumTerrainVertices.x + j;
 
@@ -207,7 +215,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
 HRESULT CTerrainBufferComp::Bind_Buffer()
 {
     if (nullptr == m_pVB || nullptr == m_pIB)
-        return;
+        return E_FAIL;
 
     ID3D11Buffer* pVBs[] = {
         m_pVB.Get()
@@ -228,11 +236,21 @@ HRESULT CTerrainBufferComp::Bind_Buffer()
 
     /* 정점을 어떤식으로 이어서 그릴거다. */
     D3D11Context()->IASetPrimitiveTopology(m_eTopology);
+
+    return S_OK;
 }
 
 HRESULT CTerrainBufferComp::Render_Buffer()
 {
     D3D11Context()->DrawIndexed(m_iNumIndices, 0, 0);
+
+    return S_OK;
+}
+
+HRESULT CTerrainBufferComp::IsRender_Ready()
+{
+    if (m_pIB == nullptr || m_pVB == nullptr)
+        return E_FAIL;
 
     return S_OK;
 }
