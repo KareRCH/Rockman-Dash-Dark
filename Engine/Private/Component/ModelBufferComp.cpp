@@ -26,19 +26,19 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 {
 	const FMeshData* pMesh = GameInstance()->Find_MeshData(eGroupIndex, strGroupKey, strModelKey);
 
-	m_iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
-	m_iIndexCount = Cast<_uint>(pMesh->vecIndices.size());
+	m_iNumVertices = Cast<_uint>(pMesh->vecVertices.size());
+	m_iNumIndices = Cast<_uint>(pMesh->vecIndices.size());
 
-	VERTEX_MODEL_SKIN_T* vertices = new VERTEX_MODEL_SKIN_T[m_iVtxCount];
+	VERTEX_MODEL_SKIN_T* vertices = new VERTEX_MODEL_SKIN_T[m_iNumVertices];
 	if (!vertices)
 		return E_FAIL;
 
-	_uint* indices = new _uint[m_iIndexCount];
+	_uint* indices = new _uint[m_iNumIndices];
 	if (!indices)
 		return E_FAIL;
 
 	// 정점 버퍼 제작
-	for (_uint i = 0; i < m_iVtxCount; i++)
+	for (_uint i = 0; i < m_iNumVertices; i++)
 	{
 		vertices[i].vPosition = pMesh->vecVertices[i].vPosition;
 		vertices[i].vNormal = pMesh->vecVertices[i].vNormal;
@@ -61,7 +61,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VERTEX_MODEL_SKIN_T) * m_iVtxCount;
+	vertexBufferDesc.ByteWidth = sizeof(VERTEX_MODEL_SKIN_T) * m_iNumVertices;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -75,7 +75,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVtxBuffer.GetAddressOf()), E_FAIL);
 
 	// 인덱스 버퍼 제작
-	for (_uint i = 0; i < m_iIndexCount; i++)
+	for (_uint i = 0; i < m_iNumIndices; i++)
 	{
 		indices[i] = pMesh->vecIndices[i];
 	}
@@ -83,7 +83,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 	// 정적 인덱스 버퍼의 구조체를 설정한다.
 	D3D11_BUFFER_DESC indexBufferDesc;
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(_uint) * m_iIndexCount;
+	indexBufferDesc.ByteWidth = sizeof(_uint) * m_iNumIndices;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -105,6 +105,9 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 
 void CModelBufferComp::Render_Buffer()
 {
+	if (m_pVtxBuffer == nullptr || m_pIndexBuffer == nullptr)
+		return;
+
 	_uint iStride = sizeof(VERTEX_MODEL_SKIN_T);
 	_uint iOffset = 0;
 

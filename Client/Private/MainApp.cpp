@@ -47,8 +47,8 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_TextureMgr(tDevice, L"Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ModelMgr("Resource/Model/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
-	GameInstance()->Load_Shader(L"PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
-	GameInstance()->Load_Shader(L"VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
+	GameInstance()->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
+	GameInstance()->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
 	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", L"FX_ModelTest", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
 	
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Frame(L"Frame", 60.f), E_FAIL);

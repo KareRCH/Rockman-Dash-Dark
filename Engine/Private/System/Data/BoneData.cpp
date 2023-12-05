@@ -126,13 +126,12 @@ void FBoneNodeData::Calculate_FinalTransform()
 	else if (eType == EModelNodeType::Bone)
 		XMStoreFloat4x4(&matTransform, (matOffsetTransform * matFinalTransform * matParentTransform));
 
-	
-
 	for (_uint i = 0; i < vecChildren.size(); i++)
 	{
 		vecChildren[i]->Calculate_FinalTransform();
 	}
 }
+
 
 
 
@@ -249,12 +248,15 @@ HRESULT FSkeletalData::Add_BoneNodeData(const wstring& strBoneNodeKey, FBoneNode
 	return S_OK;
 }
 
-vector<_float4x4> FSkeletalData::Provide_FinalTransforms()
+vector<_float4x4> FSkeletalData::Provide_FinalTransforms(_bool bNoHierarchi)
 {
 	vector<_float4x4> vecFinalTransforms;
 	vecFinalTransforms.reserve(vecBoneNodeIndexes.size());
 
-	Calculate_FinalTransforms();
+	if (bNoHierarchi)
+		Calculate_FinalTransforms();
+	else
+		Calculate_FinalTransformsNoHierarchi();
 
 	for (_uint i = 0; i < vecBoneNodeIndexes.size(); i++)
 	{
@@ -293,6 +295,27 @@ void FSkeletalData::Calculate_FinalTransforms()
 		return;
 
 	pSkeletalRootNode->Calculate_FinalTransform();
+}
+
+void FSkeletalData::Calculate_FinalTransformsNoHierarchi()
+{
+	if (!pSkeletalRootNode)
+		return;
+
+	for (_uint i = 0; i < vecBoneNodeIndexes.size(); i++)
+	{
+		if (vecBoneNodeIndexes[i] == pSkeletalRootNode)
+			continue;
+
+		FBoneNodeData* pBone = vecBoneNodeIndexes[i];
+
+		_matrix matOffsetTransform, matParentTransform, matFinalTransform;
+		matOffsetTransform = XMLoadFloat4x4(&pBone->matOffset);
+		matFinalTransform = XMLoadFloat4x4(&pBone->matTransform);
+		matParentTransform = XMLoadFloat4x4(&pSkeletalRootNode->matTransform);
+
+		XMStoreFloat4x4(&pBone->matTransform, (matOffsetTransform * matFinalTransform * matParentTransform));
+	}
 }
 
 

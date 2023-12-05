@@ -21,6 +21,13 @@ CTestObject::CTestObject(const CTestObject& rhs)
 
 HRESULT CTestObject::Initialize_Prototype()
 {
+    FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+    FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
+
+    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
+    TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
+    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
+
     return S_OK;
 }
 
@@ -100,7 +107,7 @@ CTestObject* CTestObject::Create()
 {
     ThisClass* pInstance = new ThisClass();
 
-    if (FAILED(pInstance->Initialize()))
+    if (FAILED(pInstance->Initialize_Prototype()))
     {
         MSG_BOX("TestObject Create Failed");
         Safe_Release(pInstance);
