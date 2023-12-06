@@ -163,18 +163,13 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Include\Resource.h" />
     <ClInclude Include="Include\targetver.h" />
     <ClInclude Include="Include\Tool.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_Docking.h" />
     <ClInclude Include="Public\MainApp.h" />
     <ClInclude Include="Public\Tool_Define.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Reference\Header\ImGui\imgui.cpp" />
-    <ClCompile Include="..\Reference\Header\ImGui\imgui_demo.cpp" />
-    <ClCompile Include="..\Reference\Header\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="..\Reference\Header\ImGui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\Reference\Header\ImGui\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\Reference\Header\ImGui\imgui_tables.cpp" />
-    <ClCompile Include="..\Reference\Header\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Include\Tool.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_Docking.cpp" />
     <ClCompile Include="Private\MainApp.cpp" />
   </ItemGroup>
   <ItemGroup>

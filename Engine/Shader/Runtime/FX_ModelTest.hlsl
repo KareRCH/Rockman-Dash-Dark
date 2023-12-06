@@ -45,7 +45,7 @@ struct VS_INPUT
     float4 vWeight : WEIGHT;
 };
 
-struct PS_INPUT
+struct VPS_INOUT
 {
     float4 vPosition : SV_POSITION0;
     float3 vNormal : NORMAL;
@@ -61,9 +61,9 @@ struct PS_OUTPUT
 
 //-------------------------------------------------
 
-PS_INPUT VS_MAIN(VS_INPUT input)
+VPS_INOUT VS_MAIN(VS_INPUT input)
 {
-    PS_INPUT output = (PS_INPUT) 0;
+    VPS_INOUT output = (VPS_INOUT) 0;
     
     float4x4 matBoneTransform = { 1.f, 0.f, 0.f, 0.f,
                                   0.f, 1.f, 0.f, 0.f,
@@ -102,7 +102,7 @@ PS_INPUT VS_MAIN(VS_INPUT input)
 
 //-------------------------------------------------
 
-PS_OUTPUT PS_MAIN(PS_INPUT input)
+PS_OUTPUT PS_MAIN(VPS_INOUT input)
 {
     PS_OUTPUT output;
     

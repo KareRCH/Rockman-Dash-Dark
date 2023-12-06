@@ -9,12 +9,19 @@ BEGIN(Engine)
 
 class CImGuiWin;
 
+struct FInitImGuiMgr
+{
+	HWND hWnd;
+	ID3D11Device* pDevice;
+	ID3D11DeviceContext* pContext;
+};
+
 /// <summary>
 /// ImGui 창의 계층을 관리하기 위한 클래스
 /// ImGui는 게임 오브젝트 Tick과 다르게 돌아간다.
 /// 이는 
 /// </summary>
-class ENGINE_DLL_DBG CImGuiMgr final : public CBase
+class ENGINE_DLL CImGuiMgr final : public CBase
 {
 	DERIVED_CLASS(CBase, CImGuiMgr)
 
@@ -23,29 +30,30 @@ private:
 	virtual ~CImGuiMgr() = default;
 
 public:
-	HRESULT	Initialize();
+	HRESULT	Initialize(const FInitImGuiMgr tInit);
 	void Tick(const _float fTimeDelta);
 	HRESULT Render();
 
 public:
-	static CImGuiMgr* Create();
+	static CImGuiMgr* Create(const FInitImGuiMgr tInit);
 
 private:
 	virtual void	Free();
 
 
 public:
-	// 디바이스의 해상도 변경시 호출되는 함수입니다.
-	HRESULT ResetResolution();
-
-
+	// 생성한 ImGuiWin을 추가한다.
+	HRESULT Add_ImGuiWin(const wstring& strKey, CImGuiWin* pImGuiWin, _bool AddByRoot);
+	// 가장 상위로 노출되는 윈도우를 바인딩 한다.
+	HRESULT Bind_RootWin(const wstring& strKey);
 
 public:
-	HRESULT Add_ImGuiWin(const wstring& strKey, CImGuiWin* pImGuiWin);
-
+	GETSET_1(ImGuiIO*, m_pIO, IO, GET__C)
+	GETSET_1(ImGuiContext*, m_pGuiContext, GuiContext, GET__C)
 
 private:
-	ImGuiIO*	m_pIO = { nullptr };
+	ImGuiIO*		m_pIO = { nullptr };
+	ImGuiContext*	m_pGuiContext = { nullptr };
 
 private:
 	map<wstring, CImGuiWin*>		m_mapImGuiWin;		// 이름 검색 시스템용, 저장 목적 및 이름 검색용임.

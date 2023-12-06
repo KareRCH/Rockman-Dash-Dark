@@ -831,5 +831,8 @@
     <None Include="Shader\Runtime\FX_Terrain.hlsl">
       <Filter>03. Shader\99. Test\EffectTest</Filter>
     </None>
+    <None Include="Shader\Runtime\FX_ModelNoAnim.hlsl">
+      <Filter>03. Shader\99. Test\EffectTest</Filter>
+    </None>
   </ItemGroup>
 </Project>

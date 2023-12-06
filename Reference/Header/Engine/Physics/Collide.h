@@ -45,9 +45,9 @@ public:
 inline FVector3 FLineTests::ClosestPointOnLineSegment(const FVector3& vA, const FVector3& vB, const FVector3& vPoint)
 {
 	FVector3 vAB = vB - vA;
-	Real fSaturate = min(max(0.f, (vPoint - vA).DotProduct(vAB) / vAB.DotProduct(vAB)), 1.f);
+	//Real fSaturate = in(max(0.f, (vPoint - vA).DotProduct(vAB) / vAB.DotProduct(vAB)), 1.f);
 
-	return vA + vAB * fSaturate;
+	return vA + vAB;// *fSaturate;
 }
 
 /// <summary>

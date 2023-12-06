@@ -21,6 +21,10 @@ _bool       g_bFullScreen;                      // 전체화면 설정
 WCHAR       szTitle[MAX_LOADSTRING];            // 제목 표시줄 텍스트입니다.
 WCHAR       szWindowClass[MAX_LOADSTRING];      // 기본 창 클래스 이름입니다.
 
+_bool		g_bResizeOnScreen = 0;
+_uint		g_iResizeWidth = g_iWindowSizeX;
+_uint		g_iResizeHeight = g_iWindowSizeY;
+
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -90,6 +94,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
+            if (GI() && g_iResizeWidth != 0 && g_iResizeHeight != 0)
+            {
+                GI()->Resize_SwapChain(g_iResizeWidth, g_iResizeHeight);
+                GI()->Regist_RenderTarget(0);
+                GI()->Regist_RenderTarget(1);
+                GI()->Bind_RenderTargetsOnDevice();
+            }
+
             ::GameInstance()->Tick_Timer(L"Timer_Immediate");
 
             _float	fTimeDelta_Immediate = GameInstance()->Get_TimerDelta(L"Timer_Immediate");
@@ -248,6 +260,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         break;
     }
+    case WM_SIZE:
+        if (wParam == SIZE_MINIMIZED)
+            return 0;
+
+        g_iResizeWidth = (UINT)LOWORD(lParam); // Queue resize
+        g_iResizeHeight = (UINT)HIWORD(lParam);
+        break;
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);

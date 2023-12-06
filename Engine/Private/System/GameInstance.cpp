@@ -19,6 +19,7 @@
 #include "System/RenderMgr.h"
 #include "System/ModelMgr.h"
 #include "System/ParticleMgr.h"
+#include "System/ImGuiMgr.h"
 
 #include "BaseClass/GameObject.h"
 #include "Component/Component.h"
@@ -94,6 +95,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pKeyMgr);
 	Safe_Release(m_pInputDev);
 	Safe_Release(m_pGraphicDev);
+	Safe_Release(m_pImGuiMgr);
 }
 
 
@@ -186,29 +188,31 @@ void CGameInstance::TurnOff_Cull()
 	m_pGraphicDev->TurnOff_Cull();
 }
 
-const _matrix* CGameInstance::Get_GraphicDev_ProjectionMatrix()
+HRESULT CGameInstance::Resize_SwapChain(_uint iWidth, _uint iHeight)
 {
 	if (nullptr == m_pGraphicDev)
-		return nullptr;
+		return E_FAIL;
 
-	return &m_pGraphicDev->GetProjectionMatrix();
+	return m_pGraphicDev->Resize_SwapChain(iWidth, iHeight);
 }
 
-const _matrix* CGameInstance::Get_GraphicDev_WorldMatrix()
+HRESULT CGameInstance::Regist_RenderTarget(_uint iRenderTargetIndex)
 {
 	if (nullptr == m_pGraphicDev)
-		return nullptr;
+		return E_FAIL;
 
-	return &m_pGraphicDev->GetWorldMatrix();
+	return m_pGraphicDev->Regist_RenderTarget(iRenderTargetIndex);
 }
 
-const _matrix* CGameInstance::Get_GraphicDev_OrthoMatrix()
+void CGameInstance::Bind_RenderTargetsOnDevice()
 {
 	if (nullptr == m_pGraphicDev)
-		return nullptr;
+		return;
 
-	return &m_pGraphicDev->GetOrthoMatrix();
+	m_pGraphicDev->Bind_RenderTargetsOnDevice();
 }
+
+
 
 
 
@@ -1058,3 +1062,70 @@ FEffectData* CGameInstance::Find_EffectData(const wstring& strKey) const
 
 	return m_pShaderMgr->Find_EffectData(strKey);
 }
+
+
+
+
+
+
+
+
+#pragma region ImGuiMgr
+HRESULT CGameInstance::Initialize_ImGuiMgr(const FInitImGuiMgr tInit)
+{
+	if (nullptr != m_pImGuiMgr)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(m_pImGuiMgr = CImGuiMgr::Create(tInit), E_FAIL);
+
+	return S_OK;
+}
+
+void CGameInstance::Tick_ImGuiMgr(const _float& fTimeDelta)
+{
+	if (nullptr == m_pImGuiMgr)
+		return;
+
+	m_pImGuiMgr->Tick(fTimeDelta);
+}
+
+HRESULT CGameInstance::Render_ImGuiMgr()
+{
+	if (nullptr == m_pImGuiMgr)
+		return E_FAIL;
+
+	return m_pImGuiMgr->Render();
+}
+
+ImGuiIO* CGameInstance::Get_ImGuiIO()
+{
+	if (nullptr == m_pImGuiMgr)
+		return nullptr;
+
+	return m_pImGuiMgr->Get_IO();
+}
+
+ImGuiContext* CGameInstance::Get_ImGuiContext()
+{
+	if (nullptr == m_pImGuiMgr)
+		return nullptr;
+
+	return m_pImGuiMgr->Get_GuiContext();
+}
+
+HRESULT CGameInstance::Add_ImGuiWin(const wstring& strName, CImGuiWin* pImGuiWin, _bool AddByRoot)
+{
+	if (nullptr == m_pImGuiMgr)
+		return E_FAIL;
+
+	return m_pImGuiMgr->Add_ImGuiWin(strName, pImGuiWin, AddByRoot);
+}
+
+HRESULT CGameInstance::Bind_RootWin(const wstring& strName)
+{
+	if (nullptr == m_pImGuiMgr)
+		return E_FAIL;
+
+	return m_pImGuiMgr->Bind_RootWin(strName);
+}
+#pragma endregion

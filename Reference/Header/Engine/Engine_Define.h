@@ -55,6 +55,13 @@
 #include <lua.hpp>
 
 
+// ImGui 라이브러리
+#include <imgui.h>
+#include <imgui_internal.h>
+#include <imgui_impl_dx11.h>
+#include <imgui_impl_win32.h>
+
+
 //----------------STD---------------------
 
 // C 런타임 헤더 파일입니다.
@@ -117,7 +124,13 @@
 #endif
 #endif
 
-
+// min max 매크로는 호환성 문제로 사용되지 않습니다. ( assimp )
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
 
 #else
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
@@ -138,5 +151,9 @@ extern HWND			g_hWnd;
 extern HINSTANCE	g_hInst;
 extern _bool		g_bLockEsc;		// 비정상 종료를 막기위한 플래그
 extern _bool		g_bFullScreen;
+
+extern _bool		g_bResizeOnScreen;	// 해상도 스크린에 맞추기
+extern _uint		g_iResizeWidth;		// 해상도 변경시 사용되는 변수
+extern _uint		g_iResizeHeight;	// 해상도 변경시 사용되는 변수
 
 #endif // Engine_Define_h__
