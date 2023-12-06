@@ -55,9 +55,10 @@ public:		// 그래픽 디바이스
 	void							TurnOff_ZBuffer();
 	void							TurnOn_Cull();
 	void							TurnOff_Cull();
-	const _matrix* Get_GraphicDev_ProjectionMatrix();
-	const _matrix* Get_GraphicDev_WorldMatrix();
-	const _matrix* Get_GraphicDev_OrthoMatrix();
+	
+	HRESULT							Resize_SwapChain(_uint iWidth, _uint iHeight);
+	HRESULT							Regist_RenderTarget(_uint iRenderTargetIndex);
+	void							Bind_RenderTargetsOnDevice();
 #pragma endregion
 
 
@@ -250,6 +251,19 @@ public:		// 셰이더 매니저
 #pragma endregion
 
 
+#pragma region ImGui 매니저
+public:
+	HRESULT Initialize_ImGuiMgr(const struct FInitImGuiMgr tInit);
+	void	Tick_ImGuiMgr(const _float& fTimeDelta);
+	HRESULT Render_ImGuiMgr();
+	HRESULT Add_ImGuiWin(const wstring& strName, class CImGuiWin* pImGuiWin, _bool AddByRoot);
+	HRESULT Bind_RootWin(const wstring& strName);
+	struct ImGuiIO* Get_ImGuiIO();
+	struct ImGuiContext* Get_ImGuiContext();
+#pragma endregion
+
+
+
 
 private:
 	class CGraphicDev*		m_pGraphicDev = nullptr;
@@ -272,6 +286,7 @@ private:
 	class CTextureMgr*		m_pTextureMgr = nullptr;
 	class CShaderMgr*		m_pShaderMgr = nullptr;
 	class CParticleMgr*		m_pParticleMgr = nullptr;
+	class CImGuiMgr*		m_pImGuiMgr = { nullptr };
 };
 
 

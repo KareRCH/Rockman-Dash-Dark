@@ -8,6 +8,9 @@
 #include "System/Management.h"
 #include "System/GraphicDev.h"
 
+#include "ImGuiWin/ImGuiWin_Docking.h"
+#include "System/ImGuiMgr.h"
+
 IMPLEMENT_SINGLETON(CMainApp)
 
 CMainApp::CMainApp()
@@ -22,9 +25,8 @@ CMainApp* CMainApp::Create()
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("MainApp Create Failed");
+		Engine::Safe_Release(pInstance);
 
 		return nullptr;
 	}
@@ -56,18 +58,22 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Timer(L"Timer_Immediate"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Create_Timer(L"Timer_FPS"), E_FAIL);
 
-	//FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ImGuiMgr(), E_FAIL);
-
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_ImGuiMgr({ g_hWnd, tDevice.pDevice.Get(), tDevice.pDeviceContext.Get() }), E_FAIL);
+	m_pGameInstance->Add_ImGuiWin(TEXT("DockingSpace"), CImGuiWin_Docking::Create(), true);
+	ImGui::SetCurrentContext(m_pGameInstance->Get_ImGuiContext());
+	
 	return S_OK;
 }
 
 _int CMainApp::Tick(const _float& fTimeDelta)
 {
 	m_pGameInstance->Tick_KeyMgr();
-
+	
 	m_pGameInstance->StartFrame_PhysicsMgr();
 
 	m_pGameInstance->Tick_Object(fTimeDelta);
+
+	m_pGameInstance->Tick_ImGuiMgr(fTimeDelta);
 
 	m_pGameInstance->Tick_PhysicsMgr(fTimeDelta);
 
@@ -83,10 +89,9 @@ void CMainApp::Late_Tick(const _float& fTimeDelta)
 void CMainApp::Render()
 {
 	m_pGameInstance->Clear_BackBuffer_View(_float4(0.0f, 0.f, 1.0f, 1.f));
-
 	m_pGameInstance->Clear_DepthStencil_View();
-
 	m_pGameInstance->Render();
+	m_pGameInstance->Render_ImGuiMgr();
 
 #ifdef _DEBUG
 	//Render_FrameRate();
@@ -97,10 +102,6 @@ void CMainApp::Render()
 
 void CMainApp::Free()
 {
-	// ¿Âƒ° ¡¶∞≈
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pDeviceContext);
-
 	// dll ΩÃ±€≈Ê ¡¶∞≈
 	Safe_Release(m_pGameInstance);
 }

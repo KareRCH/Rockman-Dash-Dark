@@ -22,6 +22,11 @@ HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
         m_pDevice.GetAddressOf(), &FeatureLV, m_pDeviceContext.GetAddressOf())))
         return E_FAIL;
 
+    m_iScreenWidth = tInit.iScreenWidth;
+    m_iScreenHeight = tInit.iScreenHeight;
+    m_iNumRenderTargets = MaxRenderTarget;
+    m_vecRTV.reserve(MaxRenderTarget);
+
     FAILED_CHECK_RETURN(Ready_SwapChain(tInit), E_FAIL);
 
     FAILED_CHECK_RETURN(Ready_BackBufferRenderTargetView(tInit), E_FAIL);
@@ -32,19 +37,9 @@ HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
 
     /* 장치에 바인드해놓을 렌더타겟들과 뎁스스텐실뷰를 셋팅한다. */
     /* 장치는 최대 8개의 렌더타겟을 동시에 들고 있을 수 있다. */
-    m_vecRTV.reserve(6);
-    m_vecRTV.clear();
-    m_vecRTV.push_back(m_pRTV_SwapChain);
-    m_vecRTV.push_back(m_pRTV_PBR[ECast(ERenderTarget_PBR::Albedo)]);
-    m_vecRTV.push_back(m_pRTV_PBR[ECast(ERenderTarget_PBR::Normal)]);
-    m_vecRTV.push_back(m_pRTV_PBR[ECast(ERenderTarget_PBR::Metallic)]);
-    m_vecRTV.push_back(m_pRTV_PBR[ECast(ERenderTarget_PBR::Roughness)]);
-    m_vecRTV.push_back(m_pRTV_PBR[ECast(ERenderTarget_Common::Emission)]);
-
-    ID3D11RenderTargetView* pRTV[] = { m_vecRTV[0].Get(), m_vecRTV[1].Get(), m_vecRTV[2].Get(), m_vecRTV[3].Get(), m_vecRTV[4].Get() };
-
-    //m_pDeviceContext->OMSetRenderTargets(m_vecRTV.size(), m_vecRTV[0].GetAddressOf(), m_pDepthStencilView);
-    m_pDeviceContext->OMSetRenderTargets(2, pRTV, m_pDepthStencilView.Get());
+    Regist_RenderTarget(0);
+    Regist_RenderTarget(1);
+    Bind_RenderTargetsOnDevice();
 
 	return S_OK;
 }
@@ -56,7 +51,7 @@ HRESULT CGraphicDev::Clear_BackBuffer_View(_float4 vClearColor)
     // 백버퍼 지우기
     for (auto& item : m_vecRTV)
     {
-        auto pRTV = item.Get();
+        auto pRTV = item;
         m_pDeviceContext->ClearRenderTargetView(pRTV, color);
     }
 
@@ -94,9 +89,8 @@ CGraphicDev* CGraphicDev::Create(const FDEVICE_INIT& tInit)
 
     if (FAILED(pInstance->Initialize(tInit)))
     {
-        Engine::Safe_Release(pInstance);
-
         MSG_BOX("CGraphicDev Create Failed");
+        Engine::Safe_Release(pInstance);
 
         return nullptr;
     }
@@ -199,73 +193,7 @@ HRESULT CGraphicDev::Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit)
     if (nullptr == m_pDevice)
         return E_FAIL;
 
-    /* 내가 앞으로 사용하기위한 용도의 텍스쳐를 생성하기위한 베이스 데이터를 가지고 있는 객체이다. */
-    /* 내가 앞으로 사용하기위한 용도의 텍스쳐 : ID3D11RenderTargetView, ID3D11ShaderResoureView, ID3D11DepthStencilView */
-    ComPtr<ID3D11Texture2D> pBackBufferTexture = { nullptr };
-    ComPtr<ID3D11Texture2D> pTexture = { nullptr };
-    D3D11_TEXTURE2D_DESC textureDesc = {};
-    D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-
-    /* 스왑체인이 들고있던 텍스처를 가져와봐. */
-    if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), ReCast<void**>(pBackBufferTexture.GetAddressOf()))))
-        return E_FAIL;
-
-    ComPtr<ID3D11RenderTargetView> pRTV = { nullptr };
-    if (FAILED(m_pDevice->CreateRenderTargetView(pBackBufferTexture.Get(), nullptr, pRTV.GetAddressOf())))
-        return E_FAIL;
-
-    pBackBufferTexture->GetDesc(&textureDesc);
-    pRTV->GetDesc(&rtvDesc);
-
-    m_pTexture_SwapChain = pBackBufferTexture;
-    pBackBufferTexture.Reset();
-    m_pRTV_SwapChain = pRTV;
-    pRTV.Reset();
-
-    // PBR 렌더타깃 생성
-    for (_uint i = 0; i < ECast(ERenderTarget_Legacy::Size); i++)
-    {
-        if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
-            return E_FAIL;
-
-        if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &rtvDesc, pRTV.GetAddressOf())))
-            return E_FAIL;
-
-        m_pTexture_LGC[i] = pTexture;
-        pTexture.Reset();
-        m_pRTV_LGC[i] = pRTV;
-        pRTV.Reset();
-    }
-
-    // PBR 렌더타깃 생성
-    for (_uint i = 0; i < ECast(ERenderTarget_PBR::Size); i++)
-    {
-        if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
-            return E_FAIL;
-
-        if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &rtvDesc, pRTV.GetAddressOf())))
-            return E_FAIL;
-
-        m_pTexture_PBR[i] = pTexture;
-        pTexture.Reset();
-        m_pRTV_PBR[i] = pRTV;
-        pRTV.Reset();
-    }
-
-    // Emission, SSAO
-    for (_uint i = 0; i < ECast(ERenderTarget_Common::Size); i++)
-    {
-        if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
-            return E_FAIL;
-
-        if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &rtvDesc, pRTV.GetAddressOf())))
-            return E_FAIL;
-
-        m_pTexture_Common[i] = pTexture;
-        pTexture.Reset();
-        m_pRTV_Common[i] = pRTV;
-        pRTV.Reset();
-    }
+    Create_RenderTargets();
 
     return S_OK;
 }
@@ -292,7 +220,7 @@ HRESULT CGraphicDev::Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tIni
     TextureDesc.MiscFlags = 0;
 
     // 깊이 스텐실 텍스처 생성
-    if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, m_pDethStencilBuffer.GetAddressOf())))
+    if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, m_pDepthStencilBuffer.GetAddressOf())))
         return E_FAIL;
 
     /*******************************
@@ -339,7 +267,7 @@ HRESULT CGraphicDev::Ready_DepthStencilRenderTargetView(const FDEVICE_INIT& tIni
     depthStencilViewDesc.Texture2D.MipSlice = 0;
 
     // 깊이 스텐실 뷰 생성
-    if (FAILED(m_pDevice->CreateDepthStencilView(m_pDethStencilBuffer.Get(), &depthStencilViewDesc, m_pDepthStencilView.GetAddressOf())))
+    if (FAILED(m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer.Get(), &depthStencilViewDesc, m_pDepthStencilView.GetAddressOf())))
         return E_FAIL;
 
     return S_OK;
@@ -401,20 +329,116 @@ HRESULT CGraphicDev::Ready_Viewport(const FDEVICE_INIT& tInit)
     // 뷰포트를 생성
     m_pDeviceContext->RSSetViewports(2, viewports);
 
-    // 투영 행렬을 설정
-    _float fFieldOfView = XM_PI * 0.25f;
-    _float fScreenAspect = (_float)tInit.iScreenWidth / (_float)tInit.iScreenHeight;
+    return S_OK;
+}
 
-    // 3D 렌더링을 위한 투영 행렬을 만든다.
-    m_matProjection = XMMatrixPerspectiveFovLH(fFieldOfView, fScreenAspect, tInit.fScreenNear, tInit.fScreenDepth);
+HRESULT CGraphicDev::Resize_SwapChain(_uint iWidth, _uint iHeight)
+{
+    if (m_pSwapChain == nullptr)
+        return E_FAIL;
 
-    // 세계 행렬을 항등 행렬로 초기화
-    m_matWorld = XMMatrixIdentity();
+    m_iScreenWidth = iWidth;
+    m_iScreenHeight = iHeight;
 
-    // 2D 렌더링을 위한 직교 투영 행렬을 만든다.
-    m_matOrtho = XMMatrixOrthographicLH((_float)tInit.iScreenWidth, (_float)tInit.iScreenHeight, tInit.fScreenNear, tInit.fScreenDepth);
+    CleanUp_RenderTargets();
+    m_pSwapChain->ResizeBuffers(0, m_iScreenWidth, m_iScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
+    Create_RenderTargets();
+    Resize_DepthStencil();
 
     return S_OK;
+}
+
+void CGraphicDev::CleanUp_RenderTargets()
+{
+    m_vecRTV.clear();
+    // PBR 렌더타깃 생성
+    for (_uint i = 0; i < MaxRenderTarget; i++)
+    {
+        m_pTexture[i].Reset();
+        m_pRTV[i].Reset();
+    }
+}
+
+HRESULT CGraphicDev::Create_RenderTargets()
+{
+    /* 내가 앞으로 사용하기위한 용도의 텍스쳐를 생성하기위한 베이스 데이터를 가지고 있는 객체이다. */
+    /* 내가 앞으로 사용하기위한 용도의 텍스쳐 : ID3D11RenderTargetView, ID3D11ShaderResoureView, ID3D11DepthStencilView */
+    ComPtr<ID3D11Texture2D> pBackBufferTexture = { nullptr };
+    ComPtr<ID3D11Texture2D> pTexture = { nullptr };
+    D3D11_TEXTURE2D_DESC textureDesc = {};
+    D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+
+    /* 스왑체인이 들고있던 텍스처를 가져와봐. */
+    if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), ReCast<void**>(pBackBufferTexture.GetAddressOf()))))
+        return E_FAIL;
+
+    ComPtr<ID3D11RenderTargetView> pRTV = { nullptr };
+    if (FAILED(m_pDevice->CreateRenderTargetView(pBackBufferTexture.Get(), nullptr, pRTV.GetAddressOf())))
+        return E_FAIL;
+
+    pBackBufferTexture->GetDesc(&textureDesc);
+    pRTV->GetDesc(&rtvDesc);
+
+    m_pTexture[0] = pBackBufferTexture;
+    pBackBufferTexture.Reset();
+    m_pRTV[0] = pRTV;
+    pRTV.Reset();
+
+    // PBR 렌더타깃 생성
+    for (_uint i = 1; i < MaxRenderTarget; i++)
+    {
+        if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
+            return E_FAIL;
+
+        if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &rtvDesc, pRTV.GetAddressOf())))
+            return E_FAIL;
+
+        m_pTexture[i] = pTexture;
+        pTexture.Reset();
+        m_pRTV[i] = pRTV;
+        pRTV.Reset();
+    }
+
+    return S_OK;
+}
+
+HRESULT CGraphicDev::Resize_DepthStencil()
+{
+    D3D11_TEXTURE2D_DESC	TextureDesc = {};
+    m_pDepthStencilBuffer->GetDesc(&TextureDesc);
+    m_pDepthStencilBuffer.Reset();
+    TextureDesc.Width = m_iScreenWidth;
+    TextureDesc.Height = m_iScreenHeight;
+
+    // 깊이 스텐실 텍스처 생성
+    if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, m_pDepthStencilBuffer.GetAddressOf())))
+        return E_FAIL;
+
+    /**************************
+    * 깊이 스텐실 뷰 사이즈 변경
+    ***************************/
+    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+    m_pDepthStencilView->GetDesc(&depthStencilViewDesc);
+    m_pDepthStencilView.Reset();
+    if (FAILED(m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer.Get(), &depthStencilViewDesc, m_pDepthStencilView.GetAddressOf())))
+        return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CGraphicDev::Regist_RenderTarget(_uint iRenderTargetIndex)
+{
+    if (iRenderTargetIndex < 0 || iRenderTargetIndex >= m_iNumRenderTargets)
+        return E_FAIL;
+
+    m_vecRTV.push_back(m_pRTV[iRenderTargetIndex].Get());
+
+    return S_OK;
+}
+
+void CGraphicDev::Bind_RenderTargetsOnDevice()
+{
+    m_pDeviceContext->OMSetRenderTargets(Cast<_uint>(m_vecRTV.size()), m_vecRTV.data(), m_pDepthStencilView.Get());
 }
 
 void CGraphicDev::TurnOn_ZBuffer()
@@ -437,17 +461,3 @@ void CGraphicDev::TurnOff_Cull()
     m_pDeviceContext->RSSetState(m_pRasterCullNoneState.Get());
 }
 
-const _matrix& CGraphicDev::GetProjectionMatrix()
-{
-    return m_matProjection;
-}
-
-const _matrix& CGraphicDev::GetWorldMatrix()
-{
-    return m_matWorld;
-}
-
-const _matrix& CGraphicDev::GetOrthoMatrix()
-{
-    return m_matOrtho;
-}
