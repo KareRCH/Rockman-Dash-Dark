@@ -22,6 +22,12 @@
     <Filter Include="01. ImGuiWin">
       <UniqueIdentifier>{4027a7f5-1d87-4174-b302-b5fa8ce41309}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. ImGuiWin\01. Docking">
+      <UniqueIdentifier>{af839860-3422-457d-811e-6719261c6007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. ImGuiWin\02. MapTool">
+      <UniqueIdentifier>{cdd3ad3f-bb49-414c-81cf-22f32bbadfc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\framework.h">
@@ -43,7 +49,10 @@
       <Filter>99. Define</Filter>
     </ClInclude>
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Docking.h">
-      <Filter>01. ImGuiWin</Filter>
+      <Filter>01. ImGuiWin\01. Docking</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_MapTool.h">
+      <Filter>01. ImGuiWin\02. MapTool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -54,7 +63,10 @@
       <Filter>00. MainApp</Filter>
     </ClCompile>
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Docking.cpp">
-      <Filter>01. ImGuiWin</Filter>
+      <Filter>01. ImGuiWin\01. Docking</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_MapTool.cpp">
+      <Filter>01. ImGuiWin\02. MapTool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

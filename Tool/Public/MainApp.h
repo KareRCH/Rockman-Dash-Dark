@@ -33,7 +33,7 @@ private:
 
 
 private:		// 접근을 최소화하는 함수, 변수
-	CGameInstance* m_pGameInstance = { nullptr };
+	CGameInstance* m_pGI = { nullptr };
 };
 
 END

@@ -258,6 +258,7 @@ public:
 	HRESULT Render_ImGuiMgr();
 	HRESULT Add_ImGuiWin(const wstring& strName, class CImGuiWin* pImGuiWin, _bool AddByRoot);
 	HRESULT Bind_RootWin(const wstring& strName);
+	HRESULT AttachToChild_ImGuiWin(const wstring& strParentName, const wstring& strChildName);
 	struct ImGuiIO* Get_ImGuiIO();
 	struct ImGuiContext* Get_ImGuiContext();
 #pragma endregion
