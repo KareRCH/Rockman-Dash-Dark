@@ -164,12 +164,14 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Include\targetver.h" />
     <ClInclude Include="Include\Tool.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Docking.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_MapTool.h" />
     <ClInclude Include="Public\MainApp.h" />
     <ClInclude Include="Public\Tool_Define.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Include\Tool.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Docking.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_MapTool.cpp" />
     <ClCompile Include="Private\MainApp.cpp" />
   </ItemGroup>
   <ItemGroup>

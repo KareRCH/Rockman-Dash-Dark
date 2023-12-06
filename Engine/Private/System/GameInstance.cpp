@@ -1105,6 +1105,14 @@ ImGuiIO* CGameInstance::Get_ImGuiIO()
 	return m_pImGuiMgr->Get_IO();
 }
 
+HRESULT CGameInstance::AttachToChild_ImGuiWin(const wstring& strParentName, const wstring& strChildName)
+{
+	if (nullptr == m_pImGuiMgr)
+		return E_FAIL;
+
+	return m_pImGuiMgr->AttachToChild_ImGuiWin(strParentName, strChildName);
+}
+
 ImGuiContext* CGameInstance::Get_ImGuiContext()
 {
 	if (nullptr == m_pImGuiMgr)

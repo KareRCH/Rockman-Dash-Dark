@@ -130,6 +130,21 @@ HRESULT CImGuiMgr::Add_ImGuiWin(const wstring& strKey, CImGuiWin* pImGuiWin, _bo
 	return S_OK;
 }
 
+HRESULT CImGuiMgr::AttachToChild_ImGuiWin(const wstring& strParentName, const wstring& strChildName)
+{
+	auto iterParent = m_mapImGuiWin.find(strParentName);
+	if (iterParent != m_mapImGuiWin.end())
+		return E_FAIL;
+
+	auto iterChild = m_mapImGuiWin.find(strChildName);
+	if (iterChild != m_mapImGuiWin.end())
+		return E_FAIL;
+
+	(*iterParent).second->Add_Child((*iterChild).second);
+
+	return S_OK;
+}
+
 HRESULT CImGuiMgr::Bind_RootWin(const wstring& strKey)
 {
 	// 있는 윈도우인지 확인한다.

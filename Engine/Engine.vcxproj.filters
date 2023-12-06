@@ -835,4 +835,9 @@
       <Filter>03. Shader\99. Test\EffectTest</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\RDD-Snipets\CPP.xml">
+      <Filter>99. Defines</Filter>
+    </Xml>
+  </ItemGroup>
 </Project>
