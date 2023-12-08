@@ -95,27 +95,26 @@ HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const wstring& strN
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
 
-	ID3D11Texture2D* pTexture = nullptr;
-	hr = m_pDevice->CreateTexture2D(&textureDesc, nullptr, &pTexture);
+	ComPtr<ID3D11Texture2D> pTexture = { nullptr };
+	hr = m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf());
 	if (FAILED(hr))
 	{
-		Safe_Release(pTexture);
 		return E_FAIL;
 	}
 
-	m_pDeviceContext->UpdateSubresource(pTexture, 0, nullptr, texData->pixels, Cast<_uint>(texData->rowPitch), 0);
+	m_pDeviceContext->UpdateSubresource(pTexture.Get(), 0, nullptr, texData->pixels, Cast<_uint>(texData->rowPitch), 0);
 
-	ID3D11ShaderResourceView* pSRV = { nullptr };
-	hr = CreateShaderResourceView(m_pDevice.Get(), image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pSRV);
+	ComPtr<ID3D11ShaderResourceView> pSRV = { nullptr };
+	hr = CreateShaderResourceView(m_pDevice.Get(), image.GetImages(), image.GetImageCount(), image.GetMetadata(), pSRV.GetAddressOf());
 	if (FAILED(hr))
 	{
-		Safe_Release(pSRV);
 		return E_FAIL;
 	}
 
 	// 로드된 리소스 할당
-	Load(pTexture, pSRV);
+	Load(pTexture.Get(), pSRV.Get());
 	Set_Permanent(bPermanent);
 	m_strName = strName;
 

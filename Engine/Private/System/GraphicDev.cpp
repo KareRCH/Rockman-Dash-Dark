@@ -2,6 +2,8 @@
 
 #include <d3d11sdklayers.h>
 #include <dxgidebug.h>
+#include <DirectXTex.h>
+#include <wincodec.h>
 
 CGraphicDev::CGraphicDev()
 {
@@ -105,6 +107,22 @@ void CGraphicDev::Free()
         m_pSwapChain->SetFullscreenState(false, NULL);
     }
 
+    for (_uint i = 0; i < m_iNumRenderTargets; i++)
+    {
+        m_pTexture[i].Reset();
+        m_pRTV[i].Reset();
+    }
+    m_pDepthStencilBuffer.Reset();
+    m_pDepthStencilView.Reset();
+    m_pDepthStencilState.Reset();
+    m_pDepthDisabledStencilState.Reset();
+    m_pRasterState.Reset();
+    m_pRasterCullNoneState.Reset();
+
+    m_pDeviceContext.Reset();
+    m_pDevice.Reset();
+    m_pSwapChain.Reset();
+
 #ifdef _DEBUG
     m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 
@@ -128,6 +146,8 @@ void CGraphicDev::Free()
     //pInfoQueue->AddRetrievalFilterEntries(&filter);
 
     //Safe_Release(pInfoQueue);
+
+    m_pDebug.Reset();
 #endif // _DEBUG
 }
 
@@ -138,18 +158,18 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
 
     //m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 #endif
-    ComPtr<IDXGIDevice> pDevice = nullptr;
+    ComPtr<IDXGIDevice> pDevice = { nullptr };
     m_pDevice->QueryInterface(__uuidof(IDXGIDevice), ReCast<void**>(pDevice.GetAddressOf()));
 
     _uint adapterIndex = 0;
 
-    ComPtr<IDXGIAdapter> pAdapter = nullptr;
+    ComPtr<IDXGIAdapter> pAdapter = { nullptr };
     pDevice->GetParent(__uuidof(IDXGIAdapter), ReCast<void**>(pAdapter.GetAddressOf()));
 
-    ComPtr<IDXGIFactory> pFactory = nullptr;
+    ComPtr<IDXGIFactory> pFactory = { nullptr };
     pAdapter->GetParent(__uuidof(IDXGIFactory), ReCast<void**>(pFactory.GetAddressOf()));
 
-    pFactory->EnumAdapters(adapterIndex, &pAdapter);
+    pFactory->EnumAdapters(adapterIndex, pAdapter.GetAddressOf());
 
     /*IDXGIDebug* pGxDebug = nullptr;
     pDevice->QueryInterface(__uuidof(IDXGIDebug), (void**)&pGxDebug);
@@ -157,8 +177,7 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
     pGxDebug->ReportLiveObjects()*/
     
     /* 스왑체인을 생성한다. = 텍스쳐를 생성하는 행위 + 스왑하는 형태  */
-    DXGI_SWAP_CHAIN_DESC		SwapChainDesc;
-    ZeroMemory(&SwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
+    DXGI_SWAP_CHAIN_DESC		SwapChainDesc = {};
 
     /*텍스쳐(백버퍼)를 생성하는 행위*/
     SwapChainDesc.BufferDesc.Width = tInit.iScreenWidth;
@@ -168,7 +187,7 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
     SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
     SwapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
     SwapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-    SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
     SwapChainDesc.BufferCount = 1;
 
     /*스왑하는 형태*/
@@ -182,7 +201,7 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
     SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
     /* 백버퍼라는 텍스쳐를 생성했다. */
-    if (FAILED(pFactory->CreateSwapChain(m_pDevice.Get(), &SwapChainDesc, &m_pSwapChain)))
+    if (FAILED(pFactory->CreateSwapChain(m_pDevice.Get(), &SwapChainDesc, m_pSwapChain.GetAddressOf())))
         return E_FAIL;
 
     return S_OK;
@@ -305,29 +324,10 @@ HRESULT CGraphicDev::Ready_RasterizeState(const FDEVICE_INIT& tInit)
 
 HRESULT CGraphicDev::Ready_Viewport(const FDEVICE_INIT& tInit)
 {
-    D3D11_VIEWPORT viewport1;
-    viewport1.TopLeftX = 0.f;
-    viewport1.TopLeftY = 0.f;
-    viewport1.Width = (_float)tInit.iScreenWidth;
-    viewport1.Height = (_float)tInit.iScreenHeight;
-    viewport1.MinDepth = 0.0f;
-    viewport1.MaxDepth = 1.f;
-
-    D3D11_VIEWPORT viewport2;
-    viewport2.TopLeftX = 0.f;
-    viewport2.TopLeftY = 0.f;
-    viewport2.Width = 320;
-    viewport2.Height = viewport2.Width * ((_float)tInit.iScreenHeight / (_float)tInit.iScreenWidth);
-    viewport2.MinDepth = 0.0f;
-    viewport2.MaxDepth = 1.f;
-
-    D3D11_VIEWPORT viewports[] = {
-        viewport1,
-        viewport2
-    };
+    Add_Viewport({ 0.f, 0.f, (_float)tInit.iScreenWidth, (_float)tInit.iScreenHeight, 0.f, 1.f });
     
     // 뷰포트를 생성
-    m_pDeviceContext->RSSetViewports(2, viewports);
+    Bind_Viewport();
 
     return S_OK;
 }
@@ -363,28 +363,30 @@ HRESULT CGraphicDev::Create_RenderTargets()
 {
     /* 내가 앞으로 사용하기위한 용도의 텍스쳐를 생성하기위한 베이스 데이터를 가지고 있는 객체이다. */
     /* 내가 앞으로 사용하기위한 용도의 텍스쳐 : ID3D11RenderTargetView, ID3D11ShaderResoureView, ID3D11DepthStencilView */
-    ComPtr<ID3D11Texture2D> pBackBufferTexture = { nullptr };
     ComPtr<ID3D11Texture2D> pTexture = { nullptr };
+    ComPtr<ID3D11RenderTargetView> pRTV = { nullptr };
     D3D11_TEXTURE2D_DESC textureDesc = {};
     D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 
     /* 스왑체인이 들고있던 텍스처를 가져와봐. */
-    if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), ReCast<void**>(pBackBufferTexture.GetAddressOf()))))
+    if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), ReCast<void**>(pTexture.GetAddressOf()))))
+        return E_FAIL;
+    
+    if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), nullptr, pRTV.GetAddressOf())))
         return E_FAIL;
 
-    ComPtr<ID3D11RenderTargetView> pRTV = { nullptr };
-    if (FAILED(m_pDevice->CreateRenderTargetView(pBackBufferTexture.Get(), nullptr, pRTV.GetAddressOf())))
-        return E_FAIL;
-
-    pBackBufferTexture->GetDesc(&textureDesc);
+    pTexture->GetDesc(&textureDesc);
     pRTV->GetDesc(&rtvDesc);
+    textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 
-    m_pTexture[0] = pBackBufferTexture;
-    pBackBufferTexture.Reset();
-    m_pRTV[0] = pRTV;
+    m_pTexture[0] = pTexture.Get();
+    m_pRTV[0] = pRTV.Get();
+    pTexture.Reset();
     pRTV.Reset();
 
-    // PBR 렌더타깃 생성
+    textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
+
+    // 렌더타깃 생성
     for (_uint i = 1; i < MaxRenderTarget; i++)
     {
         if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
@@ -393,9 +395,9 @@ HRESULT CGraphicDev::Create_RenderTargets()
         if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &rtvDesc, pRTV.GetAddressOf())))
             return E_FAIL;
 
-        m_pTexture[i] = pTexture;
+        m_pTexture[i] = pTexture.Get();
+        m_pRTV[i] = pRTV.Get();
         pTexture.Reset();
-        m_pRTV[i] = pRTV;
         pRTV.Reset();
     }
 
@@ -459,5 +461,83 @@ void CGraphicDev::TurnOn_Cull()
 void CGraphicDev::TurnOff_Cull()
 {
     m_pDeviceContext->RSSetState(m_pRasterCullNoneState.Get());
+}
+
+HRESULT CGraphicDev::Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex)
+{
+    if (iViewportIndex < 0 || iViewportIndex >= m_iNumViewports)
+        return E_FAIL;
+
+    ComPtr<ID3D11Texture2D> pBackBuffer = { nullptr };
+    if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(pBackBuffer.GetAddressOf()))))
+        return E_FAIL;
+
+    D3D11_TEXTURE2D_DESC TextureDesc = {};
+    pBackBuffer->GetDesc(&TextureDesc);
+    TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+    TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+    ComPtr<ID3D11Texture2D> pStaging = { nullptr };
+    if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, pStaging.GetAddressOf())))
+        return E_FAIL;
+
+    m_pDeviceContext->CopyResource(pStaging.Get(), pBackBuffer.Get());
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Format = TextureDesc.Format;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+
+    ComPtr<ID3D11ShaderResourceView> pTempSRV = { nullptr };
+    if (FAILED(m_pDevice->CreateShaderResourceView(pStaging.Get(), &srvDesc, pSRV.GetAddressOf())))
+        return E_FAIL;
+
+    return S_OK;
+}
+
+
+void CGraphicDev::Add_Viewport(D3D11_VIEWPORT Viewport)
+{
+    if (m_vecViewports.capacity() == m_iNumViewports)
+        m_vecViewports.reserve(m_iNumViewports + 1);
+    m_vecViewports.push_back(Viewport);
+    ++m_iNumViewports;
+}
+
+void CGraphicDev::Set_Viewport(_uint iIndex, D3D11_VIEWPORT Viewport)
+{
+    if (iIndex < 0 || iIndex >= m_iNumViewports)
+        return;
+
+    m_vecViewports[iIndex] = Viewport;
+}
+
+D3D11_VIEWPORT* CGraphicDev::Get_ViewportPtr(_uint iIndex)
+{
+    if (iIndex < 0 || iIndex >= m_iNumViewports)
+        return nullptr;
+
+    return &m_vecViewports[iIndex];;
+}
+
+HRESULT CGraphicDev::Bind_Viewport()
+{
+    if (m_iNumViewports == 0)
+        return E_FAIL;
+
+    m_pDeviceContext->RSSetViewports(m_iNumViewports, m_vecViewports.data());
+    
+    return S_OK;
+}
+
+HRESULT CGraphicDev::Bind_Viewport(_uint iIndex)
+{
+    if (iIndex < 0 || iIndex >= m_iNumViewports)
+        return E_FAIL;
+
+    m_pDeviceContext->RSSetViewports(1, &m_vecViewports[iIndex]);
+
+    return S_OK;
 }
 

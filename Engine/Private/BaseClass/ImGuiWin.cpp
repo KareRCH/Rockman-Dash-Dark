@@ -13,12 +13,18 @@ void CImGuiWin::Tick(const _float& fTimeDelta)
 	}
 }
 
-void CImGuiWin::Free()
+HRESULT CImGuiWin::Render()
 {
 	for (_uint i = 0; i < m_vecChildrenWin.size(); i++)
 	{
-		Safe_Release(m_vecChildrenWin[i]);
+		m_vecChildrenWin[i]->Render();
 	}
+
+	return S_OK;
+}
+
+void CImGuiWin::Free()
+{
 	m_vecChildrenWin.clear();
 }
 

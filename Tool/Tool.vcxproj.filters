@@ -28,6 +28,24 @@
     <Filter Include="01. ImGuiWin\02. MapTool">
       <UniqueIdentifier>{cdd3ad3f-bb49-414c-81cf-22f32bbadfc5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. ImGuiWin\00. General">
+      <UniqueIdentifier>{09624850-bde8-4ee1-ade7-f93eefa5fee0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. ImGuiWin\00. General\01. Viewer">
+      <UniqueIdentifier>{18c31798-aa1c-4b92-b987-dc500a2fe6d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Level">
+      <UniqueIdentifier>{b0fbf759-de78-4db4-a510-dd22cfb43f29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. GameObject">
+      <UniqueIdentifier>{eb136014-188d-4169-a6b0-510cba7dd2f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. ImGuiWin\00. General\02. Hierarchi">
+      <UniqueIdentifier>{ca7ea2a0-adbb-4e00-bb4f-3c0d104d8a98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. ImGuiWin\00. General\03. Property">
+      <UniqueIdentifier>{17ecfaaf-7a19-44f0-b9c6-10edc99d8829}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\framework.h">
@@ -54,6 +72,21 @@
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_MapTool.h">
       <Filter>01. ImGuiWin\02. MapTool</Filter>
     </ClInclude>
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_Viewer.h">
+      <Filter>01. ImGuiWin\00. General\01. Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Level\Level_MapTool.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\ToolCamera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_Hierarchi.h">
+      <Filter>01. ImGuiWin\00. General\02. Hierarchi</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_Property.h">
+      <Filter>01. ImGuiWin\00. General\03. Property</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Include\Tool.cpp">
@@ -67,6 +100,21 @@
     </ClCompile>
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_MapTool.cpp">
       <Filter>01. ImGuiWin\02. MapTool</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_Viewer.cpp">
+      <Filter>01. ImGuiWin\00. General\01. Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Level\Level_MapTool.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\ToolCamera.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_Hierarchi.cpp">
+      <Filter>01. ImGuiWin\00. General\02. Hierarchi</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_Property.cpp">
+      <Filter>01. ImGuiWin\00. General\03. Property</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

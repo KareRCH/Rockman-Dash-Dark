@@ -87,7 +87,7 @@ _float4x4 FBoneAnimNodeData::Interporated_Matrix(const _float& fCurTime) const
 
 		// 지점을 구하면, 기준점의 시간과 현재 시간을 기준으로 계산하여 값을 보간한다.
 		_float fStartTime = vecScales[iPivot].fTime;	// 시간 변화율
-		_float fEndTime = fStartTime;								// 기준점과 다음점의 시간차이
+		_float fEndTime = fStartTime;					// 기준점과 다음점의 시간차이
 		_float fRatioTime = fStartTime;
 
 		_vector vStartScale = XMLoadFloat3(&vecScales[iPivot].vScale);	// 기준으로부터 변화율
@@ -108,6 +108,7 @@ _float4x4 FBoneAnimNodeData::Interporated_Matrix(const _float& fCurTime) const
 		vCalcScale = vFinalScale;
 	}
 
+	vCalcPos.m128_f32[3] = 1.f;
 	_matrix matResult = XMMatrixAffineTransformation(vCalcScale, XMQuaternionIdentity(), vCalcRot, vCalcPos);
 	_float4x4 matReturn;
 	XMStoreFloat4x4(&matReturn, matResult);

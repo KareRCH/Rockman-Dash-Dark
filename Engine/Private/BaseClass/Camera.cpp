@@ -25,7 +25,7 @@ HRESULT CCamera::Initialize_Prototype()
     return S_OK;
 }
 
-HRESULT CCamera::Initialize()
+HRESULT CCamera::Initialize(void* Arg)
 {
     FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
 

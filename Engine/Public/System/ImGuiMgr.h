@@ -43,7 +43,8 @@ private:
 
 public:
 	// 생성한 ImGuiWin을 추가한다.
-	HRESULT Add_ImGuiWin(const wstring& strKey, CImGuiWin* pImGuiWin, _bool AddByRoot);
+	HRESULT Add_ImGuiWinAsRoot(const wstring& strname, CImGuiWin* pImGuiWin);
+	HRESULT Add_ImGuiWinAsChild(const wstring& strParentName, const wstring& strName, CImGuiWin* pImGuiWin);
 	HRESULT AttachToChild_ImGuiWin(const wstring& strParentName, const wstring& strChildName);
 	// 가장 상위로 노출되는 윈도우를 바인딩 한다.
 	HRESULT Bind_RootWin(const wstring& strKey);

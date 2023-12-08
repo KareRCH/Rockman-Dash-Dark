@@ -79,12 +79,16 @@ void CImGuiWin_Docking::Tick(const _float& fTimeDelta)
 		m_bFirstLoop = false;
 	}
 
+
 	SUPER::Tick(fTimeDelta);
+
 	ImGui::End();
 }
 
 HRESULT CImGuiWin_Docking::Render()
 {
+	SUPER::Render();
+
     return S_OK;
 }
 

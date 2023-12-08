@@ -10,8 +10,8 @@ HRESULT CImGuiWin_MapTool::Initialize()
 
 void CImGuiWin_MapTool::Tick(const _float& fTimeDelta)
 {
-	if (!m_bOpen)
-		return;
+    if (!m_bOpen)
+        return;
 
     ImGuiWindowFlags iMain_Flags = ImGuiWindowFlags_NoMove;
     ImGuiDockNodeFlags DockSpace_Flags = ImGuiDockNodeFlags_NoDockingInCentralNode;
@@ -53,32 +53,15 @@ void CImGuiWin_MapTool::Tick(const _float& fTimeDelta)
         //ShowDockingDisabledMessage();
     }
 
-    if (m_bFirstLoop)
-    {
-        ImGuiID dockspace_id = ImGui::GetID("DockSpace_MapTool");
-        ImGui::DockBuilderRemoveNode(dockspace_id);
-        ImGui::DockBuilderAddNode(dockspace_id, DockSpace_Flags | ImGuiDockNodeFlags_DockSpace);
-        ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetWindowSize());
-
-
-        ImGuiID dock_right_id = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.2f, NULL, &dockspace_id);
-        ImGui::DockBuilderDockWindow("Left", dock_right_id);
-        ImGui::DockBuilderDockWindow("Center", dockspace_id);
-        //ImGui::DockBuilderDockWindow("One", dockspace_id);
-        //ImGui::DockBuilderDockWindow("Two", dockspace_id);
-
-        ImGui::DockBuilderFinish(dockspace_id);
-
-        m_bFirstLoop = false;
-    }
-
-	SUPER::Tick(fTimeDelta);
+    SUPER::Tick(fTimeDelta);
 
     ImGui::End();
 }
 
 HRESULT CImGuiWin_MapTool::Render()
 {
+    SUPER::Render();
+
 	return S_OK;
 }
 

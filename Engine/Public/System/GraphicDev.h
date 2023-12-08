@@ -68,6 +68,9 @@ public:
 	void		TurnOff_Cull();
 
 public:
+	HRESULT		Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex);
+
+public:
 	GETSET_1(ComPtr<ID3D11Device>, m_pDevice, Device, GET_C_REF)
 	GETSET_1(ComPtr<ID3D11DeviceContext>, m_pDeviceContext, DeviceContext, GET_C_REF)
 
@@ -81,16 +84,16 @@ private:
 	ComPtr<IDXGISwapChain>			m_pSwapChain = { nullptr };
 	
 
-	// 아래는 확장용 렌더타겟
+private:	// 렌더 타겟
 	ComPtr<ID3D11Texture2D>			m_pTexture[MaxRenderTarget] = { nullptr };
 	ComPtr<ID3D11RenderTargetView>	m_pRTV[MaxRenderTarget] = { nullptr };		// 0번은 항상 스왑체인 RTV
 	_uint	m_iNumRenderTargets = 0U;
 
-
 	using vector_RTV = vector<ID3D11RenderTargetView*>;
 	vector_RTV						m_vecRTV;									// 실제 할당되는 렌더타깃의 벡터
 
-	ComPtr<ID3D11Texture2D>			m_pDepthStencilBuffer = nullptr;				// 스텐실 뷰 생성용 버퍼
+private:	// 스텐실
+	ComPtr<ID3D11Texture2D>			m_pDepthStencilBuffer = nullptr;			// 스텐실 뷰 생성용 버퍼
 	ComPtr<ID3D11DepthStencilView>	m_pDepthStencilView = nullptr;				// 깊이 스텐실 뷰
 
 	ComPtr<ID3D11DepthStencilState>	m_pDepthStencilState = nullptr;				// 일반 스텐실 상태
@@ -98,6 +101,19 @@ private:
 
 	ComPtr<ID3D11RasterizerState>	m_pRasterState = { nullptr };				// 일반 래스터라이즈 상태
 	ComPtr<ID3D11RasterizerState>	m_pRasterCullNoneState = { nullptr };		// 컬을 하지 않는 래스터라이즈
+
+
+public:		// 시스템 렌더를 위해 쓰이는 뷰포트 세팅이다.
+	void Add_Viewport(D3D11_VIEWPORT Viewport);
+	void Set_Viewport(_uint iIndex, D3D11_VIEWPORT Viewport);
+	D3D11_VIEWPORT* Get_ViewportPtr(_uint iIndex);
+	// 뷰포트를 세팅한다.
+	HRESULT Bind_Viewport();
+	HRESULT Bind_Viewport(_uint iIndex);
+
+private:	// 시스템 렌더링용 뷰포트
+	vector<D3D11_VIEWPORT>		m_vecViewports;
+	_uint	m_iNumViewports = 0;
 
 #ifdef _DEBUG
 public:
