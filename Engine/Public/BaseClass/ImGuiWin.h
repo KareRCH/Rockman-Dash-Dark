@@ -19,7 +19,7 @@ protected:
 public:
 	virtual HRESULT	Initialize() = 0;
 	virtual void	Tick(const _float& fTimeDelta);
-	virtual HRESULT	Render() = 0;
+	virtual HRESULT	Render();
 
 protected:
 	virtual void	Free();

@@ -100,6 +100,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 GI()->Regist_RenderTarget(0);
                 GI()->Regist_RenderTarget(1);
                 GI()->Bind_RenderTargetsOnDevice();
+                GI()->Set_SystemViewport(1, {0.f, 0.f, (_float)g_iResizeWidth , (_float)g_iResizeHeight, 0.f, 1.f });
             }
 
             ::GameInstance()->Tick_Timer(L"Timer_Immediate");
@@ -113,6 +114,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 _float	fTimeDelta = ::GameInstance()->Get_TimerDelta(L"Timer_FPS");
 
                 // 틱 함수
+                pMainApp->Priority_Tick(fTimeDelta);
                 pMainApp->Tick(fTimeDelta);
                 pMainApp->Late_Tick(fTimeDelta);
                 pMainApp->Render();

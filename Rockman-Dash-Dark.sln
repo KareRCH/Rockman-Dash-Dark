@@ -15,6 +15,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02. Engine", "02. Engine", "{03EEE110-CD03-4E73-8699-0C640D835EBB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tool", "Tool\Tool.vcxproj", "{57840051-37E3-43B2-BFAE-18EB8FBCF868}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6D0E4A78-951A-45A3-9D98-7676CFEAC013} = {6D0E4A78-951A-45A3-9D98-7676CFEAC013}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -209,8 +209,8 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const wstring& strKe
 		D3DX11_PASS_DESC	tPassDesc;
 		pPass->GetDesc(&tPassDesc);
 
-		ID3D11InputLayout* pInputLayout = nullptr;
-		if (FAILED(m_pDevice->CreateInputLayout(pElements, iNumElements, tPassDesc.pIAInputSignature, tPassDesc.IAInputSignatureSize, &pInputLayout)))
+		ComPtr<ID3D11InputLayout> pInputLayout = { nullptr };
+		if (FAILED(m_pDevice->CreateInputLayout(pElements, iNumElements, tPassDesc.pIAInputSignature, tPassDesc.IAInputSignatureSize, pInputLayout.GetAddressOf())))
 			return E_FAIL;
 
 

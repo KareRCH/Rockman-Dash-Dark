@@ -23,11 +23,11 @@ attrib +r "$(SolutionDir)Reference\Header\*.*" /s /d
 xcopy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Reference\Library\Engine\$(PlatformTarget)\$(Configuration)\" /y
 xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\" /y
 xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)Client\Bin\$(PlatformTarget)\$(Configuration)\Shader\" /y /e
-xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)Client\Shader\" /y /e
+xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)Client\Shader\Compiled\" /y /e
 
 xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)Tool\Bin\$(PlatformTarget)\$(Configuration)\" /y
 xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)Tool\Bin\$(PlatformTarget)\$(Configuration)\Shader\" /y /e
-xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)Tool\Shader\" /y /e
+xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)Tool\Shader\Compiled\" /y /e
 
 xcopy "Shader\Runtime\*.*" "$(SolutionDir)Client\Shader\Runtime\" /y /e</Command>
     </PostBuildEvent>

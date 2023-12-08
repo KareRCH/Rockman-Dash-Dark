@@ -80,6 +80,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pLevelMgr);
 	Safe_Release(m_pBlackBoardMgr);
 	
+
 	Safe_Release(m_pParticleMgr);
 	Safe_Release(m_pShaderMgr);
 	
@@ -88,14 +89,16 @@ void CGameInstance::Free()
 	Safe_Release(m_pTextureMgr);
 	Safe_Release(m_pPipelineMgr);
 
+
 	Safe_Release(m_pPhysicsMgr);
 	Safe_Release(m_pSoundMgr);
 	Safe_Release(m_pFrameMgr);
 	Safe_Release(m_pTimerMgr);
 	Safe_Release(m_pKeyMgr);
+	
+	Safe_Release(m_pImGuiMgr);
 	Safe_Release(m_pInputDev);
 	Safe_Release(m_pGraphicDev);
-	Safe_Release(m_pImGuiMgr);
 }
 
 
@@ -210,6 +213,54 @@ void CGameInstance::Bind_RenderTargetsOnDevice()
 		return;
 
 	m_pGraphicDev->Bind_RenderTargetsOnDevice();
+}
+
+void CGameInstance::Add_SystemViewport(D3D11_VIEWPORT Viewport)
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	m_pGraphicDev->Add_Viewport(Viewport);
+}
+
+void CGameInstance::Set_SystemViewport(_uint iIndex, D3D11_VIEWPORT Viewport)
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	m_pGraphicDev->Set_Viewport(iIndex, Viewport);
+}
+
+D3D11_VIEWPORT* CGameInstance::Get_SystemViewportPtr(_uint iIndex)
+{
+	if (nullptr == m_pGraphicDev)
+		return nullptr;
+
+	return m_pGraphicDev->Get_ViewportPtr(iIndex);
+}
+
+HRESULT CGameInstance::Bind_SystemViewport()
+{
+	if (nullptr == m_pGraphicDev)
+		return E_FAIL;
+
+	return m_pGraphicDev->Bind_Viewport();
+}
+
+HRESULT CGameInstance::Bind_SystemViewport(_uint iIndex)
+{
+	if (nullptr == m_pGraphicDev)
+		return E_FAIL;
+
+	return m_pGraphicDev->Bind_Viewport(iIndex);
+}
+
+HRESULT CGameInstance::Copy_BackBufferToTexture_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex)
+{
+	if (nullptr == m_pGraphicDev)
+		return E_FAIL;
+
+	return m_pGraphicDev->Copy_BackBufferToSRV_ByViewport(pSRV, iViewportIndex);
 }
 
 
@@ -1121,12 +1172,20 @@ ImGuiContext* CGameInstance::Get_ImGuiContext()
 	return m_pImGuiMgr->Get_GuiContext();
 }
 
-HRESULT CGameInstance::Add_ImGuiWin(const wstring& strName, CImGuiWin* pImGuiWin, _bool AddByRoot)
+HRESULT CGameInstance::Add_ImGuiWinAsRoot(const wstring& strName, CImGuiWin* pImGuiWin)
 {
 	if (nullptr == m_pImGuiMgr)
 		return E_FAIL;
 
-	return m_pImGuiMgr->Add_ImGuiWin(strName, pImGuiWin, AddByRoot);
+	return m_pImGuiMgr->Add_ImGuiWinAsRoot(strName, pImGuiWin);
+}
+
+HRESULT CGameInstance::Add_ImGuiWinAsChild(const wstring& strParentName, const wstring& strName, CImGuiWin* pImGuiWin)
+{
+	if (nullptr == m_pImGuiMgr)
+		return E_FAIL;
+
+	return m_pImGuiMgr->Add_ImGuiWinAsChild(strParentName, strName, pImGuiWin);
 }
 
 HRESULT CGameInstance::Bind_RootWin(const wstring& strName)

@@ -59,6 +59,14 @@ public:		// 그래픽 디바이스
 	HRESULT							Resize_SwapChain(_uint iWidth, _uint iHeight);
 	HRESULT							Regist_RenderTarget(_uint iRenderTargetIndex);
 	void							Bind_RenderTargetsOnDevice();
+
+	void							Add_SystemViewport(D3D11_VIEWPORT Viewport);
+	void							Set_SystemViewport(_uint iIndex, D3D11_VIEWPORT Viewport);
+	D3D11_VIEWPORT*					Get_SystemViewportPtr(_uint iIndex);
+	HRESULT							Bind_SystemViewport();
+	HRESULT							Bind_SystemViewport(_uint iIndex);
+
+	HRESULT							Copy_BackBufferToTexture_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex);
 #pragma endregion
 
 
@@ -256,7 +264,8 @@ public:
 	HRESULT Initialize_ImGuiMgr(const struct FInitImGuiMgr tInit);
 	void	Tick_ImGuiMgr(const _float& fTimeDelta);
 	HRESULT Render_ImGuiMgr();
-	HRESULT Add_ImGuiWin(const wstring& strName, class CImGuiWin* pImGuiWin, _bool AddByRoot);
+	HRESULT Add_ImGuiWinAsRoot(const wstring& strName, class CImGuiWin* pImGuiWin);
+	HRESULT Add_ImGuiWinAsChild(const wstring& strParentName, const wstring& strName, CImGuiWin* pImGuiWin);
 	HRESULT Bind_RootWin(const wstring& strName);
 	HRESULT AttachToChild_ImGuiWin(const wstring& strParentName, const wstring& strChildName);
 	struct ImGuiIO* Get_ImGuiIO();

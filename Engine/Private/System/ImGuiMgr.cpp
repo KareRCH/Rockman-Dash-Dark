@@ -42,6 +42,8 @@ HRESULT CImGuiMgr::Initialize(const FInitImGuiMgr tInit)
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	}
 
+	io.DisplaySize = ImVec2(1920.f, 1080.f);
+
 	// Setup Platform/Renderer backends
 	if (!ImGui_ImplWin32_Init(tInit.hWnd))
 		return E_FAIL;
@@ -55,13 +57,9 @@ HRESULT CImGuiMgr::Initialize(const FInitImGuiMgr tInit)
 void CImGuiMgr::Tick(const _float fTimeDelta)
 {
 	// Start the Dear ImGui frame
-	ImGuiContext* pContext = ImGui::GetCurrentContext();
-
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-
-	pContext = ImGui::GetCurrentContext();
 
 	for (_uint i = 0; i < m_vecRootWins.size(); i++)
 	{
@@ -71,10 +69,15 @@ void CImGuiMgr::Tick(const _float fTimeDelta)
 
 HRESULT CImGuiMgr::Render()
 {
+	for (_uint i = 0; i < m_vecRootWins.size(); i++)
+	{
+		m_vecRootWins[i]->Render();
+	}
+
 	// Rendering
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
+	
 	// Update and Render additional Platform Windows
 	if (m_pIO->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
@@ -113,7 +116,7 @@ void CImGuiMgr::Free()
 	ImGui::DestroyContext();
 }
 
-HRESULT CImGuiMgr::Add_ImGuiWin(const wstring& strKey, CImGuiWin* pImGuiWin, _bool AddByRoot)
+HRESULT CImGuiMgr::Add_ImGuiWinAsRoot(const wstring& strKey, CImGuiWin* pImGuiWin)
 {
 	if (!pImGuiWin)
 		return E_FAIL;
@@ -123,21 +126,47 @@ HRESULT CImGuiMgr::Add_ImGuiWin(const wstring& strKey, CImGuiWin* pImGuiWin, _bo
 		return E_FAIL;
 
 	m_mapImGuiWin.emplace(strKey, pImGuiWin);
+	
+	Bind_RootWin(strKey);
 
-	if (AddByRoot)
-		Bind_RootWin(strKey);
+	return S_OK;
+}
 
+HRESULT CImGuiMgr::Add_ImGuiWinAsChild(const wstring& strParentName, const wstring& strName, CImGuiWin* pImGuiWin)
+{
+	if (!pImGuiWin)
+		return E_FAIL;
+
+	// 부모가 없을 시
+	auto iterParent = m_mapImGuiWin.find(strParentName);
+	if (iterParent == m_mapImGuiWin.end())
+	{
+		Safe_Release(pImGuiWin);
+		return E_FAIL;
+	}
+
+	// 중복시
+	auto iterChild = m_mapImGuiWin.find(strName);
+	if (iterChild != m_mapImGuiWin.end())
+	{
+		Safe_Release(pImGuiWin);
+		return E_FAIL;
+	}
+
+	m_mapImGuiWin.emplace(strName, pImGuiWin);
+	(*iterParent).second->Add_Child(pImGuiWin);
+	
 	return S_OK;
 }
 
 HRESULT CImGuiMgr::AttachToChild_ImGuiWin(const wstring& strParentName, const wstring& strChildName)
 {
 	auto iterParent = m_mapImGuiWin.find(strParentName);
-	if (iterParent != m_mapImGuiWin.end())
+	if (iterParent == m_mapImGuiWin.end())
 		return E_FAIL;
 
 	auto iterChild = m_mapImGuiWin.find(strChildName);
-	if (iterChild != m_mapImGuiWin.end())
+	if (iterChild == m_mapImGuiWin.end())
 		return E_FAIL;
 
 	(*iterParent).second->Add_Child((*iterChild).second);
