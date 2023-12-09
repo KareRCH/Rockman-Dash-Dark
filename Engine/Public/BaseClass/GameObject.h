@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Base.h"
 #include "Component/TransformComponent.h"
 #include "Component/PipelineComp.h"
 
@@ -9,7 +8,7 @@
 
 BEGIN(Engine)
 
-class CPrimitiveComponent;
+class CGameObjectComp;
 
 /// <summary>
 /// 씬에 추가되어 사용되는 좌표를 기본적으로 탑재하는 오브젝트 클래스
@@ -19,6 +18,13 @@ class ENGINE_DLL CGameObject abstract : public CBase, public ITransform
 {
 	DERIVED_CLASS(CBase, CGameObject)
 	friend class CObjectMgr;
+
+public:
+	struct FInitGameObjectBase
+	{
+
+	};
+
 protected:
 	explicit CGameObject() = default;
 	explicit CGameObject(const CGameObject& rhs);
@@ -28,9 +34,9 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* Arg = nullptr);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
-	virtual _int	Tick(const _float& fTimeDelta);
+	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
-	virtual void	Render();
+	virtual HRESULT	Render();
 
 public:
 	virtual CGameObject* Clone(void* Arg) PURE;
@@ -85,23 +91,23 @@ private:
 #pragma region 컴포넌트
 public:
 	// 검색용
-	HRESULT Add_Component(const wstring& strName, CPrimitiveComponent* pComponent);
-	CPrimitiveComponent* Get_Component(const _uint iIndex)
+	HRESULT Add_Component(const wstring& strName, CGameObjectComp* pComponent);
+	CGameObjectComp* Get_Component(const _uint iIndex)
 	{
 		return m_vecComponent[iIndex];
 	}
-	CPrimitiveComponent* Get_Component(const wstring& strName);
+	CGameObjectComp* Get_Component(const wstring& strName);
 
 public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
-	void OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue);
-	void OnStateLateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue);
-	void OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue);
+	void OnStateUpdate_Updated(const CGameObjectComp* const pComp, const ECompTickAuto& bValue);
+	void OnStateLateUpdate_Updated(const CGameObjectComp* const pComp, const ECompTickAuto& bValue);
+	void OnStateRender_Updated(const CGameObjectComp* const pComp, const ECompTickAuto& bValue);
 
 private:	// 컴포넌트 속성
-	vector<CPrimitiveComponent*>			m_vecComponent;				// 컴포넌트 관리 컨테이너
-	_unmap<wstring, CPrimitiveComponent*>	m_mapPrimComp;				// 오브젝트 전용 컴포넌트 관리 컨테이너
+	vector<CGameObjectComp*>			m_vecComponent;				// 컴포넌트 관리 컨테이너
+	_unmap<wstring, CGameObjectComp*>	m_mapPrimComp;				// 오브젝트 전용 컴포넌트 관리 컨테이너
 
-	using list_comp =						list<CPrimitiveComponent*>;
+	using list_comp =						list<CGameObjectComp*>;
 	list_comp								m_listUpdateComp[ECast(ECompTickType::Size)];	// 컴포넌트 업데이트 관리 리소스
 #pragma endregion
 

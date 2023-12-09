@@ -81,15 +81,17 @@ HRESULT CShaderMgr::Load_Shader(const wstring& strFileName, const EShaderType eT
 	case Engine::EShaderType::Vertex:
 	{
 		ID3D11VertexShader* pShader = Cast<ID3D11VertexShader*>(pShaderBuffer.Get());
-		if (FAILED(m_pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pShader)))
+		ComPtr<ID3D11VertexShader> pComShader = pShader;
+		if (FAILED(m_pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pComShader)))
 			return E_FAIL;
-		pShaderBuffer = Cast<ID3D11DeviceChild*>(pShader);
+		pShaderBuffer = Cast<ID3D11DeviceChild*>(pComShader.Get());
 		break;
 	}
 	case Engine::EShaderType::Pixel:
 	{
 		ID3D11PixelShader* pShader = Cast<ID3D11PixelShader*>(pShaderBuffer.Get());
-		if (FAILED(m_pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pShader)))
+		ComPtr<ID3D11PixelShader> pComShader = pShader;
+		if (FAILED(m_pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pComShader)))
 			return E_FAIL;
 		pShaderBuffer = Cast<ID3D11DeviceChild*>(pShader);
 		break;

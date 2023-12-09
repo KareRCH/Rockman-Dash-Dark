@@ -5,7 +5,7 @@
 
 BEGIN(Tool)
 
-class CImGuiWin_MapTool : public Engine::CImGuiWin
+class CImGuiWin_MapTool final : public Engine::CImGuiWin
 {
 	DERIVED_CLASS(CImGuiWin, CImGuiWin_MapTool)
 
@@ -24,6 +24,10 @@ public:
 
 private:
 	virtual void	Free() override;
+
+private:
+	
+	
 };
 
 END

@@ -263,6 +263,78 @@ HRESULT CGameInstance::Copy_BackBufferToTexture_ByViewport(ComPtr<ID3D11ShaderRe
 	return m_pGraphicDev->Copy_BackBufferToSRV_ByViewport(pSRV, iViewportIndex);
 }
 
+HRESULT CGameInstance::Copy_BackBufferToTexture_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, const D3D11_VIEWPORT Viewport)
+{
+	if (nullptr == m_pGraphicDev)
+		return E_FAIL;
+
+	return m_pGraphicDev->Copy_BackBufferToSRV_ByViewport(pSRV, Viewport);
+}
+
+const _float CGameInstance::ResolutionRatio()
+{
+	if (nullptr == m_pGraphicDev)
+		return 1.f;
+
+	return m_pGraphicDev->Get_ResolutionRatio();
+}
+
+const _uint CGameInstance::ResolutionX()
+{
+	if (nullptr == m_pGraphicDev)
+		return 0;
+
+	return m_pGraphicDev->Get_ResolutionX();
+}
+
+const _uint CGameInstance::ResolutionY()
+{
+	if (nullptr == m_pGraphicDev)
+		return 0;
+
+	return m_pGraphicDev->Get_ResolutionX();
+}
+
+void CGameInstance::Set_Resolution(_uint iX, _uint iY)
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	return m_pGraphicDev->Set_Resolution(iX, iY);
+}
+
+void CGameInstance::Set_ResolutionX_MaintainRatio(_uint iX)
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	return m_pGraphicDev->Set_ResolutionX_MaintainRatio(iX);
+}
+
+void CGameInstance::Set_ResolutionY_MaintainRatio(_uint iY)
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	return m_pGraphicDev->Set_ResolutionY_MaintainRatio(iY);
+}
+
+const _float CGameInstance::ResolutionByScreen_RatioX()
+{
+	if (nullptr == m_pGraphicDev)
+		return 1.f;
+
+	return m_pGraphicDev->Get_ResolutionByScreen_RatioX();
+}
+
+const _float CGameInstance::ResolutionByScreen_RatioY()
+{
+	if (nullptr == m_pGraphicDev)
+		return 1.f;
+
+	return m_pGraphicDev->Get_ResolutionByScreen_RatioX();
+}
+
 
 
 

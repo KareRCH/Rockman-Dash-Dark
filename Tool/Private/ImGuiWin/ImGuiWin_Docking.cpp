@@ -10,9 +10,11 @@ HRESULT CImGuiWin_Docking::Initialize()
 
 void CImGuiWin_Docking::Tick(const _float& fTimeDelta)
 {
+	if (!m_bOpen)
+		return;
+
 	m_DockSpace_Flags = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
 	m_Window_Flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoCollapse;
-
 
 	if (m_bOpt_FullScreen)
 	{
@@ -51,7 +53,7 @@ void CImGuiWin_Docking::Tick(const _float& fTimeDelta)
 	// Submit the DockSpace
 	ImGuiIO& io = ImGui::GetIO();
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	{
+	{		
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), m_DockSpace_Flags);
 	}
@@ -79,6 +81,7 @@ void CImGuiWin_Docking::Tick(const _float& fTimeDelta)
 		m_bFirstLoop = false;
 	}
 
+	MenuBar(fTimeDelta);
 
 	SUPER::Tick(fTimeDelta);
 
@@ -110,4 +113,73 @@ CImGuiWin_Docking* CImGuiWin_Docking::Create()
 void CImGuiWin_Docking::Free()
 {
 	SUPER::Free();
+}
+
+void CImGuiWin_Docking::MenuBar(const _float& fTimeDelta)
+{
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::BeginMenu("Project"))
+		{
+			if (ImGui::MenuItem("Open"))
+			{
+
+			}
+
+			if (ImGui::MenuItem("Save"))
+			{
+
+			}
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Export Datas To Client"))
+			{
+
+			}
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Program"))
+		{
+			if (ImGui::MenuItem("Exit"))
+			{
+				PostQuitMessage(0);
+			}
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::Dummy(ImVec2(50.f, 0.f));
+
+		if (ImGui::BeginTabBar("Layout"))
+		{
+			if (ImGui::BeginTabItem(u8"맵 툴"))
+			{				
+				Open_JustOneChild(0);
+
+				ImGui::EndTabItem();
+			}
+
+			if (ImGui::BeginTabItem(u8"오브젝트 툴"))
+			{
+				Open_JustOneChild(1);
+
+				ImGui::EndTabItem();
+			}
+
+			if (ImGui::BeginTabItem(u8"애니메이션 툴"))
+			{
+				Open_JustOneChild(2);
+
+				ImGui::EndTabItem();
+			}
+
+
+			ImGui::EndTabBar();
+		}
+
+		ImGui::EndMenuBar();
+	}
 }

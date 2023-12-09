@@ -39,18 +39,16 @@ void CSkinnedModelComp::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
-_int CSkinnedModelComp::Tick(const _float& fTimeDelta)
+void CSkinnedModelComp::Tick(const _float& fTimeDelta)
 {
     m_pAnimationComp->Set_TickDeltaTime(fTimeDelta);
-
-    return 0;
 }
 
 void CSkinnedModelComp::Late_Tick(const _float& fTimeDelta)
 {
 }
 
-void CSkinnedModelComp::Render()
+HRESULT CSkinnedModelComp::Render()
 {
     // 여기서 셰이더에 모든 정보를 넘겨주는 행위를 한다.
 
@@ -91,6 +89,8 @@ void CSkinnedModelComp::Render()
         // 바인딩된 정점, 인덱스 그리기
         m_pMultiMeshBufComp->Render_Buffer(i);
     }
+
+    return S_OK;
 }
 
 CSkinnedModelComp* CSkinnedModelComp::Create()

@@ -14,6 +14,8 @@ struct FDEVICE_INIT
 	_uint	iScreenHeight;
 	_float	fScreenNear;
 	_float	fScreenDepth;
+	_uint	iResolutionX;
+	_uint	iResolutionY;
 };
 
 /// <summary>
@@ -69,6 +71,7 @@ public:
 
 public:
 	HRESULT		Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex);
+	HRESULT		Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, const D3D11_VIEWPORT Viewport);
 
 public:
 	GETSET_1(ComPtr<ID3D11Device>, m_pDevice, Device, GET_C_REF)
@@ -115,6 +118,7 @@ private:	// 시스템 렌더링용 뷰포트
 	vector<D3D11_VIEWPORT>		m_vecViewports;
 	_uint	m_iNumViewports = 0;
 
+
 #ifdef _DEBUG
 public:
 	GETSET_1(ID3D11Debug*, m_pDebug.Get(), Debug, GET__C)
@@ -123,9 +127,38 @@ private:
 	ComPtr<ID3D11Debug> m_pDebug = { nullptr };
 #endif
 
+public:
+	void			Set_ScreenSize(_uint iX, _uint iY);
+	void			Set_ScreenWidth(_uint iX);
+	void			Set_ScreenHeight(_uint iY);
+
+private:	// 창 크기, 해상도에 영향을 주지 않습니다.
+	_uint			m_iScreenWidth = g_iWindowSizeX;
+	_uint			m_iScreenHeight = g_iWindowSizeY;
+	_float			m_iScreenRatio = 1.f;
+
+public:		// 해상도 세팅 관련
+	void			Set_Resolution(_uint iX, _uint iY);
+	void			Set_ResolutionX_MaintainRatio(_uint iX);
+	void			Set_ResolutionY_MaintainRatio(_uint iY);
+	const _uint&	Get_ResolutionX() const { return m_viResolutionX; }
+	const _uint&	Get_ResolutionY() const { return m_viResolutionY; }
+	const _float&	Get_ResolutionRatio() const { return m_fResolutionRatio; }
+
+private:	// 해상도는 실제 게임이 표시되는 값에 영향을 줍니다. 백버퍼의 크기보다 작거나 클 수 있습니다.
+	_uint			m_viResolutionX = g_iWindowSizeX;
+	_uint			m_viResolutionY = g_iWindowSizeY;
+	_float			m_fResolutionRatio = 1.f;
+
+public:
+	const _float&	Get_ResolutionByScreen_RatioX() { return m_vResolutionByScreen_Ratio.x; }
+	const _float&	Get_ResolutionByScreen_RatioY() { return m_vResolutionByScreen_Ratio.y; }
+
+private:			// 해상도 : 화면비, 실제 표시되는 영역을 지정하기 위해 사용됩니다.
+	void			Apply_ResolutionByScreen_Ratio();
+
 private:
-	_uint	m_iScreenWidth = 1280U;
-	_uint	m_iScreenHeight = 720U;
+	_float2			m_vResolutionByScreen_Ratio = {};
 
 };
 

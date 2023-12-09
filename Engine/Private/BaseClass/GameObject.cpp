@@ -5,13 +5,28 @@
 
 CGameObject::CGameObject(const CGameObject& rhs)
 	: m_pPipelineComp(rhs.m_pPipelineComp)
+	, m_iStateFlag(rhs.m_iStateFlag)
 {
+	// 파이프라인 참조
 	Safe_AddRef(m_pPipelineComp);
+
+	for (_uint i = 0; i < ECast(EGObjTickPriority::Size); i++)
+		m_fPriority[i] = rhs.m_fPriority[i];
+
+	for (_uint i = 0; i < ECast(EGObjTag::Size); i++)
+		m_setTag[i] = rhs.m_setTag[i];
+
+	// 복제하는 경우도 있어서 일단은 복사한다.
+	m_pTransformComp = Cast<CTransformComponent*>(rhs.m_pTransformComp->Clone());
 }
 
 HRESULT CGameObject::Initialize_Prototype()
 {
+	// 기본 트랜스폼 생성
 	m_pTransformComp = CTransformComponent::Create();
+	// 매니저 참조 컴포넌트는 단순 레퍼런스형으로 공유 컴포넌트로 사용된다.
+	// 카메라 행렬에 대한 데이터 교환을 하는 컴포넌트이다. 파이프라인에 GI통해서 접근하지 않고
+	// 해당 매니저에 대해 컴포넌트로 통신한다.
 	m_pPipelineComp = Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp"));
 
 	return S_OK;
@@ -19,8 +34,6 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(void* Arg)
 {
-	m_pTransformComp = CTransformComponent::Create();
-
 	return S_OK;
 }
 
@@ -37,7 +50,7 @@ void CGameObject::Priority_Tick(const _float& fTimeDelta)
 	}
 }
 
-_int CGameObject::Tick(const _float& fTimeDelta)
+void CGameObject::Tick(const _float& fTimeDelta)
 {
 	_uint iIndex = ECast(ECompTickType::Tick);
 
@@ -45,8 +58,6 @@ _int CGameObject::Tick(const _float& fTimeDelta)
 	{
 		(*iter)->Tick(fTimeDelta);
 	}
-
-	return 0;
 }
 
 void CGameObject::Late_Tick(const _float& fTimeDelta)
@@ -59,13 +70,15 @@ void CGameObject::Late_Tick(const _float& fTimeDelta)
 	}
 }
 
-void CGameObject::Render()
+HRESULT CGameObject::Render()
 {
 	for (auto iter = m_listUpdateComp[ECast(ECompTickType::Render)].begin();
 		iter != m_listUpdateComp[ECast(ECompTickType::Render)].end(); ++iter)
 	{
 		(*iter)->Render();
 	}
+
+	return S_OK;
 }
 
 void CGameObject::Free()
@@ -95,10 +108,10 @@ void CGameObject::Delete_Tag(const EGObjTag eTagType, const wstring& strTag)
 
 
 
-HRESULT CGameObject::Add_Component(const wstring& strName, CPrimitiveComponent* pComponent)
+HRESULT CGameObject::Add_Component(const wstring& strName, CGameObjectComp* pComponent)
 {
 	auto iter = find_if(m_vecComponent.begin(), m_vecComponent.end(), 
-		[&strName](CPrimitiveComponent* pComp) {
+		[&strName](CGameObjectComp* pComp) {
 			return pComp->Get_Name() == strName;
 		});
 
@@ -120,10 +133,10 @@ HRESULT CGameObject::Add_Component(const wstring& strName, CPrimitiveComponent* 
 	return S_OK;
 }
 
-CPrimitiveComponent* CGameObject::Get_Component(const wstring& strName)
+CGameObjectComp* CGameObject::Get_Component(const wstring& strName)
 {
 	auto iter = find_if(m_vecComponent.begin(), m_vecComponent.end(),
-		[&strName](CPrimitiveComponent* pComp) {
+		[&strName](CGameObjectComp* pComp) {
 			return pComp->Get_Name() == strName;
 		});
 
@@ -145,12 +158,12 @@ CPrimitiveComponent* CGameObject::Get_Component(const wstring& strName)
 
 
 
-void CGameObject::OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue)
+void CGameObject::OnStateUpdate_Updated(const CGameObjectComp* const pComp, const ECompTickAuto& bValue)
 {
 	_uint iIndex = ECast(ECompTickType::Tick);
 
 	auto iter = find_if(m_listUpdateComp[iIndex].begin(), m_listUpdateComp[iIndex].end(),
-		[&pComp](CPrimitiveComponent* _pComp) {
+		[&pComp](CGameObjectComp* _pComp) {
 			return pComp == _pComp;
 		});
 
@@ -162,17 +175,17 @@ void CGameObject::OnStateUpdate_Updated(const CPrimitiveComponent* const pComp, 
 	else
 	{
 		if (bValue == ECompTickAuto::SemiAuto)
-			m_listUpdateComp[iIndex].push_back(const_cast<CPrimitiveComponent*>(pComp));
+			m_listUpdateComp[iIndex].push_back(const_cast<CGameObjectComp*>(pComp));
 	}
 }
 
-void CGameObject::OnStateLateUpdate_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue)
+void CGameObject::OnStateLateUpdate_Updated(const CGameObjectComp* const pComp, const ECompTickAuto& bValue)
 {
 	_uint iIndex = ECast(ECompTickType::Late);
 
 	auto iter = find_if(m_listUpdateComp[iIndex].begin(),
 		m_listUpdateComp[iIndex].end(),
-		[&pComp](CPrimitiveComponent* _pComp) {
+		[&pComp](CGameObjectComp* _pComp) {
 			return pComp == _pComp;
 		});
 
@@ -184,17 +197,17 @@ void CGameObject::OnStateLateUpdate_Updated(const CPrimitiveComponent* const pCo
 	else
 	{
 		if (bValue == ECompTickAuto::SemiAuto)
-			m_listUpdateComp[iIndex].push_back(const_cast<CPrimitiveComponent*>(pComp));
+			m_listUpdateComp[iIndex].push_back(const_cast<CGameObjectComp*>(pComp));
 	}
 }
 
-void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, const ECompTickAuto& bValue)
+void CGameObject::OnStateRender_Updated(const CGameObjectComp* const pComp, const ECompTickAuto& bValue)
 {
 	constexpr _uint iIndex = ECast(ECompTickType::Render);
 
 	auto iter = find_if(m_listUpdateComp[0].begin(),
 		m_listUpdateComp[0].end(),
-		[&pComp](CPrimitiveComponent* _pComp) {
+		[&pComp](CGameObjectComp* _pComp) {
 			return pComp == _pComp;
 		});
 
@@ -206,7 +219,7 @@ void CGameObject::OnStateRender_Updated(const CPrimitiveComponent* const pComp, 
 	else
 	{
 		if (bValue == ECompTickAuto::SemiAuto)
-			m_listUpdateComp[0].push_back(const_cast<CPrimitiveComponent*>(pComp));
+			m_listUpdateComp[0].push_back(const_cast<CGameObjectComp*>(pComp));
 	}
 }
 

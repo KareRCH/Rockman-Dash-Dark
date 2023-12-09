@@ -58,3 +58,32 @@ HRESULT CImGuiWin::Exists_OnChild(CImGuiWin* const pWin)
 
 	return E_FAIL;
 }
+
+void CImGuiWin::Open_Child(_uint iIndex)
+{
+	if (iIndex < 0 || iIndex >= m_vecChildrenWin.size())
+		return;
+
+	m_vecChildrenWin[iIndex]->m_bOpen = true;
+}
+
+void CImGuiWin::Open_JustOneChild(_uint iIndex)
+{
+	if (iIndex < 0 || iIndex >= m_vecChildrenWin.size())
+		return;
+
+	for (_uint i = 0; i < m_vecChildrenWin.size(); i++)
+	{
+		m_vecChildrenWin[i]->m_bOpen = false;
+	}
+
+	m_vecChildrenWin[iIndex]->m_bOpen = true;
+}
+
+void CImGuiWin::Close_Child(_uint iIndex)
+{
+	if (iIndex < 0 || iIndex >= m_vecChildrenWin.size())
+		return;
+
+	m_vecChildrenWin[iIndex]->m_bOpen = false;
+}

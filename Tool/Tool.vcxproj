@@ -27,34 +27,34 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <EnableUnitySupport>true</EnableUnitySupport>
+    <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <EnableUnitySupport>true</EnableUnitySupport>
+    <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <EnableUnitySupport>true</EnableUnitySupport>
+    <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <EnableUnitySupport>true</EnableUnitySupport>
+    <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -78,6 +78,18 @@
     <Import Project="Tool.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <SourcePath>$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <SourcePath>$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <SourcePath>$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <SourcePath>$(SourcePath)</SourcePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -164,22 +176,31 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Include\targetver.h" />
     <ClInclude Include="Include\Tool.h" />
     <ClInclude Include="Public\GameObject\ToolCamera.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_Browser.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Docking.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Hierarchi.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_MapTool.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_ObjectTool.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Property.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_Terrain.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Viewer.h" />
     <ClInclude Include="Public\Level\Level_MapTool.h" />
     <ClInclude Include="Public\MainApp.h" />
     <ClInclude Include="Public\Tool_Define.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Client\Private\GameObject\DynamicCamera.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\TestObject.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp" />
     <ClCompile Include="Include\Tool.cpp" />
     <ClCompile Include="Private\GameObject\ToolCamera.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_Browser.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Docking.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Hierarchi.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_MapTool.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_ObjectTool.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Property.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_Terrain.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Viewer.cpp" />
     <ClCompile Include="Private\Level\Level_MapTool.cpp" />
     <ClCompile Include="Private\MainApp.cpp" />
@@ -190,6 +211,12 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
   <ItemGroup>
     <Image Include="Include\small.ico" />
     <Image Include="Include\Tool.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Client\Client.vcxproj">
+      <Project>{6d0e4a78-951a-45a3-9d98-7676cfeac013}</Project>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

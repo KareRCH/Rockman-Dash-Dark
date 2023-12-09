@@ -41,7 +41,7 @@ CComponent* CTransformComponent::Clone(void* Arg)
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize(Arg)))
 	{
 		MSG_BOX("TransformComponent Copy Failed");
 		Safe_Release(pInstance);

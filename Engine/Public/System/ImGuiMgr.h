@@ -12,8 +12,8 @@ class CImGuiWin;
 struct FInitImGuiMgr
 {
 	HWND hWnd;
-	ID3D11Device* pDevice;
-	ID3D11DeviceContext* pContext;
+	ComPtr<ID3D11Device> pDevice;
+	ComPtr<ID3D11DeviceContext> pContext;
 };
 
 /// <summary>

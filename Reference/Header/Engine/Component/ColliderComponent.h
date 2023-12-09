@@ -27,9 +27,9 @@ public:
 	PRIVATE virtual HRESULT Initialize(void* Arg = nullptr) { return S_OK; }
 	PUBLIC	virtual HRESULT Initialize(ECOLLISION eType);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
-	virtual _int	Tick(const _float& fTimeDelta);
+	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta) {}
-	virtual void	Render() {}
+	virtual HRESULT	Render() { return S_OK; }
 
 public:
 	static	CColliderComponent*		Create(ECOLLISION eType);

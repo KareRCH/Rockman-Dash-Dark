@@ -3,7 +3,6 @@
 #include "Client_Define.h"
 #include "Engine_Define.h"
 
-#include "System/Management.h"
 #include "TestScene.h"
 #include "System/GraphicDev.h"
 #include "System/ShaderMgr_Enum.h"
