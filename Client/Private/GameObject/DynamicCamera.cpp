@@ -39,7 +39,7 @@ void CDynamicCamera::Priority_Tick(const _float& fTimeDelta)
 }
 
 
-_int CDynamicCamera::Tick(const _float& fTimeDelta)
+void CDynamicCamera::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
@@ -66,8 +66,6 @@ _int CDynamicCamera::Tick(const _float& fTimeDelta)
 
     // 현재 카메라의 상태를 통해 전역 카메라 행렬을 업데이트 한다.
     Apply_ViewProjMatrix();
-
-    return 0;
 }
 
 void CDynamicCamera::Late_Tick(const _float& fTimeDelta)
@@ -75,9 +73,11 @@ void CDynamicCamera::Late_Tick(const _float& fTimeDelta)
     SUPER::Late_Tick(fTimeDelta);
 }
 
-void CDynamicCamera::Render()
+HRESULT CDynamicCamera::Render()
 {
     SUPER::Render();
+
+    return S_OK;
 }
 
 CDynamicCamera* CDynamicCamera::Create()

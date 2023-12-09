@@ -115,16 +115,17 @@ void CLayer::Priority_Tick(const _float& fTimeDelta)
 _int CLayer::Tick(const _float& fTimeDelta)
 {
 	// 이 레이어에 속한 게임 오브젝트를 업데이트 한다.
-	_int iResult = 0;
+	/*_int iResult = 0;
 	for (auto& gameObj : m_listPriorityObject)
 	{
 		iResult = gameObj->Tick(fTimeDelta);
 
 		if (iResult & 0x80000000)
 			return iResult;
-	}
+	}*/
 
-	return iResult;
+	//return iResult;
+	return 0;
 }
 
 void CLayer::Late_Tick(const _float& fTimeDelta)
@@ -139,7 +140,7 @@ void CLayer::Late_Tick(const _float& fTimeDelta)
 	m_listPriorityObject.clear();
 }
 
-CPrimitiveComponent* CLayer::Get_Component(COMPONENTID eID, const wstring& pObjTag, const wstring& pComponentTag)
+CGameObjectComp* CLayer::Get_Component(COMPONENTID eID, const wstring& pObjTag, const wstring& pComponentTag)
 {
 	// 레이어 -> 오브젝트 -> 컴포넌트
 	//auto	iter = find_if(m_mapObject.begin(), m_mapObject.end(), CTag_Finder(pObjTag));

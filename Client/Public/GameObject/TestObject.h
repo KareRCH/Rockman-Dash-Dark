@@ -35,9 +35,9 @@ public:
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(const _float3 vPos);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
-	virtual _int	Tick(const _float& fTimeDelta) override;
+	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;
-	virtual void	Render() override;
+	virtual HRESULT	Render() override;
 
 public:
 	static CTestObject* Create();
@@ -54,7 +54,7 @@ private:
 	CSkinnedModelComp* m_pModelComp = { nullptr };
 
 private:
-	FGauge	m_Gauge = FGauge(30.f);
+	FGauge	m_Gauge = FGauge(1.f);
 };
 
 END

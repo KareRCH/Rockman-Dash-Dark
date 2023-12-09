@@ -37,11 +37,9 @@ void CCamera::Priority_Tick(const _float& fTimeDelta)
     SUPER::Priority_Tick(fTimeDelta);
 }
 
-_int CCamera::Tick(const _float& fTimeDelta)
+void CCamera::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
-
-    return 0;
 }
 
 void CCamera::Late_Tick(const _float& fTimeDelta)
@@ -50,11 +48,11 @@ void CCamera::Late_Tick(const _float& fTimeDelta)
 
 }
 
-void CCamera::Render()
+HRESULT CCamera::Render()
 {
     SUPER::Render();
 
-
+    return S_OK;
 }
 
 void CCamera::Free()

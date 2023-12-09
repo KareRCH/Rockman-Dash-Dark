@@ -34,6 +34,10 @@ private:
 	CImGuiWin*			m_pParentWin = { nullptr };
 	vector<CImGuiWin*>	m_vecChildrenWin;
 
+public:
+	void Open_Child(_uint iIndex);
+	void Open_JustOneChild(_uint iIndex);
+	void Close_Child(_uint iIndex);
 
 public:
 	GETSET_1(_bool, m_bOpen, Open, SET)

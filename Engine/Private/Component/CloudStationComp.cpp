@@ -19,17 +19,18 @@ void CCloudStationComp::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
-_int CCloudStationComp::Tick(const _float& fTimeDelta)
+void CCloudStationComp::Tick(const _float& fTimeDelta)
 {
-	return 0;
+
 }
 
 void CCloudStationComp::Late_Tick(const _float& fTimeDelta)
 {
 }
 
-void CCloudStationComp::Render()
+HRESULT CCloudStationComp::Render()
 {
+	return S_OK;
 }
 
 CCloudStationComp* CCloudStationComp::Create()

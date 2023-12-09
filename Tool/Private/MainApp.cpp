@@ -13,8 +13,13 @@
 #include "ImGuiWin/ImGuiWin_Viewer.h"
 #include "ImGuiWin/ImGuiWin_Hierarchi.h"
 #include "ImGuiWin/ImGuiWin_Property.h"
+#include "ImGuiWin/ImGuiWin_Browser.h"
+#include "ImGuiWin/ImGuiWin_ObjectTool.h"
+#include "ImGuiWin/ImGuiWin_Terrain.h"
 #include "System/ImGuiMgr.h"
 #include "Level/Level_MapTool.h"
+
+#include "GameObject/DynamicCamera.h"
 
 IMPLEMENT_SINGLETON(CMainApp)
 
@@ -60,7 +65,7 @@ HRESULT CMainApp::Initialize()
 	m_pGI->Load_Effect(L"Runtime/FX_ModelTest.hlsl", L"FX_ModelTest", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
 	m_pGI->Load_Effect(L"Runtime/FX_Terrain.hlsl", L"FX_Terrain", VERTEX_NORM_T::InputLayout, VERTEX_NORM_T::iMaxIndex);
 
-	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 60.f), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 120.f), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_Immediate"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_FPS"), E_FAIL);
@@ -72,9 +77,12 @@ HRESULT CMainApp::Initialize()
 	m_pGI->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("Viewer"), CImGuiWin_Viewer::Create());
 	m_pGI->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Hierarchi"), CImGuiWin_Hierarchi::Create());
 	m_pGI->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Property"), CImGuiWin_Property::Create());
+	m_pGI->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Browser"), CImGuiWin_Browser::Create());
+	m_pGI->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Terrain"), CImGuiWin_Terrain::Create());
+	m_pGI->Add_ImGuiWinAsChild(TEXT("DockingSpace"), TEXT("ObjectTool"), CImGuiWin_ObjectTool::Create());
 
 	m_pGI->Open_Level(0, CLevel_MapTool::Create());
-	
+
 	return S_OK;
 }
 

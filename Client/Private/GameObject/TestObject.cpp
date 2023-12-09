@@ -33,12 +33,8 @@ HRESULT CTestObject::Initialize_Prototype()
 
 HRESULT CTestObject::Initialize(void* Arg)
 {
-    FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
+    FAILED_CHECK_RETURN(__super::Initialize(Arg), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
-
-    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
-    TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
-    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
 
     return S_OK;
 }
@@ -57,7 +53,7 @@ void CTestObject::Priority_Tick(const _float& fTimeDelta)
     SUPER::Priority_Tick(fTimeDelta);
 }
 
-_int CTestObject::Tick(const _float& fTimeDelta)
+void CTestObject::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
@@ -82,9 +78,6 @@ _int CTestObject::Tick(const _float& fTimeDelta)
 
     if (m_Gauge.Increase(fTimeDelta))
         m_Gauge.Reset();
-
-
-    return 0;
 }
 
 void CTestObject::Late_Tick(const _float& fTimeDelta)
@@ -92,7 +85,7 @@ void CTestObject::Late_Tick(const _float& fTimeDelta)
     SUPER::Late_Tick(fTimeDelta);
 }
 
-void CTestObject::Render()
+HRESULT CTestObject::Render()
 {
     SUPER::Render();
 
@@ -101,6 +94,8 @@ void CTestObject::Render()
     m_pModelComp->Set_MaskTime(0, m_Gauge.fCur);
     m_pModelComp->Apply_Pose();
     m_pModelComp->Render();
+
+    return S_OK;
 }
 
 CTestObject* CTestObject::Create()

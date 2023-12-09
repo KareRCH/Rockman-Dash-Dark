@@ -26,26 +26,28 @@ void CImGuiWin_MapTool::Tick(const _float& fTimeDelta)
 
         if (m_bFirstLoop)
         {
+            m_bFirstLoop = false;
+
             ImGui::DockBuilderRemoveNode(dockspace_id);
             ImGui::DockBuilderAddNode(dockspace_id, DockSpace_Flags | ImGuiDockNodeFlags_DockSpace);
             ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetWindowSize());
             ImVec2 vDockSize = ImGui::GetWindowSize();
 
-            ImGuiID dock_right_id = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 250.f / vDockSize.x, NULL, &dockspace_id);
-            ImGuiID dock_property_id = ImGui::DockBuilderSplitNode(dock_right_id, ImGuiDir_Down, 0.5f, NULL, &dock_right_id);
+            ImGuiID dock_hierarchi_id = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 250.f / vDockSize.x, NULL, &dockspace_id);
+            ImGuiID dock_property_id = ImGui::DockBuilderSplitNode(dock_hierarchi_id, ImGuiDir_Down, 0.5f, NULL, &dock_hierarchi_id);
+            ImGuiID dock_terrain_id = ImGui::DockBuilderSplitNode(dock_hierarchi_id, ImGuiDir_Down, 0.5f, &dock_property_id, &dock_hierarchi_id);
+            
 
             ImGui::DockBuilderDockWindow(u8"ºä¾î", dockspace_id);
-            ImGui::DockBuilderDockWindow(u8"°èÃþ", dock_right_id);
+            ImGui::DockBuilderDockWindow(u8"°èÃþ", dock_hierarchi_id);
             ImGui::DockBuilderDockWindow(u8"¼Ó¼º", dock_property_id);
-
+            ImGui::DockBuilderDockWindow(u8"ÅÍ·¹ÀÎ", dock_terrain_id);
 
             ImGuiID dock_browser_scene = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 200.f / vDockSize.y, NULL, &dockspace_id);
 
             ImGui::DockBuilderDockWindow(u8"ºê¶ó¿ìÀú", dock_browser_scene);
 
             ImGui::DockBuilderFinish(dockspace_id);
-
-            m_bFirstLoop = false;
         }
     }
     else
@@ -53,7 +55,9 @@ void CImGuiWin_MapTool::Tick(const _float& fTimeDelta)
         //ShowDockingDisabledMessage();
     }
 
+
     SUPER::Tick(fTimeDelta);
+
 
     ImGui::End();
 }

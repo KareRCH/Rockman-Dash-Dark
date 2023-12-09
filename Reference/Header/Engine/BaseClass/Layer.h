@@ -28,7 +28,7 @@ private:
 	virtual void	Free();
 
 public:
-	CPrimitiveComponent*		Get_Component(COMPONENTID eID, const wstring& pObjTag, const wstring& pComponentTag);
+	CGameObjectComp*		Get_Component(COMPONENTID eID, const wstring& pObjTag, const wstring& pComponentTag);
 
 public:
 	HRESULT			Add_GameObject(CGameObject* pGameObject);

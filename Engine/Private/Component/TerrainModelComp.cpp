@@ -30,16 +30,16 @@ void CTerrainModelComp::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
-_int CTerrainModelComp::Tick(const _float& fTimeDelta)
+void CTerrainModelComp::Tick(const _float& fTimeDelta)
 {
-	return _int();
+
 }
 
 void CTerrainModelComp::Late_Tick(const _float& fTimeDelta)
 {
 }
 
-void CTerrainModelComp::Render()
+HRESULT CTerrainModelComp::Render()
 {
     Bind_ShaderResources();
 
@@ -48,6 +48,8 @@ void CTerrainModelComp::Render()
     m_pTerrainBufferComp->Bind_Buffer();
 
     m_pTerrainBufferComp->Render_Buffer();
+
+    return S_OK;
 }
 
 CTerrainModelComp* CTerrainModelComp::Create()

@@ -18,17 +18,18 @@ void CTeamAgentComp::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
-_int CTeamAgentComp::Tick(const _float& fTimeDelta)
+void CTeamAgentComp::Tick(const _float& fTimeDelta)
 {
-    return _int();
+    
 }
 
 void CTeamAgentComp::Late_Tick(const _float& fTimeDelta)
 {
 }
 
-void CTeamAgentComp::Render()
+HRESULT CTeamAgentComp::Render()
 {
+    return S_OK;
 }
 
 CTeamAgentComp* CTeamAgentComp::Create()

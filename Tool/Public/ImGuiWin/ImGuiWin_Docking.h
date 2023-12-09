@@ -27,6 +27,10 @@ private:
 
 
 private:
+	void	MenuBar(const _float& fTimeDelta);
+
+
+private:
 	_bool					m_bOpt_FullScreen = true;
 	_bool					m_bOpt_Padding;
 

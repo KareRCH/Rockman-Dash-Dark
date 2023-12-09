@@ -26,11 +26,11 @@ HRESULT CSceneComponent::Initialize(void* Arg)
 	return S_OK;
 }
 
-_int CSceneComponent::Tick(const _float& fTimeDelta)
+void CSceneComponent::Tick(const _float& fTimeDelta)
 {
 	// 여기에 자동 함수 추가
 
-	return 0;
+
 }
 
 void CSceneComponent::Free()

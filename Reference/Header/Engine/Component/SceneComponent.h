@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Component/PrimitiveComponent.h"
+#include "Component/GameObjectComp.h"
 #include "Component/TransformComponent.h"
 #include "Component/PipelineComp.h"
 #include "BaseClass/GameObject.h"
@@ -12,9 +12,9 @@ BEGIN(Engine)
 /// 내부적으로 트랜스폼 컴포넌트를 포함하는 클래스
 /// 이 클래스를 상속받으면 트랜스폼 속성을 같이 가지게 된다.
 /// </summary>
-class ENGINE_DLL CSceneComponent abstract : public CPrimitiveComponent, public ITransform
+class ENGINE_DLL CSceneComponent abstract : public CGameObjectComp, public ITransform
 {
-	DERIVED_CLASS(CPrimitiveComponent, CSceneComponent)
+	DERIVED_CLASS(CGameObjectComp, CSceneComponent)
 protected:
 	explicit CSceneComponent() = default;
 	explicit CSceneComponent(const CSceneComponent& rhs);
@@ -24,9 +24,9 @@ public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
-	virtual _int	Tick(const _float& fTimeDelta);
+	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta) PURE;
-	virtual void	Render() PURE;
+	virtual HRESULT	Render() PURE;
 
 public:
 	virtual CComponent* Clone(void* Arg = nullptr) PURE;

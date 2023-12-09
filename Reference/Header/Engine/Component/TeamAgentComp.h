@@ -24,9 +24,9 @@ public:
 	virtual HRESULT Initialize_Prototype(void* Arg = nullptr);
 	virtual HRESULT Initialize(void* Arg = nullptr);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
-	virtual _int	Tick(const _float& fTimeDelta);
+	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
-	virtual void	Render();
+	virtual HRESULT	Render();
 
 public:
 	static CTeamAgentComp* Create();

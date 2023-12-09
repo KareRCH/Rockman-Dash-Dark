@@ -167,14 +167,12 @@ void CColliderComponent::Priority_Tick(const _float& fTimeDelta)
 {
 }
 
-_int CColliderComponent::Tick(const _float& fTimeDelta)
+void CColliderComponent::Tick(const _float& fTimeDelta)
 {
     OnCollisionExited();
     // Exited ÃÊ±âÈ­
     for (auto iter = m_listColliderObject.begin(); iter != m_listColliderObject.end(); ++iter)
         iter->second = false;
-
-    return 0;
 }
 
 void CColliderComponent::EnterToPhysics(_uint iIndex)

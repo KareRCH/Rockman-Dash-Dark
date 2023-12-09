@@ -24,17 +24,19 @@ HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
         m_pDevice.GetAddressOf(), &FeatureLV, m_pDeviceContext.GetAddressOf())))
         return E_FAIL;
 
-    m_iScreenWidth = tInit.iScreenWidth;
-    m_iScreenHeight = tInit.iScreenHeight;
+    m_iScreenWidth = m_viResolutionX = tInit.iScreenWidth;
+    m_iScreenHeight = m_viResolutionY = tInit.iScreenHeight;
+
+    Set_Resolution(tInit.iScreenWidth, tInit.iScreenHeight);
+
     m_iNumRenderTargets = MaxRenderTarget;
     m_vecRTV.reserve(MaxRenderTarget);
 
+    m_fResolutionRatio = Cast<_float>(m_viResolutionX) / Cast<_float>(m_viResolutionY);
+
     FAILED_CHECK_RETURN(Ready_SwapChain(tInit), E_FAIL);
-
     FAILED_CHECK_RETURN(Ready_BackBufferRenderTargetView(tInit), E_FAIL);
-
     FAILED_CHECK_RETURN(Ready_DepthStencilRenderTargetView(tInit), E_FAIL);
-
     FAILED_CHECK_RETURN(Ready_Viewport(tInit), E_FAIL);
 
     /* ÀåÄ¡¿¡ ¹ÙÀÎµåÇØ³õÀ» ·»´õÅ¸°Ùµé°ú µª½º½ºÅÙ½Çºä¸¦ ¼ÂÆÃÇÑ´Ù. */
@@ -337,8 +339,7 @@ HRESULT CGraphicDev::Resize_SwapChain(_uint iWidth, _uint iHeight)
     if (m_pSwapChain == nullptr)
         return E_FAIL;
 
-    m_iScreenWidth = iWidth;
-    m_iScreenHeight = iHeight;
+    Set_ScreenSize(iWidth, iHeight);
 
     CleanUp_RenderTargets();
     m_pSwapChain->ResizeBuffers(0, m_iScreenWidth, m_iScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
@@ -471,9 +472,19 @@ HRESULT CGraphicDev::Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResource
     ComPtr<ID3D11Texture2D> pBackBuffer = { nullptr };
     if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(pBackBuffer.GetAddressOf()))))
         return E_FAIL;
+    
+    D3D11_BOX regionBox = {};
+    regionBox.left = Cast<_uint>(m_vecViewports[iViewportIndex].TopLeftX);
+    regionBox.top = Cast<_uint>(m_vecViewports[iViewportIndex].TopLeftY);
+    regionBox.front = 0;
+    regionBox.right = Cast<_uint>(regionBox.left + m_vecViewports[iViewportIndex].Width);
+    regionBox.bottom = Cast<_uint>(regionBox.top + m_vecViewports[iViewportIndex].Height);
+    regionBox.back = 1;
 
     D3D11_TEXTURE2D_DESC TextureDesc = {};
     pBackBuffer->GetDesc(&TextureDesc);
+    TextureDesc.Width = regionBox.right - regionBox.left;
+    TextureDesc.Height = regionBox.bottom - regionBox.top;
     TextureDesc.Usage = D3D11_USAGE_DEFAULT;
     TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
@@ -481,7 +492,51 @@ HRESULT CGraphicDev::Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResource
     if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, pStaging.GetAddressOf())))
         return E_FAIL;
 
-    m_pDeviceContext->CopyResource(pStaging.Get(), pBackBuffer.Get());
+
+    //m_pDeviceContext->CopyResource(pStaging.Get(), pBackBuffer.Get());
+    m_pDeviceContext->CopySubresourceRegion(pStaging.Get(), 0, 0, 0, 0, pBackBuffer.Get(), 0, &regionBox);
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Format = TextureDesc.Format;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+
+    ComPtr<ID3D11ShaderResourceView> pTempSRV = { nullptr };
+    if (FAILED(m_pDevice->CreateShaderResourceView(pStaging.Get(), &srvDesc, pSRV.GetAddressOf())))
+        return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CGraphicDev::Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, const D3D11_VIEWPORT Viewport)
+{
+    ComPtr<ID3D11Texture2D> pBackBuffer = { nullptr };
+    if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(pBackBuffer.GetAddressOf()))))
+        return E_FAIL;
+
+    D3D11_BOX regionBox = {};
+    regionBox.left = Cast<_uint>(Viewport.TopLeftX);
+    regionBox.top = Cast<_uint>(Viewport.TopLeftY);
+    regionBox.front = 0;
+    regionBox.right = Cast<_uint>(regionBox.left + Viewport.Width);
+    regionBox.bottom = Cast<_uint>(regionBox.top + Viewport.Height);
+    regionBox.back = 1;
+
+    D3D11_TEXTURE2D_DESC TextureDesc = {};
+    pBackBuffer->GetDesc(&TextureDesc);
+    TextureDesc.Width = regionBox.right - regionBox.left;
+    TextureDesc.Height = regionBox.bottom - regionBox.top;
+    TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+    TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+    ComPtr<ID3D11Texture2D> pStaging = { nullptr };
+    if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, pStaging.GetAddressOf())))
+        return E_FAIL;
+
+
+    //m_pDeviceContext->CopyResource(pStaging.Get(), pBackBuffer.Get());
+    m_pDeviceContext->CopySubresourceRegion(pStaging.Get(), 0, 0, 0, 0, pBackBuffer.Get(), 0, &regionBox);
 
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
     srvDesc.Format = TextureDesc.Format;
@@ -541,3 +596,58 @@ HRESULT CGraphicDev::Bind_Viewport(_uint iIndex)
     return S_OK;
 }
 
+void CGraphicDev::Set_ScreenSize(_uint iX, _uint iY)
+{
+    m_iScreenWidth = iX;
+    m_iScreenHeight = iY;
+    m_iScreenRatio = Cast<_float>(m_iScreenWidth) / Cast<_float>(m_iScreenHeight);
+
+    Apply_ResolutionByScreen_Ratio();
+}
+
+void CGraphicDev::Set_ScreenWidth(_uint iX)
+{
+    m_iScreenWidth = iX;
+    m_iScreenRatio = Cast<_float>(m_iScreenWidth) / Cast<_float>(m_iScreenHeight);
+
+    Apply_ResolutionByScreen_Ratio();
+}
+
+void CGraphicDev::Set_ScreenHeight(_uint iY)
+{
+    m_iScreenHeight = iY;
+    m_iScreenRatio = Cast<_float>(m_iScreenWidth) / Cast<_float>(m_iScreenHeight);
+
+    Apply_ResolutionByScreen_Ratio();
+}
+
+void CGraphicDev::Set_Resolution(_uint iX, _uint iY)
+{
+    m_viResolutionX = iX;
+    m_viResolutionY = iY;
+    m_fResolutionRatio = Cast<_float>(m_viResolutionX) / Cast<_float>(m_viResolutionY);
+
+    Apply_ResolutionByScreen_Ratio();
+}
+
+void CGraphicDev::Set_ResolutionX_MaintainRatio(_uint iX)
+{
+    m_viResolutionX = iX;
+    m_viResolutionY = Cast<_uint>(m_viResolutionX / m_fResolutionRatio);
+
+    Apply_ResolutionByScreen_Ratio();
+}
+
+void CGraphicDev::Set_ResolutionY_MaintainRatio(_uint iY)
+{
+    m_viResolutionY = iY;
+    m_viResolutionX = Cast<_uint>(m_viResolutionY * m_fResolutionRatio);
+
+    Apply_ResolutionByScreen_Ratio();
+}
+
+void CGraphicDev::Apply_ResolutionByScreen_Ratio()
+{
+    m_vResolutionByScreen_Ratio.x = Cast<_float>(m_viResolutionX) / Cast<_float>(m_iScreenWidth);
+    m_vResolutionByScreen_Ratio.y = Cast<_float>(m_viResolutionY) / Cast<_float>(m_iScreenHeight);
+}

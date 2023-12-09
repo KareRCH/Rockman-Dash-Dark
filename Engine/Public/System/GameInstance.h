@@ -67,28 +67,38 @@ public:		// 그래픽 디바이스
 	HRESULT							Bind_SystemViewport(_uint iIndex);
 
 	HRESULT							Copy_BackBufferToTexture_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex);
+	HRESULT							Copy_BackBufferToTexture_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, const D3D11_VIEWPORT Viewport);
+	const _float					ResolutionRatio();
+	const _uint						ResolutionX();
+	const _uint						ResolutionY();
+	void							Set_Resolution(_uint iX, _uint iY);
+	void							Set_ResolutionX_MaintainRatio(_uint iX);
+	void							Set_ResolutionY_MaintainRatio(_uint iY);
+	const _float					ResolutionByScreen_RatioX();
+	const _float					ResolutionByScreen_RatioY();
+
 #pragma endregion
 
 
 
 #pragma region 인풋 디바이스
-public:		// 인풋 디바이스
-	HRESULT Initialize_InputDev(HINSTANCE hInst, HWND hWnd);
-	void	Tick_InputDev();
-	void	Late_Tick_InputDev();
-	_byte	Get_DIKeyState(_ubyte byKeyID);
-	_byte	Get_DIMouseState(MOUSEKEYSTATE eMouse);
-	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState);
-	void	Toggle_LockMouseCenter();
+public:			// 인풋 디바이스
+	HRESULT		Initialize_InputDev(HINSTANCE hInst, HWND hWnd);
+	void		Tick_InputDev();
+	void		Late_Tick_InputDev();
+	_byte		Get_DIKeyState(_ubyte byKeyID);
+	_byte		Get_DIMouseState(MOUSEKEYSTATE eMouse);
+	_long		Get_DIMouseMove(MOUSEMOVESTATE eMouseState);
+	void		Toggle_LockMouseCenter();
 #pragma endregion
 
 
 
 #pragma region 키 매니저
-public:		// 키 매니저
-	HRESULT Initialize_KeyMgr();
-	void	Tick_KeyMgr();
-	void	Late_Tick_KeyMgr();
+public:					// 키 매니저
+	HRESULT				Initialize_KeyMgr();
+	void				Tick_KeyMgr();
+	void				Late_Tick_KeyMgr();
 	// 키 입력
 	inline _bool		IsKey_Pressing(const int& iKey);
 	inline _bool		IsKey_Pressed(const int& iKey);
@@ -170,15 +180,15 @@ public:
 
 #pragma region 오브젝트 매니저
 public:		// 매니지먼트
-	HRESULT Initialize_ObjectMgr();
-	void	Priority_Tick_Object(const _float& fTimeDelta);
-	_int	Tick_Object(const _float& fTimeDelta);
-	void	Late_Tick_Object(const _float& fTimeDelta);
+	HRESULT				Initialize_ObjectMgr();
+	void				Priority_Tick_Object(const _float& fTimeDelta);
+	_int				Tick_Object(const _float& fTimeDelta);
+	void				Late_Tick_Object(const _float& fTimeDelta);
 
-	HRESULT Add_PrototypeObject(const wstring& strPrototypeKey, class CGameObject* pPrototype);
-	HRESULT Add_CloneObject(const wstring& strPrototypeKey, void* pArg = nullptr);
-	class CGameObject* Find_PrototypeObject(const wstring& strPrototypeKey);
-	void	Clear_PrototypeObejcts(const wstring& strContainTag);
+	HRESULT				Add_PrototypeObject(const wstring& strPrototypeKey, class CGameObject* pPrototype);
+	HRESULT				Add_CloneObject(const wstring& strPrototypeKey, void* pArg = nullptr);
+	class CGameObject*	Find_PrototypeObject(const wstring& strPrototypeKey);
+	void				Clear_PrototypeObejcts(const wstring& strContainTag);
 
 	HRESULT				Add_GameObject(class CGameObject* pObj);
 	class CGameObject*	Find_GameObject(_uint iFindID);
@@ -207,20 +217,20 @@ public:		// 블랙보드 매니저
 
 #pragma region 텍스처 매니저
 public:		// 텍스처 매니저
-	HRESULT Initialize_TextureMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
-	HRESULT Load_Texture(const wstring& strFileName, const _bool bPermanent);
+	HRESULT						Initialize_TextureMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
+	HRESULT						Load_Texture(const wstring& strFileName, const _bool bPermanent);
 	ID3D11Texture2D*			Find_Texture2D(const wstring& strTextureKey);
-	ID3D11ShaderResourceView* Find_SRV(const wstring& strTextureKey);
+	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey);
 #pragma endregion
 
 
 
 #pragma region 렌더 매니저
 public:		// 렌더 매니저
-	HRESULT	Initialize_RenderMgr(const DX11DEVICE_T tDevice, const _uint iWidth = 1280U, const _uint iHeight = 720U);
-	void	Render();
-	void	Add_RenderGroup(ERenderGroup eType, class CGameObject* pGameObject);
-	void	Clear_RenderGroup();
+	HRESULT			Initialize_RenderMgr(const DX11DEVICE_T tDevice, const _uint iWidth = 1280U, const _uint iHeight = 720U);
+	void			Render();
+	void			Add_RenderGroup(ERenderGroup eType, class CGameObject* pGameObject);
+	void			Clear_RenderGroup();
 	void			Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView);
 	const _matrix 	Get_PerspectiveViewMatrix(const _uint iCam) const;
 	void			Set_PerspectiveProjMatrix(const _uint iCam, const _matrix& matPersProj);
@@ -235,41 +245,41 @@ public:		// 렌더 매니저
 
 #pragma region 모델 매니저
 public:		// 모델 매니저
-	HRESULT	Initialize_ModelMgr(const string& strMainPath);
-	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
+	HRESULT					Initialize_ModelMgr(const string& strMainPath);
+	void					Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
 	const FModelData* const Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
-	const FMeshData* const Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey);
+	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey);
 	const FMeshGroup* const Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
-	class FSkeletalData* Clone_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strSkeletalKey);
-	class FSkeletalData* Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strSkeletalKey);
+	class FSkeletalData*	Clone_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strSkeletalKey);
+	class FSkeletalData*	Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strSkeletalKey);
 #pragma endregion
 
 
 
 #pragma region 셰이더 매니저
 public:		// 셰이더 매니저
-	HRESULT Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
-	HRESULT	Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey);
-	const ComPtr<ID3DBlob> Get_ShaderByte(const EShaderType eType, const wstring& strKey);
+	HRESULT							Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
+	HRESULT							Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey);
+	const ComPtr<ID3DBlob>			Get_ShaderByte(const EShaderType eType, const wstring& strKey);
 	template<EShaderType Type>
 	inline ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strKey);
-	HRESULT Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
-	ID3DX11Effect* Find_Effect(const wstring& strKey) const;
-	class FEffectData* Find_EffectData(const wstring& strKey) const;
+	HRESULT							Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
+	ID3DX11Effect*					Find_Effect(const wstring& strKey) const;
+	class FEffectData*				Find_EffectData(const wstring& strKey) const;
 #pragma endregion
 
 
 #pragma region ImGui 매니저
 public:
-	HRESULT Initialize_ImGuiMgr(const struct FInitImGuiMgr tInit);
-	void	Tick_ImGuiMgr(const _float& fTimeDelta);
-	HRESULT Render_ImGuiMgr();
-	HRESULT Add_ImGuiWinAsRoot(const wstring& strName, class CImGuiWin* pImGuiWin);
-	HRESULT Add_ImGuiWinAsChild(const wstring& strParentName, const wstring& strName, CImGuiWin* pImGuiWin);
-	HRESULT Bind_RootWin(const wstring& strName);
-	HRESULT AttachToChild_ImGuiWin(const wstring& strParentName, const wstring& strChildName);
-	struct ImGuiIO* Get_ImGuiIO();
-	struct ImGuiContext* Get_ImGuiContext();
+	HRESULT					Initialize_ImGuiMgr(const struct FInitImGuiMgr tInit);
+	void					Tick_ImGuiMgr(const _float& fTimeDelta);
+	HRESULT					Render_ImGuiMgr();
+	HRESULT					Add_ImGuiWinAsRoot(const wstring& strName, class CImGuiWin* pImGuiWin);
+	HRESULT					Add_ImGuiWinAsChild(const wstring& strParentName, const wstring& strName, CImGuiWin* pImGuiWin);
+	HRESULT					Bind_RootWin(const wstring& strName);
+	HRESULT					AttachToChild_ImGuiWin(const wstring& strParentName, const wstring& strChildName);
+	struct ImGuiIO*			Get_ImGuiIO();
+	struct ImGuiContext*	Get_ImGuiContext();
 #pragma endregion
 
 

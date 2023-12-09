@@ -48,7 +48,7 @@ HRESULT CImGuiMgr::Initialize(const FInitImGuiMgr tInit)
 	if (!ImGui_ImplWin32_Init(tInit.hWnd))
 		return E_FAIL;
 
-	if (!ImGui_ImplDX11_Init(tInit.pDevice, tInit.pContext))
+	if (!ImGui_ImplDX11_Init(tInit.pDevice.Get(), tInit.pContext.Get()))
 		return E_FAIL;
 
     return S_OK;
