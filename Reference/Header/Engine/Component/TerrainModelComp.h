@@ -4,12 +4,16 @@
 
 #include "Component/TerrainBufferComp.h"
 #include "Component/EffectComponent.h"
+#include "Component/TextureComponent.h"
 
 BEGIN(Engine)
 
 class ENGINE_DLL CTerrainModelComp : public CModelComponent
 {
 	DERIVED_CLASS(CModelComponent, CTerrainModelComp)
+
+public:
+	enum TEXTURE { TYPE_DIFFUSE, TYPE_MASK, TYPE_BRUSH, TYPE_END };
 
 protected:
 	explicit CTerrainModelComp() = default;
@@ -35,6 +39,8 @@ public:
 	HRESULT	IsRender_Ready();
 	HRESULT Bind_ShaderResources();
 
+
+
 #pragma region 터레인 버퍼 컴포넌트
 	HRESULT Create_Buffer(const FTerrainBufInit tInit);
 
@@ -47,12 +53,19 @@ private:
 #pragma region 이펙트 컴포넌트
 public:
 	// 이펙트를 바인드 한다.
-	HRESULT Bind_Effect(const wstring& strEffectKey);
+	HRESULT Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
 	// 이펙트를 언바인드 한다. 안쓸듯
 	HRESULT Unbind_Effect();
 
 private:
 	CEffectComponent* m_pEffectComp = { nullptr };
+#pragma endregion
+
+
+#pragma region 텍스처 컴포넌트
+
+private:
+	CTextureComponent* m_pTextureComps[TYPE_END] = {nullptr};
 #pragma endregion
 
 

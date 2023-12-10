@@ -126,6 +126,8 @@ void CImGuiWin_Terrain::Layout_TerrainSetting(const _float& fTimeDelta)
 		{
 			GI()->Add_GameObject(m_pTerrain = CTerrain::Create());
 			Safe_AddRef(m_pTerrain);
+
+			//m_pTerrain->
 		}
 		else
 		{

@@ -168,7 +168,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
-</Command>
+      </Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
@@ -195,7 +195,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
-</Command>
+      </Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -226,7 +226,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
-</Command>
+      </Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -253,7 +253,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
-</Command>
+      </Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
@@ -280,7 +280,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
-</Command>
+      </Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -311,7 +311,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
-</Command>
+      </Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -323,6 +323,8 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\GameObject\DynamicCamera.h" />
     <ClInclude Include="Public\GameObject\TestObject.h" />
     <ClInclude Include="Public\GameObject\TestTextureObject.h" />
+    <ClInclude Include="Public\Level\Level_Loading.h" />
+    <ClInclude Include="Public\Loader.h" />
     <ClInclude Include="Public\MainApp.h" />
     <ClInclude Include="Public\TestScene.h" />
   </ItemGroup>
@@ -331,6 +333,8 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\GameObject\DynamicCamera.cpp" />
     <ClCompile Include="Private\GameObject\TestObject.cpp" />
     <ClCompile Include="Private\GameObject\TestTextureObject.cpp" />
+    <ClCompile Include="Private\Level\Level_Loading.cpp" />
+    <ClCompile Include="Private\Loader.cpp" />
     <ClCompile Include="Private\MainApp.cpp" />
     <ClCompile Include="Private\TestScene.cpp" />
   </ItemGroup>

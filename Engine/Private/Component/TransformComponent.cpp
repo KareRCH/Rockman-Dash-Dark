@@ -1,5 +1,7 @@
 #include "Component/TransformComponent.h"
 
+#include "Component/EffectComponent.h"
+
 CTransformComponent::CTransformComponent()
 	: m_qtOrientation(_float4(0.f, 0.f, 0.f, 1.f)), m_vScale(1.f, 1.f, 1.f)
 	, m_matTransform()
@@ -55,6 +57,11 @@ CComponent* CTransformComponent::Clone(void* Arg)
 void CTransformComponent::Free()
 {
 	
+}
+
+HRESULT CTransformComponent::Bind_EffectMatrix(CEffectComponent* pEffect, const _char* pConstantName)
+{
+	return pEffect->Bind_Matrix(pConstantName, &m_matTransform);
 }
 
 void CTransformComponent::MoveForward(_float fValue)

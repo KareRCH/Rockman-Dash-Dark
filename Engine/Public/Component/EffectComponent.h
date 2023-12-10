@@ -12,11 +12,15 @@ BEGIN(Engine)
 /// 이 EffectComponent 계열은 고수준 셰이딩을 자주 사용하고 간편하게 사용해야 할 때 쓰인다.
 /// 간편함을 위해 만들어 져서 이 컴포넌트 하나로 해결본다.
 /// 
-/// 렌더링 파이프라인 바인딩이 필요하다.
+/// [바인딩 된 컴포넌트]
+/// - 디바이스
+/// [참조하는 관리자]
+/// - 셰이더 매니저
 /// </summary>
 class CEffectComponent final : public CInternalComponent, public ID3D11DeviceComp
 {
 	DERIVED_CLASS(CInternalComponent, CEffectComponent)
+
 protected:
 	explicit CEffectComponent() = default;
 	explicit CEffectComponent(const CEffectComponent& rhs);
@@ -47,7 +51,7 @@ private:
 	
 public:	// 외부용 함수
 	// 이펙트 불러오기
-	HRESULT Bind_Effect(const wstring& strEffectKey);
+	HRESULT Bind_Effect(const wstring& strEffectFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
 	// 이펙트 풀기
 	HRESULT Unbind_Effect();
 	// 외부에서 
@@ -66,6 +70,11 @@ public:
 	HRESULT Bind_RawValue(const _char* pConstantName, const void* pData, _uint iSize);
 
 private:
+	// 내부적으로 쓰이는 셰이더 매니저 링크 함수. 이를 통해 전역적으로 셰이더를 등록하고 해제하는 행위를 한다.
+	HRESULT Link_ShaderMgr();
+
+private:
+	class CShaderMgr* m_pShaderMgr = { nullptr };	// 셰이더 매니저 연결
 	class FEffectData* m_pEffectData = { nullptr };	// 이펙트 데이터
 };
 

@@ -36,7 +36,7 @@ void CToolCamera::Priority_Tick(const _float& fTimeDelta)
 
 }
 
-_int CToolCamera::Tick(const _float& fTimeDelta)
+void CToolCamera::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
@@ -63,8 +63,6 @@ _int CToolCamera::Tick(const _float& fTimeDelta)
 
     // 현재 카메라의 상태를 통해 전역 카메라 행렬을 업데이트 한다.
     Apply_ViewProjMatrix();
-
-    return _int();
 }
 
 void CToolCamera::Late_Tick(const _float& fTimeDelta)
@@ -72,9 +70,10 @@ void CToolCamera::Late_Tick(const _float& fTimeDelta)
     SUPER::Late_Tick(fTimeDelta);
 }
 
-void CToolCamera::Render()
+HRESULT CToolCamera::Render()
 {
 
+    return S_OK;
 }
 
 CToolCamera* CToolCamera::Create()

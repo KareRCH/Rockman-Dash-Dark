@@ -232,6 +232,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Component\CommonModelComp.h" />
+    <ClInclude Include="Public\Component\MeshBufferComp.h" />
+    <ClInclude Include="Public\Component\PlaneModelComp.h" />
     <ClInclude Include="Public\Component\TerrainBufferComp.h" />
     <ClInclude Include="Public\Component\TerrainModelComp.h" />
     <ClInclude Include="Public\Utility\LogicDeviceBasic.h" />
@@ -341,6 +344,8 @@
     <ClCompile Include="Private\BaseClass\Terrain.cpp" />
     <ClCompile Include="Private\Component\AnimationComponent.cpp" />
     <ClCompile Include="Private\Component\BoxBufferComp.cpp" />
+    <ClCompile Include="Private\Component\CommonModelComp.cpp" />
+    <ClCompile Include="Private\Component\MeshBufferComp.cpp" />
     <ClCompile Include="Private\Component\PipelineComp.cpp" />
     <ClCompile Include="Private\Component\ColliderComponent.cpp" />
     <ClCompile Include="Private\Component\ColorShaderComp.cpp" />
@@ -354,6 +359,7 @@
     <ClCompile Include="Private\Component\ModelComponent.cpp" />
     <ClCompile Include="Private\Component\ModelShaderComp.cpp" />
     <ClCompile Include="Private\Component\MultiMeshBufComp.cpp" />
+    <ClCompile Include="Private\Component\PlaneModelComp.cpp" />
     <ClCompile Include="Private\Component\RectBufferComp.cpp" />
     <ClCompile Include="Private\Component\SceneComponent.cpp" />
     <ClCompile Include="Private\Component\ShaderComponent.cpp" />

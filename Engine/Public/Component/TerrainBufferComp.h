@@ -7,8 +7,17 @@ BEGIN(Engine)
 struct FTerrainBufInit
 {
 	wstring strHeightMapFilePath;	// 헤이트 맵의 경로
-	_int	iWidth;					// 최대 너비이자 면적, 반드시 정사각형으로 설정됨
-	_int	iHeight;				// 최대 높낮이, 이 값을 통해 최대 높낮이가 정해진다.
+	_uint	iWidth;					// 최대 너비이자 면적, 반드시 정사각형으로 설정됨
+	_uint	iHeight;				// 최대 높낮이, 이 값을 통해 최대 높낮이가 정해진다.
+};
+
+// 헤이트 없는 초기화자
+struct FTerrainBufInit_NoHeight
+{
+	_uint iNumVertexX;
+	_uint iNumVertexZ;
+	_uint iWidth;
+	_uint iHeight;
 };
 
 /// <summary>
@@ -36,6 +45,8 @@ protected:
 public:
 	// 초기 버퍼 생성 작업
 	HRESULT Create_Buffer(const FTerrainBufInit tInit);
+	// 초기 버퍼 생성 작업, 헤이트 없이
+	HRESULT Create_Buffer(const FTerrainBufInit_NoHeight tInit);
 	// 장치에 버퍼 바인드
 	HRESULT Bind_Buffer();
 	// 실제 인덱싱된 버퍼를 드로잉
@@ -44,9 +55,9 @@ public:
 	HRESULT IsRender_Ready();
 
 private:
-	_int3	m_viNumTerrainVertices;
-	_float	m_fIntervalX;
-	_float	m_fIntervalZ;
+	_int3	m_viNumTerrainVertices;		// 터레인 점 개수
+	_float	m_fIntervalX;				// 점간 간격 X
+	_float	m_fIntervalZ;				// 점간 간격 Z
 };
 
 END

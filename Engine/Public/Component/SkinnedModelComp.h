@@ -125,7 +125,7 @@ private:
 	// 외부 설정용
 public:
 	// 이펙트를 바인드 한다.
-	HRESULT Bind_Effect(const wstring& strEffectKey);
+	HRESULT Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
 	// 이펙트를 언바인드 한다. 안쓸듯
 	HRESULT Unbind_Effect();
 

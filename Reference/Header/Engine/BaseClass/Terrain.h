@@ -51,6 +51,13 @@ private:
 	HRESULT	Initialize_Component(const FInitTerrain& tInit);
 
 
+public:
+	HRESULT Create_Terrain(const FInitTerrain& tInit);
+	// 터레인 생성시 헤이트 맵으로 부터 로드함.
+	HRESULT Create_TerrainByHeightMap(const FInitTerrain& tInit);
+	
+
+
 protected:
 	CTerrainModelComp* m_pTerrainModelComp = { nullptr };
 };

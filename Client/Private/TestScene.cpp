@@ -8,8 +8,6 @@
 
 HRESULT CTestScene::Initialize()
 {
-    FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
-
     GI()->Load_Texture(L"Model/Character/RockVolnutt/Body.png", true);
     GI()->Load_Texture(L"Model/Character/RockVolnutt/Head.png", true);
     GI()->Load_Model(EModelGroupIndex::Permanent, "Character/RockVolnutt/Test.fbx", L"RockVolnutt");
@@ -22,14 +20,13 @@ HRESULT CTestScene::Initialize()
     return S_OK;
 }
 
-_int CTestScene::Tick(const _float& fTimeDelta)
+void CTestScene::Tick(const _float& fTimeDelta)
 {
-    return 0;
+
 }
 
 HRESULT CTestScene::Render()
 {
-    SUPER::Render();
 
     return S_OK;
 }
@@ -40,8 +37,8 @@ CTestScene* CTestScene::Create()
 
     if (FAILED(pInstance->Initialize()))
     {
-        Engine::Safe_Release(pInstance);
         MSG_BOX("TestScene Create Failed");
+        Safe_Release(pInstance);
 
         return nullptr;
     }
@@ -51,5 +48,4 @@ CTestScene* CTestScene::Create()
 
 void CTestScene::Free()
 {
-    SUPER::Free();
 }

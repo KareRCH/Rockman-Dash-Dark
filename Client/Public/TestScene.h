@@ -15,7 +15,7 @@ protected:
 
 public:
 	virtual HRESULT		Initialize() override;
-	virtual _int		Tick(const _float& fTimeDelta) override;
+	virtual void		Tick(const _float& fTimeDelta) override;
 	virtual HRESULT		Render() override;
 
 public:

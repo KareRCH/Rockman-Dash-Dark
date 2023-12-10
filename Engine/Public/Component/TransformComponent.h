@@ -30,6 +30,10 @@ protected:
 
 
 public:
+	HRESULT Bind_EffectMatrix(class CEffectComponent* pEffect, const _char* pConstantName);
+
+
+public:
 #pragma region Position
 	inline const _vector Get_PositionVector()
 	{

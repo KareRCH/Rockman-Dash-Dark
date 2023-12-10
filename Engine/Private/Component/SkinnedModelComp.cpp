@@ -175,12 +175,12 @@ void CSkinnedModelComp::Unbind_AllMeshes()
     m_pMultiMeshBufComp->Unbind_AllMeshes();
 }
 
-HRESULT CSkinnedModelComp::Bind_Effect(const wstring& strEffectKey)
+HRESULT CSkinnedModelComp::Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
     if (!m_pEffectComp)
         return E_FAIL;
 
-    return m_pEffectComp->Bind_Effect(strEffectKey);
+    return m_pEffectComp->Bind_Effect(strEffectKey, pElements, iNumElements);
 }
 
 HRESULT CSkinnedModelComp::Unbind_Effect()
