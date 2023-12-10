@@ -61,9 +61,6 @@
     <Filter Include="02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\02. ModelShaderComp">
       <UniqueIdentifier>{45f8fbc5-e422-45fd-8e94-29ceb43c9020}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Utility\02. Component\01. SceneComponent\04. TextureComponent">
-      <UniqueIdentifier>{e944931a-4f57-4403-9301-a8b715b47b9f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Shader\99. Test">
       <UniqueIdentifier>{6616dfa3-5f18-4ba8-8c68-5c84ac7edcc3}</UniqueIdentifier>
     </Filter>
@@ -205,15 +202,6 @@
     <Filter Include="02. Utility\02. Component\03. InternalComponent\01. BufferComponent\04. Box">
       <UniqueIdentifier>{b9e6f23c-a1ee-4bb0-a401-369969820f9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Utility\02. Component\03. InternalComponent\02. SkeletalComponent">
-      <UniqueIdentifier>{608dc5ca-a884-4355-bcd2-58b424c5a593}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\02. Component\03. InternalComponent\03. AnimationComponent">
-      <UniqueIdentifier>{94f372a1-20f6-48a9-a017-8889a055621a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\02. Component\03. InternalComponent\04. MaterialComponent">
-      <UniqueIdentifier>{3c25317c-31dd-452e-afb7-e27af4b0f8ed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent">
       <UniqueIdentifier>{11d92368-7cfe-45d9-85c6-820472f73953}</UniqueIdentifier>
     </Filter>
@@ -228,12 +216,6 @@
     </Filter>
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\01. SkinnedModelComp">
       <UniqueIdentifier>{1960f58b-253f-46e6-bf31-88bd9df13a84}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\02. Component\03. InternalComponent\02. SkeletalComponent\Interface">
-      <UniqueIdentifier>{ba897420-14df-4b5e-9fcb-d9a2d7cc00dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\02. Component\03. InternalComponent\03. AnimationComponent\Interface">
-      <UniqueIdentifier>{3b8c65af-af2d-47ad-b09a-0a7a3831e1a6}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. System\01. Manager\02. GamePipeline\07. CamViewMgr">
       <UniqueIdentifier>{0024b94d-0c81-453d-a43f-07fade65c2e7}</UniqueIdentifier>
@@ -264,6 +246,36 @@
     </Filter>
     <Filter Include="02. Utility\02. Component\03. InternalComponent\01. BufferComponent\06. Terrain">
       <UniqueIdentifier>{7410f83b-89ab-4e3f-9abb-9d0af3c88997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\05. PlaneModelComp">
+      <UniqueIdentifier>{f168956a-5b98-4a62-aa1e-d10394f2d783}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\08. TextureComponent">
+      <UniqueIdentifier>{e944931a-4f57-4403-9301-a8b715b47b9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp">
+      <UniqueIdentifier>{69ebcde2-743a-4bc4-b3a3-f27b6713908e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\01. BufferComponent\07. Mesh">
+      <UniqueIdentifier>{5d881cbd-f285-461a-a940-d3a1376c1810}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\01. MeshComp">
+      <UniqueIdentifier>{a18259bc-030a-421f-abb1-f42f51c784cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\02. SkeletalComp">
+      <UniqueIdentifier>{608dc5ca-a884-4355-bcd2-58b424c5a593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\02. SkeletalComp\Interface">
+      <UniqueIdentifier>{ba897420-14df-4b5e-9fcb-d9a2d7cc00dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\03. AnimationComp">
+      <UniqueIdentifier>{94f372a1-20f6-48a9-a017-8889a055621a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\03. AnimationComp\Interface">
+      <UniqueIdentifier>{3b8c65af-af2d-47ad-b09a-0a7a3831e1a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\04. MaterialComp">
+      <UniqueIdentifier>{3c25317c-31dd-452e-afb7-e27af4b0f8ed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -406,7 +418,7 @@
       <Filter>02. Utility\02. Component\02. GameObjectComp\01. ShaderComponent\02. ModelShaderComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\TextureComponent.h">
-      <Filter>02. Utility\02. Component\01. SceneComponent\04. TextureComponent</Filter>
+      <Filter>02. Utility\02. Component\03. InternalComponent\08. TextureComponent</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\GameObjectComp.h">
       <Filter>02. Utility\02. Component\02. GameObjectComp</Filter>
@@ -487,16 +499,16 @@
       <Filter>02. Utility\02. Component\03. InternalComponent</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\SkeletalComponent.h">
-      <Filter>02. Utility\02. Component\03. InternalComponent\02. SkeletalComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\02. SkeletalComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\Component.h">
       <Filter>02. Utility\02. Component</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\MaterialComponent.h">
-      <Filter>02. Utility\02. Component\03. InternalComponent\04. MaterialComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\04. MaterialComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\AnimationComponent.h">
-      <Filter>02. Utility\02. Component\03. InternalComponent\03. AnimationComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\03. AnimationComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\LevelMgr.h">
       <Filter>01. System\01. Manager\02. GamePipeline\01. LevelMgr</Filter>
@@ -523,16 +535,16 @@
       <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\Interface\IMaterialComponent.h">
-      <Filter>02. Utility\02. Component\03. InternalComponent\04. MaterialComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\04. MaterialComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\SkinnedModelComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\01. SkinnedModelComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\Interface\ISkeletalComponent.h">
-      <Filter>02. Utility\02. Component\03. InternalComponent\02. SkeletalComponent\Interface</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\02. SkeletalComp\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\Interface\IAnimationComponent.h">
-      <Filter>02. Utility\02. Component\03. InternalComponent\03. AnimationComponent\Interface</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\03. AnimationComp\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\Interface\ITeamAgentComp.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\05. TeamAgentComponent\Interface</Filter>
@@ -563,6 +575,15 @@
     </ClInclude>
     <ClInclude Include="Public\Component\TerrainBufferComp.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\06. Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\PlaneModelComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\05. PlaneModelComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\CommonModelComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\MeshBufferComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\01. MeshComp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -672,7 +693,7 @@
       <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\03. Model</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\TextureComponent.cpp">
-      <Filter>02. Utility\02. Component\01. SceneComponent\04. TextureComponent</Filter>
+      <Filter>02. Utility\02. Component\03. InternalComponent\08. TextureComponent</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\GameObjectComp.cpp">
       <Filter>02. Utility\02. Component\02. GameObjectComp</Filter>
@@ -744,16 +765,16 @@
       <Filter>02. Utility\02. Component\03. InternalComponent</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\SkeletalComponent.cpp">
-      <Filter>02. Utility\02. Component\03. InternalComponent\02. SkeletalComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\02. SkeletalComp</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\Component.cpp">
       <Filter>02. Utility\02. Component</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\AnimationComponent.cpp">
-      <Filter>02. Utility\02. Component\03. InternalComponent\03. AnimationComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\03. AnimationComp</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\MaterialComponent.cpp">
-      <Filter>02. Utility\02. Component\03. InternalComponent\04. MaterialComponent</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\04. MaterialComp</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\LevelMgr.cpp">
       <Filter>01. System\01. Manager\02. GamePipeline\01. LevelMgr</Filter>
@@ -796,6 +817,15 @@
     </ClCompile>
     <ClCompile Include="Private\Component\TerrainBufferComp.cpp">
       <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\06. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\PlaneModelComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\05. PlaneModelComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\CommonModelComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\MeshBufferComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\01. MeshComp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

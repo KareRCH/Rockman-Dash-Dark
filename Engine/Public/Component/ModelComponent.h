@@ -24,9 +24,9 @@ protected:
 public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
-	virtual void	Priority_Tick(const _float& fTimeDelta) PURE;
-	virtual void	Tick(const _float& fTimeDelta) PURE;
-	virtual void	Late_Tick(const _float& fTimeDelta) PURE;
+	virtual void	Priority_Tick(const _float& fTimeDelta);
+	virtual void	Tick(const _float& fTimeDelta);
+	virtual void	Late_Tick(const _float& fTimeDelta);
 	virtual HRESULT	Render() PURE;
 
 public:

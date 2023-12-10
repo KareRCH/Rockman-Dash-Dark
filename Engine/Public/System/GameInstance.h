@@ -216,11 +216,16 @@ public:		// 블랙보드 매니저
 
 
 #pragma region 텍스처 매니저
+	friend class CTextureComponent;
 public:		// 텍스처 매니저
 	HRESULT						Initialize_TextureMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
+	HRESULT						IsReady_TextureMgr();
 	HRESULT						Load_Texture(const wstring& strFileName, const _bool bPermanent);
 	ID3D11Texture2D*			Find_Texture2D(const wstring& strTextureKey);
 	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey);
+
+private:
+	class CTextureMgr* Get_TextureMgr();
 #pragma endregion
 
 
@@ -257,15 +262,19 @@ public:		// 모델 매니저
 
 
 #pragma region 셰이더 매니저
+	friend class CEffectComponent;
 public:		// 셰이더 매니저
 	HRESULT							Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
 	HRESULT							Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey);
 	const ComPtr<ID3DBlob>			Get_ShaderByte(const EShaderType eType, const wstring& strKey);
 	template<EShaderType Type>
 	inline ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strKey);
-	HRESULT							Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
-	ID3DX11Effect*					Find_Effect(const wstring& strKey) const;
-	class FEffectData*				Find_EffectData(const wstring& strKey) const;
+	HRESULT							Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
+	ID3DX11Effect*					Find_Effect(const wstring& strEffectFileName) const;
+	class FEffectData*				Find_EffectData(const wstring& strEffectFileName) const;
+
+private:
+	class CShaderMgr*				Get_ShaderMgr();
 #pragma endregion
 
 

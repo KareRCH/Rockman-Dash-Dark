@@ -107,3 +107,32 @@ HRESULT CTerrain::Initialize_Component(const FInitTerrain& tInit)
     
     return S_OK;
 }
+
+HRESULT CTerrain::Create_Terrain(const FInitTerrain& tInit)
+{
+    if (nullptr == m_pTerrainModelComp)
+        return E_FAIL;
+
+    FTerrainBufInit tBufInit = {};
+    tBufInit.iWidth = tInit.iWidthX;
+    tBufInit.iHeight = tInit.iWidthX;
+
+    m_pTerrainModelComp->Create_Buffer(tBufInit);
+
+    return S_OK;
+}
+
+HRESULT CTerrain::Create_TerrainByHeightMap(const FInitTerrain& tInit)
+{
+    if (nullptr == m_pTerrainModelComp)
+        return E_FAIL;
+
+    FTerrainBufInit tBufInit = {};
+    tBufInit.strHeightMapFilePath = tInit.strHeightMapPath;
+    tBufInit.iWidth = tInit.iWidthX;
+    tBufInit.iHeight = tInit.iWidthX;
+
+    m_pTerrainModelComp->Create_Buffer(tBufInit);
+
+    return S_OK;
+}

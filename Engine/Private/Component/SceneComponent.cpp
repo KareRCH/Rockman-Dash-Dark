@@ -6,6 +6,7 @@ CSceneComponent::CSceneComponent(const CSceneComponent& rhs)
 	: Base(rhs)
 	, m_pPipelineComp(rhs.m_pPipelineComp)
 {
+	m_pTransformComp = Cast<CTransformComponent*>(rhs.m_pTransformComp->Clone());
 }
 
 HRESULT CSceneComponent::Initialize_Prototype(void* Arg)
@@ -21,16 +22,21 @@ HRESULT CSceneComponent::Initialize_Prototype(void* Arg)
 
 HRESULT CSceneComponent::Initialize(void* Arg)
 {
-	m_pTransformComp = CTransformComponent::Create();
-
 	return S_OK;
+}
+
+void CSceneComponent::Priority_Tick(const _float& fTimeDelta)
+{
 }
 
 void CSceneComponent::Tick(const _float& fTimeDelta)
 {
 	// 여기에 자동 함수 추가
 
+}
 
+void CSceneComponent::Late_Tick(const _float& fTimeDelta)
+{
 }
 
 void CSceneComponent::Free()

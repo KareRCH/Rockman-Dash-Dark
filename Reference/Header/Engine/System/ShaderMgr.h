@@ -123,11 +123,15 @@ public:
 private:
 	virtual void		Free() override;
 
+#pragma region 디바이스
 private:
 	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
 	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
+#pragma endregion
 
 
+
+#pragma region 일반 셰이더 (FX11 아님)
 public:
 	// 파일이름을 통해 셰이더를 로드
 	HRESULT	Load_Shader(const wstring& strFileName, const EShaderType eType, const wstring& strKey);
@@ -142,15 +146,18 @@ private:
 private:
 	wstring								m_strMainPath;
 	_unmap<wstring, FShaderData*>		m_mapShaderData[ECast(EShaderType::Size)];
+#pragma endregion
 
+
+#pragma region 이펙트 셰이더 (구 FX 기반 셰이더, FX11)
 public:
-	HRESULT Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
+	HRESULT Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
 	ID3DX11Effect* Find_Effect(const wstring& strKey) const;
 	FEffectData* Find_EffectData(const wstring& strKey) const;
 
-#pragma region Effect11 전용
+
 private:
-	_unmap<wstring, FEffectData*>	m_mapEffects;		// Effect11로 만들어진 셰이더 저장소.
+	map<const wstring, FEffectData*>	m_mapEffects;		// Effect11로 만들어진 셰이더 저장소.
 #pragma endregion
 
 };

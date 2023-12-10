@@ -5,7 +5,6 @@
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 
-#include "System/Management.h"
 #include "System/GraphicDev.h"
 
 #include "ImGuiWin/ImGuiWin_Docking.h"
@@ -62,8 +61,8 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"../Client/Shader/"), E_FAIL);
 	m_pGI->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
 	m_pGI->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
-	m_pGI->Load_Effect(L"Runtime/FX_ModelTest.hlsl", L"FX_ModelTest", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
-	m_pGI->Load_Effect(L"Runtime/FX_Terrain.hlsl", L"FX_Terrain", VERTEX_NORM_T::InputLayout, VERTEX_NORM_T::iMaxIndex);
+	m_pGI->Load_Effect(L"Runtime/FX_ModelTest.hlsl", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
+	m_pGI->Load_Effect(L"Runtime/FX_Terrain.hlsl", VERTEX_NORM_T::InputLayout, VERTEX_NORM_T::iMaxIndex);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 120.f), E_FAIL);
 

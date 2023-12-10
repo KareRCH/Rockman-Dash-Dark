@@ -891,6 +891,14 @@ HRESULT CGameInstance::Initialize_TextureMgr(const DX11DEVICE_T tDevice, const w
 	return S_OK;
 }
 
+HRESULT CGameInstance::IsReady_TextureMgr()
+{
+	if (nullptr == m_pTextureMgr)
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CGameInstance::Load_Texture(const wstring& strFileName, const _bool bPermanent)
 {
 	if (nullptr == m_pTextureMgr)
@@ -913,6 +921,11 @@ ID3D11ShaderResourceView* CGameInstance::Find_SRV(const wstring& strTextureKey)
 		return nullptr;
 
 	return m_pTextureMgr->Find_SRV(strTextureKey);
+}
+
+CTextureMgr* CGameInstance::Get_TextureMgr()
+{
+	return m_pTextureMgr;
 }
 
 #pragma endregion
@@ -1162,28 +1175,33 @@ const ComPtr<ID3DBlob> CGameInstance::Get_ShaderByte(const EShaderType eType, co
 
 
 
-HRESULT CGameInstance::Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
+HRESULT CGameInstance::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
 	if (nullptr == m_pShaderMgr)
 		return E_FAIL;
 
-	return m_pShaderMgr->Load_Effect(strFileName, strKey, pElements, iNumElements);
+	return m_pShaderMgr->Load_Effect(strFileName, pElements, iNumElements);
 }
 
-ID3DX11Effect* CGameInstance::Find_Effect(const wstring& strKey) const
+ID3DX11Effect* CGameInstance::Find_Effect(const wstring& strEffectFileName) const
 {
 	if (nullptr == m_pShaderMgr)
 		return nullptr;
 
-	return m_pShaderMgr->Find_Effect(strKey);
+	return m_pShaderMgr->Find_Effect(strEffectFileName);
 }
 
-FEffectData* CGameInstance::Find_EffectData(const wstring& strKey) const
+FEffectData* CGameInstance::Find_EffectData(const wstring& strEffectFileName) const
 {
 	if (nullptr == m_pShaderMgr)
 		return nullptr;
 
-	return m_pShaderMgr->Find_EffectData(strKey);
+	return m_pShaderMgr->Find_EffectData(strEffectFileName);
+}
+
+CShaderMgr* CGameInstance::Get_ShaderMgr()
+{
+	return m_pShaderMgr;
 }
 
 

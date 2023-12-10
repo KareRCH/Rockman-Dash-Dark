@@ -172,9 +172,9 @@ const ComPtr<ID3DBlob> CShaderMgr::Get_ShaderByte(const EShaderType eType, const
 
 
 
-HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const wstring& strKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
+HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
-	auto iter = m_mapEffects.find(strKey);
+	auto iter = m_mapEffects.find(strFileName);
 	if (iter != m_mapEffects.end())
 		return E_FAIL;
 
@@ -218,7 +218,7 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const wstring& strKe
 
 		pEffectData->pInputLayouts.push_back(pInputLayout);
 	}
-	m_mapEffects.emplace(strKey, pEffectData);
+	m_mapEffects.emplace(strFileName, pEffectData);
 
 	return S_OK;
 }

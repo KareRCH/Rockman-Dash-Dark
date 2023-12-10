@@ -13,12 +13,12 @@ protected:
 	virtual ~CLevel() = default;
 
 public:
-	virtual HRESULT		Initialize();
-	virtual _int		Tick(const _float& fTimeDelta);
-	virtual HRESULT		Render();
+	virtual HRESULT		Initialize() PURE;
+	virtual void		Tick(const _float& fTimeDelta) PURE;
+	virtual HRESULT		Render() PURE;
 
 protected:
-	virtual void		Free();
+	virtual void		Free() PURE;
 
 };
 
