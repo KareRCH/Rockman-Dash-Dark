@@ -19,7 +19,6 @@
 #include "System/RenderMgr.h"
 #include "System/ModelMgr.h"
 #include "System/ParticleMgr.h"
-#include "System/ImGuiMgr.h"
 
 #include "BaseClass/GameObject.h"
 #include "Component/Component.h"
@@ -96,7 +95,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pTimerMgr);
 	Safe_Release(m_pKeyMgr);
 	
-	Safe_Release(m_pImGuiMgr);
 	Safe_Release(m_pInputDev);
 	Safe_Release(m_pGraphicDev);
 }
@@ -1203,86 +1201,3 @@ CShaderMgr* CGameInstance::Get_ShaderMgr()
 {
 	return m_pShaderMgr;
 }
-
-
-
-
-
-
-
-
-#pragma region ImGuiMgr
-HRESULT CGameInstance::Initialize_ImGuiMgr(const FInitImGuiMgr tInit)
-{
-	if (nullptr != m_pImGuiMgr)
-		return E_FAIL;
-
-	NULL_CHECK_RETURN(m_pImGuiMgr = CImGuiMgr::Create(tInit), E_FAIL);
-
-	return S_OK;
-}
-
-void CGameInstance::Tick_ImGuiMgr(const _float& fTimeDelta)
-{
-	if (nullptr == m_pImGuiMgr)
-		return;
-
-	m_pImGuiMgr->Tick(fTimeDelta);
-}
-
-HRESULT CGameInstance::Render_ImGuiMgr()
-{
-	if (nullptr == m_pImGuiMgr)
-		return E_FAIL;
-
-	return m_pImGuiMgr->Render();
-}
-
-ImGuiIO* CGameInstance::Get_ImGuiIO()
-{
-	if (nullptr == m_pImGuiMgr)
-		return nullptr;
-
-	return m_pImGuiMgr->Get_IO();
-}
-
-HRESULT CGameInstance::AttachToChild_ImGuiWin(const wstring& strParentName, const wstring& strChildName)
-{
-	if (nullptr == m_pImGuiMgr)
-		return E_FAIL;
-
-	return m_pImGuiMgr->AttachToChild_ImGuiWin(strParentName, strChildName);
-}
-
-ImGuiContext* CGameInstance::Get_ImGuiContext()
-{
-	if (nullptr == m_pImGuiMgr)
-		return nullptr;
-
-	return m_pImGuiMgr->Get_GuiContext();
-}
-
-HRESULT CGameInstance::Add_ImGuiWinAsRoot(const wstring& strName, CImGuiWin* pImGuiWin)
-{
-	if (nullptr == m_pImGuiMgr)
-		return E_FAIL;
-
-	return m_pImGuiMgr->Add_ImGuiWinAsRoot(strName, pImGuiWin);
-}
-
-HRESULT CGameInstance::Add_ImGuiWinAsChild(const wstring& strParentName, const wstring& strName, CImGuiWin* pImGuiWin)
-{
-	if (nullptr == m_pImGuiMgr)
-		return E_FAIL;
-
-	return m_pImGuiMgr->Add_ImGuiWinAsChild(strParentName, strName, pImGuiWin);
-}
-
-HRESULT CGameInstance::Bind_RootWin(const wstring& strName)
-{
-	if (nullptr == m_pImGuiMgr)
-		return E_FAIL;
-
-	return m_pImGuiMgr->Bind_RootWin(strName);
-}
-#pragma endregion

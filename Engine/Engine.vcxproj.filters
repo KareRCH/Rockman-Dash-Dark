@@ -163,9 +163,6 @@
     <Filter Include="01. System\01. Manager\02. GamePipeline\04. RenderMgr">
       <UniqueIdentifier>{c5c4caf4-c2c6-4ceb-8c5c-ec31d184f521}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. System\01. Manager\02. GamePipeline\06. ImGuiMgr">
-      <UniqueIdentifier>{c873a54f-a8d7-4a42-ae22-e612778fd043}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Utility\02. Component\03. InternalComponent\00. D3D11DeviceComp">
       <UniqueIdentifier>{a4c62ecd-6c17-4a2a-9da2-0018e88b9f87}</UniqueIdentifier>
     </Filter>
@@ -216,9 +213,6 @@
     </Filter>
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\01. SkinnedModelComp">
       <UniqueIdentifier>{1960f58b-253f-46e6-bf31-88bd9df13a84}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. System\01. Manager\02. GamePipeline\07. CamViewMgr">
-      <UniqueIdentifier>{0024b94d-0c81-453d-a43f-07fade65c2e7}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. System\01. Manager\02. GamePipeline\05. CloudStationMgr">
       <UniqueIdentifier>{5538bfdf-d833-40e1-88ba-f9c4510f0d7e}</UniqueIdentifier>
@@ -276,6 +270,9 @@
     </Filter>
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\04. MaterialComp">
       <UniqueIdentifier>{3c25317c-31dd-452e-afb7-e27af4b0f8ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\06. PipelineMgr">
+      <UniqueIdentifier>{0024b94d-0c81-453d-a43f-07fade65c2e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -447,12 +444,6 @@
     <ClInclude Include="Public\System\ModelMgr.h">
       <Filter>01. System\01. Manager\01. Resource\04. ModelMgr</Filter>
     </ClInclude>
-    <ClInclude Include="Public\BaseClass\ImGuiWin.h">
-      <Filter>01. System\01. Manager\02. GamePipeline\06. ImGuiMgr</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\System\ImGuiMgr.h">
-      <Filter>01. System\01. Manager\02. GamePipeline\06. ImGuiMgr</Filter>
-    </ClInclude>
     <ClInclude Include="Public\System\GraphicDev.h">
       <Filter>01. System\01. Manager\00. Main\01. GraphicDev</Filter>
     </ClInclude>
@@ -550,10 +541,10 @@
       <Filter>02. Utility\02. Component\03. InternalComponent\05. TeamAgentComponent\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\PipelineMgr.h">
-      <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\06. PipelineMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Define\PipelineMgr_Define.h">
-      <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\06. PipelineMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\CloudStationComp.h">
       <Filter>02. Utility\02. Component\02. GameObjectComp\02. CloudStationComp</Filter>
@@ -725,12 +716,6 @@
     <ClCompile Include="Private\System\ModelMgr.cpp">
       <Filter>01. System\01. Manager\01. Resource\04. ModelMgr</Filter>
     </ClCompile>
-    <ClCompile Include="Private\BaseClass\ImGuiWin.cpp">
-      <Filter>01. System\01. Manager\02. GamePipeline\06. ImGuiMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\System\ImGuiMgr.cpp">
-      <Filter>01. System\01. Manager\02. GamePipeline\06. ImGuiMgr</Filter>
-    </ClCompile>
     <ClCompile Include="Private\System\GraphicDev.cpp">
       <Filter>01. System\01. Manager\00. Main\01. GraphicDev</Filter>
     </ClCompile>
@@ -795,7 +780,7 @@
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\01. SkinnedModelComp</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\PipelineMgr.cpp">
-      <Filter>01. System\01. Manager\02. GamePipeline\07. CamViewMgr</Filter>
+      <Filter>01. System\01. Manager\02. GamePipeline\06. PipelineMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\CloudStationComp.cpp">
       <Filter>02. Utility\02. Component\02. GameObjectComp\02. CloudStationComp</Filter>

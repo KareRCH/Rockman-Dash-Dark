@@ -244,7 +244,7 @@ void CAnimationComponent::Apply_FinalMask()
 		for (_uint j = 0; j < rAnimMask.vecBoneMasks.size(); j++)
 		{
 			_float4x4 matTemp = {};
-			const FBoneAnimNodeData* pBoneAnimNodeData= pBoneAnimData->Find_AnimNodeData(j);
+			const FBoneAnimChannelData* pBoneAnimNodeData= pBoneAnimData->Find_AnimNodeData(j);
 			if (!pBoneAnimNodeData)
 				vecBoneMatrices[j] = {};
 			else

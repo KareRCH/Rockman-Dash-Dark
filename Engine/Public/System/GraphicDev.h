@@ -3,6 +3,8 @@
 #include "Base.h"
 #include "GraphicDev_Include.h"
 
+#include <dxgidebug.h>
+
 BEGIN(Engine)
 
 struct FDEVICE_INIT
@@ -122,9 +124,11 @@ private:	// 시스템 렌더링용 뷰포트
 #ifdef _DEBUG
 public:
 	GETSET_1(ID3D11Debug*, m_pDebug.Get(), Debug, GET__C)
+	GETSET_1(IDXGIDebug*, m_pDxDebug.Get(), DxDebug, GET__C)
 
 private:
 	ComPtr<ID3D11Debug> m_pDebug = { nullptr };
+	ComPtr<IDXGIDebug>	m_pDxDebug = { nullptr };
 #endif
 
 public:

@@ -1,13 +1,11 @@
 #pragma once
 
 #include "Tool_Define.h"
-#include "BaseClass/ImGuiWin.h"
-
-#include "imgui.h"
+#include "ImGuiWin/ImGuiWin.h"
 
 BEGIN(Tool)
 
-class CImGuiWin_Viewer final : public Engine::CImGuiWin
+class CImGuiWin_Viewer final : public CImGuiWin
 {
 	DERIVED_CLASS(CImGuiWin, CImGuiWin_Viewer)
 

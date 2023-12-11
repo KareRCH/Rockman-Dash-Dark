@@ -243,7 +243,6 @@
     <ClInclude Include="Public\BaseClass\Camera.h" />
     <ClInclude Include="Public\BaseClass\GameObject.h" />
     <ClInclude Include="Public\BaseClass\GameObject_Define.h" />
-    <ClInclude Include="Public\BaseClass\ImGuiWin.h" />
     <ClInclude Include="Public\BaseClass\Layer.h" />
     <ClInclude Include="Public\BaseClass\Level.h" />
     <ClInclude Include="Public\BaseClass\Terrain.h" />
@@ -308,7 +307,6 @@
     <ClInclude Include="Public\System\Frame.h" />
     <ClInclude Include="Public\System\FrameMgr.h" />
     <ClInclude Include="Public\System\GraphicDev_Include.h" />
-    <ClInclude Include="Public\System\ImGuiMgr.h" />
     <ClInclude Include="Public\System\JobMgr.h" />
     <ClInclude Include="Public\System\KeyMgr.h" />
     <ClInclude Include="Public\System\LevelMgr.h" />
@@ -338,7 +336,6 @@
   <ItemGroup>
     <ClCompile Include="Private\BaseClass\CloudStation.cpp" />
     <ClCompile Include="Private\BaseClass\Camera.cpp" />
-    <ClCompile Include="Private\BaseClass\ImGuiWin.cpp" />
     <ClCompile Include="Private\BaseClass\Layer.cpp" />
     <ClCompile Include="Private\BaseClass\Level.cpp" />
     <ClCompile Include="Private\BaseClass\Terrain.cpp" />
@@ -388,7 +385,6 @@
     <ClCompile Include="Private\System\FontMgr.cpp" />
     <ClCompile Include="Private\System\Frame.cpp" />
     <ClCompile Include="Private\System\FrameMgr.cpp" />
-    <ClCompile Include="Private\System\ImGuiMgr.cpp" />
     <ClCompile Include="Private\System\JobMgr.cpp" />
     <ClCompile Include="Private\System\KeyMgr.cpp" />
     <ClCompile Include="Private\System\LevelMgr.cpp" />

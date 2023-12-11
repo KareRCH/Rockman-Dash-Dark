@@ -7,15 +7,16 @@ BEGIN(Engine)
 /// <summary>
 /// 애니메이션 채널의 프레임별 노드
 /// </summary>
-class ENGINE_DLL FBoneAnimNodeData final : public CBase
+class ENGINE_DLL FBoneAnimChannelData final : public CBase
 {
-	DERIVED_CLASS(CBase, FBoneAnimNodeData)
+	DERIVED_CLASS(CBase, FBoneAnimChannelData)
 private:
-	explicit FBoneAnimNodeData() {}
-	virtual ~FBoneAnimNodeData() = default;
+	explicit FBoneAnimChannelData() = default;
+	explicit FBoneAnimChannelData(const FBoneAnimChannelData& rhs);
+	virtual ~FBoneAnimChannelData() = default;
 
 public:
-	static FBoneAnimNodeData* Create();
+	static FBoneAnimChannelData* Create();
 	virtual void Free() override;
 
 public:
@@ -73,9 +74,9 @@ public:
 	virtual void Free() override;
 
 public:
-	const FBoneAnimNodeData* const Find_AnimNodeData(_uint iIndex) const;
-	const FBoneAnimNodeData* const Find_AnimNodeData(const wstring& strNodeKey) const;
-	void Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimNodeData* pAnimNodeData);
+	const FBoneAnimChannelData* const Find_AnimNodeData(_uint iIndex) const;
+	const FBoneAnimChannelData* const Find_AnimNodeData(const wstring& strNodeKey) const;
+	void Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimChannelData* pAnimNodeData);
 
 public:
 	// 시간 변화율로 애니메이션 타임라인의 현재 시간을 구해주는 함수, Mod를 켜면 반복됨
@@ -84,8 +85,8 @@ public:
 public:
 	_double dfDuration = 0.0;									// 진행 길이
 	_double dfTickPerSecond = 0.0;								// 시간당 프레임
-	map<const wstring, FBoneAnimNodeData*>	mapNodeAnim;		// 노드 이름으로 검색 시스템
-	vector<FBoneAnimNodeData*>				vecAnim_BoneIndex;	// 애니메이션 노드 인덱스 관리
+	map<const wstring, FBoneAnimChannelData*>	mapNodeAnim;		// 노드 이름으로 검색 시스템
+	vector<FBoneAnimChannelData*>				vecAnim_BoneIndex;	// 애니메이션 노드 인덱스 관리
 	
 };
 

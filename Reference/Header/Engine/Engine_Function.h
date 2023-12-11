@@ -114,7 +114,7 @@ namespace Engine
 /// </summary>
 /// <param name="str">string</param>
 /// <returns></returns>
-	wstring Make_Wstring(const string& str)
+	inline wstring Make_Wstring(const string& str)
 	{
 		return wstring(str.begin(), str.end());
 	}

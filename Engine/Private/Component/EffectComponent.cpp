@@ -106,6 +106,9 @@ HRESULT CEffectComponent::IsRender_Ready()
 
 HRESULT CEffectComponent::Begin(_uint iPassIndex)
 {
+    if (nullptr == m_pEffectData || nullptr == m_pEffectData->pEffect)
+        return E_FAIL;
+
     if (iPassIndex >= m_pEffectData->tTechniqueDesc.Passes)
         return E_FAIL;
 
@@ -124,6 +127,9 @@ HRESULT CEffectComponent::Begin(_uint iPassIndex)
 
 HRESULT CEffectComponent::Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix)
 {
+    if (nullptr == m_pEffectData || nullptr == m_pEffectData->pEffect)
+        return E_FAIL;
+
     /* 이 셰이더에 선언되어있는 전역변수의 핸들을 얻어온다.*/
     ID3DX11EffectVariable* pVariable = m_pEffectData->pEffect->GetVariableByName(pConstantName);
     if (nullptr == pVariable)
@@ -138,6 +144,9 @@ HRESULT CEffectComponent::Bind_Matrix(const _char* pConstantName, const _float4x
 
 HRESULT CEffectComponent::Bind_Matrices(const _char* pConstantName, const _float4x4* pMatrix, _uint iNumMatrices)
 {
+    if (nullptr == m_pEffectData || nullptr == m_pEffectData->pEffect)
+        return E_FAIL;
+
     ID3DX11EffectVariable* pVariable = m_pEffectData->pEffect->GetVariableByName(pConstantName);
     if (nullptr == pVariable)
         return E_FAIL;
@@ -151,6 +160,9 @@ HRESULT CEffectComponent::Bind_Matrices(const _char* pConstantName, const _float
 
 HRESULT CEffectComponent::Bind_SRV(const _char* pConstantName, ID3D11ShaderResourceView* pSRV)
 {
+    if (nullptr == m_pEffectData || nullptr == m_pEffectData->pEffect)
+        return E_FAIL;
+
     ID3DX11EffectVariable* pVariable = m_pEffectData->pEffect->GetVariableByName(pConstantName);
     if (nullptr == pVariable)
         return E_FAIL;
@@ -164,6 +176,9 @@ HRESULT CEffectComponent::Bind_SRV(const _char* pConstantName, ID3D11ShaderResou
 
 HRESULT CEffectComponent::Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView** ppSRV, _uint iNumTextures)
 {
+    if (nullptr == m_pEffectData || nullptr == m_pEffectData->pEffect)
+        return E_FAIL;
+
     ID3DX11EffectVariable* pVariable = m_pEffectData->pEffect->GetVariableByName(pConstantName);
     if (nullptr == pVariable)
         return E_FAIL;
@@ -177,6 +192,9 @@ HRESULT CEffectComponent::Bind_SRVs(const _char* pConstantName, ID3D11ShaderReso
 
 HRESULT CEffectComponent::Bind_RawValue(const _char* pConstantName, const void* pData, _uint iSize)
 {
+    if (nullptr == m_pEffectData || nullptr == m_pEffectData->pEffect)
+        return E_FAIL;
+
     ID3DX11EffectVariable* pVariable = m_pEffectData->pEffect->GetVariableByName(pConstantName);
     if (nullptr == pVariable)
         return E_FAIL;

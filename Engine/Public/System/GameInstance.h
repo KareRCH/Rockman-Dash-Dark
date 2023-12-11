@@ -278,22 +278,6 @@ private:
 #pragma endregion
 
 
-#pragma region ImGui ¸Å´ÏÀú
-public:
-	HRESULT					Initialize_ImGuiMgr(const struct FInitImGuiMgr tInit);
-	void					Tick_ImGuiMgr(const _float& fTimeDelta);
-	HRESULT					Render_ImGuiMgr();
-	HRESULT					Add_ImGuiWinAsRoot(const wstring& strName, class CImGuiWin* pImGuiWin);
-	HRESULT					Add_ImGuiWinAsChild(const wstring& strParentName, const wstring& strName, CImGuiWin* pImGuiWin);
-	HRESULT					Bind_RootWin(const wstring& strName);
-	HRESULT					AttachToChild_ImGuiWin(const wstring& strParentName, const wstring& strChildName);
-	struct ImGuiIO*			Get_ImGuiIO();
-	struct ImGuiContext*	Get_ImGuiContext();
-#pragma endregion
-
-
-
-
 private:
 	class CGraphicDev*		m_pGraphicDev = nullptr;
 	class CInputDev*		m_pInputDev = nullptr;
@@ -315,7 +299,6 @@ private:
 	class CTextureMgr*		m_pTextureMgr = nullptr;
 	class CShaderMgr*		m_pShaderMgr = nullptr;
 	class CParticleMgr*		m_pParticleMgr = nullptr;
-	class CImGuiMgr*		m_pImGuiMgr = { nullptr };
 };
 
 

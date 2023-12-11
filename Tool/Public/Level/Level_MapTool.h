@@ -5,7 +5,7 @@
 
 BEGIN(Tool)
 
-class CLevel_MapTool : public Engine::CLevel
+class CLevel_MapTool final : public Engine::CLevel
 {
 	DERIVED_CLASS(CLevel, CLevel_MapTool)
 
@@ -16,7 +16,7 @@ protected:
 
 public:
 	virtual HRESULT		Initialize();
-	virtual _int		Tick(const _float& fTimeDelta);
+	virtual void		Tick(const _float& fTimeDelta);
 	virtual HRESULT		Render();
 
 public:

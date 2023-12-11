@@ -31,6 +31,20 @@ HRESULT CTestObject::Initialize_Prototype()
     return S_OK;
 }
 
+HRESULT CTestObject::Initialize_Prototype(const _float3 vPos)
+{
+    FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+    FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
+
+    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
+    TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
+    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
+
+    Transform().Set_Position(vPos);
+
+    return S_OK;
+}
+
 HRESULT CTestObject::Initialize(void* Arg)
 {
     FAILED_CHECK_RETURN(__super::Initialize(Arg), E_FAIL);
@@ -117,7 +131,7 @@ CTestObject* CTestObject::Create(const _float3 vPos)
 {
     ThisClass* pInstance = new ThisClass();
 
-    if (FAILED(pInstance->Initialize(vPos)))
+    if (FAILED(pInstance->Initialize_Prototype(vPos)))
     {
         MSG_BOX("TestObject Create Failed");
         Safe_Release(pInstance);

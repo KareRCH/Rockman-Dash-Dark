@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Base.h"
+#include "ImGuiLib_Define.h"
 
 
 struct ImGuiIO;
 
-BEGIN(Engine)
+BEGIN(ImGuiLib)
 
 class CImGuiWin;
 
@@ -21,9 +22,9 @@ struct FInitImGuiMgr
 /// ImGui는 게임 오브젝트 Tick과 다르게 돌아간다.
 /// 이는 
 /// </summary>
-class ENGINE_DLL CImGuiMgr final : public CBase
+class CImGuiMgr final : public CBase
 {
-	DERIVED_CLASS(CBase, CImGuiMgr)
+	DERIVED_CLASS_SINGLETON(CBase, CImGuiMgr)
 
 private:
 	explicit CImGuiMgr();
@@ -51,11 +52,11 @@ public:
 
 public:
 	GETSET_1(ImGuiIO*, m_pIO, IO, GET__C)
-	GETSET_1(ImGuiContext*, m_pGuiContext, GuiContext, GET__C)
+		GETSET_1(ImGuiContext*, m_pGuiContext, GuiContext, GET__C)
 
 private:
-	ImGuiIO*		m_pIO = { nullptr };
-	ImGuiContext*	m_pGuiContext = { nullptr };
+	ImGuiIO* m_pIO = { nullptr };
+	ImGuiContext* m_pGuiContext = { nullptr };
 
 private:
 	map<wstring, CImGuiWin*>		m_mapImGuiWin;		// 이름 검색 시스템용, 저장 목적 및 이름 검색용임.

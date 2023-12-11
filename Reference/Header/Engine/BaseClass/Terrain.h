@@ -21,8 +21,8 @@ public:
 
 		wstring	strHeightMapPath;
 		_uint	iNumVertexCountX;
-		_uint	iNumVertexCountY;
-		_uint	iWidthX, iWidthY;
+		_uint	iNumVertexCountZ;
+		_uint	iWidthX, iWidthZ;
 		_uint	iHeight;
 	};
 

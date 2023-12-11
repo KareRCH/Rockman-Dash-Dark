@@ -32,6 +32,7 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(const _float3 vPos);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(const _float3 vPos);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
