@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Tool_Define.h"
-#include "BaseClass/ImGuiWin.h"
+#include "ImGuiWin/ImGuiWin.h"
 
 BEGIN(Tool)
 

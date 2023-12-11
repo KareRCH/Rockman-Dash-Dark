@@ -3,10 +3,9 @@
 #include "Base.h"
 #include "Client_Define.h"
 
+
 BEGIN(Engine)
-
 class CGameInstance;
-
 END
 
 

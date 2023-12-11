@@ -1,6 +1,6 @@
 #include "System/Data/BoneAnimData.h"
 
-FBoneAnimNodeData* FBoneAnimNodeData::Create()
+FBoneAnimChannelData* FBoneAnimChannelData::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -15,14 +15,14 @@ FBoneAnimNodeData* FBoneAnimNodeData::Create()
 	return pInstance;
 }
 
-void FBoneAnimNodeData::Free()
+void FBoneAnimChannelData::Free()
 {
 	vecPositions.clear();
 	vecRotations.clear();
 	vecScales.clear();
 }
 
-_float4x4 FBoneAnimNodeData::Interporated_Matrix(const _float& fCurTime) const
+_float4x4 FBoneAnimChannelData::Interporated_Matrix(const _float& fCurTime) const
 {
 	_uint iPivot;
 	_matrix matTransform = XMMatrixIdentity();
@@ -116,7 +116,7 @@ _float4x4 FBoneAnimNodeData::Interporated_Matrix(const _float& fCurTime) const
 	return matReturn;
 }
 
-_uint FBoneAnimNodeData::Calculate_PivotPosition(const _float& fCurTime) const
+_uint FBoneAnimChannelData::Calculate_PivotPosition(const _float& fCurTime) const
 {
 	_uint iPivot;
 
@@ -160,7 +160,7 @@ _uint FBoneAnimNodeData::Calculate_PivotPosition(const _float& fCurTime) const
 	return iPivot;
 }
 
-_uint FBoneAnimNodeData::Calculate_PivotRotation(const _float& fCurTime) const
+_uint FBoneAnimChannelData::Calculate_PivotRotation(const _float& fCurTime) const
 {
 	_uint iPivot;
 
@@ -204,7 +204,7 @@ _uint FBoneAnimNodeData::Calculate_PivotRotation(const _float& fCurTime) const
 	return iPivot;
 }
 
-_uint FBoneAnimNodeData::Calculate_PivotScale(const _float& fCurTime) const
+_uint FBoneAnimChannelData::Calculate_PivotScale(const _float& fCurTime) const
 {
 	_uint iPivot;
 
@@ -270,7 +270,7 @@ void FBoneAnimData::Free()
 	mapNodeAnim.clear();
 }
 
-const FBoneAnimNodeData* const FBoneAnimData::Find_AnimNodeData(_uint iIndex) const
+const FBoneAnimChannelData* const FBoneAnimData::Find_AnimNodeData(_uint iIndex) const
 {
 	if (iIndex < 0 || iIndex >= vecAnim_BoneIndex.size())
 		return nullptr;
@@ -278,7 +278,7 @@ const FBoneAnimNodeData* const FBoneAnimData::Find_AnimNodeData(_uint iIndex) co
 	return vecAnim_BoneIndex[iIndex];
 }
 
-const FBoneAnimNodeData* const FBoneAnimData::Find_AnimNodeData(const wstring& strNodeKey) const
+const FBoneAnimChannelData* const FBoneAnimData::Find_AnimNodeData(const wstring& strNodeKey) const
 {
 	auto iter = mapNodeAnim.find(strNodeKey);
 	if (iter == mapNodeAnim.end())
@@ -287,7 +287,7 @@ const FBoneAnimNodeData* const FBoneAnimData::Find_AnimNodeData(const wstring& s
 	return (*iter).second;
 }
 
-void FBoneAnimData::Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimNodeData* pAnimNodeData)
+void FBoneAnimData::Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimChannelData* pAnimNodeData)
 {
 	if (pAnimNodeData->iBoneID >= vecAnim_BoneIndex.size())
 		vecAnim_BoneIndex.resize(Cast<_uint>(pAnimNodeData->iBoneID + 1), nullptr);

@@ -65,7 +65,7 @@ private:	// 뼈 관련
 private:	// 애니메이션 관련
 	_uint	m_iNumAnimations = { 0 };
 	_uint	m_iCurrentAnimIndex = { 0 };
-	vector<class CAnimation*>	m_pAnimations;
+	vector<class CAnimationComponent*>	m_pAnimations;
 
 };
 

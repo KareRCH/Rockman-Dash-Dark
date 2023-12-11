@@ -176,6 +176,8 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Include\targetver.h" />
     <ClInclude Include="Include\Tool.h" />
     <ClInclude Include="Public\GameObject\ToolCamera.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiMgr.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Browser.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Docking.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Hierarchi.h" />
@@ -194,6 +196,8 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp" />
     <ClCompile Include="Include\Tool.cpp" />
     <ClCompile Include="Private\GameObject\ToolCamera.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiMgr.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Browser.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Docking.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Hierarchi.cpp" />

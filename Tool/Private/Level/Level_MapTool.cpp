@@ -5,8 +5,6 @@
 
 HRESULT CLevel_MapTool::Initialize()
 {
-    FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
-
     /*GI()->Load_Texture(L"Model/Character/RockVolnutt/Body.png", true);
     GI()->Load_Texture(L"Model/Character/RockVolnutt/Head.png", true);
     GI()->Load_Model(EModelGroupIndex::Permanent, "Character/RockVolnutt/Test.fbx", L"RockVolnutt");*/
@@ -19,9 +17,9 @@ HRESULT CLevel_MapTool::Initialize()
     return S_OK;
 }
 
-_int CLevel_MapTool::Tick(const _float& fTimeDelta)
+void CLevel_MapTool::Tick(const _float& fTimeDelta)
 {
-    return 0;
+
 }
 
 HRESULT CLevel_MapTool::Render()
@@ -46,5 +44,4 @@ CLevel_MapTool* CLevel_MapTool::Create()
 
 void CLevel_MapTool::Free()
 {
-    SUPER::Free();
 }

@@ -323,7 +323,7 @@ void CModelMgr::Load_Anim(FModelData* pModelData)
 		for (_uint j = 0; j < pAnimAI->mNumChannels; j++)
 		{
 			aiNodeAnim* pNodeAnimAI = pAnimAI->mChannels[j];
-			FBoneAnimNodeData* pAnimNodeData = FBoneAnimNodeData::Create();
+			FBoneAnimChannelData* pAnimNodeData = FBoneAnimChannelData::Create();
 			wstring AnimNodeName = Make_Wstring(pNodeAnimAI->mNodeName.C_Str());
 			FBoneNodeData* pBoneNodeData = pBoneGroup->Find_BoneNodeData(SkeletalName, AnimNodeName);
 
@@ -337,7 +337,7 @@ void CModelMgr::Load_Anim(FModelData* pModelData)
 			{
 				auto fTime = pNodeAnimAI->mPositionKeys[k].mTime;
 				auto vPos = pNodeAnimAI->mPositionKeys[k].mValue;
-				FBoneAnimNodeData::FPosition tPosition = {
+				FBoneAnimChannelData::FPosition tPosition = {
 					Cast<_float>(fTime),
 					{ vPos.x, vPos.y, vPos.z }
 				};
@@ -349,7 +349,7 @@ void CModelMgr::Load_Anim(FModelData* pModelData)
 			{
 				auto fTime = pNodeAnimAI->mRotationKeys[k].mTime;
 				auto vRot = pNodeAnimAI->mRotationKeys[k].mValue;
-				FBoneAnimNodeData::FRotation tRotation = {
+				FBoneAnimChannelData::FRotation tRotation = {
 					Cast<_float>(fTime),
 					{ vRot.x, vRot.y, vRot.z, vRot.w }
 				};
@@ -361,7 +361,7 @@ void CModelMgr::Load_Anim(FModelData* pModelData)
 			{
 				auto fTime = pNodeAnimAI->mScalingKeys[k].mTime;
 				auto vScale = pNodeAnimAI->mScalingKeys[k].mValue;
-				FBoneAnimNodeData::FScale tScale = {
+				FBoneAnimChannelData::FScale tScale = {
 					Cast<_float>(fTime),
 					{ vScale.x, vScale.y, vScale.z }
 				};

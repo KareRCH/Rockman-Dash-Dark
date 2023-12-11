@@ -1,7 +1,7 @@
 #include "System/GraphicDev.h"
 
 #include <d3d11sdklayers.h>
-#include <dxgidebug.h>
+
 #include <DirectXTex.h>
 #include <wincodec.h>
 
@@ -121,13 +121,16 @@ void CGraphicDev::Free()
     m_pRasterState.Reset();
     m_pRasterCullNoneState.Reset();
 
+
     m_pDeviceContext.Reset();
     m_pDevice.Reset();
     m_pSwapChain.Reset();
 
+
+
 #ifdef _DEBUG
     m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
-
+    //m_pDxDebug->ReportLiveObjects(DXGI_DEBUG_D3D11, DXGI_DEBUG_RLO_DETAIL);
     //ID3D11InfoQueue* pInfoQueue = nullptr;
     //m_pDebug->QueryInterface(__uuidof(ID3D11InfoQueue), (void**)&pInfoQueue);
 
@@ -151,6 +154,9 @@ void CGraphicDev::Free()
 
     m_pDebug.Reset();
 #endif // _DEBUG
+
+    
+
 }
 
 HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
@@ -173,10 +179,11 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
 
     pFactory->EnumAdapters(adapterIndex, pAdapter.GetAddressOf());
 
-    /*IDXGIDebug* pGxDebug = nullptr;
-    pDevice->QueryInterface(__uuidof(IDXGIDebug), (void**)&pGxDebug);
+    // 디버그
+#ifdef _DEBUG
+    pDevice->QueryInterface(__uuidof(IDXGIDebug), (void**)m_pDxDebug.GetAddressOf());
+#endif
 
-    pGxDebug->ReportLiveObjects()*/
     
     /* 스왑체인을 생성한다. = 텍스쳐를 생성하는 행위 + 스왑하는 형태  */
     DXGI_SWAP_CHAIN_DESC		SwapChainDesc = {};

@@ -8,7 +8,7 @@ BEGIN(Client)
 /// <summary>
 /// 게임 내에서 유동적으로 쓰이는 카메라
 /// </summary>
-class CDynamicCamera final : public CCamera
+class CDynamicCamera final : public Engine::CCamera
 {
 	DERIVED_CLASS(CCamera, CDynamicCamera)
 protected:

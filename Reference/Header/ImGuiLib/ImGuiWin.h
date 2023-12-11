@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Base.h"
+#include "ImGuiLib_Define.h"
 
-BEGIN(Engine)
+BEGIN(ImGuiLib)
 
 /// <summary>
 /// ImGui계층의 기초가 되는 클래스
 /// </summary>
-class ENGINE_DLL CImGuiWin abstract : public CBase
+class CImGuiWin abstract : public CBase
 {
 	DERIVED_CLASS(CBase, CImGuiWin)
 

@@ -21,7 +21,6 @@ HRESULT CLoader::Initialize()
 	// 디바이스 참조
 	m_pDeviceComp = Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp"));
 
-
 	InitializeCriticalSection(&m_CriticalSection);
 
 	/* 스레드를 생성한다. */

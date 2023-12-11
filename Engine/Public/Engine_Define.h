@@ -55,13 +55,6 @@
 #include <lua.hpp>
 
 
-// ImGui 라이브러리
-#include <imgui.h>
-#include <imgui_internal.h>
-#include <imgui_impl_dx11.h>
-#include <imgui_impl_win32.h>
-
-
 //----------------STD---------------------
 
 // C 런타임 헤더 파일입니다.

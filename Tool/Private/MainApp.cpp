@@ -15,10 +15,10 @@
 #include "ImGuiWin/ImGuiWin_Browser.h"
 #include "ImGuiWin/ImGuiWin_ObjectTool.h"
 #include "ImGuiWin/ImGuiWin_Terrain.h"
-#include "System/ImGuiMgr.h"
+#include "ImGuiWin/ImGuiMgr.h"
 #include "Level/Level_MapTool.h"
 
-#include "GameObject/DynamicCamera.h"
+//#include "GameObject/DynamicCamera.h"
 
 IMPLEMENT_SINGLETON(CMainApp)
 
@@ -69,16 +69,16 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_Immediate"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_FPS"), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGI->Initialize_ImGuiMgr({ g_hWnd, tDevice.pDevice.Get(), tDevice.pDeviceContext.Get() }), E_FAIL);
-	ImGui::SetCurrentContext(m_pGI->Get_ImGuiContext());
-	m_pGI->Add_ImGuiWinAsRoot(TEXT("DockingSpace"), CImGuiWin_Docking::Create());
-	m_pGI->Add_ImGuiWinAsChild(TEXT("DockingSpace"), TEXT("MapTool"), CImGuiWin_MapTool::Create());
-	m_pGI->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("Viewer"), CImGuiWin_Viewer::Create());
-	m_pGI->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Hierarchi"), CImGuiWin_Hierarchi::Create());
-	m_pGI->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Property"), CImGuiWin_Property::Create());
-	m_pGI->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Browser"), CImGuiWin_Browser::Create());
-	m_pGI->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Terrain"), CImGuiWin_Terrain::Create());
-	m_pGI->Add_ImGuiWinAsChild(TEXT("DockingSpace"), TEXT("ObjectTool"), CImGuiWin_ObjectTool::Create());
+	FAILED_CHECK_RETURN(CImGuiMgr::GetInstance()->Initialize({ g_hWnd, tDevice.pDevice.Get(), tDevice.pDeviceContext.Get() }), E_FAIL);
+	ImGui::SetCurrentContext(CImGuiMgr::GetInstance()->Get_GuiContext());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsRoot(TEXT("DockingSpace"), CImGuiWin_Docking::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("DockingSpace"), TEXT("MapTool"), CImGuiWin_MapTool::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("Viewer"), CImGuiWin_Viewer::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Hierarchi"), CImGuiWin_Hierarchi::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Property"), CImGuiWin_Property::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Browser"), CImGuiWin_Browser::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Terrain"), CImGuiWin_Terrain::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("DockingSpace"), TEXT("ObjectTool"), CImGuiWin_ObjectTool::Create());
 
 	m_pGI->Open_Level(0, CLevel_MapTool::Create());
 
@@ -97,7 +97,7 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 {
 	m_pGI->Tick_Object(fTimeDelta);
 
-	m_pGI->Tick_ImGuiMgr(fTimeDelta);
+	CImGuiMgr::GetInstance()->Tick(fTimeDelta);
 	
 	m_pGI->Tick_PhysicsMgr(fTimeDelta);
 
@@ -116,7 +116,7 @@ void CMainApp::Render()
 	m_pGI->Clear_DepthStencil_View();
 	m_pGI->Bind_SystemViewport(0);
 	m_pGI->Render();
-	m_pGI->Render_ImGuiMgr();
+	CImGuiMgr::GetInstance()->Render();
 
 #ifdef _DEBUG
 	//Render_FrameRate();
@@ -129,6 +129,7 @@ void CMainApp::Free()
 {
 	// dll ½Ì±ÛÅæ Á¦°Å
 	Safe_Release(m_pGI);
+	CImGuiMgr::GetInstance()->DestroyInstance();
 }
 
 void CMainApp::Render_FrameRate()

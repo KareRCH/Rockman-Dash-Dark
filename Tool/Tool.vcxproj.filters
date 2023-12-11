@@ -111,6 +111,12 @@
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Terrain.h">
       <Filter>01. ImGuiWin\02. MapTool\01. Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin.h">
+      <Filter>01. ImGuiWin</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGuiWin\ImGuiMgr.h">
+      <Filter>01. ImGuiWin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Include\Tool.cpp">
@@ -157,6 +163,12 @@
     </ClCompile>
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Terrain.cpp">
       <Filter>01. ImGuiWin\02. MapTool\01. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin.cpp">
+      <Filter>01. ImGuiWin</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGuiWin\ImGuiMgr.cpp">
+      <Filter>01. ImGuiWin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
