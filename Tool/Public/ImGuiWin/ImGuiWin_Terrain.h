@@ -39,11 +39,11 @@ private:
 private:
 	class CTerrain* m_pTerrain = { nullptr };
 
-	_int			m_ivTerrainVertex_CountX = 0;
-	_int			m_ivTerrainVertex_CountZ = 0;
+	_int			m_ivTerrainVertex_CountX = 1025;
+	_int			m_ivTerrainVertex_CountZ = 1025;
 
-	_int			m_ivTerrainWidth = 0;
-	_int			m_ivTerrainHeight = 0;
+	_int			m_ivTerrainWidth = 100;
+	_int			m_ivTerrainHeight = 1;
 
 	
 };

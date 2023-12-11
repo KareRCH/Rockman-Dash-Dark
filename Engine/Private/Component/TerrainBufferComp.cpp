@@ -214,6 +214,12 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
 
 HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeight tInit)
 {
+    if (nullptr != m_pVB || nullptr != m_pIB)
+    {
+        m_pVB.Reset();
+        m_pIB.Reset();
+    }
+
     // 헤이트 맵 사이즈
     m_viNumTerrainVertices.x = tInit.iNumVertexX;
     m_viNumTerrainVertices.z = tInit.iNumVertexZ;

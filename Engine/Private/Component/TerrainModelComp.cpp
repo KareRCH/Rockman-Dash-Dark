@@ -126,6 +126,14 @@ HRESULT CTerrainModelComp::Create_Buffer(const FTerrainBufInit tInit)
     return m_pTerrainBufferComp->Create_Buffer(tInit);
 }
 
+HRESULT CTerrainModelComp::Create_Buffer(const FTerrainBufInit_NoHeight tInit)
+{
+    if (!m_pTerrainBufferComp)
+        return E_FAIL;
+
+    return m_pTerrainBufferComp->Create_Buffer(tInit);
+}
+
 HRESULT CTerrainModelComp::Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
     if (!m_pEffectComp)
