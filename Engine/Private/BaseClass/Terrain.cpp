@@ -97,6 +97,7 @@ void CTerrain::Free()
 HRESULT CTerrain::Initialize_Component()
 {
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pTerrainModelComp = CTerrainModelComp::Create()), E_FAIL);
+    m_pTerrainModelComp->Bind_Effect(TEXT("Runtime/FX_Terrain.hlsl"), VERTEX_NORM_T::InputLayout, VERTEX_NORM_T::iMaxIndex);
 
     return S_OK;
 }
@@ -113,9 +114,11 @@ HRESULT CTerrain::Create_Terrain(const FInitTerrain& tInit)
     if (nullptr == m_pTerrainModelComp)
         return E_FAIL;
 
-    FTerrainBufInit tBufInit = {};
+    FTerrainBufInit_NoHeight tBufInit = {};
     tBufInit.iWidth = tInit.iWidthX;
-    tBufInit.iHeight = tInit.iWidthX;
+    tBufInit.iHeight = tInit.iHeight;
+    tBufInit.iNumVertexX = tInit.iNumVertexCountX;
+    tBufInit.iNumVertexZ = tInit.iNumVertexCountZ;
 
     m_pTerrainModelComp->Create_Buffer(tBufInit);
 

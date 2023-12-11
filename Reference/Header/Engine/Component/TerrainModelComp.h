@@ -43,6 +43,7 @@ public:
 
 #pragma region 터레인 버퍼 컴포넌트
 	HRESULT Create_Buffer(const FTerrainBufInit tInit);
+	HRESULT Create_Buffer(const FTerrainBufInit_NoHeight tInit);
 
 private:
 	CTerrainBufferComp* m_pTerrainBufferComp = { nullptr };

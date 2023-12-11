@@ -130,7 +130,9 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 
 
 	// 변경 사항을 적용한다.
-	if (bCreate)
+	if (bCreate
+		&& m_ivTerrainVertex_CountX > 0 && m_ivTerrainVertex_CountZ > 0
+		&& m_ivTerrainWidth > 0 && m_ivTerrainHeight > 0)
 	{
 		GI()->Add_GameObject(m_pTerrain = CTerrain::Create());
 		Safe_AddRef(m_pTerrain);
@@ -217,9 +219,6 @@ void CImGuiWin_Terrain::Layout_TerrainSetting(const _float& fTimeDelta)
 	// 변경 사항을 적용한다.
 	if (bIsChanged)
 	{
-		GI()->Add_GameObject(m_pTerrain = CTerrain::Create());
-		Safe_AddRef(m_pTerrain);
-
 		CTerrain::FInitTerrain tInit = {};
 		tInit.strHeightMapPath = TEXT("");
 		tInit.iNumVertexCountX = m_ivTerrainVertex_CountX;
