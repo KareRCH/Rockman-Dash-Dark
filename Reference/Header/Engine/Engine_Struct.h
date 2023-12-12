@@ -64,13 +64,31 @@ namespace Engine
 		};
 	};
 
-	struct VERTEX_TEXTURE_T
+	// 단일 위치값만 가지는 셰이더구조체
+	struct SHADER_VTX_SINGLE
+	{
+		_float3		vPosition;
+
+		static constexpr _uint iMaxIndex = 1;
+		static constexpr D3D11_INPUT_ELEMENT_DESC InputLayout[iMaxIndex] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+	};
+
+	//
+	struct SHADER_VTX_TEXCOORD
 	{
 		_float3		vPosition;
 		_float2		vTexCoord;
+
+		static constexpr _uint iMaxIndex = 2;
+		static constexpr D3D11_INPUT_ELEMENT_DESC InputLayout[iMaxIndex] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
 	};
 
-	struct VERTEX_MODEL_T
+	struct SHADER_VTX_COMMODEL
 	{
 		_float3		vPosition;
 		_float3		vNormal;
@@ -84,7 +102,7 @@ namespace Engine
 		};
 	};
 
-	struct VERTEX_NORM_T
+	struct SHADER_VTX_NORM
 	{
 		_float3		vPosition;
 		_float3		vNormal;
@@ -98,7 +116,7 @@ namespace Engine
 		};
 	};
 
-	struct VERTEX_MODEL_SKIN_T
+	struct SHADER_VTX_SKINMODEL
 	{
 		_float3		vPosition;
 		_float3		vNormal;

@@ -106,7 +106,7 @@ HRESULT CModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& strVertexS
     /***********************************
     * 정점 레이아웃 구성 (시맨틱 전달자)
     ************************************/
-    FAILED_CHECK_RETURN(D3D11Device()->CreateInputLayout(VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex,
+    FAILED_CHECK_RETURN(D3D11Device()->CreateInputLayout(SHADER_VTX_SKINMODEL::InputLayout, SHADER_VTX_SKINMODEL::iMaxIndex,
         pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(), &m_pLayout), E_FAIL);
     
 

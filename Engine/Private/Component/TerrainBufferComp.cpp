@@ -88,7 +88,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
     // 정점 개수
     m_iNumVertexBuffers = 1;
     m_iNumVertices = m_viNumTerrainVertices.x * m_viNumTerrainVertices.z;
-    m_iStride = sizeof(VERTEX_NORM_T);
+    m_iStride = sizeof(SHADER_VTX_NORM);
 
     // 인덱스 개수
     m_iNumIndices = (m_viNumTerrainVertices.x - 1) * (m_viNumTerrainVertices.z - 1) * 2 * 3;
@@ -99,7 +99,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
 
 
 #pragma region 버텍스 버퍼 생성
-    VERTEX_NORM_T* pVertices = new VERTEX_NORM_T[m_iNumVertices];
+    SHADER_VTX_NORM* pVertices = new SHADER_VTX_NORM[m_iNumVertices];
 
     for (_uint i = 0; i < Cast<_uint>(m_viNumTerrainVertices.z); i++)
     {
@@ -231,7 +231,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeight tInit)
     // 정점 개수
     m_iNumVertexBuffers = 1;
     m_iNumVertices = m_viNumTerrainVertices.x * m_viNumTerrainVertices.z;
-    m_iStride = sizeof(VERTEX_NORM_T);
+    m_iStride = sizeof(SHADER_VTX_NORM);
 
     // 인덱스 개수
     m_iNumIndices = (m_viNumTerrainVertices.x - 1) * (m_viNumTerrainVertices.z - 1) * 2 * 3;
@@ -242,7 +242,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeight tInit)
 
 
 #pragma region 버텍스 버퍼 생성
-    VERTEX_NORM_T* pVertices = new VERTEX_NORM_T[m_iNumVertices];
+    SHADER_VTX_NORM* pVertices = new SHADER_VTX_NORM[m_iNumVertices];
 
     for (_uint i = 0; i < Cast<_uint>(m_viNumTerrainVertices.z); i++)
     {

@@ -3,6 +3,7 @@
 
 #include "Tool_Define.h"
 #include "ImGuiWin/ImGuiWin.h"
+#include "Component/D3D11DeviceComp.h"
 
 BEGIN(Engine)
 
@@ -32,9 +33,20 @@ public:
 private:
 	virtual void	Free() override;
 
+#pragma region 디바이스 컴포넌트
+private:
+	ID3D11Device* D3D11Device() const { return m_pDeviceComp->Get_Device(); }
+	ID3D11DeviceContext* D3D11Context() const { return m_pDeviceComp->Get_Context(); }
+
+private:
+	CD3D11DeviceComp* m_pDeviceComp = { nullptr };
+#pragma endregion
+
 private:
 	void		Layout_TerrainCreate(const _float& fTimeDelta);
 	void		Layout_TerrainSetting(const _float& fTimeDelta);
+
+	HRESULT		Terrain_SaveFile();
 
 private:
 	class CTerrain* m_pTerrain = { nullptr };

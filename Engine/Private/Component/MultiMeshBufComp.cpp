@@ -116,7 +116,7 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 
 	
 	// 정점, 인덱스 버퍼 만들기
-	VERTEX_MODEL_SKIN_T* vertices = new VERTEX_MODEL_SKIN_T[tMeshBuffer.iVtxCount];
+	SHADER_VTX_SKINMODEL* vertices = new SHADER_VTX_SKINMODEL[tMeshBuffer.iVtxCount];
 	if (!vertices)
 		return E_FAIL;
 
@@ -139,7 +139,7 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VERTEX_MODEL_SKIN_T) * tMeshBuffer.iVtxCount;
+	vertexBufferDesc.ByteWidth = sizeof(SHADER_VTX_SKINMODEL) * tMeshBuffer.iVtxCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -222,7 +222,7 @@ void CMultiMeshBufComp::Unbind_AllMeshes()
 
 void CMultiMeshBufComp::Bind_Buffer(_uint iBufferIndex)
 {
-	_uint iStride = sizeof(VERTEX_MODEL_SKIN_T);
+	_uint iStride = sizeof(SHADER_VTX_SKINMODEL);
 	_uint iOffset = 0;
 
 	// 정점 버퍼 활성
