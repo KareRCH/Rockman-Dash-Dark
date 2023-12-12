@@ -147,6 +147,18 @@ namespace Engine
 		ClientToScreen(hWnd, &center);
 		SetCursorPos(center.x, center.y);
 	}
+
+	// 클라이언트의 지정된 지점으로부터 마우스 위치를 변환하는 함수
+	inline POINT Get_MousePos_ByClientPivot(const HWND& hWnd, POINT ptPivot)
+	{
+		POINT mouse;
+		::GetCursorPos(&mouse);
+		::ScreenToClient(hWnd, &mouse);
+		mouse.x += ptPivot.x;
+		mouse.y += ptPivot.y;
+
+		return mouse;
+	}
 #pragma endregion
 
 

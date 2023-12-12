@@ -1,10 +1,13 @@
 #include "ImGuiWin/ImGuiWin_Terrain.h"
 
 #include "BaseClass/Terrain.h"
+#include "DirectXTex.h"
 
 HRESULT CImGuiWin_Terrain::Initialize()
 {
 	m_bOpen = true;
+
+	m_pDeviceComp = Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp"));
 
 	return S_OK;
 }
@@ -53,6 +56,7 @@ void CImGuiWin_Terrain::Free()
 	SUPER::Free();
 
 	Safe_Release(m_pTerrain);
+	Safe_Release(m_pDeviceComp);
 }
 
 void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
@@ -228,4 +232,98 @@ void CImGuiWin_Terrain::Layout_TerrainSetting(const _float& fTimeDelta)
 		tInit.iHeight = m_ivTerrainHeight;
 		m_pTerrain->Create_Terrain(tInit);
 	}
+
+
+	if (ImGui::Button(u8"저장##Terrain Save File"))
+	{
+		Terrain_SaveFile();
+	}
+}
+
+HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
+{
+	if (m_pTerrain == nullptr)
+		return E_FAIL;
+
+
+	/* 텍스쳐를 생성해보자. */
+	D3D11_TEXTURE2D_DESC	TextureDesc = {};
+
+	TextureDesc.Width = 1025;
+	TextureDesc.Height = 1025;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;
+	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	TextureDesc.MiscFlags = 0;
+
+	// 초기화 데이터 입력
+	D3D11_SUBRESOURCE_DATA		InitialData = {};
+	_float* pPixels = new _float[TextureDesc.Width * TextureDesc.Height];
+
+	for (size_t i = 0; i < TextureDesc.Height; i++)
+	{
+		for (size_t j = 0; j < TextureDesc.Width; j++)
+		{
+			_uint		iIndex = i * TextureDesc.Width + j;
+
+			pPixels[iIndex] = 0.f;
+		}
+	}
+
+	// 초기화 데이터 주소, 크기 저장
+	InitialData.pSysMem = pPixels;
+	InitialData.SysMemPitch = TextureDesc.Width * 4;
+
+	// 텍스처 생성 및 초기화
+	ID3D11Texture2D* pTexture2D = { nullptr };
+	if (FAILED(D3D11Device()->CreateTexture2D(&TextureDesc, &InitialData, &pTexture2D)))
+		return E_FAIL;
+	
+	// 데이터 임의로 넣고 텍스처 수정 준비
+	for (size_t i = 0; i < TextureDesc.Height; i++)
+	{
+		for (size_t j = 0; j < TextureDesc.Width; j++)
+		{
+			_uint		iIndex = i * TextureDesc.Width + j;
+
+			pPixels[iIndex] = Cast<_float>(iIndex);
+		}
+	}
+
+	/* 텍스쳐의 픽셀정보를 내 마음대로 조절해서 */
+	D3D11_MAPPED_SUBRESOURCE		MappedSubResource = {};
+
+	D3D11Context()->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
+
+	memcpy(MappedSubResource.pData, pPixels, sizeof(_uint) * TextureDesc.Width * TextureDesc.Height);
+
+	D3D11Context()->Unmap(pTexture2D, 0);
+
+
+	// 이미지 저장을 위해 Desc를 준비한다.
+	Image image = {};
+	image.width = TextureDesc.Width;
+	image.height = TextureDesc.Height;
+	image.format = TextureDesc.Format;
+	ComputePitch(image.format, image.width, image.height, image.rowPitch, image.slicePitch);
+	image.pixels = ReCast<_uint_8*>(pPixels);
+	
+	/* 다시 파일로 저장하기위해서. */
+	// 텍스처가 범용적으로 저장되는 경로에 저장하도록 해준다.
+	wstring strPath = GI()->Get_TextureMainPath() + TEXT("TestHeight.dds");
+	// 아무런 변형없이 값 그대로 저장한다.
+	if (FAILED(SaveToDDSFile(image, DDS_FLAGS_NONE, strPath.c_str())))
+		return E_FAIL;
+
+	Safe_Delete_Array(pPixels);
+	Safe_Release(pTexture2D);
+
+	return S_OK;
 }

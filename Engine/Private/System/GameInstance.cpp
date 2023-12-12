@@ -921,6 +921,14 @@ ID3D11ShaderResourceView* CGameInstance::Find_SRV(const wstring& strTextureKey)
 	return m_pTextureMgr->Find_SRV(strTextureKey);
 }
 
+const wstring CGameInstance::Get_TextureMainPath()
+{
+	if (nullptr == m_pTextureMgr)
+		return TEXT("");
+
+	return m_pTextureMgr->Get_MainPath();
+}
+
 CTextureMgr* CGameInstance::Get_TextureMgr()
 {
 	return m_pTextureMgr;

@@ -41,8 +41,6 @@ CCloudStationComp* CCloudStationComp::Create()
 	{
 		MSG_BOX("BoxBufferComp Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;

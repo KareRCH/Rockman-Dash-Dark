@@ -47,6 +47,7 @@ public:
 
 public:
 	//GETSET_1(mutex, m_mapMutex, Mutex, GET_PTR)
+	GETSET_1(wstring, m_strMainPath, MainPath, GET_C_REF)
 
 private:
 	wstring						m_strMainPath = { L"" };

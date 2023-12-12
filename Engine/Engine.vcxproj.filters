@@ -274,6 +274,18 @@
     <Filter Include="01. System\01. Manager\02. GamePipeline\06. PipelineMgr">
       <UniqueIdentifier>{0024b94d-0c81-453d-a43f-07fade65c2e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent">
+      <UniqueIdentifier>{a7524019-6590-40bb-93e6-26396e977481}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\Cell">
+      <UniqueIdentifier>{b7d6827f-1167-4567-ae9a-3a35465b74cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Shader\03. Effect">
+      <UniqueIdentifier>{1f2ab013-58a2-4fbe-b259-bc639aa43666}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\Buffer">
+      <UniqueIdentifier>{c376dee4-c864-47f4-963f-aa6b0efad4ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -576,6 +588,15 @@
     <ClInclude Include="Public\Component\MeshBufferComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\01. MeshComp</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\NavigationComponent.h">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\NaviCellBufferComp.h">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\Data\NaviCell.h">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\Cell</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -812,6 +833,15 @@
     <ClCompile Include="Private\Component\MeshBufferComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\01. MeshComp</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Component\NavigationComponent.cpp">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\NaviCellBufferComp.cpp">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\Data\NaviCell.cpp">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\Cell</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">
@@ -837,6 +867,9 @@
     </FxCompile>
     <FxCompile Include="Shader\Compiled\PS_Deferred_GBuffer.hlsl">
       <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Runtime\FX_Navigation.hlsl">
+      <Filter>03. Shader\03. Effect</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

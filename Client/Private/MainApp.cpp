@@ -46,8 +46,8 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
 	GameInstance()->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
 	GameInstance()->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
-	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
-	GI()->Load_Effect(L"Runtime/FX_Terrain.hlsl", VERTEX_NORM_T::InputLayout, VERTEX_NORM_T::iMaxIndex);
+	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::InputLayout, SHADER_VTX_SKINMODEL::iMaxIndex);
+	GI()->Load_Effect(L"Runtime/FX_Terrain.hlsl", SHADER_VTX_NORM::InputLayout, SHADER_VTX_NORM::iMaxIndex);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 60.f), E_FAIL);
 

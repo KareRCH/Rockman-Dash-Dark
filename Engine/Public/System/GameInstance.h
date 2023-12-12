@@ -223,6 +223,7 @@ public:		// 텍스처 매니저
 	HRESULT						Load_Texture(const wstring& strFileName, const _bool bPermanent);
 	ID3D11Texture2D*			Find_Texture2D(const wstring& strTextureKey);
 	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey);
+	const wstring				Get_TextureMainPath();
 
 private:
 	class CTextureMgr* Get_TextureMgr();

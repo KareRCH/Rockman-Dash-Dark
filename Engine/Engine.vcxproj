@@ -233,7 +233,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Public\Component\CommonModelComp.h" />
+    <ClInclude Include="Public\Component\Data\NaviCell.h" />
     <ClInclude Include="Public\Component\MeshBufferComp.h" />
+    <ClInclude Include="Public\Component\NaviCellBufferComp.h" />
+    <ClInclude Include="Public\Component\NavigationComponent.h" />
     <ClInclude Include="Public\Component\PlaneModelComp.h" />
     <ClInclude Include="Public\Component\TerrainBufferComp.h" />
     <ClInclude Include="Public\Component\TerrainModelComp.h" />
@@ -342,7 +345,10 @@
     <ClCompile Include="Private\Component\AnimationComponent.cpp" />
     <ClCompile Include="Private\Component\BoxBufferComp.cpp" />
     <ClCompile Include="Private\Component\CommonModelComp.cpp" />
+    <ClCompile Include="Private\Component\Data\NaviCell.cpp" />
     <ClCompile Include="Private\Component\MeshBufferComp.cpp" />
+    <ClCompile Include="Private\Component\NaviCellBufferComp.cpp" />
+    <ClCompile Include="Private\Component\NavigationComponent.cpp" />
     <ClCompile Include="Private\Component\PipelineComp.cpp" />
     <ClCompile Include="Private\Component\ColliderComponent.cpp" />
     <ClCompile Include="Private\Component\ColorShaderComp.cpp" />
@@ -443,6 +449,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\Runtime\FX_Navigation.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>

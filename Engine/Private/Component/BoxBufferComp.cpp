@@ -10,7 +10,7 @@ HRESULT CBoxBufferComp::Initialize_Prototype(void* Arg)
 	m_iNumVertices = 4;
 	m_iNumIndices = 6;
 
-	VERTEX_TEXTURE_T* vertices = new VERTEX_TEXTURE_T[m_iNumVertices];
+	SHADER_VTX_TEXCOORD* vertices = new SHADER_VTX_TEXCOORD[m_iNumVertices];
 	if (!vertices)
 	{
 		return E_FAIL;
@@ -45,7 +45,7 @@ HRESULT CBoxBufferComp::Initialize_Prototype(void* Arg)
 	// 정적 정점 버퍼의 구조체를 설정
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VERTEX_TEXTURE_T) * m_iNumVertices;
+	vertexBufferDesc.ByteWidth = sizeof(SHADER_VTX_TEXCOORD) * m_iNumVertices;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -90,7 +90,7 @@ HRESULT CBoxBufferComp::Initialize(void* Arg)
 
 void CBoxBufferComp::Render_Buffer()
 {
-	_uint iStride = sizeof(VERTEX_TEXTURE_T);
+	_uint iStride = sizeof(SHADER_VTX_TEXCOORD);
 	_uint iOffset = 0;
 
 	// 렌더링 할 수 있도록 입력 어셈블러에서 정점 버퍼를 활성으로 설정

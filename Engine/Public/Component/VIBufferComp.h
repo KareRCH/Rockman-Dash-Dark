@@ -6,7 +6,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CVIBufferComp abstract : public CInternalComponent, public ID3D11DeviceComp
+class ENGINE_DLL CVIBufferComp abstract : public CInternalComponent
 {
 	DERIVED_CLASS(CInternalComponent, CVIBufferComp)
 
@@ -27,8 +27,8 @@ protected:
 
 #pragma region 디바이스 컴포넌트
 protected:
-	virtual ID3D11Device* const D3D11Device() const override { return m_pDeviceComp->Get_Device(); }
-	virtual ID3D11DeviceContext* const D3D11Context() const override { return m_pDeviceComp->Get_Context(); }
+	ID3D11Device* const D3D11Device() const { return m_pDeviceComp->Get_Device(); }
+	ID3D11DeviceContext* const D3D11Context() const { return m_pDeviceComp->Get_Context(); }
 
 private:
 	CD3D11DeviceComp* m_pDeviceComp = { nullptr };

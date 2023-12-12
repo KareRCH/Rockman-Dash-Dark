@@ -176,7 +176,7 @@ HRESULT CTestObject::Initialize_Component()
     m_pModelComp->Bind_Mesh(L"Arms");
     m_pModelComp->Bind_Mesh(L"Legs");
     m_pModelComp->Bind_Mesh(L"Head");
-    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", VERTEX_MODEL_SKIN_T::InputLayout, VERTEX_MODEL_SKIN_T::iMaxIndex);
+    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::InputLayout, SHADER_VTX_SKINMODEL::iMaxIndex);
     m_pModelComp->Bind_Skeletal(L"Armature");
     m_pModelComp->Create_Mask(L"Main", L"Armature", true);
     m_pModelComp->Create_Mask(L"Head", L"Armature", false);

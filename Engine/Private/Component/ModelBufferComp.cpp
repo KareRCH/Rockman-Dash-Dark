@@ -29,7 +29,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 	m_iNumVertices = Cast<_uint>(pMesh->vecVertices.size());
 	m_iNumIndices = Cast<_uint>(pMesh->vecIndices.size());
 
-	VERTEX_MODEL_SKIN_T* vertices = new VERTEX_MODEL_SKIN_T[m_iNumVertices];
+	SHADER_VTX_SKINMODEL* vertices = new SHADER_VTX_SKINMODEL[m_iNumVertices];
 	if (!vertices)
 		return E_FAIL;
 
@@ -61,7 +61,7 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VERTEX_MODEL_SKIN_T) * m_iNumVertices;
+	vertexBufferDesc.ByteWidth = sizeof(SHADER_VTX_SKINMODEL) * m_iNumVertices;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -108,7 +108,7 @@ void CModelBufferComp::Render_Buffer()
 	if (m_pVB == nullptr || m_pIB == nullptr)
 		return;
 
-	_uint iStride = sizeof(VERTEX_MODEL_SKIN_T);
+	_uint iStride = sizeof(SHADER_VTX_SKINMODEL);
 	_uint iOffset = 0;
 
 	// 정점 버퍼 활성
