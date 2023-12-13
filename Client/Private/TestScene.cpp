@@ -5,6 +5,7 @@
 #include "BaseClass/Terrain.h"
 #include "System/Define/ModelMgr_Define.h"
 #include "System/GameInstance.h"
+#include "Component/TerrainModelComp.h"
 
 HRESULT CTestScene::Initialize()
 {
@@ -22,6 +23,7 @@ HRESULT CTestScene::Initialize()
     tInit.strHeightMapPath = TEXT("TestHeight.png");
     tInit.iMaxWidth = 100;
     pTerrain->Create_TerrainByHeightMap(tInit);
+    pTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"))->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_0.dds"));
 
     return S_OK;
 }

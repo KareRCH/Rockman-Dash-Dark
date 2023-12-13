@@ -1,6 +1,6 @@
 #include "BaseClass/GameObject.h"
 
-#include "Component/PrimitiveComponent.h"
+
 #include "System/GameInstance.h"
 
 CGameObject::CGameObject(const CGameObject& rhs)
@@ -134,20 +134,7 @@ HRESULT CGameObject::Add_Component(const wstring& strName, CGameObjectComp* pCom
 	return S_OK;
 }
 
-CGameObjectComp* CGameObject::Get_Component(const wstring& strName)
-{
-	auto iter = find_if(m_vecComponent.begin(), m_vecComponent.end(),
-		[&strName](CGameObjectComp* pComp) {
-			return pComp->Get_Name() == strName;
-		});
 
-	if (iter != m_vecComponent.end())
-	{
-		return (*iter);
-	}
-
-	return nullptr;
-}
 
 
 

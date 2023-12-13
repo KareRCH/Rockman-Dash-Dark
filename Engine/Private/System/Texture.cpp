@@ -79,9 +79,31 @@ HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const wstring& strN
 	if (FAILED(hr))
 		return E_FAIL;
 
-	hr = LoadFromWICFile((strFilePath).c_str(), WIC_FLAGS_NONE, nullptr, image);
-	if (FAILED(hr))
+	size_t iSubstrPoint = strFilePath.find_last_of(TEXT("."));
+	wstring strEXT = strFilePath.substr(iSubstrPoint);
+	TexMetadata* pMetadata = { nullptr };
+
+	if (strEXT == TEXT(".dds"))
+	{
+		hr = LoadFromDDSFile((strFilePath).c_str(), DDS_FLAGS_NONE, nullptr, image);
+		if (FAILED(hr))
+			return E_FAIL;
+	}
+	else if (strEXT.compare(TEXT(".png")) || strEXT.compare(TEXT(".bmp")))
+	{
+		hr = LoadFromWICFile((strFilePath).c_str(), WIC_FLAGS_NONE, pMetadata, image);
+		if (FAILED(hr))
+			return E_FAIL;
+	}
+	else if (strEXT.compare(TEXT(".tga")))
+	{
+		hr = LoadFromTGAFile((strFilePath).c_str(), pMetadata, image);
+		if (FAILED(hr))
+			return E_FAIL;
+	}
+	else
 		return E_FAIL;
+	
 
 	// 텍스처, SRV 제작
 	const Image* texData = image.GetImage(0, 0, 0);

@@ -69,6 +69,10 @@ private:
 
 
 #pragma region 텍스처 컴포넌트
+public:
+	HRESULT Bind_Texture(TEXTURE eType, const wstring& strFileName);
+	HRESULT Unbind_Texture(TEXTURE eType);
+
 
 private:
 	CTextureComponent* m_pTextureComps[TYPE_END] = {nullptr};

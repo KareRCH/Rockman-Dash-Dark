@@ -15,6 +15,10 @@ HRESULT CTerrainModelComp::Initialize_Prototype(void* Arg)
 
     m_pTerrainBufferComp = CTerrainBufferComp::Create();
     m_pEffectComp = CEffectComponent::Create();
+    for (_uint i = 0; i < TYPE_END; i++)
+    {
+        m_pTextureComps[i] = CTextureComponent::Create();
+    }
 
 	return S_OK;
 }
@@ -116,6 +120,12 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
         return E_FAIL;
+    if (FAILED(m_pTextureComps[TYPE_DIFFUSE]->Bind_SRV(m_pEffectComp, "g_DiffuseTexture")))
+        return E_FAIL;
+    if (FAILED(m_pTextureComps[TYPE_MASK]->Bind_SRV(m_pEffectComp, "g_MaskTexture")))
+        return E_FAIL;
+    if (FAILED(m_pTextureComps[TYPE_BRUSH]->Bind_SRV(m_pEffectComp, "g_BrushTexture")))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -175,4 +185,20 @@ HRESULT CTerrainModelComp::Unbind_Effect()
         return E_FAIL;
 
     return m_pEffectComp->Unbind_Effect();
+}
+
+HRESULT CTerrainModelComp::Bind_Texture(TEXTURE eType, const wstring& strFileName)
+{
+    if (!m_pTextureComps[eType])
+        return E_FAIL;
+
+    return m_pTextureComps[eType]->Bind_Texture(strFileName);
+}
+
+HRESULT CTerrainModelComp::Unbind_Texture(TEXTURE eType)
+{
+    if (!m_pTextureComps[eType])
+        return E_FAIL;
+
+    return m_pTextureComps[eType]->Unbind_Texture();
 }

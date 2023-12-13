@@ -96,7 +96,7 @@ void CTerrain::Free()
 
 HRESULT CTerrain::Initialize_Component()
 {
-    FAILED_CHECK_RETURN(Add_Component(L"TerrainComp", m_pTerrainModelComp = CTerrainModelComp::Create()), E_FAIL);
+    FAILED_CHECK_RETURN(Add_Component(L"TerrainModelComp", m_pTerrainModelComp = CTerrainModelComp::Create()), E_FAIL);
     m_pTerrainModelComp->Bind_Effect(TEXT("Runtime/FX_Terrain.hlsl"), SHADER_VTX_NORM::InputLayout, SHADER_VTX_NORM::iMaxIndex);
 
     return S_OK;
