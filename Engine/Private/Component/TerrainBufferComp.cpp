@@ -94,12 +94,12 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_HeightMap tInit)
 
     const DirectX::Image* img = imageScratch.GetImages();
     const size_t imageSize = tMetaData.width * tMetaData.height * sizeof(_float);
-    _float* pPixel = new _float[Cast<_float>(tMetaData.width * tMetaData.height)];
+    _float* pPixel = new _float[Cast<_uint>(tMetaData.width * tMetaData.height)];
     memcpy(pPixel, img->pixels, imageSize);
     
     // 헤이트 맵 사이즈
-    m_viNumTerrainVertices.x = tMetaData.width;
-    m_viNumTerrainVertices.z = tMetaData.height;
+    m_viNumTerrainVertices.x = Cast<_uint>(tMetaData.width);
+    m_viNumTerrainVertices.z = Cast<_uint>(tMetaData.height);
 
     // 점간의 거리
     if (m_viNumTerrainVertices.x >= m_viNumTerrainVertices.z)
@@ -110,7 +110,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_HeightMap tInit)
     // 정점 개수
     m_iNumVertexBuffers = 1;
     m_iNumVertices = m_viNumTerrainVertices.x * m_viNumTerrainVertices.z;
-    m_iStride = sizeof(SHADER_VTX_NORM);
+    m_iVertexStride = sizeof(SHADER_VTX_NORM);
 
     // 인덱스 개수
     m_iNumIndices = (m_viNumTerrainVertices.x - 1) * (m_viNumTerrainVertices.z - 1) * 2 * 3;
@@ -203,12 +203,12 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_HeightMap tInit)
 
 
     m_BufferDesc = {};
-    m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
+    m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
     m_BufferDesc.Usage = D3D11_USAGE_DEFAULT /*D3D11_USAGE_DYNAMIC*/;
     m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     m_BufferDesc.CPUAccessFlags = 0;
     m_BufferDesc.MiscFlags = 0;
-    m_BufferDesc.StructureByteStride = m_iStride;
+    m_BufferDesc.StructureByteStride = m_iVertexStride;
 
     m_SubResourceData = {};
     m_SubResourceData.pSysMem = pVertices;
@@ -257,7 +257,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeightMap tIni
     // 정점 개수
     m_iNumVertexBuffers = 1;
     m_iNumVertices = m_viNumTerrainVertices.x * m_viNumTerrainVertices.z;
-    m_iStride = sizeof(SHADER_VTX_NORM);
+    m_iVertexStride = sizeof(SHADER_VTX_NORM);
 
     // 인덱스 개수
     m_iNumIndices = (m_viNumTerrainVertices.x - 1) * (m_viNumTerrainVertices.z - 1) * 2 * 3;
@@ -348,12 +348,12 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeightMap tIni
 
 
     m_BufferDesc = {};
-    m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
+    m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
     m_BufferDesc.Usage = D3D11_USAGE_DEFAULT /*D3D11_USAGE_DYNAMIC*/;
     m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     m_BufferDesc.CPUAccessFlags = 0;
     m_BufferDesc.MiscFlags = 0;
-    m_BufferDesc.StructureByteStride = m_iStride;
+    m_BufferDesc.StructureByteStride = m_iVertexStride;
 
     m_SubResourceData = {};
     m_SubResourceData.pSysMem = pVertices;
@@ -391,7 +391,7 @@ HRESULT CTerrainBufferComp::Bind_Buffer()
     };
 
     _uint           iStrides[] = {
-        m_iStride
+        m_iVertexStride
     };
     _uint           iOffsets[] = {
         0,
@@ -423,3 +423,4 @@ HRESULT CTerrainBufferComp::IsRender_Ready()
 
     return S_OK;
 }
+

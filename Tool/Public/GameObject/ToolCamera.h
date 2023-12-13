@@ -27,6 +27,12 @@ public:
 
 protected:
 	virtual void	Free() override;
+
+public:
+	GETSET_2(_bool, m_bIsCanMove, IsCanMove, GET_C_REF, SET_C_REF)
+
+private:
+	_bool		m_bIsCanMove = false;
 };
 
 END

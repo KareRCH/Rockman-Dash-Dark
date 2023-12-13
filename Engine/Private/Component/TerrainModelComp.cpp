@@ -112,9 +112,9 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
         return E_FAIL;
     /*if (FAILED(m_pEffectComp->Bind_Matrix("g_WorldMatrix", &Transform().Get_TransformFloat4x4())))
         return E_FAIL;*/
-    if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_ViewFloat4x4(ECamType::Pers, ECamNum::One)))))
+    if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
         return E_FAIL;
-    if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_ProjFloat4x4(ECamType::Pers, ECamNum::One)))))
+    if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
         return E_FAIL;
 
     return S_OK;
@@ -135,6 +135,31 @@ HRESULT CTerrainModelComp::Create_Buffer(const FTerrainBufInit_NoHeightMap tInit
 
     return m_pTerrainBufferComp->Create_Buffer(tInit);
 }
+
+HRESULT CTerrainModelComp::Copy_VBuffer(void* pArray, size_t iSize, size_t iSizePerIndex)
+{
+    if (!m_pTerrainBufferComp)
+        return E_FAIL;
+
+    return m_pTerrainBufferComp->Copy_VBufferToArray(pArray, iSize, iSizePerIndex);
+}
+
+void CTerrainModelComp::Update_VBuffer(void* pData, _uint iSize)
+{
+    if (!m_pTerrainBufferComp)
+        return;
+
+    m_pTerrainBufferComp->Update_VBuffer(pData, iSize);
+}
+
+const size_t CTerrainModelComp::Get_VertexCount() const
+{
+    if (!m_pTerrainBufferComp)
+        return E_FAIL;
+
+    return m_pTerrainBufferComp->Get_VertexCount();
+}
+
 
 HRESULT CTerrainModelComp::Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {

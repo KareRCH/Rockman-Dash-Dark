@@ -3,6 +3,10 @@
 #include "Tool_Define.h"
 #include "ImGuiWin/ImGuiWin.h"
 
+BEGIN(Engine)
+class CTerrain;
+END
+
 BEGIN(Tool)
 
 class CImGuiWin_Viewer final : public CImGuiWin
@@ -66,8 +70,10 @@ private:
 private:
 	_float2			m_vViewerMin = {};
 	_float2			m_vViewerSize = {};
+	_float2			m_vViewerCenter = {};
 	_bool			m_bMouseOnViewer = false;	// 마우스가 뷰어 안에 있는지.
 	_float2			m_vMousePosOnViewer = {};	// 뷰어기준으로 마우스 위치가 변환됨.
+
 
 	_float			m_fConvertRatio = 1.f;		// 텍스처 복사용
 	
@@ -78,6 +84,11 @@ private:
 private:
 	class CImGuiWin_Terrain*	m_pGuiTerrain = { nullptr };	// 연동할 터레인 레이아웃
 	class CTerrain*				m_pTerrain = { nullptr };		// 피킹용 터레인
+	vector<SHADER_VTX_NORM>		m_TerrainVertices;
+	using VERTEX_TYPE = vector<SHADER_VTX_NORM>::value_type;
+
+private:
+	class CToolCamera*			m_pCamera = { nullptr };		// 뷰어용 카메라
 
 };
 

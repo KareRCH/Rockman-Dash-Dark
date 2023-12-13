@@ -57,6 +57,9 @@ public:
 	HRESULT Render_Buffer();
 	// 외부에서 버퍼가 준비되었는지 알기 위한 함수
 	HRESULT IsRender_Ready();
+	
+public:
+	const size_t Get_VertexCount() const { return m_viNumTerrainVertices.x * m_viNumTerrainVertices.z; }
 
 private:
 	_int3	m_viNumTerrainVertices;		// 터레인 점 개수

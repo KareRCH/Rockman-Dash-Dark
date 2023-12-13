@@ -260,7 +260,7 @@ HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 		{
 			_uint		iIndex = i * TextureDesc.Width + j;
 
-			pPixels[iIndex] = Cast<_float>(1.f);
+			pPixels[iIndex] = Cast<_float>(iIndex) / Cast<_float>((TextureDesc.Height * TextureDesc.Width)) * 10.f;
 		}
 	}
 

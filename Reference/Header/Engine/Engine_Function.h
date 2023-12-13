@@ -142,10 +142,31 @@ namespace Engine
 		return center;
 	}
 
+	inline POINT GetClientMin(const HWND& hWnd)
+	{
+		RECT clientRect;
+		GetClientRect(hWnd, &clientRect);
+
+		POINT center;
+		center.x = clientRect.left;
+		center.y = clientRect.top;
+
+		return center;
+	}
+
 	inline void CenterMouse(const HWND& hWnd) {
 		POINT center = GetClientCenter(hWnd);
 		ClientToScreen(hWnd, &center);
 		SetCursorPos(center.x, center.y);
+	}
+
+	// 클라이언트 기반으로 마우스 위치 바꾸는 함수
+	inline void SetMousePos(const HWND& hWnd, POINT ptPos) {
+		POINT ptCenter = GetClientMin(hWnd);
+		ptCenter.x += ptPos.x;
+		ptCenter.y += ptPos.y;
+		ClientToScreen(hWnd, &ptCenter);		// 화면 좌표로 변경
+		SetCursorPos(ptCenter.x, ptCenter.y);		// 화면에 마우스 위치
 	}
 
 	// 클라이언트의 지정된 지점으로부터 마우스 위치를 변환하는 함수

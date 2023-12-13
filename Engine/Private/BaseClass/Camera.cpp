@@ -1,7 +1,7 @@
 #include "BaseClass/Camera.h"
 
 CCamera::CCamera()
-    : m_eCamType(ECamType::Pers), m_eCamID(ECamNum::One)
+    : m_eCamType(ECamType::Persp), m_eCamID(ECamNum::One)
     , m_vAt(_float3(0.f, 0.f, 0.f))
     , m_fFov(60.f), m_fAspect(Cast<_float>(g_iWindowSizeX) / Cast<_float>(g_iWindowSizeY))
     , m_fNear(0.1f), m_fFar(1000.f)
@@ -69,6 +69,6 @@ void CCamera::Apply_ViewProjMatrix()
 
 
 
-    PipelineComp().Set_ViewMatrix(m_eCamType, m_eCamID, m_matView);
-    PipelineComp().Set_ProjMatrix(m_eCamType, m_eCamID, matPersProj);
+    PipelineComp().Set_CamMatrix(m_eCamType, ECamMatrix::View, m_eCamID, m_matView);
+    PipelineComp().Set_CamMatrix(m_eCamType, ECamMatrix::Proj, m_eCamID, matPersProj);
 }
