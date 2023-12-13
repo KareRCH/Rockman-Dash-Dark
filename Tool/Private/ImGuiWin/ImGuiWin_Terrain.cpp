@@ -105,26 +105,12 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 	ImGui::SameLine();
 	ImGui::PopStyleVar();
 	ImGui::PushItemWidth(80.f);
-	if (ImGui::InputInt(u8"##Terrain Width", &m_ivTerrainWidth, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+	if (ImGui::InputInt(u8"##Terrain Width", &m_ivTerrainMaxWidth, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 
 	}
 	ImGui::PopItemWidth();
 
-
-	ImGui::SameLine();
-
-
-	ImGui::Button(u8"Y##Terrrain Height Button");
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
-	ImGui::SameLine();
-	ImGui::PopStyleVar();
-	ImGui::PushItemWidth(80.f);
-	if (ImGui::InputInt(u8"##Terrain Height", &m_ivTerrainHeight, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
-	{
-
-	}
-	ImGui::PopItemWidth();
 
 	ImGui::Separator();
 	if (ImGui::Button(u8"생성##Terrain Create"))
@@ -136,7 +122,7 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 	// 변경 사항을 적용한다.
 	if (bCreate
 		&& m_ivTerrainVertex_CountX > 0 && m_ivTerrainVertex_CountZ > 0
-		&& m_ivTerrainWidth > 0 && m_ivTerrainHeight > 0)
+		&& m_ivTerrainMaxWidth > 0)
 	{
 		GI()->Add_GameObject(m_pTerrain = CTerrain::Create());
 		Safe_AddRef(m_pTerrain);
@@ -145,9 +131,7 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 		tInit.strHeightMapPath = TEXT("");
 		tInit.iNumVertexCountX = m_ivTerrainVertex_CountX;
 		tInit.iNumVertexCountZ = m_ivTerrainVertex_CountZ;
-		tInit.iWidthX = m_ivTerrainWidth;
-		tInit.iWidthZ = m_ivTerrainWidth;
-		tInit.iHeight = m_ivTerrainHeight;
+		tInit.iMaxWidth = m_ivTerrainMaxWidth;
 		m_pTerrain->Create_Terrain(tInit);
 	}
 }
@@ -198,22 +182,7 @@ void CImGuiWin_Terrain::Layout_TerrainSetting(const _float& fTimeDelta)
 	ImGui::SameLine();
 	ImGui::PopStyleVar();
 	ImGui::PushItemWidth(80.f);
-	if (ImGui::InputInt(u8"##Terrain Width", &m_ivTerrainWidth, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
-	{
-		bIsChanged = true;
-	}
-	ImGui::PopItemWidth();
-
-
-	ImGui::SameLine();
-
-
-	ImGui::Button(u8"Y##Terrrain Height Button");
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
-	ImGui::SameLine();
-	ImGui::PopStyleVar();
-	ImGui::PushItemWidth(80.f);
-	if (ImGui::InputInt(u8"##Terrain Height", &m_ivTerrainHeight, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+	if (ImGui::InputInt(u8"##Terrain Width", &m_ivTerrainMaxWidth, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 		bIsChanged = true;
 	}
@@ -227,9 +196,7 @@ void CImGuiWin_Terrain::Layout_TerrainSetting(const _float& fTimeDelta)
 		tInit.strHeightMapPath = TEXT("");
 		tInit.iNumVertexCountX = m_ivTerrainVertex_CountX;
 		tInit.iNumVertexCountZ = m_ivTerrainVertex_CountZ;
-		tInit.iWidthX = m_ivTerrainWidth;
-		tInit.iWidthZ = m_ivTerrainWidth;
-		tInit.iHeight = m_ivTerrainHeight;
+		tInit.iMaxWidth = m_ivTerrainMaxWidth;
 		m_pTerrain->Create_Terrain(tInit);
 	}
 
@@ -249,11 +216,11 @@ HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 	/* 텍스쳐를 생성해보자. */
 	D3D11_TEXTURE2D_DESC	TextureDesc = {};
 
-	TextureDesc.Width = 1025;
-	TextureDesc.Height = 1025;
+	TextureDesc.Width = m_ivTerrainVertex_CountX;
+	TextureDesc.Height = m_ivTerrainVertex_CountZ;
 	TextureDesc.MipLevels = 1;
 	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	TextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
@@ -293,7 +260,7 @@ HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 		{
 			_uint		iIndex = i * TextureDesc.Width + j;
 
-			pPixels[iIndex] = Cast<_float>(iIndex);
+			pPixels[iIndex] = Cast<_float>(1.f);
 		}
 	}
 
@@ -317,11 +284,11 @@ HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 	
 	/* 다시 파일로 저장하기위해서. */
 	// 텍스처가 범용적으로 저장되는 경로에 저장하도록 해준다.
-	wstring strPath = GI()->Get_TextureMainPath() + TEXT("TestHeight.dds");
+	wstring strPath = GI()->Get_TextureMainPath() + TEXT("TestHeight.png");
 	// 아무런 변형없이 값 그대로 저장한다.
-	if (FAILED(SaveToDDSFile(image, DDS_FLAGS_NONE, strPath.c_str())))
+	if (FAILED(SaveToWICFile(image, WIC_FLAGS_NONE, GetWICCodec(WIC_CODEC_PNG), strPath.c_str())))
 		return E_FAIL;
-
+	
 	Safe_Delete_Array(pPixels);
 	Safe_Release(pTexture2D);
 

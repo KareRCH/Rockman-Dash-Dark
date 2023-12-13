@@ -59,10 +59,25 @@ private:
 	ComPtr<ID3D11ShaderResourceView>	m_pSRV = { nullptr };
 	ComPtr<ID3D11ShaderResourceView>	m_pPrevSRV = { nullptr };
 
-private:
-	_float2			m_vContentSize = {};
-	_float			m_fConvertRatio = 1.f;
 
+private:
+	void	Mouse_Picking(const _float& fTimeDelta);
+
+private:
+	_float2			m_vViewerMin = {};
+	_float2			m_vViewerSize = {};
+	_bool			m_bMouseOnViewer = false;	// 마우스가 뷰어 안에 있는지.
+	_float2			m_vMousePosOnViewer = {};	// 뷰어기준으로 마우스 위치가 변환됨.
+
+	_float			m_fConvertRatio = 1.f;		// 텍스처 복사용
+	
+
+private:
+	HRESULT			Link_GuiTerrain();
+	
+private:
+	class CImGuiWin_Terrain*	m_pGuiTerrain = { nullptr };	// 연동할 터레인 레이아웃
+	class CTerrain*				m_pTerrain = { nullptr };		// 피킹용 터레인
 
 };
 

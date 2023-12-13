@@ -28,7 +28,7 @@ protected:
 	virtual void		Free() PURE;
 
 public:
-	GETSET_1(wstring, m_strName, Name, GET_C_REF)		// 이름을 얻기만 가능
+	GETSET_2(wstring, m_strName, Name, GET_C_REF, SET_C_REF)		// 이름을 얻기만 가능
 
 	void		Add_LevelTag(const wstring& strPrototypeTag) { m_setLevelTag.emplace(strPrototypeTag); }
 	_bool		Has_LevelTag(const wstring& strPrototypeTag) { return (m_setLevelTag.find(strPrototypeTag) != m_setLevelTag.end()); }

@@ -19,11 +19,10 @@ public:
 		// 구조체기는 하지만 using에 등록 하기만 하는거라 상관 없음
 		DERIVED_CLASS(FInitGameObjectBase, FInitTerrain)
 
-		wstring	strHeightMapPath;
-		_uint	iNumVertexCountX;
-		_uint	iNumVertexCountZ;
-		_uint	iWidthX, iWidthZ;
-		_uint	iHeight;
+		wstring	strHeightMapPath;	// 헤이트맵 정보가 담긴 파일 위치
+		_uint	iNumVertexCountX;	// 버텍스 X 개수
+		_uint	iNumVertexCountZ;	// 버텍스 Z 개수
+		_uint	iMaxWidth;			// 너비, 정점의 개수가 많은 것 기준으로 간격이 조정된다.
 	};
 
 protected:

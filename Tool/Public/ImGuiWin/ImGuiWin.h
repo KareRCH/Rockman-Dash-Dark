@@ -35,8 +35,14 @@ public:
 	HRESULT Add_Child(CImGuiWin* pWin);
 	// 들어온 Win이 중복되는지 확인하는 것.
 	HRESULT Exists_OnChild(CImGuiWin* const pWin);
+	// 첫번째로 찾는 타입의 윈도우를 얻는다.
+	template<typename WinClass>
+	HRESULT Find_Child(WinClass** ppFindChild);
 
-private:
+public:
+	GETSET_2(CImGuiWin*, m_pParentWin, Parent, GET__C, SET__C)
+
+protected:
 	CImGuiWin*			m_pParentWin = { nullptr };
 	vector<CImGuiWin*>	m_vecChildrenWin;
 
@@ -55,3 +61,19 @@ protected:	// 각종 속성
 };
 
 END
+
+template<typename WinClass>
+inline HRESULT CImGuiWin::Find_Child(WinClass** ppFindChild)
+{
+	for (_uint i = 0; i < m_vecChildrenWin.size(); i++)
+	{
+		WinClass* pWin = DynCast<WinClass*>(m_vecChildrenWin[i]);
+		if (pWin)
+		{
+			(*ppFindChild) = pWin;
+			return S_OK;
+		}
+	}
+
+	return E_FAIL;
+}

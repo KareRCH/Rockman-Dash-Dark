@@ -48,14 +48,16 @@ private:
 
 	HRESULT		Terrain_SaveFile();
 
+public:
+	GETSET_1(CTerrain*, m_pTerrain, Terrain, GET__C)
+
 private:
 	class CTerrain* m_pTerrain = { nullptr };
 
 	_int			m_ivTerrainVertex_CountX = 1025;
 	_int			m_ivTerrainVertex_CountZ = 1025;
 
-	_int			m_ivTerrainWidth = 100;
-	_int			m_ivTerrainHeight = 1;
+	_int			m_ivTerrainMaxWidth = 100;
 
 	
 };
