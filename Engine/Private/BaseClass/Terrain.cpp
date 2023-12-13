@@ -96,7 +96,7 @@ void CTerrain::Free()
 
 HRESULT CTerrain::Initialize_Component()
 {
-    FAILED_CHECK_RETURN(Add_Component(L"Model", m_pTerrainModelComp = CTerrainModelComp::Create()), E_FAIL);
+    FAILED_CHECK_RETURN(Add_Component(L"TerrainComp", m_pTerrainModelComp = CTerrainModelComp::Create()), E_FAIL);
     m_pTerrainModelComp->Bind_Effect(TEXT("Runtime/FX_Terrain.hlsl"), SHADER_VTX_NORM::InputLayout, SHADER_VTX_NORM::iMaxIndex);
 
     return S_OK;
@@ -114,11 +114,11 @@ HRESULT CTerrain::Create_Terrain(const FInitTerrain& tInit)
     if (nullptr == m_pTerrainModelComp)
         return E_FAIL;
 
-    FTerrainBufInit_NoHeight tBufInit = {};
-    tBufInit.iWidth = tInit.iWidthX;
-    tBufInit.iHeight = tInit.iHeight;
+    FTerrainBufInit_NoHeightMap tBufInit = {};
     tBufInit.iNumVertexX = tInit.iNumVertexCountX;
     tBufInit.iNumVertexZ = tInit.iNumVertexCountZ;
+    tBufInit.iMaxWidth = tInit.iMaxWidth;
+    
 
     m_pTerrainModelComp->Create_Buffer(tBufInit);
 
@@ -130,10 +130,9 @@ HRESULT CTerrain::Create_TerrainByHeightMap(const FInitTerrain& tInit)
     if (nullptr == m_pTerrainModelComp)
         return E_FAIL;
 
-    FTerrainBufInit tBufInit = {};
+    FTerrainBufInit_HeightMap tBufInit = {};
     tBufInit.strHeightMapFilePath = tInit.strHeightMapPath;
-    tBufInit.iWidth = tInit.iWidthX;
-    tBufInit.iHeight = tInit.iWidthX;
+    tBufInit.iMaxWidth = tInit.iMaxWidth;
 
     m_pTerrainModelComp->Create_Buffer(tBufInit);
 

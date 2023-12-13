@@ -1,5 +1,8 @@
 #include "Component/TerrainBufferComp.h"
 
+#include "System/GameInstance.h"
+#include "DirectXTex.h"
+
 CTerrainBufferComp::CTerrainBufferComp(const CTerrainBufferComp& rhs)
 {
 }
@@ -55,10 +58,22 @@ void CTerrainBufferComp::Free()
     SUPER::Free();
 }
 
-HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
+HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_HeightMap tInit)
 {
-    _ulong dwByte = 0;
-    HANDLE		hFile = CreateFile(tInit.strHeightMapFilePath.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+    if (nullptr != m_pVB || nullptr != m_pIB)
+    {
+        m_pVB.Reset();
+        m_pIB.Reset();
+    }
+
+    wstring strMainPath = GI()->Get_TextureMainPath();
+    TexMetadata tMetaData = {};
+    ScratchImage imageScratch = {};
+    if (FAILED(LoadFromWICFile((strMainPath + tInit.strHeightMapFilePath).c_str(), WIC_FLAGS_NONE, &tMetaData, imageScratch)))
+        return E_FAIL;
+
+    /*_ulong dwByte = 0;
+    HANDLE		hFile = CreateFile((strMainPath + tInit.strHeightMapFilePath).c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
     if (0 == hFile)
         return E_FAIL;
@@ -75,15 +90,22 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
     if (!ReadFile(hFile, pPixel, sizeof(_uint) * ih.biWidth * ih.biHeight, &dwByte, nullptr))
         return E_FAIL;
 
-    CloseHandle(hFile);
+    CloseHandle(hFile);*/
 
+    const DirectX::Image* img = imageScratch.GetImages();
+    const size_t imageSize = tMetaData.width * tMetaData.height * sizeof(_float);
+    _float* pPixel = new _float[Cast<_float>(tMetaData.width * tMetaData.height)];
+    memcpy(pPixel, img->pixels, imageSize);
+    
     // 헤이트 맵 사이즈
-    m_viNumTerrainVertices.x = ih.biWidth;
-    m_viNumTerrainVertices.z = ih.biHeight;
+    m_viNumTerrainVertices.x = tMetaData.width;
+    m_viNumTerrainVertices.z = tMetaData.height;
 
     // 점간의 거리
-    m_fIntervalX = Cast<_float>(tInit.iWidth) / Cast<_float>(m_viNumTerrainVertices.x);
-    m_fIntervalZ = Cast<_float>(tInit.iWidth) / Cast<_float>(m_viNumTerrainVertices.z);
+    if (m_viNumTerrainVertices.x >= m_viNumTerrainVertices.z)
+        m_fInterval = Cast<_float>(tInit.iMaxWidth) / Cast<_float>(m_viNumTerrainVertices.x);
+    else
+        m_fInterval = Cast<_float>(tInit.iMaxWidth) / Cast<_float>(m_viNumTerrainVertices.z);
 
     // 정점 개수
     m_iNumVertexBuffers = 1;
@@ -92,8 +114,10 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
 
     // 인덱스 개수
     m_iNumIndices = (m_viNumTerrainVertices.x - 1) * (m_viNumTerrainVertices.z - 1) * 2 * 3;
-    m_iIndexStride = m_iNumVertices >= 65535 ? 4 : 2;
-    m_eIndexFormat = m_iIndexStride == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+    //m_iIndexStride = m_iNumVertices >= 65535 ? 4 : 2;
+    //m_eIndexFormat = m_iIndexStride == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+    m_iIndexStride = 4;
+    m_eIndexFormat = DXGI_FORMAT_R32_UINT;
     m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 
@@ -106,9 +130,9 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
         for (_uint j = 0; j < Cast<_uint>(m_viNumTerrainVertices.x); j++)
         {
             _uint		iIndex = (i * m_viNumTerrainVertices.x) + j;
-            _float      fCalcHeight = Cast<_float>((pPixel[iIndex] & 0x000000ff)) / 256.f * Cast<_float>(tInit.iHeight);
+            _float      fCalcHeight = Cast<_float>(pPixel[iIndex]);
 
-            pVertices[iIndex].vPosition = _float3(j * m_fIntervalX, fCalcHeight, i * m_fIntervalZ);
+            pVertices[iIndex].vPosition = _float3(j * m_fInterval, fCalcHeight, i * m_fInterval);
             pVertices[iIndex].vNormal = _float3(0.0f, 0.0f, 0.f);
             pVertices[iIndex].vTexcoord = _float2(j / (m_viNumTerrainVertices.x - 1.0f), i / (m_viNumTerrainVertices.z - 1.0f));
         }
@@ -212,7 +236,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit tInit)
     return S_OK;
 }
 
-HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeight tInit)
+HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeightMap tInit)
 {
     if (nullptr != m_pVB || nullptr != m_pIB)
     {
@@ -225,8 +249,10 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeight tInit)
     m_viNumTerrainVertices.z = tInit.iNumVertexZ;
 
     // 점간의 거리
-    m_fIntervalX = Cast<_float>(tInit.iWidth) / Cast<_float>(m_viNumTerrainVertices.x);
-    m_fIntervalZ = Cast<_float>(tInit.iWidth) / Cast<_float>(m_viNumTerrainVertices.z);
+    if (m_viNumTerrainVertices.x > m_viNumTerrainVertices.z)
+        m_fInterval = Cast<_float>(tInit.iMaxWidth) / Cast<_float>(m_viNumTerrainVertices.x);
+    else
+        m_fInterval = Cast<_float>(tInit.iMaxWidth) / Cast<_float>(m_viNumTerrainVertices.z);
 
     // 정점 개수
     m_iNumVertexBuffers = 1;
@@ -235,8 +261,10 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeight tInit)
 
     // 인덱스 개수
     m_iNumIndices = (m_viNumTerrainVertices.x - 1) * (m_viNumTerrainVertices.z - 1) * 2 * 3;
-    m_iIndexStride = m_iNumVertices >= 65535 ? 4 : 2;
-    m_eIndexFormat = m_iIndexStride == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+    //m_iIndexStride = m_iNumVertices >= 65535 ? 4 : 2;
+    //m_eIndexFormat = m_iIndexStride == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+    m_iIndexStride = 4;
+    m_eIndexFormat = DXGI_FORMAT_R32_UINT;
     m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 
@@ -250,7 +278,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeight tInit)
         {
             _uint		iIndex = (i * m_viNumTerrainVertices.x) + j;
 
-            pVertices[iIndex].vPosition = _float3(j * m_fIntervalX, 0.f, i * m_fIntervalZ);
+            pVertices[iIndex].vPosition = _float3(j * m_fInterval, 0.f, i * m_fInterval);
             pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
             pVertices[iIndex].vTexcoord = _float2(j / (m_viNumTerrainVertices.x - 1.0f), i / (m_viNumTerrainVertices.z - 1.0f));
         }
@@ -260,6 +288,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeight tInit)
 #pragma region INDEX_BUFFER
     ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 
+    // 인덱스 버퍼가 2바이트 일때 안먹히는 이유. _uint 타입이어서
     _uint* pIndices = new _uint[m_iNumIndices];
 
     _uint		iNumIndices = 0;

@@ -30,7 +30,7 @@ HRESULT CNaviCell::Initialize(const _float3* pPoints)
 
 HRESULT CNaviCell::Render(CEffectComponent* pEffectComp)
 {
-    _float4x4		WorldMatrix;
+    //_float4x4		WorldMatrix;
 
     /*XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
 

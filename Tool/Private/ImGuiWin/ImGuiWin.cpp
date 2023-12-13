@@ -34,6 +34,7 @@ HRESULT CImGuiWin::Add_Child(CImGuiWin* pWin)
 		return E_FAIL;
 
 	m_vecChildrenWin.push_back(pWin);
+	pWin->m_pParentWin = this;
 
 	return S_OK;
 }

@@ -335,6 +335,7 @@
     <ClInclude Include="Public\System\Timer.h" />
     <ClInclude Include="Public\System\TimerMgr.h" />
     <ClInclude Include="Public\System\Define\PipelineMgr_Define.h" />
+    <ClInclude Include="Public\Utility\RapidJsonSerial.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\BaseClass\CloudStation.cpp" />
@@ -413,6 +414,7 @@
     <ClCompile Include="Private\System\TextureMgr.cpp" />
     <ClCompile Include="Private\System\Timer.cpp" />
     <ClCompile Include="Private\System\TimerMgr.cpp" />
+    <ClCompile Include="Private\Utility\RapidJsonSerial.cpp" />
     <ClCompile Include="Public\Base.inl" />
     <ClCompile Include="Private\BaseClass\GameObject.cpp" />
     <ClCompile Include="Private\Component\PrimitiveComponent.cpp" />

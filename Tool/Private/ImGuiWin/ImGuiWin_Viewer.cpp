@@ -1,5 +1,8 @@
 #include "ImGuiWin/ImGuiWin_Viewer.h"
 
+#include "ImGuiWin/ImGuiWin_Terrain.h"
+#include "BaseClass/Terrain.h"
+
 HRESULT CImGuiWin_Viewer::Initialize()
 {
 	m_bOpen = true;
@@ -58,6 +61,9 @@ void CImGuiWin_Viewer::Free()
 
     m_pSRV.Reset();
     m_pPrevSRV.Reset();
+
+    Safe_Release(m_pGuiTerrain);
+    Safe_Release(m_pTerrain);
 }
 
 void CImGuiWin_Viewer::Layout_TopBar(const _float& fTimeDelta)
@@ -169,38 +175,55 @@ void CImGuiWin_Viewer::Layout_TopBar(const _float& fTimeDelta)
 void CImGuiWin_Viewer::Layout_View(const _float& fTimeDelta)
 {
     // 콘텐츠 크기 구하기
-    ImVec2 contentSize = ImGui::GetContentRegionAvail();
+    ImVec2 contentSize = ImGui::GetContentRegionAvail();    // 윈도우에 들어갈 수 있는 남은 공간
     ImVec2 clipPos = {};
     ImVec2 clipSize = {};
-    m_vContentSize = _float2(contentSize.x, contentSize.y);
+    m_vViewerSize = _float2(contentSize.x, contentSize.y);
     _uint iResolutionX = GI()->ResolutionX();
     _uint iResolutionY = GI()->ResolutionY();
     _float fResolutionRatio = GI()->ResolutionRatio();
-    _float fTest = m_vContentSize.y * fResolutionRatio;
-
-
+    _float fTest = m_vViewerSize.y * fResolutionRatio;
 
     // 출력 화면은 콘텐츠에 맞추되, 실제 복사되는 텍스처는 가장 긴 (해상도에 맞춘) 창의 길이에 맞춘다.
-    if (m_vContentSize.x >= m_vContentSize.y * fResolutionRatio)
+    if (m_vViewerSize.x >= m_vViewerSize.y * fResolutionRatio)
     {
         // 실제 그려져야 하는 출력 공간 설정
-        GI()->Set_ResolutionX_MaintainRatio(Cast<_uint>(m_vContentSize.x));
-        GI()->Set_SystemViewport(0, { 0.f, 0.f, m_vContentSize.x, m_vContentSize.x / fResolutionRatio, 0.f, 1.f });
-        clipSize = { 1.f, (m_vContentSize.y * fResolutionRatio) / m_vContentSize.x };
+        GI()->Set_ResolutionX_MaintainRatio(Cast<_uint>(m_vViewerSize.x));
+        GI()->Set_SystemViewport(0, { 0.f, 0.f, m_vViewerSize.x, m_vViewerSize.x / fResolutionRatio, 0.f, 1.f });
+        clipSize = { 1.f, (m_vViewerSize.y * fResolutionRatio) / m_vViewerSize.x };
     }
     else
     {
         // 실제 그려져야 하는 출력 공간 설정
-        GI()->Set_ResolutionY_MaintainRatio(Cast<_uint>(m_vContentSize.y));
-        GI()->Set_SystemViewport(0, { 0.f, 0.f, m_vContentSize.y * fResolutionRatio, m_vContentSize.y, 0.f, 1.f });
-        clipSize = { m_vContentSize.x / (m_vContentSize.y * fResolutionRatio), 1.f };
+        GI()->Set_ResolutionY_MaintainRatio(Cast<_uint>(m_vViewerSize.y));
+        GI()->Set_SystemViewport(0, { 0.f, 0.f, m_vViewerSize.y * fResolutionRatio, m_vViewerSize.y, 0.f, 1.f });
+        clipSize = { m_vViewerSize.x / (m_vViewerSize.y * fResolutionRatio), 1.f };
     }
-
-    //m_pSRV = GI()->Find_SRV(TEXT("Model/Character/RockVolnutt/Body.png"));
 
     m_pPrevSRV.Reset();
     if (m_pSRV != nullptr)
         ImGui::Image((void*)m_pSRV.Get(), contentSize, ImVec2(0, 0), clipSize);
+    
+    // 마우스가 화면 안에 있는지 체크
+    POINT ptMouse = Get_MousePos_Client(g_hWnd);
+    ImVec2 vMouse = { Cast<_float>(ptMouse.x), Cast<_float>(ptMouse.y) };
+    ImVec2 vItemMin = ImGui::GetWindowContentRegionMin() - ImGui::GetWindowPos();
+    ImRect rcItemRect = { vItemMin + ImGui::GetItemRectMin(), vItemMin + ImGui::GetItemRectMax() };
+    if (rcItemRect.Min.x < vMouse.x && rcItemRect.Max.x > vMouse.x
+        && rcItemRect.Min.y < vMouse.y && rcItemRect.Max.y > vMouse.y)
+    {
+        m_bMouseOnViewer = true;
+    }
+    else
+        m_bMouseOnViewer = false;
+
+    m_vViewerMin = { rcItemRect.Min.x, rcItemRect.Min.y };
+
+    m_vMousePosOnViewer.x = vMouse.x - rcItemRect.Min.x;
+    m_vMousePosOnViewer.y = vMouse.y - rcItemRect.Min.y;
+    
+    // 피킹
+    Mouse_Picking(fTimeDelta);
 }
 
 void CImGuiWin_Viewer::Set_Button_ActiveColor()
@@ -278,4 +301,52 @@ void CImGuiWin_Viewer::LoadTextureFromFIle(const string& strFileName)
     //stbi_image_free(image_data);
 
     //return true;
+}
+
+void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
+{
+    // 마우스가 뷰어 안에 있어야 함.
+    if (!m_bMouseOnViewer)
+        return;
+
+    if (FAILED(Link_GuiTerrain()))
+        return;
+
+    // 누름
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+    {
+        _bool bIsPicking_Ready = false;
+        CTerrain* pTerrain = m_pGuiTerrain->Get_Terrain();
+        if (pTerrain)
+        {
+            CTerrainModelComp* pModel = DynCast<CTerrainModelComp*>(pTerrain->Get_Component(TEXT("TerrainComp")));
+            if (pModel)
+            {
+                if (S_OK == pModel->IsRender_Ready())
+                    bIsPicking_Ready = true;
+            }
+        }
+
+        if (bIsPicking_Ready)
+        {
+
+        }
+    }
+}
+
+HRESULT CImGuiWin_Viewer::Link_GuiTerrain()
+{
+    if (m_pGuiTerrain)
+        return S_OK;
+
+    if (!m_pParentWin)
+        return E_FAIL;
+
+    // 부모가 ImGuiWin_Terrain을 가지고 있어야 끝남.
+    if (FAILED(m_pParentWin->Find_Child(&m_pGuiTerrain)))
+        return E_FAIL;
+
+    Safe_AddRef(m_pGuiTerrain);
+
+    return S_OK;
 }

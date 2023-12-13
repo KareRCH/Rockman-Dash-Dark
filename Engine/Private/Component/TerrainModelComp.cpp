@@ -108,8 +108,10 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
 {
     _float4x4 matTemp = {};
 
-    if (FAILED(m_pEffectComp->Bind_Matrix("g_WorldMatrix", &Transform().Get_TransformFloat4x4())))
+    if (FAILED(Transform().Bind_EffectMatrix(m_pEffectComp, "g_WorldMatrix")))
         return E_FAIL;
+    /*if (FAILED(m_pEffectComp->Bind_Matrix("g_WorldMatrix", &Transform().Get_TransformFloat4x4())))
+        return E_FAIL;*/
     if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_ViewFloat4x4(ECamType::Pers, ECamNum::One)))))
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_ProjFloat4x4(ECamType::Pers, ECamNum::One)))))
@@ -118,7 +120,7 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
     return S_OK;
 }
 
-HRESULT CTerrainModelComp::Create_Buffer(const FTerrainBufInit tInit)
+HRESULT CTerrainModelComp::Create_Buffer(const FTerrainBufInit_HeightMap tInit)
 {
     if (!m_pTerrainBufferComp)
         return E_FAIL;
@@ -126,7 +128,7 @@ HRESULT CTerrainModelComp::Create_Buffer(const FTerrainBufInit tInit)
     return m_pTerrainBufferComp->Create_Buffer(tInit);
 }
 
-HRESULT CTerrainModelComp::Create_Buffer(const FTerrainBufInit_NoHeight tInit)
+HRESULT CTerrainModelComp::Create_Buffer(const FTerrainBufInit_NoHeightMap tInit)
 {
     if (!m_pTerrainBufferComp)
         return E_FAIL;

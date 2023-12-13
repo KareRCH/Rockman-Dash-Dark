@@ -125,6 +125,7 @@ HRESULT CGameObject::Add_Component(const wstring& strName, CGameObjectComp* pCom
 	// 완료시 벡터에 컴포넌트 추가
 	m_vecComponent.push_back(pComponent);
 	pComponent->Set_OwnerObject(this);
+	pComponent->Set_Name(strName);
 
 	pComponent->Set_StateUpdate_Event<ThisClass>(this, &ThisClass::OnStateUpdate_Updated);
 	pComponent->Set_StateLateUpdate_Event<ThisClass>(this, &ThisClass::OnStateLateUpdate_Updated);

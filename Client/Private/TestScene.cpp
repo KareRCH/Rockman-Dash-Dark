@@ -15,7 +15,13 @@ HRESULT CTestScene::Initialize()
     GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 0.f)));
     //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
     GI()->Add_GameObject(CDynamicCamera::Create());
-    GI()->Add_GameObject(CTerrain::Create());
+
+    CTerrain* pTerrain = { nullptr };
+    GI()->Add_GameObject(pTerrain = CTerrain::Create());
+    CTerrain::FInitTerrain tInit = {};
+    tInit.strHeightMapPath = TEXT("TestHeight.png");
+    tInit.iMaxWidth = 100;
+    pTerrain->Create_TerrainByHeightMap(tInit);
 
     return S_OK;
 }

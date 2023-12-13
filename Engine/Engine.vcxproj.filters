@@ -597,6 +597,9 @@
     <ClInclude Include="Public\Component\Data\NaviCell.h">
       <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\Cell</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Utility\RapidJsonSerial.h">
+      <Filter>02. Utility\04. Serialize</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -841,6 +844,9 @@
     </ClCompile>
     <ClCompile Include="Private\Component\Data\NaviCell.cpp">
       <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\Cell</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Utility\RapidJsonSerial.cpp">
+      <Filter>02. Utility\04. Serialize</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
