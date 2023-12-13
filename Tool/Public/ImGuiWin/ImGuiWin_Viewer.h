@@ -29,6 +29,15 @@ public:
 private:
 	virtual void	Free() override;
 
+#pragma region Ä·ºä ÄÄÆ÷³ÍÆ®
+protected:
+	CPipelineComp& PipelineComp() { return (*m_pPipelineComp); }
+
+private:
+	CPipelineComp* m_pPipelineComp = { nullptr };
+#pragma endregion
+
+
 private:
 	void	Layout_TopBar(const _float& fTimeDelta);
 	void	Layout_View(const _float& fTimeDelta);

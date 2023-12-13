@@ -50,6 +50,11 @@ public:
 	HRESULT Bind_Texture(const wstring& strFilePath);
 	// 이미 등록된 텍스처를 찾아 저장하는 함수, 앞으로 잘 안쓸듯? [Deprecated]
 	HRESULT Bind_TextureFromManager(const wstring& strFilePath);
+	// 텍스처 연결 끊기
+	HRESULT Unbind_Texture();
+
+public:
+	HRESULT Bind_SRV(class CEffectComponent* pEffect, const _char* pTextureName);
 
 private:
 	// 텍스처 매니저에 연결하는 내부 함수

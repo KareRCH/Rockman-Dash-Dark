@@ -2,6 +2,7 @@
 
 #include "System/GameInstance.h"
 #include "System/TextureMgr.h"
+#include "Component/EffectComponent.h"
 
 CTextureComponent::CTextureComponent(const CTextureComponent& rhs)
     : Base(rhs)
@@ -91,6 +92,18 @@ HRESULT CTextureComponent::Bind_TextureFromManager(const wstring& strFilePath)
 	m_pSRV = pSRV;
 
 	return S_OK;
+}
+
+HRESULT CTextureComponent::Unbind_Texture()
+{
+	m_pSRV.Reset();
+
+	return S_OK;
+}
+
+HRESULT CTextureComponent::Bind_SRV(CEffectComponent* pEffect, const _char* pTextureName)
+{
+	return pEffect->Bind_SRV(pTextureName, m_pSRV.Get());
 }
 
 HRESULT CTextureComponent::Link_TextureManager()

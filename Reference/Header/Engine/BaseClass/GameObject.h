@@ -5,6 +5,7 @@
 
 #include "Component/Define/Component_Define.h"
 #include "BaseClass/GameObject_Define.h"
+#include "Component/GameObjectComp.h"
 
 BEGIN(Engine)
 
@@ -92,11 +93,10 @@ private:
 public:
 	// 검색용
 	HRESULT Add_Component(const wstring& strName, CGameObjectComp* pComponent);
-	CGameObjectComp* Get_Component(const _uint iIndex)
-	{
-		return m_vecComponent[iIndex];
-	}
-	CGameObjectComp* Get_Component(const wstring& strName);
+	template<class T, typename = enable_if_t<is_base_of_v<CGameObjectComp, T>>>
+	T* Get_Component(const _uint iIndex) { return DynCast<T*>(m_vecComponent[iIndex]); }
+	template<class T, typename = enable_if_t<is_base_of_v<CGameObjectComp, T>>>
+	T* Get_Component(const wstring& strName);
 
 public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
 	void OnStateUpdate_Updated(const CGameObjectComp* const pComp, const ECompTickAuto& bValue);
@@ -141,3 +141,20 @@ private:
 };
 
 END
+
+
+template<class T, typename>
+T* CGameObject::Get_Component(const wstring& strName)
+{
+	auto iter = find_if(m_vecComponent.begin(), m_vecComponent.end(),
+		[&strName](CGameObjectComp* pComp) {
+			return pComp->Get_Name() == strName;
+		});
+
+	if (iter != m_vecComponent.end())
+	{
+		return DynCast<T*>(*iter);
+	}
+
+	return nullptr;
+}

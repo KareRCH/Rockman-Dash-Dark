@@ -158,7 +158,7 @@ public:		// 타이머 매니저
 
 
 
-#pragma region 캠뷰 매니저
+#pragma region 파이프라인 매니저
 	friend class CPipelineComp;
 public:		// 타이머 매니저
 	HRESULT Initialize_PipelineMgr();

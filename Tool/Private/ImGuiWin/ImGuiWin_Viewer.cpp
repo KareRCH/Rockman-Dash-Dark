@@ -10,6 +10,8 @@ HRESULT CImGuiWin_Viewer::Initialize()
 {
 	m_bOpen = true;
 
+    m_pPipelineComp = Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(TEXT("CamViewComp")));
+
     GI()->Add_GameObject(m_pCamera = CToolCamera::Create());
     Safe_AddRef(m_pCamera);
 
@@ -71,6 +73,7 @@ void CImGuiWin_Viewer::Free()
     Safe_Release(m_pGuiTerrain);
     Safe_Release(m_pTerrain);
     Safe_Release(m_pCamera);
+    Safe_Release(m_pPipelineComp);
 }
 
 void CImGuiWin_Viewer::Layout_TopBar(const _float& fTimeDelta)
@@ -334,14 +337,14 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
     }
 
     // 누름
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+    if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
     {
         _bool bIsPicking_Ready = false;
         CTerrain* pTerrain = m_pGuiTerrain->Get_Terrain();
         CTerrainModelComp* pModel = { nullptr };
         if (pTerrain)
         {
-            pModel = DynCast<CTerrainModelComp*>(pTerrain->Get_Component(TEXT("TerrainComp")));
+            pModel = pTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"));
             if (pModel)
             {
                 if (S_OK == pModel->IsRender_Ready())
@@ -354,13 +357,71 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
             m_TerrainVertices.resize(pModel->Get_VertexCount());
             pModel->Copy_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size(), sizeof(VERTEX_TYPE));
 
-            srand(_uint(time(nullptr)));
+            /*srand(_uint(time(nullptr)));
             for (_uint i = 0; i < m_TerrainVertices.size(); i++)
             {
                 m_TerrainVertices[i].vPosition.y = (rand() % m_TerrainVertices.size()) * 0.0001f;
             }
 
-            pModel->Update_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size());
+            pModel->Update_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size());*/
+            D3D11_VIEWPORT viewport = *GI()->Get_SystemViewportPtr(0);
+            _float3 vNear, vFar;
+            vNear = { m_vMousePosOnViewer.x, m_vMousePosOnViewer.y, 0.01f };
+            vFar = { m_vMousePosOnViewer.x, m_vMousePosOnViewer.y, 1000.f };
+            _matrix matProj = PipelineComp().Get_CamMatrix(ECamType::Persp, ECamMatrix::Proj, ECamNum::One);
+            _matrix matView = PipelineComp().Get_CamMatrix(ECamType::Persp, ECamMatrix::View, ECamNum::One);
+            //_matrix matWorld = XMMatrixInverse(nullptr, matView);
+            _vector vMouseNear = XMVector3Unproject(XMLoadFloat3(&vNear),
+                viewport.TopLeftX, viewport.TopLeftY, viewport.Width, viewport.Height, viewport.MinDepth, viewport.MaxDepth,
+                matProj, matView, XMMatrixIdentity()
+            );
+            _vector vMouseFar = XMVector3Unproject(XMLoadFloat3(&vFar),
+                viewport.TopLeftX, viewport.TopLeftY, viewport.Width, viewport.Height, viewport.MinDepth, viewport.MaxDepth,
+                matProj, matView, XMMatrixIdentity()
+            );
+            // 카메라에서 쏘는 광선
+            _vector vRay = XMVector3Normalize(vMouseFar - vMouseNear);
+
+            // 야매 피킹
+            _float3 vPos1 = m_TerrainVertices.front().vPosition;
+            vPos1.y = 0.f;
+            _float3 vPos2 = m_TerrainVertices.back().vPosition;
+            vPos1.y = 0.f;
+            _float3 vPos3 = { vPos2.x, 0.f, vPos1.z };
+            _vector vsimPos1 = XMLoadFloat3(&vPos1);
+            _vector vsimPos2 = XMLoadFloat3(&vPos2);
+            _vector vsimPos3 = XMLoadFloat3(&vPos3);
+            _vector vsimNormal = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+
+            // 평면을 만들고 교차점을 찾아낸다.
+            _float fRadius = 5.f;   // 임시용 브러쉬 범위
+            _vector vPlane = XMPlaneFromPointNormal(vsimPos1, vsimNormal);
+            // 교차점 구하기
+            _vector vsimInterPoint = XMPlaneIntersectLine(vPlane, vMouseNear, vMouseFar);
+            _float3 vInterPoint;
+            XMStoreFloat3(&vInterPoint, vsimInterPoint);
+            vInterPoint.y = 0.f;
+
+            if (vPos1.x < vInterPoint.x && vInterPoint.x < vPos2.x
+                && vPos1.z < vInterPoint.z && vInterPoint.z < vPos2.z)
+            {
+                for (_uint i = 0; i < m_TerrainVertices.size(); i++)
+                {
+                    _vector vsimVertexPos = XMLoadFloat3(&m_TerrainVertices[i].vPosition);
+                    _float f = XMVector3Length(vsimInterPoint - vsimVertexPos).m128_f32[0];
+                    if (f <= fRadius)
+                        m_TerrainVertices[i].vPosition.y += fTimeDelta;
+                }
+
+                pModel->Update_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size());
+            }
+            
+
+            // 결과를 XMFLOAT3로 변환
+            //XMStoreFloat3(&intersectionPoint, vInterPoint);
+            
+
+            _int t = 0;
         }
     }
 }
