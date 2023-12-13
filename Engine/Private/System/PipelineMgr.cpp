@@ -6,11 +6,14 @@ HRESULT CPipelineMgr::Initialize()
     XMStoreFloat4x4(&matIdentity, XMMatrixIdentity());
     for (_uint i = 0; i < ECast(ECamType::Size); i++)
     {
-        for (_uint j = 0; j < ECast(ECamNum::Size); j++)
+        for (_uint j = 0; j < ECast(ECamMatrix::Size); j++)
         {
-            m_bActiveCams[i][j] = false;
-            m_matViews[i][j] = matIdentity;
-            m_matProjs[i][j] = matIdentity;
+            for (_uint k = 0; k < ECast(ECamNum::Size); k++)
+            {
+                m_bActiveCams[i][j][k] = false;
+                m_CamMatrices[i][j][k] = matIdentity;
+                m_CamInvMatrices[i][j][k] = matIdentity;
+            }
         }
     }
 
@@ -24,15 +27,34 @@ HRESULT CPipelineMgr::Initialize()
         m_Viewports[i].MaxDepth = 1.f;
     }
 
-    Active_Camera(ECamType::Pers, ECamNum::One);
-    Active_Camera(ECamType::Ortho, ECamNum::One);
+    Active_Camera(ECamType::Persp , ECamMatrix::View, ECamNum::One);
+    Active_Camera(ECamType::Persp , ECamMatrix::Proj, ECamNum::One);
 
     return S_OK;
 }
 
 void CPipelineMgr::Tick()
 {
+    for (_uint i = 0; i < ECast(ECamType::Size); i++)
+    {
+        for (_uint j = 0; j < ECast(ECamMatrix::Size); j++)
+        {
+            for (_uint k = 0; k < ECast(ECamNum::Size); k++)
+            {
+                // 안 쓰는 카메라 연산 안함.
+                if (!m_bActiveCams[i][j][k])
+                    continue;
 
+                _matrix matInv = XMLoadFloat4x4(&m_CamInvMatrices[i][j][k]);
+                _float4x4 matResult;
+                _vector vDeterminant = XMMatrixDeterminant(matInv);
+                matInv = XMMatrixInverse(&vDeterminant, matInv);
+                XMStoreFloat4x4(&matResult, matInv);
+
+                m_CamInvMatrices[i][j][k] = matResult;
+            }
+        }
+    }
 }
 
 CPipelineMgr* CPipelineMgr::Create()
@@ -43,8 +65,6 @@ CPipelineMgr* CPipelineMgr::Create()
     {
         MSG_BOX("ProtoMgr Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -52,26 +72,4 @@ CPipelineMgr* CPipelineMgr::Create()
 
 void CPipelineMgr::Free()
 {
-}
-
-const _float4x4 CPipelineMgr::Get_ProjInvFloat4x4(ECamType eType, ECamNum eNum) const
-{
-    _matrix matInv = XMLoadFloat4x4(&m_matProjs[ECast(eType)][ECast(eNum)]);
-    _float4x4 matResult;
-    _vector vDeterminant = XMMatrixDeterminant(matInv);
-
-    matInv = XMMatrixInverse(&vDeterminant, matInv);
-    XMStoreFloat4x4(&matResult, matInv);
-
-    return matResult;
-}
-
-const _matrix CPipelineMgr::Get_ProjInvMatrix(ECamType eType, ECamNum eNum) const
-{
-    _matrix matInv = XMLoadFloat4x4(&m_matProjs[ECast(eType)][ECast(eNum)]);
-    _vector vDeterminant = XMMatrixDeterminant(matInv);
-
-    matInv = XMMatrixInverse(&vDeterminant, matInv);
-
-    return matInv;
 }

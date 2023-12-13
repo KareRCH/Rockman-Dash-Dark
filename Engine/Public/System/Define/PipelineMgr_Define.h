@@ -7,7 +7,12 @@ BEGIN(Engine)
 
 enum class ECamType : _uint
 {
-	Pers, Ortho, Size
+	Ortho, Persp, Size
+};
+
+enum class ECamMatrix : _uint
+{
+	View, Proj, Size
 };
 
 enum class ECamNum : _uint

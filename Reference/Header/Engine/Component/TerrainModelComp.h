@@ -44,6 +44,11 @@ public:
 #pragma region 터레인 버퍼 컴포넌트
 	HRESULT Create_Buffer(const FTerrainBufInit_HeightMap tInit);
 	HRESULT Create_Buffer(const FTerrainBufInit_NoHeightMap tInit);
+	// 버퍼 복사
+	HRESULT Copy_VBuffer(void* pArray, size_t iSize, size_t iSizePerIndex);
+	// 버퍼 업데이트
+	void	Update_VBuffer(void* pData, _uint iSize);
+	const size_t Get_VertexCount() const;
 
 private:
 	CTerrainBufferComp* m_pTerrainBufferComp = { nullptr };

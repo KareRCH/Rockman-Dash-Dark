@@ -11,7 +11,7 @@ HRESULT CLevel_MapTool::Initialize()
 
     //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 0.f)));
     //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
-    GI()->Add_GameObject(CToolCamera::Create());
+    //GI()->Add_GameObject(CToolCamera::Create());
     //GI()->Add_GameObject(CTerrain::Create());
 
     return S_OK;

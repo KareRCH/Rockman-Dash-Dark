@@ -26,33 +26,60 @@ public:
 private:
 	virtual void		Free();
 
+#pragma region Ä«¸Þ¶ó
 public:
-	void	Active_Camera(ECamType eType, ECamNum eNum) { m_bActiveCams[ECast(eType)][ECast(eNum)] = true; }
-	void	Deactive_Camera(ECamType eType, ECamNum eNum) { m_bActiveCams[ECast(eType)][ECast(eNum)] = false; }
-
-public:
-	const _float4x4		Get_ViewFloat4x4(ECamType eType, ECamNum eNum) const { return m_matViews[ECast(eType)][ECast(eNum)]; }
-	const _matrix		Get_ViewMatrix(ECamType eType, ECamNum eNum) const { return XMLoadFloat4x4(&m_matViews[ECast(eType)][ECast(eNum)]); }
-	
-	const _float4x4		Get_ProjFloat4x4(ECamType eType, ECamNum eNum) const { return m_matProjs[ECast(eType)][ECast(eNum)]; }
-	const _matrix		Get_ProjMatrix(ECamType eType, ECamNum eNum) const { return XMLoadFloat4x4(&m_matProjs[ECast(eType)][ECast(eNum)]); }
-	
-	const _float4x4		Get_ProjInvFloat4x4(ECamType eType, ECamNum eNum) const;
-	const _matrix		Get_ProjInvMatrix(ECamType eType, ECamNum eNum) const;
-
+	void	Active_Camera(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) { m_bActiveCams[ECast(eType)][ECast(eMatrix)][ECast(eNum)] = true; }
+	void	Deactive_Camera(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) { m_bActiveCams[ECast(eType)][ECast(eMatrix)][ECast(eNum)] = false; }
 
 public:
-	void	Set_ViewMatrix(ECamType eType, ECamNum eNum, _float4x4 mat) { m_matViews[ECast(eType)][ECast(eNum)] = mat; }
-	void	Set_ViewMatrix(ECamType eType, ECamNum eNum, _matrix mat) { XMStoreFloat4x4(&m_matViews[ECast(eType)][ECast(eNum)], mat); }
+	const _float4x4		Get_CamFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
+	{
+		if (m_bActiveCams[ECast(eType)][ECast(eMatrix)][ECast(eNum)])
+			return m_CamMatrices[ECast(eType)][ECast(eMatrix)][ECast(eNum)];
+		return _float4x4();
+	}
+	const _matrix		Get_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
+	{
+		if (m_bActiveCams[ECast(eType)][ECast(eMatrix)][ECast(eNum)])
+			return XMLoadFloat4x4(&m_CamMatrices[ECast(eType)][ECast(eMatrix)][ECast(eNum)]);
+		return _matrix();
+	}
 
-	void	Set_ProjMatrix(ECamType eType, ECamNum eNum, _float4x4 mat) { m_matProjs[ECast(eType)][ECast(eNum)] = mat; }
-	void	Set_ProjMatrix(ECamType eType, ECamNum eNum, _matrix mat) { XMStoreFloat4x4(&m_matProjs[ECast(eType)][ECast(eNum)], mat); }
+	const _float4x4		Get_CamInvFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
+	{
+		if (m_bActiveCams[ECast(eType)][ECast(eMatrix)][ECast(eNum)])
+			return m_CamInvMatrices[ECast(eType)][ECast(eMatrix)][ECast(eNum)];
+		return _float4x4();
+	}
+	const _matrix		Get_CamInvMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
+	{
+		if (m_bActiveCams[ECast(eType)][ECast(eMatrix)][ECast(eNum)])
+			return XMLoadFloat4x4(&m_CamInvMatrices[ECast(eType)][ECast(eMatrix)][ECast(eNum)]);
+		return _matrix();
+	}
+
+
+public:
+	void	Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _float4x4 mat)
+	{
+		if (!m_bActiveCams[ECast(eType)][ECast(eMatrix)][ECast(eNum)])
+			return;
+		m_CamMatrices[ECast(eType)][ECast(eMatrix)][ECast(eNum)] = mat;
+	}
+	void	Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _matrix mat)
+	{
+		if (!m_bActiveCams[ECast(eType)][ECast(eMatrix)][ECast(eNum)])
+			return;
+		XMStoreFloat4x4(&m_CamMatrices[ECast(eType)][ECast(eMatrix)][ECast(eNum)], mat);
+	}
 
 
 private:
-	_bool			m_bActiveCams[ECast(ECamType::Size)][ECast(ECamNum::Size)];
-	_float4x4		m_matViews[ECast(ECamType::Size)][ECast(ECamNum::Size)];
-	_float4x4		m_matProjs[ECast(ECamType::Size)][ECast(ECamNum::Size)];
+	_bool			m_bActiveCams[ECast(ECamType::Size)][ECast(ECamMatrix::Size)][ECast(ECamNum::Size)];
+	_float4x4		m_CamMatrices[ECast(ECamType::Size)][ECast(ECamMatrix::Size)][ECast(ECamNum::Size)];
+	_float4x4		m_CamInvMatrices[ECast(ECamType::Size)][ECast(ECamMatrix::Size)][ECast(ECamNum::Size)];
+#pragma endregion
+
 
 public:
 	const D3D11_VIEWPORT Get_Viewport(EViewportNum eNum) { return m_Viewports[ECast(eNum)]; }

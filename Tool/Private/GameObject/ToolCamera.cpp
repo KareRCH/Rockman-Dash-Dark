@@ -40,26 +40,28 @@ void CToolCamera::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
-    if (GI()->IsKey_Pressing(DIK_W))
-        Transform().MoveForward(5.f * fTimeDelta);
-    else if (GI()->IsKey_Pressing(DIK_S))
-        Transform().MoveForward(-5.f * fTimeDelta);
+    if (m_bIsCanMove)
+    {
+        if (GI()->IsKey_Pressing(DIK_W))
+            Transform().MoveForward(5.f * fTimeDelta);
+        else if (GI()->IsKey_Pressing(DIK_S))
+            Transform().MoveForward(-5.f * fTimeDelta);
 
-    if (GI()->IsKey_Pressing(DIK_D))
-        Transform().MoveRightward(5.f * fTimeDelta);
-    else if (GI()->IsKey_Pressing(DIK_A))
-        Transform().MoveRightward(-5.f * fTimeDelta);
+        if (GI()->IsKey_Pressing(DIK_D))
+            Transform().MoveRightward(5.f * fTimeDelta);
+        else if (GI()->IsKey_Pressing(DIK_A))
+            Transform().MoveRightward(-5.f * fTimeDelta);
 
-    if (GI()->IsKey_Pressing(DIK_E))
-        Transform().MoveUpward(5.f * fTimeDelta);
-    else if (GI()->IsKey_Pressing(DIK_Q))
-        Transform().MoveUpward(-5.f * fTimeDelta);
+        if (GI()->IsKey_Pressing(DIK_E))
+            Transform().MoveUpward(5.f * fTimeDelta);
+        else if (GI()->IsKey_Pressing(DIK_Q))
+            Transform().MoveUpward(-5.f * fTimeDelta);
 
-    if (GI()->IsKey_Pressed(DIK_F3))
-        GI()->Toggle_LockMouseCenter();
+        //GI()->Toggle_LockMouseCenter();
 
-    //Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
-    //Transform().TurnUp(Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 0.1f * fTimeDelta);
+        Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
+        Transform().TurnUp(Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 0.1f * fTimeDelta);
+    }
 
     // 현재 카메라의 상태를 통해 전역 카메라 행렬을 업데이트 한다.
     Apply_ViewProjMatrix();

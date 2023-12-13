@@ -86,6 +86,7 @@ private:
 
 	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
 	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
+	ComPtr<IDXGIDevice>				m_pDxgiDevice = { nullptr };
 	ComPtr<IDXGISwapChain>			m_pSwapChain = { nullptr };
 	
 

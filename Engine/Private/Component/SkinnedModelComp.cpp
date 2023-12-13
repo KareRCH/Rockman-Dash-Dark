@@ -68,8 +68,8 @@ HRESULT CSkinnedModelComp::Render()
         //XMStoreFloat4x4(&matTemp, XMLoadFloat4x4(&matMesh) * XMLoadFloat4x4(&matTemp));
         
         m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
-        m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_ViewFloat4x4(ECamType::Pers, ECamNum::One)));
-        m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_ProjFloat4x4(ECamType::Pers, ECamNum::One)));
+        m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
+        m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
         m_pEffectComp->Bind_Matrices("g_matBones", vecBones.data(), (_uint)vecBones.size());
 
         m_pEffectComp->Bind_RawValue("g_colDiffuse", VPCast(&lightBuffer.vDiffuseColor), sizeof(_float4));

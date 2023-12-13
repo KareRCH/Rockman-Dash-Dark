@@ -2,10 +2,16 @@
 
 #include "ImGuiWin/ImGuiWin_Terrain.h"
 #include "BaseClass/Terrain.h"
+#include "GameObject/ToolCamera.h"
+
+
 
 HRESULT CImGuiWin_Viewer::Initialize()
 {
 	m_bOpen = true;
+
+    GI()->Add_GameObject(m_pCamera = CToolCamera::Create());
+    Safe_AddRef(m_pCamera);
 
 	return S_OK;
 }
@@ -64,6 +70,7 @@ void CImGuiWin_Viewer::Free()
 
     Safe_Release(m_pGuiTerrain);
     Safe_Release(m_pTerrain);
+    Safe_Release(m_pCamera);
 }
 
 void CImGuiWin_Viewer::Layout_TopBar(const _float& fTimeDelta)
@@ -217,7 +224,9 @@ void CImGuiWin_Viewer::Layout_View(const _float& fTimeDelta)
     else
         m_bMouseOnViewer = false;
 
+    // 기타 뷰어 시작점, 가운데점 저장
     m_vViewerMin = { rcItemRect.Min.x, rcItemRect.Min.y };
+    m_vViewerCenter = { (rcItemRect.Min.x + rcItemRect.Max.x) * 0.5f,  (rcItemRect.Min.y + rcItemRect.Max.y) * 0.5f };
 
     m_vMousePosOnViewer.x = vMouse.x - rcItemRect.Min.x;
     m_vMousePosOnViewer.y = vMouse.y - rcItemRect.Min.y;
@@ -305,6 +314,9 @@ void CImGuiWin_Viewer::LoadTextureFromFIle(const string& strFileName)
 
 void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
 {
+    // 카메라 움직임 초기화
+    m_pCamera->Set_IsCanMove(false);
+
     // 마우스가 뷰어 안에 있어야 함.
     if (!m_bMouseOnViewer)
         return;
@@ -312,14 +324,24 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
     if (FAILED(Link_GuiTerrain()))
         return;
 
+    if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
+    {
+        if (m_pCamera)
+        {
+            m_pCamera->Set_IsCanMove(true);
+            ::SetMousePos(g_hWnd, { Cast<_long>(m_vViewerCenter.x), Cast<_long>(m_vViewerCenter.y) });
+        }
+    }
+
     // 누름
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
     {
         _bool bIsPicking_Ready = false;
         CTerrain* pTerrain = m_pGuiTerrain->Get_Terrain();
+        CTerrainModelComp* pModel = { nullptr };
         if (pTerrain)
         {
-            CTerrainModelComp* pModel = DynCast<CTerrainModelComp*>(pTerrain->Get_Component(TEXT("TerrainComp")));
+            pModel = DynCast<CTerrainModelComp*>(pTerrain->Get_Component(TEXT("TerrainComp")));
             if (pModel)
             {
                 if (S_OK == pModel->IsRender_Ready())
@@ -329,7 +351,16 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
 
         if (bIsPicking_Ready)
         {
+            m_TerrainVertices.resize(pModel->Get_VertexCount());
+            pModel->Copy_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size(), sizeof(VERTEX_TYPE));
 
+            srand(_uint(time(nullptr)));
+            for (_uint i = 0; i < m_TerrainVertices.size(); i++)
+            {
+                m_TerrainVertices[i].vPosition.y = (rand() % m_TerrainVertices.size()) * 0.0001f;
+            }
+
+            pModel->Update_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size());
         }
     }
 }

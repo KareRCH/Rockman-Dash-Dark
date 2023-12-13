@@ -125,6 +125,7 @@ void CGraphicDev::Free()
     m_pDeviceContext.Reset();
     m_pDevice.Reset();
     m_pSwapChain.Reset();
+    m_pDxgiDevice.Reset();
 
 
 
@@ -153,8 +154,9 @@ void CGraphicDev::Free()
     //Safe_Release(pInfoQueue);
 
     m_pDebug.Reset();
+    m_pDxDebug.Reset();
 #endif // _DEBUG
-
+    
     
 
 }
@@ -166,13 +168,12 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
 
     //m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 #endif
-    ComPtr<IDXGIDevice> pDevice = { nullptr };
-    m_pDevice->QueryInterface(__uuidof(IDXGIDevice), ReCast<void**>(pDevice.GetAddressOf()));
+    m_pDevice->QueryInterface(__uuidof(IDXGIDevice), ReCast<void**>(m_pDxgiDevice.GetAddressOf()));
 
     _uint adapterIndex = 0;
 
     ComPtr<IDXGIAdapter> pAdapter = { nullptr };
-    pDevice->GetParent(__uuidof(IDXGIAdapter), ReCast<void**>(pAdapter.GetAddressOf()));
+    m_pDxgiDevice->GetParent(__uuidof(IDXGIAdapter), ReCast<void**>(pAdapter.GetAddressOf()));
 
     ComPtr<IDXGIFactory> pFactory = { nullptr };
     pAdapter->GetParent(__uuidof(IDXGIFactory), ReCast<void**>(pFactory.GetAddressOf()));
@@ -181,9 +182,8 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
 
     // 디버그
 #ifdef _DEBUG
-    pDevice->QueryInterface(__uuidof(IDXGIDebug), (void**)m_pDxDebug.GetAddressOf());
+    m_pDxgiDevice->QueryInterface(__uuidof(IDXGIDebug), ReCast<void**>(m_pDxDebug.GetAddressOf()));
 #endif
-
     
     /* 스왑체인을 생성한다. = 텍스쳐를 생성하는 행위 + 스왑하는 형태  */
     DXGI_SWAP_CHAIN_DESC		SwapChainDesc = {};

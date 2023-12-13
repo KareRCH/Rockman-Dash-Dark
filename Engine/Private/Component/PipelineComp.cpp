@@ -58,84 +58,52 @@ void CPipelineComp::Free()
     Safe_Release(m_pPipelineMgr);
 }
 
-const _float4x4 CPipelineComp::Get_ViewFloat4x4(ECamType eType, ECamNum eNum) const
+const _float4x4 CPipelineComp::Get_CamFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
 {
     if (!m_pPipelineMgr)
         return _float4x4();
 
-    return m_pPipelineMgr->Get_ViewFloat4x4(eType, eNum);
+    return m_pPipelineMgr->Get_CamFloat4x4(eType, eMatrix, eNum);
 }
 
-const _matrix CPipelineComp::Get_ViewMatrix(ECamType eType, ECamNum eNum) const
+const _matrix CPipelineComp::Get_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
 {
     if (!m_pPipelineMgr)
         return _matrix();
 
-    return m_pPipelineMgr->Get_ViewMatrix(eType, eNum);
+    return m_pPipelineMgr->Get_CamMatrix(eType, eMatrix, eNum);
 }
 
-const _float4x4 CPipelineComp::Get_ProjFloat4x4(ECamType eType, ECamNum eNum) const
+const _float4x4 CPipelineComp::Get_CamInvFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
 {
     if (!m_pPipelineMgr)
         return _float4x4();
 
-    return m_pPipelineMgr->Get_ProjFloat4x4(eType, eNum);
+    return m_pPipelineMgr->Get_CamInvFloat4x4(eType, eMatrix, eNum);
 }
 
-const _matrix CPipelineComp::Get_ProjMatrix(ECamType eType, ECamNum eNum) const
+const _matrix CPipelineComp::Get_CamInvMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
 {
     if (!m_pPipelineMgr)
         return _matrix();
 
-    return m_pPipelineMgr->Get_ProjMatrix(eType, eNum);
+    return m_pPipelineMgr->Get_CamInvMatrix(eType, eMatrix, eNum);
 }
 
-const _float4x4 CPipelineComp::Get_ProjInvFloat4x4(ECamType eType, ECamNum eNum) const
-{
-    if (!m_pPipelineMgr)
-        return _float4x4();
-
-    return m_pPipelineMgr->Get_ProjInvFloat4x4(eType, eNum);
-}
-
-const _matrix CPipelineComp::Get_ProjInvMatrix(ECamType eType, ECamNum eNum) const
-{
-    if (!m_pPipelineMgr)
-        return _matrix();
-
-    return m_pPipelineMgr->Get_ProjInvMatrix(eType, eNum);
-}
-
-void CPipelineComp::Set_ViewMatrix(ECamType eType, ECamNum eNum, _float4x4 mat)
+void CPipelineComp::Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _float4x4 mat)
 {
     if (!m_pPipelineMgr)
         return;
 
-    return m_pPipelineMgr->Set_ViewMatrix(eType, eNum, mat);
+    return m_pPipelineMgr->Set_CamMatrix(eType, eMatrix, eNum, mat);
 }
 
-void CPipelineComp::Set_ViewMatrix(ECamType eType, ECamNum eNum, _matrix mat)
+void CPipelineComp::Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _matrix mat)
 {
     if (!m_pPipelineMgr)
         return;
 
-    return m_pPipelineMgr->Set_ViewMatrix(eType, eNum, mat);
-}
-
-void CPipelineComp::Set_ProjMatrix(ECamType eType, ECamNum eNum, _float4x4 mat)
-{
-    if (!m_pPipelineMgr)
-        return;
-
-    return m_pPipelineMgr->Set_ProjMatrix(eType, eNum, mat);
-}
-
-void CPipelineComp::Set_ProjMatrix(ECamType eType, ECamNum eNum, _matrix mat)
-{
-    if (!m_pPipelineMgr)
-        return;
-
-    return m_pPipelineMgr->Set_ProjMatrix(eType, eNum, mat);
+    return m_pPipelineMgr->Set_CamMatrix(eType, eMatrix, eNum, mat);
 }
 
 const D3D11_VIEWPORT CPipelineComp::Get_Viewport(EViewportNum eNum)

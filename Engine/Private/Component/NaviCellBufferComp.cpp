@@ -14,7 +14,7 @@ HRESULT CNaviCellBufferComp::Initialize_Prototype(const _float3* pPoints)
 
 	m_iNumVertexBuffers = 1;
 	m_iNumVertices = 3;
-	m_iStride = sizeof(SHADER_VTX_SINGLE);
+	m_iVertexStride = sizeof(SHADER_VTX_SINGLE);
 
 	m_iNumIndices = 4;
 	m_iIndexStride = 2;
@@ -24,12 +24,12 @@ HRESULT CNaviCellBufferComp::Initialize_Prototype(const _float3* pPoints)
 #pragma region VERTEX_BUFFER
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
-	m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
+	m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT /*D3D11_USAGE_DYNAMIC*/;
 	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	m_BufferDesc.CPUAccessFlags = 0;
 	m_BufferDesc.MiscFlags = 0;
-	m_BufferDesc.StructureByteStride = m_iStride;
+	m_BufferDesc.StructureByteStride = m_iVertexStride;
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 
