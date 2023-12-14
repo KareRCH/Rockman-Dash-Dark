@@ -44,7 +44,7 @@ public:
 
 private:	// 뼈 정보
 	class FModelData* m_pModelData = { nullptr };		// 모델 데이터, 해당 모델을 바인딩 시켜놓기 위해 해놓는다.
-	class FSkeletalData* m_pSkeletalData = { nullptr };		// 아마추어, 이 녀석이 뼈의 계층구조와 직렬화된 배열을 가지고 있다.
+	class FBoneGroup* m_pBoneDatas = { nullptr };		// 아마추어, 이 녀석이 뼈의 계층구조와 직렬화된 배열을 가지고 있다.
 	
 };
 

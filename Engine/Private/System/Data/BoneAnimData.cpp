@@ -312,8 +312,8 @@ void FBoneAnimData::Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimChannel
 
 _float FBoneAnimData::Calculate_Time(_float fCurTime, _bool bMod) const
 {
-	_float fDuration = Cast<_float>(fDuration);
-	_float fTickPerSecond = Cast<_float>(fTickPerSecond);
+	_float _fDuration = Cast<_float>(fDuration);
+	_float _fTickPerSecond = Cast<_float>(fTickPerSecond);
 	_float fConvCurTime = fCurTime * fTickPerSecond;
 
 	_float fModedTIme = Cast<_float>((bMod) ? fmodf(fConvCurTime, fDuration) : min(fConvCurTime, fDuration));		// 정해진 시간 뒤로 가지 않게 한다.

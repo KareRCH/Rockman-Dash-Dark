@@ -39,7 +39,8 @@ public:
 	_uint						iID;			// 메쉬의 ID
 	vector<FMeshVertexData>		vecVertices;	// 정점 데이터
 	vector<_uint>				vecIndices;		// 인덱스 데이터
-	_float4x4					matTransform;	// 메쉬 트랜스폼 데이터
+	_uint						iMaterialIndex;	// 머터리얼 인덱스
+	_float4x4					matOffset;		// 메쉬 트랜스폼 데이터
 };
 
 

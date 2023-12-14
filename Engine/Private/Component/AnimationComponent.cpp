@@ -82,15 +82,15 @@ HRESULT CAnimationComponent::Create_Mask(const wstring& strMaskName, const wstri
 	if (!m_pModelData)
 		return E_FAIL;
 
-	FSkeletalData* pSkeletal = m_pModelData->pSkeletalGroup->Find_Skeletal(strSkeletalName);
-	if (!pSkeletal)
+	FBoneGroup* pBoneGroup = m_pModelData->pBoneGroup;
+	if (!pBoneGroup)
 		return E_FAIL;
 
 	// 기본 세팅
 	FAnimMask tMask = {};
 	tMask.strName = strMaskName;
 	tMask.fWeight = 1.f;
-	tMask.vecBoneMasks.resize(pSkeletal->Get_BoneDatas_Count(), bInitBoneActive);
+	tMask.vecBoneMasks.resize(pBoneGroup->Get_BoneDatas_Count(), bInitBoneActive);
 	tMask.strSkeletaName = strSkeletalName;
 
 	m_vecAnimMask.push_back(tMask);
@@ -114,11 +114,11 @@ void CAnimationComponent::Deactive_BoneMask(_uint iIndex, const wstring& strBone
 	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
 		return;
 
-	FSkeletalData* pSkeletal = m_pModelData->pSkeletalGroup->Find_Skeletal(m_vecAnimMask[iIndex].strSkeletaName);
-	if (!pSkeletal)
+	FBoneGroup* pBoneGroup = m_pModelData->pBoneGroup;
+	if (!pBoneGroup)
 		return;
 
-	FBoneData* pBoneData = pSkeletal->Find_BoneData(strBoneName);
+	FBoneData* pBoneData = pBoneGroup->Find_BoneData(strBoneName);
 	if (!pBoneData)
 		return;
 
@@ -133,11 +133,11 @@ void CAnimationComponent::Active_BoneMask(_uint iIndex, const wstring& strBoneNa
 	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
 		return;
 
-	FSkeletalData* pSkeletal = m_pModelData->pSkeletalGroup->Find_Skeletal(m_vecAnimMask[iIndex].strSkeletaName);
-	if (!pSkeletal)
+	FBoneGroup* pBoneGroup = m_pModelData->pBoneGroup;
+	if (!pBoneGroup)
 		return;
 
-	FBoneData* pBoneData = pSkeletal->Find_BoneData(strBoneName);
+	FBoneData* pBoneData = pBoneGroup->Find_BoneData(strBoneName);
 	if (!pBoneData)
 		return;
 
@@ -253,10 +253,10 @@ void CAnimationComponent::Apply_FinalMask()
 			int t = 0;
 		}
 
-		FSkeletalData* pSkeletal = ConCast<FSkeletalData*>(m_pModelData->pSkeletalGroup->Find_Skeletal(rAnimMask.strSkeletaName));
+		FBoneGroup* pBoneGroup = ConCast<FBoneGroup*>(m_pModelData->pBoneGroup);
 		if (i == 0)
-			pSkeletal->Clear_FinalTransforms();
-		pSkeletal->Add_Transforms(&vecBoneMatrices);
+			pBoneGroup->Clear_FinalTransforms();
+		pBoneGroup->Add_Transforms(&vecBoneMatrices);
 	}
 }
 
@@ -265,8 +265,8 @@ void CAnimationComponent::Apply_BoneAnimationWithMask()
 	if (!m_pModelData)
 		return;
 
-	for (_uint i = 0; i < m_pModelData->pSkeletalGroup->Get_Skeletal_Count(); i++)
+	/*for (_uint i = 0; i < m_pModelData->pBoneGroup->Get_Bone_Count(); i++)
 	{
 		
-	}
+	}*/
 }

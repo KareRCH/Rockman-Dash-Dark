@@ -11,7 +11,7 @@ HRESULT CTestScene::Initialize()
 {
     GI()->Load_Texture(L"Model/Character/RockVolnutt/Body.png", true);
     GI()->Load_Texture(L"Model/Character/RockVolnutt/Head.png", true);
-    GI()->Load_Model(EModelGroupIndex::Permanent, "Character/RockVolnutt/Test.fbx", L"RockVolnutt");
+    GI()->Load_Model(EModelGroupIndex::Permanent, "Model/Character/RockVolnutt/Test.fbx", L"RockVolnutt");
 
     GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 0.f)));
     //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));

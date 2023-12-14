@@ -56,7 +56,7 @@ CComponent* CTextureComponent::Clone(void* Arg)
 
 void CTextureComponent::Free()
 {
-
+	Safe_Release(m_pTextureMgr);
 }
 
 HRESULT CTextureComponent::Bind_Texture(const wstring& strFilePath)

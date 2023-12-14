@@ -58,6 +58,8 @@ public:
 	vector<FScale>			vecScales;				// 크기 데이터들
 };
 
+
+
 /// <summary>
 /// 애니메이션 노드를 포함하는 데이터
 /// 전체 재생 시간과 재생속도도 포함
@@ -67,6 +69,7 @@ class ENGINE_DLL FBoneAnimData final : public CBase
 	DERIVED_CLASS(CBase, FBoneAnimData)
 private:
 	explicit FBoneAnimData() = default;
+	explicit FBoneAnimData(const FBoneAnimData& rhs) = delete;
 	virtual ~FBoneAnimData() = default;
 
 public:
@@ -83,12 +86,16 @@ public:
 	_float Calculate_Time(_float fCurTime, _bool bMod = true) const;
 	
 public:
-	_double dfDuration = 0.0;									// 진행 길이
-	_double dfTickPerSecond = 0.0;								// 시간당 프레임
-	map<const wstring, FBoneAnimChannelData*>	mapNodeAnim;		// 노드 이름으로 검색 시스템
-	vector<FBoneAnimChannelData*>				vecAnim_BoneIndex;	// 애니메이션 노드 인덱스 관리
+	_float fDuration = 0.0;			// 진행 길이
+	_float fTickPerSecond = 0.0;	// 시간당 프레임
+
+public:
+	map<const wstring, FBoneAnimChannelData*>	mapAnimNodes;	// 노드 이름으로 검색 시스템
+	vector<FBoneAnimChannelData*>				vecAnimNodes;	// 애니메이션 인덱스 검색 시스템
 	
 };
+
+
 
 /// <summary>
 /// 뼈 애니메이션들을 저장하는 그룹
@@ -97,7 +104,8 @@ class ENGINE_DLL FBoneAnimGroup final : public CBase
 {
 	DERIVED_CLASS(CBase, FBoneAnimGroup)
 private:
-	explicit FBoneAnimGroup() {}
+	explicit FBoneAnimGroup() = default;
+	explicit FBoneAnimGroup(const FBoneAnimGroup& rhs) = delete;
 	virtual ~FBoneAnimGroup() = default;
 
 public:
@@ -105,11 +113,13 @@ public:
 	virtual void Free() override;
 
 public:
-	const FBoneAnimData* const	Find_AnimData(const wstring& strAnimKey);
-	void Add_AnimData(const wstring& strAnimKey, FBoneAnimData* pAnimData);
+	FBoneAnimData* const	Find_BoneAnim(const _uint iIndex);
+	FBoneAnimData* const	Find_BoneAnim(const wstring& strAnimKey);
+	void Add_BoneAnim(const wstring& strAnimKey, FBoneAnimData* pAnimData);
 
 private:
-	_unmap<wstring, FBoneAnimData*> mapAnimData;		// 애니메이션 저장 맵, 키는 애니메이션 이름
+	_unmap<wstring, FBoneAnimData*> mapAnimDatas;	// 애니메이션 저장 맵, 키는 애니메이션 이름
+	vector<FBoneAnimData*>			vecAnimDatas;	// 애니메이션 인덱스 검색
 	
 };
 
