@@ -240,6 +240,8 @@
     <ClInclude Include="Public\Component\PlaneModelComp.h" />
     <ClInclude Include="Public\Component\TerrainBufferComp.h" />
     <ClInclude Include="Public\Component\TerrainModelComp.h" />
+    <ClInclude Include="Public\System\Data\MaterialData.h" />
+    <ClInclude Include="Public\System\Data\ModelData.h" />
     <ClInclude Include="Public\Utility\LogicDeviceBasic.h" />
     <ClInclude Include="Public\Base.h" />
     <ClInclude Include="Public\BaseClass\CloudStation.h" />
@@ -385,6 +387,8 @@
     <ClCompile Include="Private\System\AnimationMgr.cpp" />
     <ClCompile Include="Private\System\CloudStationMgr.cpp" />
     <ClCompile Include="Private\System\CloudStationPtr.cpp" />
+    <ClCompile Include="Private\System\Data\MaterialData.cpp" />
+    <ClCompile Include="Private\System\Data\ModelData.cpp" />
     <ClCompile Include="Private\System\PipelineMgr.cpp" />
     <ClCompile Include="Private\System\Data\BoneAnimData.cpp" />
     <ClCompile Include="Private\System\Data\MeshData.cpp" />

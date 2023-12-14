@@ -154,9 +154,6 @@
     <Filter Include="01. System\01. Manager\02. GamePipeline\01. LevelMgr">
       <UniqueIdentifier>{d6dade1f-50bc-4fbc-8b29-318374de967b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. System\01. Manager\02. GamePipeline\02. ObjectMgr">
-      <UniqueIdentifier>{7cbcff4a-8bed-4d2f-b78e-f1a7368cb647}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. System\01. Manager\02. GamePipeline\03. ComponentMgr">
       <UniqueIdentifier>{90adab0e-20ec-4094-9b8c-9a914cd459ec}</UniqueIdentifier>
     </Filter>
@@ -285,6 +282,9 @@
     </Filter>
     <Filter Include="02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\Buffer">
       <UniqueIdentifier>{c376dee4-c864-47f4-963f-aa6b0efad4ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\02. ObjectMgr">
+      <UniqueIdentifier>{7cbcff4a-8bed-4d2f-b78e-f1a7368cb647}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -600,6 +600,12 @@
     <ClInclude Include="Public\Utility\RapidJsonSerial.h">
       <Filter>02. Utility\04. Serialize</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\Data\MaterialData.h">
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\Data\ModelData.h">
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -847,6 +853,12 @@
     </ClCompile>
     <ClCompile Include="Private\Utility\RapidJsonSerial.cpp">
       <Filter>02. Utility\04. Serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\Data\MaterialData.cpp">
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\Data\ModelData.cpp">
+      <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

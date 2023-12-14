@@ -66,7 +66,7 @@ public:
 			return;
 		m_CamMatrices[ECast(eType)][ECast(eMatrix)][ECast(eNum)] = mat;
 	}
-	void	Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _matrix mat)
+	void	Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _fmatrix mat)
 	{
 		if (!m_bActiveCams[ECast(eType)][ECast(eMatrix)][ECast(eNum)])
 			return;

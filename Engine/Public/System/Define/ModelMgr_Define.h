@@ -12,25 +12,4 @@ enum class EModelGroupIndex : _uint
 	Size
 };
 
-/// <summary>
-/// 아마추어와 뼈를 구분하기 위해 집어넣은 열거체
-/// </summary>
-enum class EModelNodeType : _uint
-{
-	Armature,
-	Bone,
-	Size
-};
-
-/// <summary>
-/// 시작과 끝을 구분하기 위해 넣은 열거체.
-/// 끝이라면 End로 설정되어 그래픽 표시를 할 때 끝 표시를 해주게 된다.
-/// </summary>
-enum class EModelBoneType : _uint
-{
-	Null,
-	Base,
-	End
-};
-
 END

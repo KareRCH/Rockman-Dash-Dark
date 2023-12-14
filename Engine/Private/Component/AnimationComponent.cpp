@@ -82,7 +82,7 @@ HRESULT CAnimationComponent::Create_Mask(const wstring& strMaskName, const wstri
 	if (!m_pModelData)
 		return E_FAIL;
 
-	FSkeletalData* pSkeletal = m_pModelData->pBoneGroup->Find_SkeletalData(strSkeletalName);
+	FSkeletalData* pSkeletal = m_pModelData->pSkeletalGroup->Find_Skeletal(strSkeletalName);
 	if (!pSkeletal)
 		return E_FAIL;
 
@@ -90,7 +90,7 @@ HRESULT CAnimationComponent::Create_Mask(const wstring& strMaskName, const wstri
 	FAnimMask tMask = {};
 	tMask.strName = strMaskName;
 	tMask.fWeight = 1.f;
-	tMask.vecBoneMasks.resize(pSkeletal->Get_BoneNodeData_Count(), bInitBoneActive);
+	tMask.vecBoneMasks.resize(pSkeletal->Get_BoneDatas_Count(), bInitBoneActive);
 	tMask.strSkeletaName = strSkeletalName;
 
 	m_vecAnimMask.push_back(tMask);
@@ -114,11 +114,11 @@ void CAnimationComponent::Deactive_BoneMask(_uint iIndex, const wstring& strBone
 	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
 		return;
 
-	FSkeletalData* pSkeletal = m_pModelData->pBoneGroup->Find_SkeletalData(m_vecAnimMask[iIndex].strSkeletaName);
+	FSkeletalData* pSkeletal = m_pModelData->pSkeletalGroup->Find_Skeletal(m_vecAnimMask[iIndex].strSkeletaName);
 	if (!pSkeletal)
 		return;
 
-	FBoneNodeData* pBoneData = pSkeletal->Find_BoneNodeData(strBoneName);
+	FBoneData* pBoneData = pSkeletal->Find_BoneData(strBoneName);
 	if (!pBoneData)
 		return;
 
@@ -133,11 +133,11 @@ void CAnimationComponent::Active_BoneMask(_uint iIndex, const wstring& strBoneNa
 	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
 		return;
 
-	FSkeletalData* pSkeletal = m_pModelData->pBoneGroup->Find_SkeletalData(m_vecAnimMask[iIndex].strSkeletaName);
+	FSkeletalData* pSkeletal = m_pModelData->pSkeletalGroup->Find_Skeletal(m_vecAnimMask[iIndex].strSkeletaName);
 	if (!pSkeletal)
 		return;
 
-	FBoneNodeData* pBoneData = pSkeletal->Find_BoneNodeData(strBoneName);
+	FBoneData* pBoneData = pSkeletal->Find_BoneData(strBoneName);
 	if (!pBoneData)
 		return;
 
@@ -237,7 +237,7 @@ void CAnimationComponent::Apply_FinalMask()
 				vecBoneRemainWeights[j] = max((1.f - vecBoneRemainWeights[j]) - fWeight, 0.f);	// 0이하로 떨어지지 않게 보정
 		}
 
-		const FBoneAnimData* pBoneAnimData = m_pAnimGroup->Find_AnimData(rAnimMask.strAnimName);
+		const FBoneAnimData* pBoneAnimData = m_pAnimGroup->Find_BoneAnim(rAnimMask.strAnimName);
 		_float fCurAnimTime = pBoneAnimData->Calculate_Time(rAnimMask.fCurTime);	// 변환된 시간 값
 
 		// 행렬 계산
@@ -253,7 +253,7 @@ void CAnimationComponent::Apply_FinalMask()
 			int t = 0;
 		}
 
-		FSkeletalData* pSkeletal = ConCast<FSkeletalData*>(m_pModelData->pBoneGroup->Find_SkeletalData(rAnimMask.strSkeletaName));
+		FSkeletalData* pSkeletal = ConCast<FSkeletalData*>(m_pModelData->pSkeletalGroup->Find_Skeletal(rAnimMask.strSkeletaName));
 		if (i == 0)
 			pSkeletal->Clear_FinalTransforms();
 		pSkeletal->Add_Transforms(&vecBoneMatrices);
@@ -265,7 +265,7 @@ void CAnimationComponent::Apply_BoneAnimationWithMask()
 	if (!m_pModelData)
 		return;
 
-	for (_uint i = 0; i < m_pModelData->pBoneGroup->Get_Skeletal_Count(); i++)
+	for (_uint i = 0; i < m_pModelData->pSkeletalGroup->Get_Skeletal_Count(); i++)
 	{
 		
 	}

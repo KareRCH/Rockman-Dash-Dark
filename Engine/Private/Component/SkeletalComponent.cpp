@@ -69,7 +69,7 @@ HRESULT CSkeletalComponent::Load_Skeletal(const wstring& strSkeletalKey)
     if (!m_pModelData)
         return E_FAIL;
 
-    FSkeletalData* pSkeletalData = m_pModelData->pBoneGroup->Find_SkeletalData(strSkeletalKey);
+    FSkeletalData* pSkeletalData = m_pModelData->pSkeletalGroup->Find_Skeletal(strSkeletalKey);
 
     if (!pSkeletalData)
         return E_FAIL;

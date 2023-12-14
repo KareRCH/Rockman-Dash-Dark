@@ -1,39 +1,5 @@
 #include "System/ModelMgr.h"
 
-FModelData* FModelData::Create(const _bool bLoaded)
-{
-	ThisClass* pInstance = new ThisClass();
-
-	if (!pInstance)
-	{
-		Safe_Release(pInstance);
-
-		MSG_BOX("FModelData Create Failed");
-
-		return nullptr;
-	}
-
-	pInstance->pMeshGroup = FMeshGroup::Create();
-	pInstance->pBoneGroup = FBoneGroup::Create();
-	pInstance->pAnimGroup = FBoneAnimGroup::Create();
-	pInstance->bLoaded = bLoaded;
-
-	return pInstance;
-}
-
-void FModelData::Free()
-{
-	Safe_Release(pMeshGroup);
-	Safe_Release(pBoneGroup);
-	Safe_Release(pAnimGroup);
-}
-
-// ----------------------- ModelMgr ---------------------
-
-CModelMgr::CModelMgr()
-{
-}
-
 HRESULT CModelMgr::Initialize(const string& strMainDir)
 {
 	m_strMainDir = strMainDir;
@@ -47,11 +13,8 @@ CModelMgr* CModelMgr::Create(const string& strMainDir)
 
 	if (FAILED(pInstance->Initialize(strMainDir)))
 	{
-		Engine::Safe_Release(pInstance);
-
 		MSG_BOX("ModelMgr Create Failed");
-
-		return nullptr;
+		Engine::Safe_Release(pInstance);
 	}
 
 	return pInstance;
@@ -62,12 +25,9 @@ void CModelMgr::Free()
 	for (_uint i = 0; i < ECast(EModelGroupIndex::Size); i++)
 	{
 		for (auto& Pair : m_mapModelDatas[i])
-		{
 			Safe_Release(Pair.second);
-		}
 		m_mapModelDatas[i].clear();
 	}
-	
 }
 
 void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strModelKey)
@@ -114,10 +74,10 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 	Load_MeshBoneMaterial(pModelData);
 
 	// 계층 로드
-	Load_Hierarchi(pModelData->pBoneGroup, m_pRootArmature);
+	Load_Hierarchi(pModelData->pSkeletalGroup, m_pRootArmature);
 
 	// 애니메이션 로드
-	Load_Anim(pModelData);
+	Load_Animation(pModelData);
 
 	importer.FreeScene();
 }
@@ -136,7 +96,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelData)
 	m_iBoneCount = 0;
 
 	FMeshGroup* pMeshGroup = pModelData->pMeshGroup;
-	FBoneGroup* pBoneGroup = pModelData->pBoneGroup;
+	FSkeletalGroup* pBoneGroup = pModelData->pSkeletalGroup;
 
 	_float4x4 matTransformTest = {};
 	aiNode* pRootNode = m_pScene->mRootNode;
@@ -164,6 +124,8 @@ void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelData)
 		matTest = ConvertAiMatrix_ToDXMatrix(aiTransform);
 	}
 
+
+	// 메쉬 로드
 	for (_uint i = 0; i < m_pScene->mNumMeshes; i++)
 	{
 		aiNode* pChildNode = pRootNode->mChildren[i];
@@ -177,7 +139,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelData)
 		if (pMesh->HasBones())
 		{
 			m_pRootArmature = pMesh->mBones[0]->mArmature;
-			Load_Hierarchi(pModelData->pBoneGroup, m_pRootArmature);
+			Load_Hierarchi(pModelData->pSkeletalGroup, m_pRootArmature);
 		}
 
 		// 점
@@ -212,13 +174,12 @@ void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelData)
 			pVecVertices[iVertexIndex].vecWeights.reserve(AI_LMW_MAX_WEIGHTS);
 		}
 
-		// 뼈
 		// 정점에 대한 뼈정보 로드
-		wstring strArmatureKey = Make_Wstring(pMesh->mBones[0]->mArmature->mName.C_Str());
+		wstring strSkeletalKey = Make_Wstring(pMesh->mBones[0]->mArmature->mName.C_Str());
 		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
 			wstring strNodeKey = Make_Wstring(pMesh->mBones[j]->mName.C_Str());
-			auto pModelNode = pModelData->pBoneGroup->Find_BoneNodeData(strArmatureKey, strNodeKey);
+			auto pModelNode = pModelData->pSkeletalGroup->Find_BoneData(strSkeletalKey, strNodeKey);
 
 			_int iBoneID = pModelNode->iID;
 			aiBone* pBone = pMesh->mBones[j];
@@ -287,7 +248,7 @@ void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelData)
 			FMeshGroup* pMeshGroup = pModelData->pMeshGroup;
 
 			// MeshKey 설정 및 저장
-			pMeshGroup->Add_MeshData(Make_Wstring(pMesh->mName.C_Str()), m_vecMesh[i]);
+			pMeshGroup->Add_Mesh(Make_Wstring(pMesh->mName.C_Str()), m_vecMesh[i]);
 		}
 	}
 
@@ -295,10 +256,10 @@ void CModelMgr::Load_MeshBoneMaterial(FModelData* pModelData)
 	m_vecMesh.clear();
 }
 
-void CModelMgr::Load_Anim(FModelData* pModelData)
+void CModelMgr::Load_Animation(FModelData* pModelData)
 {
 	FBoneAnimGroup* pAnimGroup = pModelData->pAnimGroup;
-	FBoneGroup* pBoneGroup = pModelData->pBoneGroup;
+	FSkeletalGroup* pBoneGroup = pModelData->pSkeletalGroup;
 
 	if (!pAnimGroup || !pBoneGroup)
 		return;
@@ -311,13 +272,15 @@ void CModelMgr::Load_Anim(FModelData* pModelData)
 		// 애님 데이터 생성
 		FBoneAnimData* pAnimData = FBoneAnimData::Create();
 		wstring AnimNameWithTK = Make_Wstring(pAnimAI->mName.C_Str());
-		pAnimData->dfDuration = pAnimAI->mDuration;
-		pAnimData->dfTickPerSecond = pAnimAI->mTicksPerSecond;
+		pAnimData->fDuration = pAnimAI->mDuration;
+		pAnimData->fTickPerSecond = pAnimAI->mTicksPerSecond;
 
 		// 애니메이션 이름 추출
 		size_t iTokkenInd = AnimNameWithTK.find_first_of(L'|') + Cast<size_t>(1);
 		wstring SkeletalName = AnimNameWithTK.substr(0, iTokkenInd - 1);
 		wstring AnimName = AnimNameWithTK.substr(iTokkenInd);
+
+
 
 		// 애니메이션 채널
 		for (_uint j = 0; j < pAnimAI->mNumChannels; j++)
@@ -325,9 +288,9 @@ void CModelMgr::Load_Anim(FModelData* pModelData)
 			aiNodeAnim* pNodeAnimAI = pAnimAI->mChannels[j];
 			FBoneAnimChannelData* pAnimNodeData = FBoneAnimChannelData::Create();
 			wstring AnimNodeName = Make_Wstring(pNodeAnimAI->mNodeName.C_Str());
-			FBoneNodeData* pBoneNodeData = pBoneGroup->Find_BoneNodeData(SkeletalName, AnimNodeName);
+			FBoneData* pBoneData = pBoneGroup->Find_BoneData(SkeletalName, AnimNodeName);
 
-			pAnimNodeData->iBoneID = pBoneNodeData->iID;
+			pAnimNodeData->iBoneID = pBoneData->iID;
 			pAnimNodeData->vecPositions.reserve(pNodeAnimAI->mNumPositionKeys);
 			pAnimNodeData->vecRotations.reserve(pNodeAnimAI->mNumRotationKeys);
 			pAnimNodeData->vecScales.reserve(pNodeAnimAI->mNumScalingKeys);
@@ -370,70 +333,64 @@ void CModelMgr::Load_Anim(FModelData* pModelData)
 
 			pAnimData->Add_AnimNodeData(AnimNodeName, pAnimNodeData);
 		}
-		pAnimGroup->Add_AnimData(AnimName, pAnimData);
+		pAnimGroup->Add_BoneAnim(AnimName, pAnimData);
 
 		int t = 1;
 	}
 }
 
-void CModelMgr::Load_Hierarchi(FBoneGroup* pBoneGroup,  aiNode* pArmatureNode)
+void CModelMgr::Load_Hierarchi(FSkeletalGroup* pSkeletalGroup,  aiNode* pArmatureNode)
 {
 	if (pArmatureNode)
 	{
 		// 한번만 로드
 		wstring strKey = Make_Wstring(pArmatureNode->mName.C_Str());	// 아마추어 키
-		auto pArmature = pBoneGroup->Find_SkeletalData(strKey);
+		auto pSkeletalData = pSkeletalGroup->Find_Skeletal(strKey);
 		// 이미 있으면 만들어진 것으로 판별
-		if (pArmature)
+		if (pSkeletalData)
 			return;
 
 		// 아마추어 컨테이너 생성
-		pArmature = pBoneGroup->Create_SkeletalData(strKey);
-		if (!pArmature)
+		pSkeletalData = pSkeletalGroup->Create_Skeletal(strKey);
+		if (!pSkeletalData)
 			return;
 
 		m_iNodeID = 0;
 
 		// ID 지정
-		FBoneNodeData* pRootNodeData = FBoneNodeData::Create();
+		FBoneData* pRootNodeData = FBoneData::Create();
 		pRootNodeData->iID = m_iNodeID++;
-		pRootNodeData->eType = EModelNodeType::Armature;
-		pRootNodeData->eBoneType = EModelBoneType::Null;
 		pRootNodeData->strName = strKey;
-		pRootNodeData->pParent = nullptr;
+		pRootNodeData->iParentID = -1;
 		pRootNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pArmatureNode->mTransformation);		// 스켈레탈은 일반 행렬이 중요하다.
 		pRootNodeData->matTransform = pRootNodeData->matOffset;
-		pBoneGroup->Add_BoneNodeData(strKey, strKey, pRootNodeData);
+
+		pSkeletalData->Add_BoneData(strKey, pRootNodeData);
 
 		for (_uint i = 0; i < pArmatureNode->mNumChildren; i++)
 		{
-			Load_HierarchiNode(pBoneGroup, pArmatureNode->mChildren[i], pRootNodeData, pRootNodeData);
+			Load_HierarchiNode(pSkeletalData, pArmatureNode->mChildren[i], pRootNodeData, pRootNodeData);
 		}
-
-		pBoneGroup->Appoint_SkeletalRootNode(strKey, strKey);
 	}
 
 	m_pRootArmature = nullptr;
 }
 
-void CModelMgr::Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FBoneNodeData* pRootNode, FBoneNodeData* pParentNode)
+void CModelMgr::Load_HierarchiNode(FSkeletalData* pSkeletalData, aiNode* pBoneNode, FBoneData* pRootNode, FBoneData* pParentNode)
 {
 	if (pBoneNode)
 	{
 		wstring strArmatureKey = pRootNode->strName;
 		wstring strNodeKey = Make_Wstring(pBoneNode->mName.C_Str());
 
-		FBoneNodeData* pNodeData = FBoneNodeData::Create();
+		FBoneData* pNodeData = FBoneData::Create();
 		pNodeData->iID = m_iNodeID++;
-		pNodeData->eType = EModelNodeType::Bone;
-		pNodeData->eBoneType = EModelBoneType::Base;
 		pNodeData->strName = strNodeKey;
-		pNodeData->pParent = pParentNode;
+		pNodeData->iParentID = pParentNode->iID;
 		pNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);	// 뼈는 역행렬이 중요하다.
 		XMStoreFloat4x4(&pNodeData->matOffset, XMMatrixInverse(nullptr, XMLoadFloat4x4(&pNodeData->matOffset)));
 		pNodeData->matTransform = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);
-		pParentNode->vecChildren.push_back(pNodeData);
-		pBoneGroup->Add_BoneNodeData(pRootNode->strName, strNodeKey, pNodeData);
+		pSkeletalData->Add_BoneData(strNodeKey, pNodeData);
 
 		_float4x4 matTemp = {};
 		XMStoreFloat4x4(&matTemp, XMLoadFloat4x4(&pNodeData->matTransform));// * XMLoadFloat4x4(&pNodeData->matTransform));
@@ -441,13 +398,10 @@ void CModelMgr::Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FB
 		_float3 vPos = Get_PosFromMatrix(matTemp);
 		_float3 vRot = Get_RotEulerFromMatrix(matTemp);
 		_float3 vScale = Get_ScaleFromMatrix(matTemp);
-		
-		if (pBoneNode->mNumChildren == 0)
-			pNodeData->eBoneType = EModelBoneType::End;
 
 		for (_uint i = 0; i < pBoneNode->mNumChildren; i++)
 		{
-			Load_HierarchiNode(pBoneGroup, pBoneNode->mChildren[i], pRootNode, pNodeData);
+			Load_HierarchiNode(pSkeletalData, pBoneNode->mChildren[i], pRootNode, pNodeData);
 		}
 	}
 }
@@ -460,7 +414,7 @@ const FMeshData* const CModelMgr::Find_MeshData(const EModelGroupIndex eGroupInd
 	if (iter == m_mapModelDatas[iIndex].end())
 		return nullptr;
 
-	return (*iter).second->pMeshGroup->Find_MeshData(strMeshKey);
+	return (*iter).second->pMeshGroup->Find_Mesh(strMeshKey);
 }
 
 FSkeletalData* CModelMgr::Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring strModelNodeKey)
@@ -472,7 +426,7 @@ FSkeletalData* CModelMgr::Find_Skeletal(const EModelGroupIndex eGroupIndex, cons
 		return nullptr;
 
 	FModelData* pModelGroup = (*iter).second;
-	return pModelGroup->pBoneGroup->Find_SkeletalData(strModelNodeKey);
+	return pModelGroup->pSkeletalGroup->Find_Skeletal(strModelNodeKey);
 }
 
 FSkeletalData* CModelMgr::Clone_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring strModelNodeKey)
@@ -484,7 +438,7 @@ FSkeletalData* CModelMgr::Clone_Skeletal(const EModelGroupIndex eGroupIndex, con
 		return nullptr;
 
 	FModelData* pModelGroup = (*iter).second;
-	return pModelGroup->pBoneGroup->Clone_SkeletalData(strModelNodeKey);
+	return pModelGroup->pSkeletalGroup->Clone_Skeletal(strModelNodeKey);
 }
 
 const FModelData* const CModelMgr::Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
@@ -523,7 +477,7 @@ FMeshGroup* CModelMgr::Find_MeshGroup(const EModelGroupIndex eGroupIndex, const 
 	return (*iter).second->pMeshGroup;
 }
 
-FBoneGroup* CModelMgr::Find_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
+FSkeletalGroup* CModelMgr::Find_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
 {
 	_uint iIndex = ECast(eGroupIndex);
 
@@ -531,7 +485,7 @@ FBoneGroup* CModelMgr::Find_BoneGroup(const EModelGroupIndex eGroupIndex, const 
 	if (iter == m_mapModelDatas[iIndex].end())
 		return nullptr;
 
-	return (*iter).second->pBoneGroup;
+	return (*iter).second->pSkeletalGroup;
 }
 
 FBoneAnimGroup* CModelMgr::Find_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
@@ -555,18 +509,6 @@ _float4x4 CModelMgr::ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix)
 	);
 
 	return matOffsetTG;
-}
-
-_float3 CModelMgr::Calculate_InterpolatedFloat3(_float fAnimTime, const _int iNumKeys, const _vector vVectorKey)
-{
-
-
-	return _float3();
-}
-
-_float4 CModelMgr::Calculate_InterpolatedQuaternion(_float fAnimTime, const _int iNumKeys, const _vector vVectorKey)
-{
-	return _float4();
 }
 
 
