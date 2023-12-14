@@ -28,8 +28,8 @@ public:
 
 public:
 	_int		iParentID = { -1 };		// 부모 노드 ID
-	_float4x4	matOffset;				// 노드의 오프셋, 변하지 않음.
-	_float4x4	matTransform;			// 최종 행렬
+	_float4x4	matTransform;				// 노드의 오프셋, 애니메이션으로 변함
+	_float4x4	matFinalTransform;			// 최종 행렬, 부모의 행렬까지 곱해짐
 };
 
 
@@ -60,7 +60,7 @@ public:
 
 public:
 	// 행렬 웨이트값을 적용하기 위해 행렬값을 더하는 연산을 하는 함수
-	void Add_Transforms(vector<_float4x4>* pVecMatrices) const;
+	void Apply_Transforms(vector<_float4x4>* pVecMatrices);
 	// 행렬 웨이트 계산전에 적용하는 청소 함수
 	void Clear_FinalTransforms();
 

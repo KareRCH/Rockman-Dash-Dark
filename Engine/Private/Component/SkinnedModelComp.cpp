@@ -64,8 +64,8 @@ HRESULT CSkinnedModelComp::Render()
     for (_uint i = 0; i < m_pMultiMeshBufComp->Get_MeshesCounts(); ++i)
     {
         _float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
-        //_float4x4 matMesh = m_pMultiMeshBufComp->Get_MeshTransform(i);
-        //XMStoreFloat4x4(&matTemp, XMLoadFloat4x4(&matMesh) * XMLoadFloat4x4(&matTemp));
+        _float4x4 matMesh = m_pMultiMeshBufComp->Get_MeshTransform(i);
+        XMStoreFloat4x4(&matTemp, XMLoadFloat4x4(&matTemp) * XMLoadFloat4x4(&matMesh));
         
         m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
         m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
