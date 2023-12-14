@@ -134,8 +134,7 @@ void CModelMgr::Load_Mesh(FModelData* pModelData)
 		pMeshGroup->Add_Mesh(strMeshName, vecMeshes[i]);
 
 		// 트랜스폼 저장
-		aiMatrix4x4 aiTransform = pChildNode->mTransformation;
-		vecMeshes[i]->matOffset = ConvertAiMatrix_ToDXMatrix(aiTransform);
+		vecMeshes[i]->matOffset = pModelData->pBoneGroup->Find_BoneData(strMeshName)->matTransform;;
 
 		// 뼈가 있을 때 루트 노드를 설정한다. 계층을 로드하는데 쓰인다.
 #pragma region 점
@@ -391,8 +390,8 @@ void CModelMgr::Load_Hierarchi(FBoneGroup* pBoneGroup,  aiNode* pRootNode)
 		pRootNodeData->iID = m_iNodeID++;
 		pRootNodeData->strName = strKey;
 		pRootNodeData->iParentID = -1;
-		pRootNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pRootNode->mTransformation);		// 스켈레탈은 일반 행렬이 중요하다.
-		pRootNodeData->matTransform = pRootNodeData->matOffset;
+		pRootNodeData->matTransform = ConvertAiMatrix_ToDXMatrix(pRootNode->mTransformation);
+		pRootNodeData->matFinalTransform = pRootNodeData->matTransform;
 
 		pBoneGroup->Add_BoneData(strKey, pRootNodeData);
 
@@ -415,9 +414,9 @@ void CModelMgr::Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FB
 		pNodeData->iID = m_iNodeID++;
 		pNodeData->strName = strNodeKey;
 		pNodeData->iParentID = pParentNode->iID;
-		pNodeData->matOffset = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);	// 뼈는 역행렬이 중요하다.
+		pNodeData->matTransform = ConvertAiMatrix_ToDXMatrix(pBoneNode->mTransformation);	// 뼈는 역행렬이 중요하다.
 		//XMStoreFloat4x4(&pNodeData->matOffset, XMMatrixInverse(nullptr, XMLoadFloat4x4(&pNodeData->matOffset)));
-		XMStoreFloat4x4(&pNodeData->matTransform, XMMatrixIdentity());
+		XMStoreFloat4x4(&pNodeData->matFinalTransform, XMMatrixIdentity());
 		pBoneGroup->Add_BoneData(strNodeKey, pNodeData);
 
 		//_float4x4 matTemp = {};

@@ -410,7 +410,7 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
                     _vector vsimVertexPos = XMLoadFloat3(&m_TerrainVertices[i].vPosition);
                     _float f = XMVector3Length(vsimInterPoint - vsimVertexPos).m128_f32[0];
                     if (f <= fRadius)
-                        m_TerrainVertices[i].vPosition.y += fTimeDelta;
+                        m_TerrainVertices[i].vPosition.y += fTimeDelta * (fRadius - f);
                 }
 
                 pModel->Update_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size());

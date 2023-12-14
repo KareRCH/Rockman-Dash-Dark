@@ -206,8 +206,10 @@ void CAnimationComponent::Apply_FinalMask()
 	
 	// 남은 가중치
 	vector<_float> vecBoneRemainWeights;
-	vector<_float4x4> vecBoneMatrices;
+	vector<_matrix> vecBoneMatrices;
+	vector<_float4x4> vecBoneFinalMatrices;
 
+	_matrix matIdentity = XMMatrixIdentity();
 	// 뼈에 대한 가중치 계산을 한다.
 	for (_int i = Cast<_int>(m_vecAnimMask.size() - 1); i >= 0; --i)
 	{
@@ -217,6 +219,7 @@ void CAnimationComponent::Apply_FinalMask()
 		{
 			vecBoneRemainWeights.resize(rAnimMask.vecBoneMasks.size(), 0.f);
 			vecBoneMatrices.resize(rAnimMask.vecBoneMasks.size(), {});
+			vecBoneFinalMatrices.resize(rAnimMask.vecBoneMasks.size(), {});
 		}
 
 		// 애니메이션이 없으면 건너뛰기
@@ -245,19 +248,26 @@ void CAnimationComponent::Apply_FinalMask()
 		{
 			_float4x4 matTemp = {};
 			const FBoneAnimChannelData* pBoneAnimNodeData= pBoneAnimData->Find_AnimNodeData(j);
-			if (!pBoneAnimNodeData)
-				vecBoneMatrices[j] = {};
+
+			// 만약 애니메이션이 있다면 행렬더하기를 한다.
+			if (nullptr != pBoneAnimNodeData)
+			{
+				vecBoneMatrices[j] += XMLoadFloat4x4(&(matTemp = pBoneAnimNodeData->Interporated_Matrix(fCurAnimTime))) * vecBoneRemainWeights[j];
+			}
 			else
-				XMStoreFloat4x4(&vecBoneMatrices[j], 
-					XMLoadFloat4x4(&(matTemp = pBoneAnimNodeData->Interporated_Matrix(fCurAnimTime))) * vecBoneRemainWeights[j]);
-			int t = 0;
+				vecBoneMatrices[j] = matIdentity;
 		}
 
-		FBoneGroup* pBoneGroup = ConCast<FBoneGroup*>(m_pModelData->pBoneGroup);
-		if (i == 0)
-			pBoneGroup->Clear_FinalTransforms();
-		pBoneGroup->Add_Transforms(&vecBoneMatrices);
+		
 	}
+
+	for (_uint i = 0; i < vecBoneMatrices.size(); i++)
+	{
+		XMStoreFloat4x4(&vecBoneFinalMatrices[i], vecBoneMatrices[i]);
+	}
+
+	FBoneGroup* pBoneGroup = ConCast<FBoneGroup*>(m_pModelData->pBoneGroup);
+	pBoneGroup->Apply_Transforms(&vecBoneFinalMatrices);
 }
 
 void CAnimationComponent::Apply_BoneAnimationWithMask()

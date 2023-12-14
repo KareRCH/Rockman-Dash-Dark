@@ -3,7 +3,7 @@
 FBoneData::FBoneData(const FBoneData& rhs)
 	: iID(rhs.iID)
 	, strName(rhs.strName), iParentID(rhs.iParentID)
-	, matOffset(rhs.matOffset), matTransform(rhs.matTransform)
+	, matTransform(rhs.matTransform), matFinalTransform(rhs.matFinalTransform)
 {
 }
 
@@ -135,13 +135,13 @@ vector<_float4x4> FBoneGroup::Provide_FinalTransforms(_bool bNoHierarchi)
 
 	for (_uint i = 0; i < vecBones.size(); i++)
 	{
-		vecFinalTransforms.push_back(vecBones[i]->matTransform);
+		vecFinalTransforms.push_back(vecBones[i]->matFinalTransform);
 	}
 
 	return vecFinalTransforms;
 }
 
-void FBoneGroup::Add_Transforms(vector<_float4x4>* pVecMatrices) const
+void FBoneGroup::Apply_Transforms(vector<_float4x4>* pVecMatrices)
 {
 	if (pVecMatrices->size() != vecBones.size())
 		return;
@@ -151,8 +151,7 @@ void FBoneGroup::Add_Transforms(vector<_float4x4>* pVecMatrices) const
 	for (_uint i = 0; i < vecBones.size(); i++)
 	{
 		// 행렬 더하기, Weight가 총합이 1이어야 한다.
-		XMStoreFloat4x4(&vecBones[i]->matTransform,
-			XMLoadFloat4x4(&(*pVecMatrices)[i]) + XMLoadFloat4x4(&vecBones[i]->matTransform));
+		XMStoreFloat4x4(&vecBones[i]->matTransform, XMLoadFloat4x4(&(*pVecMatrices)[i]));
 	}
 }
 
@@ -160,7 +159,7 @@ void FBoneGroup::Clear_FinalTransforms()
 {
 	for (_uint i = 0; i < vecBones.size(); i++)
 	{
-		XMStoreFloat4x4(&vecBones[i]->matTransform, {});
+		XMStoreFloat4x4(&vecBones[i]->matFinalTransform, {});
 	}
 }
 
@@ -179,13 +178,12 @@ void FBoneGroup::Calculate_FinalTransforms()
 	{
 		FBoneData* pBone = vecBones[i];
 
-		_matrix matOffsetTransform, matFinalTransform, matParentTransform = XMMatrixIdentity();
-		matOffsetTransform = XMLoadFloat4x4(&pBone->matOffset);
-		matFinalTransform = XMLoadFloat4x4(&pBone->matTransform);
+		_matrix matTransform, matFinalTransform, matParentFinalTransform = XMMatrixIdentity();
+		matTransform = XMLoadFloat4x4(&pBone->matTransform);
 		if (pBone->iParentID != -1)
-			matParentTransform = XMLoadFloat4x4(&vecBones[pBone->iParentID]->matTransform);
+			matParentFinalTransform = XMLoadFloat4x4(&vecBones[pBone->iParentID]->matFinalTransform);
 
-		XMStoreFloat4x4(&pBone->matTransform, (matOffsetTransform * matFinalTransform * matParentTransform));
+		XMStoreFloat4x4(&pBone->matFinalTransform, (matTransform * matParentFinalTransform));
 	}
 }
 
@@ -198,9 +196,9 @@ void FBoneGroup::Calculate_FinalTransformsNoHierarchi()
 		FBoneData* pBone = vecBones[i];
 
 		_matrix matOffsetTransform, matFinalTransform;
-		matOffsetTransform = XMLoadFloat4x4(&pBone->matOffset);
-		matFinalTransform = XMLoadFloat4x4(&pBone->matTransform);
+		matOffsetTransform = XMLoadFloat4x4(&pBone->matTransform);
+		matFinalTransform = XMLoadFloat4x4(&pBone->matFinalTransform);
 
-		XMStoreFloat4x4(&pBone->matTransform, (matOffsetTransform * matFinalTransform * matSkeletalOffset));
+		XMStoreFloat4x4(&pBone->matFinalTransform, (matOffsetTransform * matFinalTransform * matSkeletalOffset));
 	}
 }
