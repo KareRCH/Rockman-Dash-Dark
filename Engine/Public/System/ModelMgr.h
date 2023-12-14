@@ -43,15 +43,15 @@ private:
 
 public:
 	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strModelKey);
-	void	Load_MeshBoneMaterial(FModelData* pModelData);
+	void	Load_Mesh(FModelData* pModelData);
+	void	Load_Material(FModelData* pModelData);
 	void	Load_Animation(FModelData* pModelData);
-	void	Load_Hierarchi(FSkeletalGroup* pBoneGroup, aiNode* pArmatureNode);
-	void	Load_HierarchiNode(FSkeletalData* pSkeletalData, aiNode* pBoneNode, FBoneData* pRootNode, FBoneData* pParentNode);
+	void	Load_Hierarchi(FBoneGroup* pBoneGroup, aiNode* pArmatureNode);
+	void	Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FBoneData* pParentNode);
 
 public:
 	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey);
-	FSkeletalData*			Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring strModelNodeKey);
-	FSkeletalData*			Clone_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring strModelNodeKey);
+	FBoneGroup*			Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 
 public:
 	const FModelData* const	Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
@@ -59,16 +59,18 @@ public:
 
 public:
 	FMeshGroup*				Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
-	FSkeletalGroup*			Find_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	FBoneGroup*				Find_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 	FBoneAnimGroup*			Find_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	FMaterialGroup*			Find_MaterialGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 
 private:
 	_float4x4				ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);
 
 private:
 	const aiScene*		m_pScene = nullptr;				// 내부 통신용 씬 저장변수
-	vector<FMeshData*>	m_vecMesh;						// 내부 통신용 메쉬 저장변수
 	aiNode*				m_pRootArmature;				// 내부용, 아마추어 노드
+
+	string				m_strLoadFilePath;				// 내부용, 로드한 파일 경로.
 	_int				m_iNodeID;						// 내부용, 노드 번호 부여용.
 	_uint				m_iMaterialCount = 0U;
 	_uint				m_iBoneCount = 0U;

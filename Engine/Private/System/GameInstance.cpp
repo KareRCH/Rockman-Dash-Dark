@@ -1136,20 +1136,20 @@ const FMeshGroup* const CGameInstance::Find_MeshGroup(const EModelGroupIndex eGr
 	return m_pModelMgr->Find_MeshGroup(eGroupIndex, strModelKey);
 }
 
-FSkeletalData* CGameInstance::Clone_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strSkeletalKey)
+FBoneGroup* CGameInstance::Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
-	return m_pModelMgr->Clone_Skeletal(eGroupIndex, strModelKey, strSkeletalKey);
+	return m_pModelMgr->Clone_BoneGroup(eGroupIndex, strModelKey);
 }
 
-FSkeletalData* CGameInstance::Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strSkeletalKey)
+FBoneGroup* CGameInstance::Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
-	return m_pModelMgr->Find_Skeletal(eGroupIndex, strModelKey, strSkeletalKey);
+	return m_pModelMgr->Find_BoneGroup(eGroupIndex, strModelKey);
 }
 
 HRESULT CGameInstance::Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)

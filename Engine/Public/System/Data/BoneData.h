@@ -33,26 +33,22 @@ public:
 };
 
 
-
 /// <summary>
-/// 아마추어 정보가 저장되는 데이터,
-/// 단, 아마추어 노드도 따로 노드로 저장하는데.
-/// 이는 계층 구조를 만들어 저장하기 위함이다.
+/// 뼈 계층들, 
 /// </summary>
-class ENGINE_DLL FSkeletalData final : public CBase
+class FBoneGroup final : public CBase
 {
-	DERIVED_CLASS(CBase, FSkeletalData)
+	DERIVED_CLASS(CBase, FBoneGroup)
 
 private:
-	explicit FSkeletalData() = default;
-	explicit FSkeletalData(const FSkeletalData& rhs);
-	virtual ~FSkeletalData() = default;
+	explicit FBoneGroup() = default;
+	explicit FBoneGroup(const FBoneGroup& rhs);
+	virtual ~FBoneGroup() = default;
 
 public:
-	static FSkeletalData* Create();
-	virtual FSkeletalData* Clone();
+	static FBoneGroup* Create();
+	virtual FBoneGroup* Clone();
 	virtual void Free() override;
-
 
 public:
 	FBoneData* Find_BoneData(_int iID);
@@ -67,59 +63,17 @@ public:
 	void Add_Transforms(vector<_float4x4>* pVecMatrices) const;
 	// 행렬 웨이트 계산전에 적용하는 청소 함수
 	void Clear_FinalTransforms();
-	
+
 private:
 	void Calculate_FinalTransforms();
 	void Calculate_FinalTransformsNoHierarchi();
 
-
 public:
-	const wstring&	Get_SkeletalName() { return strName; }
-	const _uint		Get_BoneDatas_Count() const { return Cast<_uint>(vecBoneNodes.size()); }
-
-
-
-public:
-	_int		iID = -1;	// ID
-	wstring		strName;	// 이름
+	const _uint		Get_BoneDatas_Count() const { return Cast<_uint>(vecBones.size()); }
 
 private:
-	map<const wstring, FBoneData*>	mapBoneNodes;		// 뼈 이름 검색
-	vector<FBoneData*>				vecBoneNodes;		// 뼈 인덱스 검색
-	_float4x4						matOffset;			// 기준 행렬
-};
-
-
-
-/// <summary>
-/// 어떤 모델에 대한 그룹
-/// </summary>
-class FSkeletalGroup final : public CBase
-{
-	DERIVED_CLASS(CBase, FSkeletalGroup)
-
-private:
-	explicit FSkeletalGroup() = default;
-	explicit FSkeletalGroup(const FSkeletalGroup& rhs) = delete;
-	virtual ~FSkeletalGroup() = default;
-
-public:
-	static FSkeletalGroup* Create();
-	virtual void Free() override;
-
-public:
-	FSkeletalData*			Create_Skeletal(const wstring& strSkeletalKey);
-	FSkeletalData*			Clone_Skeletal(const wstring& strSkeletalKey);
-	// 스켈레탈 찾기
-	FSkeletalData* const	Find_Skeletal(const _uint iIndex) const;
-	FSkeletalData* const	Find_Skeletal(const wstring& strName) const;
-
-public:
-	_uint	Get_Skeletal_Count() const { return Cast<_uint>(mapSkeletals.size()); }
-
-private:
-	_unmap<wstring, FSkeletalData*> mapSkeletals;	// 스켈레탈 이름 검색
-	vector<FSkeletalData*>			vecSkeletals;	// 스켈레탈 인덱스 검색
+	_unmap<wstring, FBoneData*>		mapBones;	// 스켈레탈 이름 검색
+	vector<FBoneData*>				vecBones;	// 스켈레탈 인덱스 검색
 
 };
 

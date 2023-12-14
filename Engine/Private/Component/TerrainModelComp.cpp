@@ -92,6 +92,10 @@ void CTerrainModelComp::Free()
 
     Safe_Release(m_pEffectComp);
     Safe_Release(m_pTerrainBufferComp);
+    for (size_t i = 0; i < TYPE_END; i++)
+    {
+        Safe_Release(m_pTextureComps[i]);
+    }
 }
 
 HRESULT CTerrainModelComp::IsRender_Ready()

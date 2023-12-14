@@ -6,10 +6,10 @@
 CSkeletalComponent::CSkeletalComponent(const CSkeletalComponent& rhs)
     : Base(rhs)
     , m_pModelData(rhs.m_pModelData)
-    , m_pSkeletalData(rhs.m_pSkeletalData)
+    , m_pBoneDatas(rhs.m_pBoneDatas)
 {
     Safe_AddRef(m_pModelData);
-    Safe_AddRef(m_pSkeletalData);
+    Safe_AddRef(m_pBoneDatas);
 }
 
 HRESULT CSkeletalComponent::Initialize_Prototype(void* Arg)
@@ -55,7 +55,7 @@ CComponent* CSkeletalComponent::Clone(void* Arg)
 void CSkeletalComponent::Free()
 {
     Safe_Release(m_pModelData);
-    Safe_Release(m_pSkeletalData);
+    Safe_Release(m_pBoneDatas);
 }
 
 void CSkeletalComponent::Set_ModelData(FModelData* pModelData)
@@ -69,21 +69,21 @@ HRESULT CSkeletalComponent::Load_Skeletal(const wstring& strSkeletalKey)
     if (!m_pModelData)
         return E_FAIL;
 
-    FSkeletalData* pSkeletalData = m_pModelData->pSkeletalGroup->Find_Skeletal(strSkeletalKey);
+    FBoneGroup* pBoneGroup = m_pModelData->pBoneGroup;
 
-    if (!pSkeletalData)
+    if (!pBoneGroup)
         return E_FAIL;
     
-    m_pSkeletalData = pSkeletalData;
-    Safe_AddRef(m_pSkeletalData);
+    m_pBoneDatas = pBoneGroup;
+    Safe_AddRef(m_pBoneDatas);
 
     return S_OK;
 }
 
 vector<_float4x4> CSkeletalComponent::Get_FinalTransforms(_bool bNoHierarchi)
 {
-    if (!m_pSkeletalData)
+    if (!m_pBoneDatas)
         return vector<_float4x4>();
 
-    return m_pSkeletalData->Provide_FinalTransforms(bNoHierarchi);
+    return m_pBoneDatas->Provide_FinalTransforms(bNoHierarchi);
 }

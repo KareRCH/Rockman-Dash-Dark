@@ -1,22 +1,25 @@
 #include "System/Data/ModelData.h"
 
 
+HRESULT FModelData::Initialize()
+{
+	pMeshGroup = FMeshGroup::Create();
+	pBoneGroup = FBoneGroup::Create();
+	pAnimGroup = FBoneAnimGroup::Create();
+	pMaterialGroup = FMaterialGroup::Create();
+
+	return S_OK;
+}
+
 FModelData* FModelData::Create(const _bool bLoaded)
 {
 	ThisClass* pInstance = new ThisClass();
 
-	if (!pInstance)
+	if (FAILED(pInstance->Initialize()))
 	{
-		Safe_Release(pInstance);
-
 		MSG_BOX("FModelData Create Failed");
-
-		return nullptr;
+		Safe_Release(pInstance);
 	}
-
-	pInstance->pMeshGroup = FMeshGroup::Create();
-	pInstance->pSkeletalGroup = FSkeletalGroup::Create();
-	pInstance->pAnimGroup = FBoneAnimGroup::Create();
 
 	return pInstance;
 }
@@ -24,7 +27,8 @@ FModelData* FModelData::Create(const _bool bLoaded)
 void FModelData::Free()
 {
 	Safe_Release(pMeshGroup);
-	Safe_Release(pSkeletalGroup);
+	Safe_Release(pMaterialGroup);
+	Safe_Release(pBoneGroup);
 	Safe_Release(pAnimGroup);
 }
 
@@ -60,21 +64,14 @@ FMaterialData* FModelData::Find_Material(const wstring& strMaterial)
 	return pMaterialGroup->Find_Material(strMaterial);
 }
 
-FSkeletalData* FModelData::Find_Skeletal(const _uint iIndex)
+FBoneGroup* FModelData::Find_BoneGroup()
 {
-	if (nullptr == pSkeletalGroup)
+	if (nullptr == pBoneGroup)
 		return nullptr;
 
-	return pSkeletalGroup->Find_Skeletal(iIndex);
+	return pBoneGroup;
 }
 
-FSkeletalData* FModelData::Find_Skeletal(const wstring& strSkeletal)
-{
-	if (nullptr == pSkeletalGroup)
-		return nullptr;
-
-	return pSkeletalGroup->Find_Skeletal(strSkeletal);
-}
 
 FBoneAnimData* FModelData::Find_BoneAnim(const _uint iIndex)
 {

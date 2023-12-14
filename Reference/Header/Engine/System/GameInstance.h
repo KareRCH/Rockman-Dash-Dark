@@ -256,8 +256,8 @@ public:		// ¸ðµ¨ ¸Å´ÏÀú
 	const FModelData* const Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey);
 	const FMeshGroup* const Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
-	class FSkeletalData*	Clone_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strSkeletalKey);
-	class FSkeletalData*	Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strSkeletalKey);
+	class FBoneGroup*		Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	class FBoneGroup*		Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 #pragma endregion
 
 

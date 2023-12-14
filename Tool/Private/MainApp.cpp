@@ -57,7 +57,7 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK_RETURN(m_pGI->Initialize_TextureMgr(tDevice, L"../Client/Resource/"), E_FAIL);
 	m_pGI->Load_Texture(L"Model/Character/RockVolnutt/Body.png", true);
-	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr("../Client/Resource/Model/"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr("../Client/Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"../Client/Shader/"), E_FAIL);
 	m_pGI->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
 	m_pGI->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
