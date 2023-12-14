@@ -4,13 +4,9 @@ FMeshData* FMeshData::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
-	if (!pInstance)
+	if (nullptr == pInstance)
 	{
-		Safe_Release(pInstance);
-
 		MSG_BOX("FMeshData Create Failed");
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -49,7 +45,15 @@ void FMeshGroup::Free()
 	mapMeshDatas.clear();
 }
 
-const FMeshData* const FMeshGroup::Find_MeshData(const wstring& strMeshKey) const
+FMeshData* const FMeshGroup::Find_Mesh(const _uint iIndex) const
+{
+	if (iIndex < 0 && iIndex >= vecMeshDatas.size())
+		return nullptr;
+
+	return vecMeshDatas[iIndex];
+}
+
+FMeshData* const FMeshGroup::Find_Mesh(const wstring& strMeshKey) const
 {
 	auto iter = mapMeshDatas.find(strMeshKey);
 	if (iter == mapMeshDatas.end())
@@ -58,7 +62,7 @@ const FMeshData* const FMeshGroup::Find_MeshData(const wstring& strMeshKey) cons
 	return (*iter).second;
 }
 
-HRESULT FMeshGroup::Add_MeshData(const wstring& strMeshKey, FMeshData* const pMeshData)
+HRESULT FMeshGroup::Add_Mesh(const wstring& strMeshKey, FMeshData* const pMeshData)
 {
 	// ¸Ê ÄÁÅ×ÀÌ³Ê
 	auto iter = mapMeshDatas.find(strMeshKey);

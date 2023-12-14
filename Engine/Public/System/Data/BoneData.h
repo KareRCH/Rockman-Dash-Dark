@@ -8,55 +8,31 @@ BEGIN(Engine)
 /// <summary>
 /// 주로 뼈의 노드로 쓰이는 클래스
 /// </summary>
-class ENGINE_DLL FBoneNodeBaseData abstract : public CBase
+class ENGINE_DLL FBoneData final : public CBase
 {
-	DERIVED_CLASS(CBase, FBoneNodeBaseData)
+	DERIVED_CLASS(CBase, FBoneData)
 
 protected:
-	explicit FBoneNodeBaseData() {}
-	explicit FBoneNodeBaseData(const FBoneNodeBaseData& rhs);
-	virtual ~FBoneNodeBaseData() = default;
-
-protected:
-	virtual FBoneNodeBaseData* Clone(FSkeletalData* pArg) PURE;
-	virtual void Free() override;
+	explicit FBoneData() = default;
+	explicit FBoneData(const FBoneData& rhs);
+	virtual ~FBoneData() = default;
 
 public:
-	_int							iID = -1;				// 뼈 구분용 ID
-	EModelNodeType					eType;					// 노드 구분용
-	EModelBoneType					eBoneType;				// 뼈 속성
-	wstring							strName;				// 노드 이름
-	FBoneNodeBaseData*				pParent = { nullptr };	// 부모 노드
-	vector<class FBoneNodeData*>	vecChildren;			// 자식 노드들
-	_float4x4						matOffset;				// 노드의 오프셋
-	_float4x4						matTransform;			// 상속관계간에 정해진 변환행렬
+	static FBoneData*	Create();
+	virtual FBoneData*	Clone();
+	virtual void		Free() override;
+
+public:
+	_int		iID = -1;				// 뼈 구분용 ID
+	wstring		strName;				// 노드 이름
+
+public:
+	_int		iParentID = { -1 };		// 부모 노드 ID
+	_float4x4	matOffset;				// 노드의 오프셋, 변하지 않음.
+	_float4x4	matTransform;			// 최종 행렬
 };
 
-/// <summary>
-/// 주로 뼈의 자식 노드로 쓰이는 노드
-/// </summary>
-class ENGINE_DLL FBoneNodeData final : public FBoneNodeBaseData
-{
-	DERIVED_CLASS(FBoneNodeBaseData, FBoneNodeData)
 
-private:
-	explicit FBoneNodeData() {}
-	explicit FBoneNodeData(const FBoneNodeData& rhs);
-	virtual ~FBoneNodeData() = default;
-
-public:
-	_bool	Is_Root() { return (pParent == nullptr); }
-
-public:
-	FBoneNodeData* Find_NodeFromID(_int iID);
-	void Calculate_FinalTransform();
-
-public:
-	static FBoneNodeData* Create();
-	virtual FBoneNodeBaseData* Clone(FSkeletalData* pArg) override;
-	virtual void Free() override;
-
-};
 
 /// <summary>
 /// 아마추어 정보가 저장되는 데이터,
@@ -68,7 +44,7 @@ class ENGINE_DLL FSkeletalData final : public CBase
 	DERIVED_CLASS(CBase, FSkeletalData)
 
 private:
-	explicit FSkeletalData() {}
+	explicit FSkeletalData() = default;
 	explicit FSkeletalData(const FSkeletalData& rhs);
 	virtual ~FSkeletalData() = default;
 
@@ -77,56 +53,74 @@ public:
 	virtual FSkeletalData* Clone();
 	virtual void Free() override;
 
+
 public:
-	wstring Get_SkeletalName();
-	_uint Get_BoneNodeData_Count();
-	FBoneNodeData* Find_BoneNodeData(_int iID);
-	FBoneNodeData* Find_BoneNodeData(const wstring& strBoneNodeKey);
-	void Appoint_SkeletalRootNode(const wstring& strBoneNodeKey);
-	HRESULT Add_BoneNodeData(const wstring& strBoneNodeKey, FBoneNodeData* pNode);
+	FBoneData* Find_BoneData(_int iID);
+	FBoneData* Find_BoneData(const wstring& strBoneNodeKey);
+
+public:
+	HRESULT				Add_BoneData(const wstring& strBoneNodeKey, FBoneData* pNode);
 	vector<_float4x4>	Provide_FinalTransforms(_bool bNoHierarchi = true);
+
+public:
 	// 행렬 웨이트값을 적용하기 위해 행렬값을 더하는 연산을 하는 함수
 	void Add_Transforms(vector<_float4x4>* pVecMatrices) const;
+	// 행렬 웨이트 계산전에 적용하는 청소 함수
 	void Clear_FinalTransforms();
 	
 private:
 	void Calculate_FinalTransforms();
 	void Calculate_FinalTransformsNoHierarchi();
 
-private:
-	// 아마추어 노드도 같이 저장된다.
-	FBoneNodeData*						pSkeletalRootNode = { nullptr };	// 루트 노드를 바로 찾을 수 있게 해놓았다.
-	map<const wstring, FBoneNodeData*>	mapBoneNodeDatas;					// 뼈 이름 검색
-	vector<FBoneNodeData*>				vecBoneNodeIndexes;					// 뼈 인덱싱
 
+public:
+	const wstring&	Get_SkeletalName() { return strName; }
+	const _uint		Get_BoneDatas_Count() const { return Cast<_uint>(vecBoneNodes.size()); }
+
+
+
+public:
+	_int		iID = -1;	// ID
+	wstring		strName;	// 이름
+
+private:
+	map<const wstring, FBoneData*>	mapBoneNodes;		// 뼈 이름 검색
+	vector<FBoneData*>				vecBoneNodes;		// 뼈 인덱스 검색
+	_float4x4						matOffset;			// 기준 행렬
 };
+
+
 
 /// <summary>
 /// 어떤 모델에 대한 그룹
 /// </summary>
-class FBoneGroup final : public CBase
+class FSkeletalGroup final : public CBase
 {
-	DERIVED_CLASS(CBase, FBoneGroup)
+	DERIVED_CLASS(CBase, FSkeletalGroup)
+
 private:
-	explicit FBoneGroup() {}
-	virtual ~FBoneGroup() = default;
+	explicit FSkeletalGroup() = default;
+	explicit FSkeletalGroup(const FSkeletalGroup& rhs) = delete;
+	virtual ~FSkeletalGroup() = default;
 
 public:
-	static FBoneGroup* Create();
+	static FSkeletalGroup* Create();
 	virtual void Free() override;
 
 public:
-	FSkeletalData* Clone_SkeletalData(const wstring& strSkeletalKey);
-	FSkeletalData* Find_SkeletalData(const wstring& strSkeletalKey);
-	FSkeletalData* Create_SkeletalData(const wstring& strSkeletalKey);
-	void Appoint_SkeletalRootNode(const wstring& strSkeletalKey, const wstring& strBoneNodeKey);
+	FSkeletalData*			Create_Skeletal(const wstring& strSkeletalKey);
+	FSkeletalData*			Clone_Skeletal(const wstring& strSkeletalKey);
+	// 스켈레탈 찾기
+	FSkeletalData* const	Find_Skeletal(const _uint iIndex) const;
+	FSkeletalData* const	Find_Skeletal(const wstring& strName) const;
 
-	FBoneNodeData* Find_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey);
-	HRESULT Add_BoneNodeData(const wstring& strSkeletalKey, const wstring& strBoneNodeKey, FBoneNodeData* pNode);
-	_uint Get_Skeletal_Count();
+public:
+	_uint	Get_Skeletal_Count() const { return Cast<_uint>(mapSkeletals.size()); }
 
 private:
-	_unmap<wstring, FSkeletalData*> mapSkeletaDatas;	// 스켈레탈 저장 맵
+	_unmap<wstring, FSkeletalData*> mapSkeletals;	// 스켈레탈 이름 검색
+	vector<FSkeletalData*>			vecSkeletals;	// 스켈레탈 인덱스 검색
+
 };
 
 END

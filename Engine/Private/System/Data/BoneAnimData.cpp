@@ -265,23 +265,23 @@ FBoneAnimData* FBoneAnimData::Create()
 
 void FBoneAnimData::Free()
 {
-	for (auto& Pair : mapNodeAnim)
+	for (auto& Pair : mapAnimNodes)
 		Safe_Release(Pair.second);
-	mapNodeAnim.clear();
+	mapAnimNodes.clear();
 }
 
 const FBoneAnimChannelData* const FBoneAnimData::Find_AnimNodeData(_uint iIndex) const
 {
-	if (iIndex < 0 || iIndex >= vecAnim_BoneIndex.size())
+	if (iIndex < 0 || iIndex >= vecAnimNodes.size())
 		return nullptr;
 
-	return vecAnim_BoneIndex[iIndex];
+	return vecAnimNodes[iIndex];
 }
 
 const FBoneAnimChannelData* const FBoneAnimData::Find_AnimNodeData(const wstring& strNodeKey) const
 {
-	auto iter = mapNodeAnim.find(strNodeKey);
-	if (iter == mapNodeAnim.end())
+	auto iter = mapAnimNodes.find(strNodeKey);
+	if (iter == mapAnimNodes.end())
 		return nullptr;
 
 	return (*iter).second;
@@ -289,31 +289,31 @@ const FBoneAnimChannelData* const FBoneAnimData::Find_AnimNodeData(const wstring
 
 void FBoneAnimData::Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimChannelData* pAnimNodeData)
 {
-	if (pAnimNodeData->iBoneID >= vecAnim_BoneIndex.size())
-		vecAnim_BoneIndex.resize(Cast<_uint>(pAnimNodeData->iBoneID + 1), nullptr);
+	if (pAnimNodeData->iBoneID >= vecAnimNodes.size())
+		vecAnimNodes.resize(Cast<_uint>(pAnimNodeData->iBoneID + 1), nullptr);
 
-	if (vecAnim_BoneIndex[pAnimNodeData->iBoneID] != nullptr)
+	if (vecAnimNodes[pAnimNodeData->iBoneID] != nullptr)
 	{
 		Safe_Release(pAnimNodeData);
 		return;
 	}
 
-	vecAnim_BoneIndex[pAnimNodeData->iBoneID] = pAnimNodeData;
+	vecAnimNodes[pAnimNodeData->iBoneID] = pAnimNodeData;
 
-	auto iter = mapNodeAnim.find(strNodeKey);
-	if (iter != mapNodeAnim.end())
+	auto iter = mapAnimNodes.find(strNodeKey);
+	if (iter != mapAnimNodes.end())
 	{
 		Safe_Release(pAnimNodeData);
 		return;
 	}
 
-	mapNodeAnim.emplace(strNodeKey, pAnimNodeData);
+	mapAnimNodes.emplace(strNodeKey, pAnimNodeData);
 }
 
 _float FBoneAnimData::Calculate_Time(_float fCurTime, _bool bMod) const
 {
-	_float fDuration = Cast<_float>(dfDuration);
-	_float fTickPerSecond = Cast<_float>(dfTickPerSecond);
+	_float fDuration = Cast<_float>(fDuration);
+	_float fTickPerSecond = Cast<_float>(fTickPerSecond);
 	_float fConvCurTime = fCurTime * fTickPerSecond;
 
 	_float fModedTIme = Cast<_float>((bMod) ? fmodf(fConvCurTime, fDuration) : min(fConvCurTime, fDuration));		// 정해진 시간 뒤로 가지 않게 한다.
@@ -339,31 +339,39 @@ FBoneAnimGroup* FBoneAnimGroup::Create()
 
 void FBoneAnimGroup::Free()
 {
-	for (auto& Pair : mapAnimData)
+	for (auto& Pair : mapAnimDatas)
 		Safe_Release(Pair.second);
 
-	mapAnimData.clear();
+	mapAnimDatas.clear();
 }
 
-const FBoneAnimData* const FBoneAnimGroup::Find_AnimData(const wstring& strAnimKey)
+FBoneAnimData* const FBoneAnimGroup::Find_BoneAnim(const _uint iIndex)
 {
-	auto iter = mapAnimData.find(strAnimKey);
-	if (iter == mapAnimData.end())
+	if (iIndex < 0 && iIndex >= vecAnimDatas.size())
+		return nullptr;
+
+	return vecAnimDatas[iIndex];
+}
+
+FBoneAnimData* const FBoneAnimGroup::Find_BoneAnim(const wstring& strAnimKey)
+{
+	auto iter = mapAnimDatas.find(strAnimKey);
+	if (iter == mapAnimDatas.end())
 		return nullptr;
 
 	return (*iter).second;
 }
 
-void FBoneAnimGroup::Add_AnimData(const wstring& strAnimKey, FBoneAnimData* pAnimData)
+void FBoneAnimGroup::Add_BoneAnim(const wstring& strAnimKey, FBoneAnimData* pAnimData)
 {
-	auto iter = mapAnimData.find(strAnimKey);
-	if (iter != mapAnimData.end())
+	auto iter = mapAnimDatas.find(strAnimKey);
+	if (iter != mapAnimDatas.end())
 	{
 		Safe_Release(pAnimData);
 		return;
 	}
 
-	mapAnimData.emplace(strAnimKey, pAnimData);
+	mapAnimDatas.emplace(strAnimKey, pAnimData);
 }
 
 

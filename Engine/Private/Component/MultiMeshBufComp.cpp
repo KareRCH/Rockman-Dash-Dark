@@ -104,7 +104,7 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 		return E_FAIL;
 
 	// 메쉬 얻어오기
-	const FMeshData* pMesh = m_pMeshGroup->Find_MeshData(strMeshKey);
+	const FMeshData* pMesh = m_pMeshGroup->Find_Mesh(strMeshKey);
 	if (!pMesh)
 		return E_FAIL;
 
