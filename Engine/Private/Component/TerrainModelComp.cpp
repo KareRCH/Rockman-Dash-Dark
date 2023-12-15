@@ -1,5 +1,6 @@
 #include "Component/TerrainModelComp.h"
 
+
 CTerrainModelComp::CTerrainModelComp(const CTerrainModelComp& rhs)
     : Base(rhs)
     , m_pEffectComp(rhs.m_pEffectComp)

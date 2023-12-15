@@ -2,6 +2,7 @@
 
 #include "Tool_Define.h"
 #include "ImGuiWin/ImGuiWin.h"
+#include "Component/PipelineComp.h"
 
 BEGIN(Engine)
 class CTerrain;
@@ -9,6 +10,10 @@ END
 
 BEGIN(Tool)
 
+/// <summary>
+/// 실제 게임상의 카메라를 통해 화면을 보여준다.
+/// 피킹을 할 수 있고, 피킹을 하면 속성, 계층 창에 동기화 된다.
+/// </summary>
 class CImGuiWin_Viewer final : public CImGuiWin
 {
 	DERIVED_CLASS(CImGuiWin, CImGuiWin_Viewer)
@@ -74,6 +79,7 @@ private:
 
 
 private:
+	// 마우스로 찍었을 때 어떤 객체를 피킹했는지에 설정한다.
 	void	Mouse_Picking(const _float& fTimeDelta);
 
 private:
@@ -85,16 +91,13 @@ private:
 
 
 	_float			m_fConvertRatio = 1.f;		// 텍스처 복사용
-	
 
-private:
-	HRESULT			Link_GuiTerrain();
+public:
+	// 피킹되었을 때 어떤 객체에 대한 모드는 이를 통해 설정한다.
+	enum class EPickingMode { None, Object, Brush };
+	EPickingMode m_ePickingMode = { EPickingMode::None };
 	
-private:
-	class CImGuiWin_Terrain*	m_pGuiTerrain = { nullptr };	// 연동할 터레인 레이아웃
-	class CTerrain*				m_pTerrain = { nullptr };		// 피킹용 터레인
 	vector<SHADER_VTX_NORM>		m_TerrainVertices;
-	using VERTEX_TYPE = vector<SHADER_VTX_NORM>::value_type;
 
 private:
 	class CToolCamera*			m_pCamera = { nullptr };		// 뷰어용 카메라

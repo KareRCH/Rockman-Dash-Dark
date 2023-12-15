@@ -73,10 +73,10 @@ VPS_INOUT VS_MAIN(VS_INPUT input)
     // 하나라도 값이 들어가 있음
     //if (!all(input.vBoneID))
     {
-        matBoneTransform = g_matBones[input.vBoneID[0]] * input.vWeight[0];
-        matBoneTransform += g_matBones[input.vBoneID[1]] * input.vWeight[1];
-        matBoneTransform += g_matBones[input.vBoneID[2]] * input.vWeight[2];
-        matBoneTransform += g_matBones[input.vBoneID[3]] * input.vWeight[3];
+        //matBoneTransform = g_matBones[input.vBoneID[0]] * input.vWeight[0];
+        //matBoneTransform += g_matBones[input.vBoneID[1]] * input.vWeight[1];
+        //matBoneTransform += g_matBones[input.vBoneID[2]] * input.vWeight[2];
+        //matBoneTransform += g_matBones[input.vBoneID[3]] * input.vWeight[3];
     }
     
     output.vPosition = mul(float4(input.vPosition.xyz, 1.f), mul(matBoneTransform, g_matWorld));

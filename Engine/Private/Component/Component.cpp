@@ -1,7 +1,10 @@
 #include "Component/Component.h"
 
+#include "System/GameInstance.h"
+
 CComponent::CComponent()
 	: m_bClone(true)
+	, m_pGameInst(GI())
 {
 }
 

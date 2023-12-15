@@ -47,6 +47,9 @@ public:
 private:
 	CComponent*			m_pParentComp = { nullptr };		// 이 컴포넌트를 관리하는 컴포넌트
 	vector<CComponent*>	m_pChildrenComp;					// 이 컴포넌트가 관리하는 컴포넌트
+
+private:
+	class CGameInstance* m_pGameInst = { nullptr };
 };
 
 END

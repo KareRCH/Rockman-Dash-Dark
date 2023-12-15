@@ -45,20 +45,35 @@ private:
 private:
 	void		Layout_TerrainCreate(const _float& fTimeDelta);
 	void		Layout_TerrainSetting(const _float& fTimeDelta);
+	void		Layout_TerrainBrush(const _float& fTimeDelta);
 
 	HRESULT		Terrain_SaveFile();
 
 public:
-	GETSET_1(CTerrain*, m_pTerrain, Terrain, GET__C)
+	GETSET_1(CTerrain*, m_pPickedTerrain, Terrain, GET__C)
 
 private:
-	class CTerrain* m_pTerrain = { nullptr };
+	class CTerrain* m_pPickedTerrain = { nullptr };
 
 	_int			m_ivTerrainVertex_CountX = 1025;
 	_int			m_ivTerrainVertex_CountZ = 1025;
 
 	_int			m_ivTerrainMaxWidth = 100;
 
+public:
+	// 편집모드, 생성, 편집, 브러쉬 모드가 있다.
+	enum class EEditMode { Create, Edit, Brush };
+	// 브러시 모드
+	enum class EBrushType { Circle, Rect };
+
+private:
+	EEditMode	m_eEditMode = { EEditMode::Create };
+	EBrushType	m_eBrushType = { EBrushType::Circle };
+
+private:	// 브러쉬 설정값들
+	_float	m_fBrush_Diameter = 3.f;		// 브러쉬 사이즈, 지름 기준
+	_float	m_fBrush_Strength = 1.f;		// 브러쉬 강한 정도
+	
 	
 };
 

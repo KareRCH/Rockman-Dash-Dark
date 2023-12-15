@@ -70,8 +70,6 @@ void CImGuiWin_Viewer::Free()
     m_pSRV.Reset();
     m_pPrevSRV.Reset();
 
-    Safe_Release(m_pGuiTerrain);
-    Safe_Release(m_pTerrain);
     Safe_Release(m_pCamera);
     Safe_Release(m_pPipelineComp);
 }
@@ -324,9 +322,6 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
     if (!m_bMouseOnViewer)
         return;
 
-    if (FAILED(Link_GuiTerrain()))
-        return;
-
     if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
     {
         if (m_pCamera)
@@ -355,7 +350,7 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
         if (bIsPicking_Ready)
         {
             m_TerrainVertices.resize(pModel->Get_VertexCount());
-            pModel->Copy_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size(), sizeof(VERTEX_TYPE));
+            pModel->Copy_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size(), sizeof(SHADER_VTX_NORM));
 
             /*srand(_uint(time(nullptr)));
             for (_uint i = 0; i < m_TerrainVertices.size(); i++)
@@ -424,21 +419,4 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
             _int t = 0;
         }
     }
-}
-
-HRESULT CImGuiWin_Viewer::Link_GuiTerrain()
-{
-    if (m_pGuiTerrain)
-        return S_OK;
-
-    if (!m_pParentWin)
-        return E_FAIL;
-
-    // 부모가 ImGuiWin_Terrain을 가지고 있어야 끝남.
-    if (FAILED(m_pParentWin->Find_Child(&m_pGuiTerrain)))
-        return E_FAIL;
-
-    Safe_AddRef(m_pGuiTerrain);
-
-    return S_OK;
 }
