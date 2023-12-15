@@ -1,6 +1,9 @@
 #pragma once
 
+
 #include "ModelComponent.h"
+
+
 
 #include "Component/TerrainBufferComp.h"
 #include "Component/EffectComponent.h"
@@ -42,6 +45,7 @@ public:
 
 
 #pragma region 터레인 버퍼 컴포넌트
+public:
 	HRESULT Create_Buffer(const FTerrainBufInit_HeightMap tInit);
 	HRESULT Create_Buffer(const FTerrainBufInit_NoHeightMap tInit);
 	// 버퍼 복사
@@ -49,6 +53,8 @@ public:
 	// 버퍼 업데이트
 	void	Update_VBuffer(void* pData, _uint iSize);
 	const size_t Get_VertexCount() const;
+
+	CTerrainBufferComp* Get_TerrainBufferComp() { return m_pTerrainBufferComp; }
 
 private:
 	CTerrainBufferComp* m_pTerrainBufferComp = { nullptr };
@@ -66,7 +72,7 @@ public:
 private:
 	CEffectComponent* m_pEffectComp = { nullptr };
 #pragma endregion
-
+	
 
 #pragma region 텍스처 컴포넌트
 public:
@@ -76,9 +82,11 @@ public:
 
 private:
 	CTextureComponent* m_pTextureComps[TYPE_END] = {nullptr};
+	
 #pragma endregion
-
-
 };
 
+
+
 END
+

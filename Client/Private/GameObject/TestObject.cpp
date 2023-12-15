@@ -106,7 +106,7 @@ HRESULT CTestObject::Render()
     
     m_pModelComp->Set_MaskAnimation(0, L"Idle");
     m_pModelComp->Set_MaskTime(0, m_Gauge.fCur);
-    m_pModelComp->Apply_Pose();
+    //m_pModelComp->Apply_Pose();
     m_pModelComp->Render();
 
     return S_OK;

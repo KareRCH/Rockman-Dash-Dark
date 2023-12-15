@@ -34,13 +34,8 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const string& str
 {
 	Assimp::Importer importer;
 	
-	_uint iFlag;
-	iFlag = aiProcessPreset_TargetRealtime_Fast |
-		aiProcess_LimitBoneWeights |
-		aiProcess_Triangulate |
-		aiProcess_PopulateArmatureData |
-		aiProcess_ConvertToLeftHanded |
-		aiProcess_SortByPType;
+	_uint iFlag = 0;
+	iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
 	//iFlag = aiProcess_JoinIdenticalVertices |   // 동일한 꼭지점 결합, 인덱싱 최적화
 	//	aiProcess_ValidateDataStructure |       // 로더의 출력을 검증
 	//	aiProcess_ImproveCacheLocality |        // 출력 정점의 캐쉬위치를 개선
@@ -174,7 +169,6 @@ void CModelMgr::Load_Mesh(FModelData* pModelData)
 
 #pragma region 뼈
 		// 정점에 대한 뼈정보 로드
-		wstring strSkeletalName = Make_Wstring(pMesh->mBones[0]->mArmature->mName.C_Str());
 		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
 			// 뼈 없으면 넘어감. 이거 걸리면 안되는 거임.
@@ -282,7 +276,7 @@ void CModelMgr::Load_Material(FModelData* pModelData)
 
 			_tchar		szFullPath[MAX_PATH] = TEXT("");
 
-			MultiByteToWideChar(CP_ACP, 0, szTmp, strlen(szTmp), szFullPath, MAX_PATH);
+			MultiByteToWideChar(CP_ACP, 0, szTmp, Cast<_int>(strlen(szTmp)), szFullPath, MAX_PATH);
 
 			// 머터리얼에 데이터 저장
 			pMaterialData->strTexture[j] = szFullPath;
@@ -306,8 +300,8 @@ void CModelMgr::Load_Animation(FModelData* pModelData)
 		// 애님 데이터 생성
 		FBoneAnimData* pAnimData = FBoneAnimData::Create();
 		wstring AnimNameWithTK = Make_Wstring(pAnimAI->mName.C_Str());
-		pAnimData->fDuration = pAnimAI->mDuration;
-		pAnimData->fTickPerSecond = pAnimAI->mTicksPerSecond;
+		pAnimData->fDuration = Cast<_float>(pAnimAI->mDuration);
+		pAnimData->fTickPerSecond = Cast<_float>(pAnimAI->mTicksPerSecond);
 
 		// 애니메이션 이름 추출
 		size_t iTokkenInd = AnimNameWithTK.find_first_of(L'|') + Cast<size_t>(1);
@@ -527,12 +521,10 @@ FMaterialGroup* CModelMgr::Find_MaterialGroup(const EModelGroupIndex eGroupIndex
 
 _float4x4 CModelMgr::ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix)
 {
-	_float4x4	matOffsetTG = _float4x4(
-		matrix.a1, matrix.b1, matrix.c1, matrix.d1,
-		matrix.a2, matrix.b2, matrix.c2, matrix.d2,
-		matrix.a3, matrix.b3, matrix.c3, matrix.d3,
-		matrix.a4, matrix.b4, matrix.c4, matrix.d4
-	);
+	_float4x4	matOffsetTG = {};
+	memcpy(&matOffsetTG, &matrix, sizeof(_float4x4));
+
+	XMStoreFloat4x4(&matOffsetTG, XMMatrixTranspose(XMLoadFloat4x4(&matOffsetTG)));
 
 	return matOffsetTG;
 }

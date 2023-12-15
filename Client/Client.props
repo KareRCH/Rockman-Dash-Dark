@@ -5,6 +5,7 @@
   <PropertyGroup>
     <OutDir>Bin\$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>Intermediate\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <ReferencePath>$(ProjectDir)Public\;$(SolutionDir)Reference\Header\Engine\;$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <PostBuildEvent>

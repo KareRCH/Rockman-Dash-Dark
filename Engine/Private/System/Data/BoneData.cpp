@@ -123,15 +123,12 @@ HRESULT FBoneGroup::Add_BoneData(const wstring& strBoneNodeKey, FBoneData* pNode
 	return S_OK;
 }
 
-vector<_float4x4> FBoneGroup::Provide_FinalTransforms(_bool bNoHierarchi)
+vector<_float4x4> FBoneGroup::Provide_FinalTransforms()
 {
 	vector<_float4x4> vecFinalTransforms;
 	vecFinalTransforms.reserve(vecBones.size());
 
-	if (bNoHierarchi)
-		Calculate_FinalTransforms();
-	else
-		Calculate_FinalTransformsNoHierarchi();
+	Calculate_FinalTransforms();
 
 	for (_uint i = 0; i < vecBones.size(); i++)
 	{
@@ -155,14 +152,6 @@ void FBoneGroup::Apply_Transforms(vector<_float4x4>* pVecMatrices)
 	}
 }
 
-void FBoneGroup::Clear_FinalTransforms()
-{
-	for (_uint i = 0; i < vecBones.size(); i++)
-	{
-		XMStoreFloat4x4(&vecBones[i]->matFinalTransform, {});
-	}
-}
-
 void FBoneGroup::Calculate_FinalTransforms()
 {
 	/*OutputDebugString((strName + L"\n").c_str());
@@ -178,27 +167,11 @@ void FBoneGroup::Calculate_FinalTransforms()
 	{
 		FBoneData* pBone = vecBones[i];
 
-		_matrix matTransform, matFinalTransform, matParentFinalTransform = XMMatrixIdentity();
+		_matrix matTransform, matParentFinalTransform = XMMatrixIdentity();
 		matTransform = XMLoadFloat4x4(&pBone->matTransform);
 		if (pBone->iParentID != -1)
 			matParentFinalTransform = XMLoadFloat4x4(&vecBones[pBone->iParentID]->matFinalTransform);
 
 		XMStoreFloat4x4(&pBone->matFinalTransform, (matTransform * matParentFinalTransform));
-	}
-}
-
-void FBoneGroup::Calculate_FinalTransformsNoHierarchi()
-{
-	_matrix matSkeletalOffset = XMMatrixIdentity();//XMLoadFloat4x4(&matOffset);
-
-	for (_uint i = 0; i < vecBones.size(); i++)
-	{
-		FBoneData* pBone = vecBones[i];
-
-		_matrix matOffsetTransform, matFinalTransform;
-		matOffsetTransform = XMLoadFloat4x4(&pBone->matTransform);
-		matFinalTransform = XMLoadFloat4x4(&pBone->matFinalTransform);
-
-		XMStoreFloat4x4(&pBone->matFinalTransform, (matOffsetTransform * matFinalTransform * matSkeletalOffset));
 	}
 }

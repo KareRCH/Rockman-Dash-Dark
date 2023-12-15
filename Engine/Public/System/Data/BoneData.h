@@ -56,17 +56,14 @@ public:
 
 public:
 	HRESULT				Add_BoneData(const wstring& strBoneNodeKey, FBoneData* pNode);
-	vector<_float4x4>	Provide_FinalTransforms(_bool bNoHierarchi = true);
+	vector<_float4x4>	Provide_FinalTransforms();
 
 public:
 	// 행렬 웨이트값을 적용하기 위해 행렬값을 더하는 연산을 하는 함수
 	void Apply_Transforms(vector<_float4x4>* pVecMatrices);
-	// 행렬 웨이트 계산전에 적용하는 청소 함수
-	void Clear_FinalTransforms();
 
 private:
 	void Calculate_FinalTransforms();
-	void Calculate_FinalTransformsNoHierarchi();
 
 public:
 	const _uint		Get_BoneDatas_Count() const { return Cast<_uint>(vecBones.size()); }

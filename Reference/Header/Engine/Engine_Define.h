@@ -13,7 +13,11 @@
 #undef max
 #endif
 
-
+// 호환성 안좋아서 안써!
+//#include "rttr/rttr_enable.h"
+//#include "rttr/type.h"
+//#include "rttr/registration.h"
+//#include "rttr/registration_friend.h"
 
 // Assimp 라이브러리
 #define AI_LMW_MAX_WEIGHTS 4
@@ -53,6 +57,8 @@
 
 // 루아 라이브러리
 #include <lua.hpp>
+
+
 
 //----------------STD---------------------
 
@@ -115,6 +121,9 @@
 
 #endif
 #endif
+
+// rttr에서 friend 쓸때 사용
+//#define DOXYGEN
 
 // min max 매크로는 호환성 문제로 사용되지 않습니다. ( assimp )
 #ifdef min

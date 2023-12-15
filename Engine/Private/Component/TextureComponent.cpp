@@ -68,14 +68,16 @@ HRESULT CTextureComponent::Bind_Texture(const wstring& strFilePath)
 	// 실패시 이미 있다는 거니 찾는다.
 	if (FAILED(m_pTextureMgr->Load_Texture(strFilePath, false)))
 	{
-		ID3D11ShaderResourceView* pSRV = m_pTextureMgr->Find_SRV(strFilePath);
-
-		// 이거 걸리면 문제 개빡센거임
-		if (nullptr == pSRV)
-			return E_FAIL;
-
-		m_pSRV = pSRV;
+		
 	}
+
+	ID3D11ShaderResourceView* pSRV = m_pTextureMgr->Find_SRV(strFilePath);
+
+	if (nullptr == pSRV)
+		return E_FAIL;
+
+	m_pSRV = pSRV;
+
 
 	return S_OK;
 }

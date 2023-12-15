@@ -19,7 +19,7 @@ void CImGuiWin_Terrain::Tick(const _float& fTimeDelta)
 
 	ImGui::Begin(u8"터레인");
 
-	if (nullptr == m_pTerrain)
+	if (nullptr == m_pPickedTerrain)
 		Layout_TerrainCreate(fTimeDelta);
 	else
 		Layout_TerrainSetting(fTimeDelta);
@@ -55,7 +55,7 @@ void CImGuiWin_Terrain::Free()
 {
 	SUPER::Free();
 
-	Safe_Release(m_pTerrain);
+	Safe_Release(m_pPickedTerrain);
 	Safe_Release(m_pDeviceComp);
 }
 
@@ -124,15 +124,17 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 		&& m_ivTerrainVertex_CountX > 0 && m_ivTerrainVertex_CountZ > 0
 		&& m_ivTerrainMaxWidth > 0)
 	{
-		GI()->Add_GameObject(m_pTerrain = CTerrain::Create());
-		Safe_AddRef(m_pTerrain);
+		GI()->Add_GameObject(m_pPickedTerrain = CTerrain::Create());
+		Safe_AddRef(m_pPickedTerrain);
 
 		CTerrain::FInitTerrain tInit = {};
 		tInit.strHeightMapPath = TEXT("");
 		tInit.iNumVertexCountX = m_ivTerrainVertex_CountX;
 		tInit.iNumVertexCountZ = m_ivTerrainVertex_CountZ;
 		tInit.iMaxWidth = m_ivTerrainMaxWidth;
-		m_pTerrain->Create_Terrain(tInit);
+		m_pPickedTerrain->Create_Terrain(tInit);
+		CTerrainModelComp* pTerrainModel = m_pPickedTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"));
+		pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_1.dds"));
 	}
 }
 
@@ -189,6 +191,7 @@ void CImGuiWin_Terrain::Layout_TerrainSetting(const _float& fTimeDelta)
 	ImGui::PopItemWidth();
 
 
+
 	// 변경 사항을 적용한다.
 	if (bIsChanged)
 	{
@@ -197,7 +200,7 @@ void CImGuiWin_Terrain::Layout_TerrainSetting(const _float& fTimeDelta)
 		tInit.iNumVertexCountX = m_ivTerrainVertex_CountX;
 		tInit.iNumVertexCountZ = m_ivTerrainVertex_CountZ;
 		tInit.iMaxWidth = m_ivTerrainMaxWidth;
-		m_pTerrain->Create_Terrain(tInit);
+		m_pPickedTerrain->Create_Terrain(tInit);
 	}
 
 
@@ -207,9 +210,14 @@ void CImGuiWin_Terrain::Layout_TerrainSetting(const _float& fTimeDelta)
 	}
 }
 
+void CImGuiWin_Terrain::Layout_TerrainBrush(const _float& fTimeDelta)
+{
+
+}
+
 HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 {
-	if (m_pTerrain == nullptr)
+	if (m_pPickedTerrain == nullptr)
 		return E_FAIL;
 
 
