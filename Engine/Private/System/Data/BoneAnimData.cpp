@@ -270,7 +270,7 @@ void FBoneAnimData::Free()
 	mapAnimNodes.clear();
 }
 
-const FBoneAnimChannelData* const FBoneAnimData::Find_AnimNodeData(_uint iIndex) const
+const FBoneAnimChannelData* const FBoneAnimData::Find_AnimChannelData(_uint iIndex) const
 {
 	if (iIndex < 0 || iIndex >= vecAnimNodes.size())
 		return nullptr;
@@ -278,7 +278,7 @@ const FBoneAnimChannelData* const FBoneAnimData::Find_AnimNodeData(_uint iIndex)
 	return vecAnimNodes[iIndex];
 }
 
-const FBoneAnimChannelData* const FBoneAnimData::Find_AnimNodeData(const wstring& strNodeKey) const
+const FBoneAnimChannelData* const FBoneAnimData::Find_AnimChannelData(const wstring& strNodeKey) const
 {
 	auto iter = mapAnimNodes.find(strNodeKey);
 	if (iter == mapAnimNodes.end())
@@ -287,7 +287,7 @@ const FBoneAnimChannelData* const FBoneAnimData::Find_AnimNodeData(const wstring
 	return (*iter).second;
 }
 
-void FBoneAnimData::Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimChannelData* pAnimNodeData)
+void FBoneAnimData::Add_AnimChannelData(const wstring& strNodeKey, FBoneAnimChannelData* pAnimNodeData)
 {
 	if (pAnimNodeData->iBoneID >= vecAnimNodes.size())
 		vecAnimNodes.resize(Cast<_uint>(pAnimNodeData->iBoneID + 1), nullptr);

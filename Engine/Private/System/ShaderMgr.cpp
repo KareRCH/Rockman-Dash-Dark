@@ -172,7 +172,7 @@ const ComPtr<ID3DBlob> CShaderMgr::Get_ShaderByte(const EShaderType eType, const
 
 
 
-HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
+HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro)
 {
 	auto iter = m_mapEffects.find(strFileName);
 	if (iter != m_mapEffects.end())
@@ -188,7 +188,7 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_EL
 #endif
 
 	ComPtr<ID3DX11Effect> pEffect;
-	if (FAILED(hr = D3DX11CompileEffectFromFile((m_strMainPath + strFileName).c_str(), nullptr,
+	if (FAILED(hr = D3DX11CompileEffectFromFile((m_strMainPath + strFileName).c_str(), pShaderMacro,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice.Get(), pEffect.GetAddressOf(), nullptr)))
 		return E_FAIL;
 

@@ -69,9 +69,6 @@ public:
 	// 마스크에 적용되어 있는 값에 따라 각 뼈에 대한 가중치를 계산해낸다.
 	void Apply_FinalMask();
 
-	// 마스크를 통해 결정된 애니메이션에 따라 뼈의 최종 행렬을 계산해준다.
-	void Apply_BoneAnimationWithMask();
-
 private:
 	FModelData*			m_pModelData = { nullptr };		// 모델 데이터, 해당 모델을 바인딩 시켜놓기 위해 해놓는다.
 	FBoneAnimGroup*		m_pAnimGroup = { nullptr };		// 단 하나의 뼈에 대한 애니메이션 정보를 가진다.

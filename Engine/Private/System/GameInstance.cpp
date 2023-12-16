@@ -30,18 +30,9 @@ CGameInstance::CGameInstance()
 {
 }
 
-HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd)
+HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDeviceInit)
 {
 	// 공통되는 시스템을 로드한다.
-	FDEVICE_INIT tDeviceInit;
-	tDeviceInit.hWnd = hWnd;
-	tDeviceInit.bVSync = false;
-	tDeviceInit.bFullScreen = false;
-	tDeviceInit.iScreenWidth = g_iWindowSizeX;
-	tDeviceInit.iScreenHeight = g_iWindowSizeY;
-	tDeviceInit.fScreenDepth = 1000.f;
-	tDeviceInit.fScreenNear = 0.1f;
-
 	FAILED_CHECK_RETURN(Initialize_GraphicDev(tDeviceInit), E_FAIL);
 
 	DX11DEVICE_T tDevice = { Get_GraphicDev().Get(), Get_GraphicContext().Get() };
@@ -251,6 +242,30 @@ HRESULT CGameInstance::Bind_SystemViewport(_uint iIndex)
 		return E_FAIL;
 
 	return m_pGraphicDev->Bind_Viewport(iIndex);
+}
+
+const D3D11_TEXTURE2D_DESC* CGameInstance::Get_RTV_Desc(_uint iIndex)
+{
+	if (nullptr == m_pGraphicDev)
+		return nullptr;
+
+	return m_pGraphicDev->Get_RTV_Desc(iIndex);
+}
+
+void CGameInstance::Set_RTV_Desc(_uint iIndex, D3D11_TEXTURE2D_DESC& Desc)
+{
+	if (nullptr == m_pGraphicDev)
+		return;
+
+	return m_pGraphicDev->Set_RTV_Desc(iIndex, Desc);
+}
+
+HRESULT CGameInstance::Copy_RenderTargetViewToTexture_ByViewport(ComPtr<ID3D11Texture2D>& pTexture, _uint iRenderTargetIndex, _uint iViewportIndex)
+{
+	if (nullptr == m_pGraphicDev)
+		return E_FAIL;
+
+	return m_pGraphicDev->Copy_RenderTargetViewToTexture_ByViewport(pTexture, iRenderTargetIndex, iViewportIndex);
 }
 
 HRESULT CGameInstance::Copy_BackBufferToTexture_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex)
@@ -836,12 +851,20 @@ HRESULT CGameInstance::Add_GameObject(CGameObject* pObj)
 	return m_pObjectMgr->Add_GameObject(pObj);
 }
 
-CGameObject* CGameInstance::Find_GameObject(_uint iFindID)
+CGameObject* CGameInstance::Find_GameObjectByID(_uint iFindID)
 {
 	if (nullptr == m_pObjectMgr)
 		return nullptr;
 
-	return m_pObjectMgr->Find_GameObject(iFindID);
+	return m_pObjectMgr->Find_GameObjectByID(iFindID);
+}
+
+CGameObject* CGameInstance::Find_GameObjectByIndex(_uint iIndex)
+{
+	if (nullptr == m_pObjectMgr)
+		return nullptr;
+
+	return m_pObjectMgr->Find_GameObjectByIndex(iIndex);
 }
 
 void CGameInstance::Clear_GameObject(const wstring& strLayerTag)
@@ -1181,12 +1204,13 @@ const ComPtr<ID3DBlob> CGameInstance::Get_ShaderByte(const EShaderType eType, co
 
 
 
-HRESULT CGameInstance::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
+HRESULT CGameInstance::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements
+	, D3D_SHADER_MACRO* pShaderMacro)
 {
 	if (nullptr == m_pShaderMgr)
 		return E_FAIL;
 
-	return m_pShaderMgr->Load_Effect(strFileName, pElements, iNumElements);
+	return m_pShaderMgr->Load_Effect(strFileName, pElements, iNumElements, pShaderMacro);
 }
 
 ID3DX11Effect* CGameInstance::Find_Effect(const wstring& strEffectFileName) const

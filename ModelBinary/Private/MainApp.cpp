@@ -25,7 +25,18 @@ CMainApp* CMainApp::Create()
 
 HRESULT CMainApp::Initialize()
 {
-	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(g_hInst, g_hWnd), E_FAIL);
+	// 장치 초기화에 쓰이는 구조체
+	FDEVICE_INIT tDeviceInit = {};
+	tDeviceInit.hWnd = g_hWnd;
+	tDeviceInit.bVSync = false;
+	tDeviceInit.bFullScreen = false;
+	tDeviceInit.iScreenWidth = g_iWindowSizeX;
+	tDeviceInit.iScreenHeight = g_iWindowSizeY;
+	tDeviceInit.fScreenDepth = 1000.f;
+	tDeviceInit.fScreenNear = 0.1f;
+	tDeviceInit.iRenderTargetCount = 2;
+
+	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(g_hInst, g_hWnd, tDeviceInit), E_FAIL);
 
 	DX11DEVICE_T tDevice = { m_pGI->Get_GraphicDev(), m_pGI->Get_GraphicContext() };
 

@@ -5,14 +5,17 @@
 #include "ImGuiWin/ImGuiWin.h"
 #include "Component/D3D11DeviceComp.h"
 
+#include "Utility/DelegateTemplate.h"
+
 BEGIN(Engine)
-
 class CTerrain;
-
 END
 
 BEGIN(Tool)
 
+/// <summary>
+/// 터레인을 생성, 수정, 높이, 브러쉬를 통해 수정을 가할 수 있는 클래스
+/// </summary>
 class CImGuiWin_Terrain : public CImGuiWin
 {
 	DERIVED_CLASS(CImGuiWin, CImGuiWin_Terrain)
@@ -44,8 +47,9 @@ private:
 
 private:
 	void		Layout_TerrainCreate(const _float& fTimeDelta);
-	void		Layout_TerrainSetting(const _float& fTimeDelta);
+	void		Layout_TerrainEdit(const _float& fTimeDelta);
 	void		Layout_TerrainBrush(const _float& fTimeDelta);
+	void		Layout_TerrainHeight(const _float& fTimeDelta);
 
 	HRESULT		Terrain_SaveFile();
 
@@ -61,12 +65,16 @@ private:
 	_int			m_ivTerrainMaxWidth = 100;
 
 public:
+	_bool IsCanEdit_Terrain() { return (m_bIsEditing && nullptr != m_pPickedTerrain); }
+
+public:
 	// 편집모드, 생성, 편집, 브러쉬 모드가 있다.
-	enum class EEditMode { Create, Edit, Brush };
+	enum class EEditMode { Create, Edit, Brush, Height };
 	// 브러시 모드
 	enum class EBrushType { Circle, Rect };
 
 private:
+	_bool		m_bIsEditing = { false };
 	EEditMode	m_eEditMode = { EEditMode::Create };
 	EBrushType	m_eBrushType = { EBrushType::Circle };
 

@@ -19,10 +19,53 @@ void CImGuiWin_Terrain::Tick(const _float& fTimeDelta)
 
 	ImGui::Begin(u8"터레인");
 
-	if (nullptr == m_pPickedTerrain)
+	if (ImGui::BeginTabBar(u8"터레인 모드"))
+	{
+		if (ImGui::BeginTabItem(u8"생성"))
+		{
+			m_eEditMode = EEditMode::Create;
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem(u8"편집"))
+		{
+			m_eEditMode = EEditMode::Edit;
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem(u8"브러쉬"))
+		{
+			m_eEditMode = EEditMode::Brush;
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem(u8"높이"))
+		{
+			m_eEditMode = EEditMode::Brush;
+
+			ImGui::EndTabItem();
+		}
+	}ImGui::EndTabBar();
+
+	switch (m_eEditMode)
+	{
+	case EEditMode::Create:
 		Layout_TerrainCreate(fTimeDelta);
-	else
-		Layout_TerrainSetting(fTimeDelta);
+		break;
+	case EEditMode::Edit:
+		Layout_TerrainEdit(fTimeDelta);
+		break;
+	case EEditMode::Brush:
+		Layout_TerrainBrush(fTimeDelta);
+		break;
+	case EEditMode::Height:
+		Layout_TerrainHeight(fTimeDelta);
+		break;
+	}
+		
 
 	SUPER::Tick(fTimeDelta);
 
@@ -62,7 +105,6 @@ void CImGuiWin_Terrain::Free()
 void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 {
 	// 생성 레이아웃을 다룸
-
 	_bool	bCreate = false;
 
 	ImGui::Text(u8"정점 개수");
@@ -80,12 +122,12 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 
 	ImGui::SameLine();
 
-	ImGui::Button(u8"Y##Terrrain VertexY Button");
+	ImGui::Button(u8"Z##Terrrain VertexY Button");
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
 	ImGui::SameLine();
 	ImGui::PopStyleVar();
 	ImGui::PushItemWidth(80.f);
-	if (ImGui::InputInt(u8"##Terrain VertexY", &m_ivTerrainVertex_CountZ, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
+	if (ImGui::InputInt(u8"##Terrain VertexZ", &m_ivTerrainVertex_CountZ, 0, 0, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 
 	}
@@ -124,23 +166,30 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 		&& m_ivTerrainVertex_CountX > 0 && m_ivTerrainVertex_CountZ > 0
 		&& m_ivTerrainMaxWidth > 0)
 	{
-		GI()->Add_GameObject(m_pPickedTerrain = CTerrain::Create());
-		Safe_AddRef(m_pPickedTerrain);
-
 		CTerrain::FInitTerrain tInit = {};
 		tInit.strHeightMapPath = TEXT("");
 		tInit.iNumVertexCountX = m_ivTerrainVertex_CountX;
 		tInit.iNumVertexCountZ = m_ivTerrainVertex_CountZ;
 		tInit.iMaxWidth = m_ivTerrainMaxWidth;
-		m_pPickedTerrain->Create_Terrain(tInit);
+		tInit.pShaderMacro = SHADER_MACRO_TOOL::Desc;
+
+		GI()->Add_GameObject(m_pPickedTerrain = CTerrain::Create(tInit));
+		Safe_AddRef(m_pPickedTerrain);
+
+		// 텍스처를 바인딩
 		CTerrainModelComp* pTerrainModel = m_pPickedTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"));
 		pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_1.dds"));
 	}
 }
 
-void CImGuiWin_Terrain::Layout_TerrainSetting(const _float& fTimeDelta)
+void CImGuiWin_Terrain::Layout_TerrainEdit(const _float& fTimeDelta)
 {
 	// 만들어진 터레인이 있을 때 수정하는 코드이다.
+	if (nullptr == m_pPickedTerrain)
+	{
+		ImGui::Text(u8"선택된 터레인이 없습니다.");
+		return;
+	}
 
 	_bool	bIsChanged = false;
 
@@ -212,6 +261,51 @@ void CImGuiWin_Terrain::Layout_TerrainSetting(const _float& fTimeDelta)
 
 void CImGuiWin_Terrain::Layout_TerrainBrush(const _float& fTimeDelta)
 {
+	// 선택된 터레인이 있을 때 버튼을 눌러 편집 모드로 들어갈 수 있음.
+	if (nullptr != m_pPickedTerrain)
+	{
+		if (!m_bIsEditing)
+		{
+			ImGui::Text(u8"버튼을 눌러 터레인을 수정");
+			if (ImGui::Button(u8"터레인 수정"))
+			{
+				m_bIsEditing = true;
+			}
+			return;
+		}
+	}
+
+	// 만들어진 터레인이 있을 때 수정하는 코드이다.
+	if (false == IsCanEdit_Terrain())
+	{
+		ImGui::Text(u8"선택된 터레인이 없습니다.");
+		return;
+	}
+
+}
+
+void CImGuiWin_Terrain::Layout_TerrainHeight(const _float& fTimeDelta)
+{
+	// 선택된 터레인이 있을 때 버튼을 눌러 편집 모드로 들어갈 수 있음.
+	if (nullptr != m_pPickedTerrain)
+	{
+		if (!m_bIsEditing)
+		{
+			ImGui::Text(u8"버튼을 눌러 터레인을 수정");
+			if (ImGui::Button(u8"터레인 수정"))
+			{
+				m_bIsEditing = true;
+			}
+			return;
+		}
+	}
+
+	// 만들어진 터레인이 있을 때 수정하는 코드이다.
+	if (false == IsCanEdit_Terrain())
+	{
+		ImGui::Text(u8"선택된 터레인이 없습니다.");
+		return;
+	}
 
 }
 

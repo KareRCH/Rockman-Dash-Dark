@@ -63,7 +63,7 @@ void CEffectComponent::Free()
     Safe_Release(m_pShaderMgr);
 }
 
-HRESULT CEffectComponent::Bind_Effect(const wstring& strEffectFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
+HRESULT CEffectComponent::Bind_Effect(const wstring& strEffectFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro)
 {
     // 셰이더 매니저에 의존성이 있음, 항상 전역적으로 다룸
     if (FAILED(Link_ShaderMgr()))
@@ -77,8 +77,11 @@ HRESULT CEffectComponent::Bind_Effect(const wstring& strEffectFileName, const D3
     if (!pEffectData)
     {
         // 없으면 로드 시키고, 그래도 실패하면 파일 못 찾는거임.
-        if (FAILED(m_pShaderMgr->Load_Effect(strEffectFileName, pElements, iNumElements)))
+        if (FAILED(m_pShaderMgr->Load_Effect(strEffectFileName, pElements, iNumElements, pShaderMacro)))
             return E_FAIL;
+
+        // 로드성공시 다시 찾아온다.
+        pEffectData = m_pShaderMgr->Find_EffectData(strEffectFileName);
     }
 
     m_pEffectData = pEffectData;

@@ -92,6 +92,11 @@ void CTestObject::Tick(const _float& fTimeDelta)
 
     if (m_Gauge.Increase(fTimeDelta))
         m_Gauge.Reset();
+
+    m_pModelComp->Set_MaskAnimation(0, L"Idle");
+    m_pModelComp->Set_MaskTime(0, m_Gauge.fCur);
+    m_pModelComp->Apply_Pose();
+    m_pModelComp->Invalidate_BoneTransforms();
 }
 
 void CTestObject::Late_Tick(const _float& fTimeDelta)
@@ -102,11 +107,7 @@ void CTestObject::Late_Tick(const _float& fTimeDelta)
 HRESULT CTestObject::Render()
 {
     SUPER::Render();
-
     
-    m_pModelComp->Set_MaskAnimation(0, L"Idle");
-    m_pModelComp->Set_MaskTime(0, m_Gauge.fCur);
-    //m_pModelComp->Apply_Pose();
     m_pModelComp->Render();
 
     return S_OK;

@@ -19,6 +19,18 @@ HRESULT CTerrain::Initialize_Prototype()
     return S_OK;
 }
 
+HRESULT CTerrain::Initialize_Prototype(const FInitTerrain& tInit)
+{
+    FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+    FAILED_CHECK_RETURN(Initialize_Component(tInit), E_FAIL);
+
+    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
+    TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
+    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
+
+    return S_OK;
+}
+
 HRESULT CTerrain::Initialize(void* Arg)
 {
     FInitTerrain tInit = {};
@@ -67,8 +79,19 @@ CTerrain* CTerrain::Create()
     {
         MSG_BOX("Terrain Create Failed");
         Safe_Release(pInstance);
+    }
 
-        return nullptr;
+    return pInstance;
+}
+
+CTerrain* CTerrain::Create(const FInitTerrain& tInit)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize_Prototype(tInit)))
+    {
+        MSG_BOX("Terrain Create Failed");
+        Safe_Release(pInstance);
     }
 
     return pInstance;
@@ -104,8 +127,28 @@ HRESULT CTerrain::Initialize_Component()
 
 HRESULT CTerrain::Initialize_Component(const FInitTerrain& tInit)
 {
-
+    FAILED_CHECK_RETURN(Add_Component(L"TerrainModelComp", m_pTerrainModelComp = CTerrainModelComp::Create()), E_FAIL);
+    // 셰이더 매크로 정의를 확인함.
+    m_pTerrainModelComp->Bind_Effect(TEXT("Runtime/FX_Terrain.hlsl"), SHADER_VTX_NORM::InputLayout, SHADER_VTX_NORM::iMaxIndex, tInit.pShaderMacro);
     
+    // 헤이트맵 없이 초기화
+    if (tInit.strHeightMapPath.empty())
+    {
+        FTerrainBufInit_NoHeightMap tBufInit = {};
+        tBufInit.iNumVertexX = tInit.iNumVertexCountX;
+        tBufInit.iNumVertexZ = tInit.iNumVertexCountZ;
+        tBufInit.iMaxWidth = tInit.iMaxWidth;
+        m_pTerrainModelComp->Create_Buffer(tBufInit);
+    }
+    // 헤이트맵 가지고 초기화
+    else
+    {
+        FTerrainBufInit_HeightMap tBufInit = {};
+        tBufInit.strHeightMapFilePath = tInit.strHeightMapPath;
+        tBufInit.iMaxWidth = tInit.iMaxWidth;
+        m_pTerrainModelComp->Create_Buffer(tBufInit);
+    }
+
     return S_OK;
 }
 

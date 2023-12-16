@@ -129,6 +129,7 @@
     <PostBuildEvent />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
@@ -146,6 +147,7 @@
     <PostBuildEvent />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -167,6 +169,7 @@
     <PostBuildEvent />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -185,6 +188,7 @@
     <PostBuildEvent />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">
@@ -202,6 +206,7 @@
     <PostBuildEvent />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -223,6 +228,7 @@
     <PostBuildEvent />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -236,6 +242,7 @@
     <ClInclude Include="Public\Component\TerrainModelComp.h" />
     <ClInclude Include="Public\System\Data\MaterialData.h" />
     <ClInclude Include="Public\System\Data\ModelData.h" />
+    <ClInclude Include="Public\Utility\DelegateTemplate.h" />
     <ClInclude Include="Public\Utility\LogicDeviceBasic.h" />
     <ClInclude Include="Public\Base.h" />
     <ClInclude Include="Public\BaseClass\CloudStation.h" />

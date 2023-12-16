@@ -4,11 +4,16 @@
 #include "ImGuiWin/ImGuiWin.h"
 #include "Component/PipelineComp.h"
 
+#include "Utility/DelegateTemplate.h"
+
 BEGIN(Engine)
 class CTerrain;
 END
 
 BEGIN(Tool)
+
+typedef FastDelegate1<CGameObject*> PickedObjectDelegate;
+typedef BroadcastDelegate<PickedObjectDelegate, CGameObject*> BroadPickedObjectDelegate;
 
 /// <summary>
 /// 실제 게임상의 카메라를 통해 화면을 보여준다.
@@ -19,7 +24,7 @@ class CImGuiWin_Viewer final : public CImGuiWin
 	DERIVED_CLASS(CImGuiWin, CImGuiWin_Viewer)
 
 protected:
-	explicit CImGuiWin_Viewer() = default;
+	explicit CImGuiWin_Viewer();
 	explicit CImGuiWin_Viewer(const CImGuiWin_Viewer& rhs) = default;
 	virtual ~CImGuiWin_Viewer() = default;
 
@@ -33,6 +38,10 @@ public:
 
 private:
 	virtual void	Free() override;
+
+
+private:
+	class CGameInstance* m_pGI = { nullptr };
 
 #pragma region 캠뷰 컴포넌트
 protected:
@@ -101,6 +110,25 @@ public:
 
 private:
 	class CToolCamera*			m_pCamera = { nullptr };		// 뷰어용 카메라
+
+
+private:
+	BroadPickedObjectDelegate	OnObjectPicked;		// 피킹 델리게이트
+
+private:
+	void Test(CGameObject* pObj)
+	{
+		if (pObj == nullptr)
+			OutputDebugString(L"테스트\n");
+		else
+		{
+			wstringstream ss;
+			ss << pObj->Get_ID();
+			wstring strTest;
+			strTest = ss.str();
+			OutputDebugString(strTest.c_str());
+		}
+	}
 
 };
 

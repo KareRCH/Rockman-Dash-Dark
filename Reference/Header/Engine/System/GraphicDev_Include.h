@@ -6,7 +6,7 @@
 
 BEGIN(Engine)
 
-const _uint MaxRenderTarget = 2;
+const _uint MaxRenderTarget = 8;
 
 struct FRenderTarget_Desc
 {

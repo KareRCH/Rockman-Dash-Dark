@@ -19,10 +19,11 @@ public:
 		// 구조체기는 하지만 using에 등록 하기만 하는거라 상관 없음
 		DERIVED_CLASS(FInitGameObjectBase, FInitTerrain)
 
-		wstring	strHeightMapPath;	// 헤이트맵 정보가 담긴 파일 위치
-		_uint	iNumVertexCountX;	// 버텍스 X 개수
-		_uint	iNumVertexCountZ;	// 버텍스 Z 개수
-		_uint	iMaxWidth;			// 너비, 정점의 개수가 많은 것 기준으로 간격이 조정된다.
+		wstring	strHeightMapPath;		// 헤이트맵 정보가 담긴 파일 위치
+		_uint	iNumVertexCountX;		// 버텍스 X 개수
+		_uint	iNumVertexCountZ;		// 버텍스 Z 개수
+		_uint	iMaxWidth;				// 너비, 정점의 개수가 많은 것 기준으로 간격이 조정된다.
+		const D3D_SHADER_MACRO* pShaderMacro;	// 셰이더 매크로 설정, Tool처럼 특수한 경우에 전처리를 넣어주기 위해서 쓰인다.
 	};
 
 protected:
@@ -32,6 +33,7 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(const FInitTerrain& tInit);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual void	Tick(const _float& fTimeDelta) override;
@@ -40,6 +42,7 @@ public:
 
 public:
 	static CTerrain* Create();
+	static CTerrain* Create(const FInitTerrain& tInit);
 	virtual CGameObject* Clone(void* Arg = nullptr) override;
 
 protected:

@@ -66,6 +66,7 @@ public:
 	HRESULT Unbind_Mesh(const wstring& strMeshKey);
 	// 바인딩 된 메시들을 모두 언바인드 한다.
 	void	Unbind_AllMeshes();
+	
 
 private:
 	CMultiMeshBufComp* m_pMultiMeshBufComp = { nullptr };
@@ -79,6 +80,7 @@ private:
 public:		// 외부 설정용
 	// 뼈를 등록한다. 스켈레탈과 애니메이션에 쓰인다.
 	HRESULT Bind_Skeletal(const wstring& strSkeletalKey);
+	void Invalidate_BoneTransforms();
 
 public:
 	virtual CSkeletalComponent* SkeletalComp() override { return m_pSkeletalComp; }

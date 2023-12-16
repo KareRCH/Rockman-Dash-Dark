@@ -37,7 +37,7 @@ private:
 	virtual ~CGameInstance() = default;
 
 public:
-	HRESULT Initialize(HINSTANCE hInst, HWND hWnd);
+	HRESULT Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDeviceInit);
 
 private:
 	virtual void Free() override;
@@ -66,6 +66,10 @@ public:		// 그래픽 디바이스
 	HRESULT							Bind_SystemViewport();
 	HRESULT							Bind_SystemViewport(_uint iIndex);
 
+	const D3D11_TEXTURE2D_DESC*		Get_RTV_Desc(_uint iIndex);
+	void							Set_RTV_Desc(_uint iIndex, D3D11_TEXTURE2D_DESC& Desc);
+
+	HRESULT							Copy_RenderTargetViewToTexture_ByViewport(ComPtr<ID3D11Texture2D>& pTexture, _uint iRenderTargetIndex, _uint iViewportIndex);
 	HRESULT							Copy_BackBufferToTexture_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex);
 	HRESULT							Copy_BackBufferToTexture_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, const D3D11_VIEWPORT Viewport);
 	const _float					ResolutionRatio();
@@ -191,7 +195,8 @@ public:		// 매니지먼트
 	void				Clear_PrototypeObejcts(const wstring& strContainTag);
 
 	HRESULT				Add_GameObject(class CGameObject* pObj);
-	class CGameObject*	Find_GameObject(_uint iFindID);
+	class CGameObject*	Find_GameObjectByID(_uint iFindID);
+	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);
 	void				Clear_GameObject(const wstring& strLayerTag);
 #pragma endregion
 
@@ -270,7 +275,7 @@ public:		// 셰이더 매니저
 	const ComPtr<ID3DBlob>			Get_ShaderByte(const EShaderType eType, const wstring& strKey);
 	template<EShaderType Type>
 	inline ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strKey);
-	HRESULT							Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
+	HRESULT							Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, D3D_SHADER_MACRO* pShaderMacro = nullptr);
 	ID3DX11Effect*					Find_Effect(const wstring& strEffectFileName) const;
 	class FEffectData*				Find_EffectData(const wstring& strEffectFileName) const;
 

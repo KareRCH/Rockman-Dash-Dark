@@ -77,9 +77,9 @@ public:
 	virtual void Free() override;
 
 public:
-	const FBoneAnimChannelData* const Find_AnimNodeData(_uint iIndex) const;
-	const FBoneAnimChannelData* const Find_AnimNodeData(const wstring& strNodeKey) const;
-	void Add_AnimNodeData(const wstring& strNodeKey, FBoneAnimChannelData* pAnimNodeData);
+	const FBoneAnimChannelData* const Find_AnimChannelData(_uint iIndex) const;
+	const FBoneAnimChannelData* const Find_AnimChannelData(const wstring& strNodeKey) const;
+	void Add_AnimChannelData(const wstring& strNodeKey, FBoneAnimChannelData* pAnimNodeData);
 
 public:
 	// 시간 변화율로 애니메이션 타임라인의 현재 시간을 구해주는 함수, Mod를 켜면 반복됨

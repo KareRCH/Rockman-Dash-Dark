@@ -8,7 +8,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\Public\;$(SolutionDir)Reference\Header\FMod\core\;$(SolutionDir)Reference\Header\FMod\fsbank\;$(SolutionDir)Reference\Header\FMod\studio\;$(SolutionDir)Reference\Header\RapidJson\;$(SolutionDir)Reference\Header\Assimp\;$(SolutionDir)Reference\Header\BulletPhysics\;$(SolutionDir)Reference\Header\DirectXTK\;$(SolutionDir)Reference\Header\DirectXTex\;$(SolutionDir)Reference\Header\ImGui\;$(SolutionDir)Reference\Header\Rttr\;$(SolutionDir)Reference\Header\SrDelegates\;$(SolutionDir)Reference\Header\BrainTree\;$(SolutionDir)Reference\Header\Lua5.1\;$(SolutionDir)Reference\Header\FX11\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Public\;$(SolutionDir)Reference\Header\FMod\core\;$(SolutionDir)Reference\Header\FMod\fsbank\;$(SolutionDir)Reference\Header\FMod\studio\;$(SolutionDir)Reference\Header\RapidJson\;$(SolutionDir)Reference\Header\Assimp\;$(SolutionDir)Reference\Header\BulletPhysics\;$(SolutionDir)Reference\Header\DirectXTK\;$(SolutionDir)Reference\Header\DirectXTex\;$(SolutionDir)Reference\Header\ImGui\;$(SolutionDir)Reference\Header\Rttr\;$(SolutionDir)Reference\Header\FastDelegates\;$(SolutionDir)Reference\Header\SrDelegates\;$(SolutionDir)Reference\Header\BrainTree\;$(SolutionDir)Reference\Header\Lua5.1\;$(SolutionDir)Reference\Header\FX11\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

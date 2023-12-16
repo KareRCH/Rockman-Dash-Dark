@@ -2,6 +2,7 @@
 
 #include "System/ModelMgr.h"
 #include "System/GameInstance.h"
+#include "System/Data/BoneData.h"
 
 CSkeletalComponent::CSkeletalComponent(const CSkeletalComponent& rhs)
     : Base(rhs)
@@ -80,10 +81,15 @@ HRESULT CSkeletalComponent::Load_Skeletal(const wstring& strSkeletalKey)
     return S_OK;
 }
 
-vector<_float4x4> CSkeletalComponent::Get_FinalTransforms()
+FBoneGroup* CSkeletalComponent::Get_BoneGroup()
+{
+    return m_pBoneDatas;
+}
+
+void CSkeletalComponent::Invalidate_BoneTransforms()
 {
     if (!m_pBoneDatas)
-        return vector<_float4x4>();
+        return;
 
-    return m_pBoneDatas->Provide_FinalTransforms();
+    m_pBoneDatas->Invalidate_FinalTransforms();
 }
