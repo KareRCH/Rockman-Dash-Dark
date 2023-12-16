@@ -119,8 +119,6 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
 
     if (FAILED(Transform().Bind_EffectMatrix(m_pEffectComp, "g_WorldMatrix")))
         return E_FAIL;
-    /*if (FAILED(m_pEffectComp->Bind_Matrix("g_WorldMatrix", &Transform().Get_TransformFloat4x4())))
-        return E_FAIL;*/
     if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
@@ -130,6 +128,9 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
     if (FAILED(m_pTextureComps[TYPE_MASK]->Bind_SRV(m_pEffectComp, "g_MaskTexture")))
         return E_FAIL;
     if (FAILED(m_pTextureComps[TYPE_BRUSH]->Bind_SRV(m_pEffectComp, "g_BrushTexture")))
+        return E_FAIL;
+    // 클라이언트에서 하면 안될거임. 셰이더 코드에서 TOOL이 정의 되어있지 않으면 사용 못함.
+    if (FAILED(m_pEffectComp->Bind_RawValue("g_iObjectID", &Get_OwnerObject()->Get_ID(), sizeof(_int))))
         return E_FAIL;
 
     return S_OK;
@@ -176,12 +177,12 @@ const size_t CTerrainModelComp::Get_VertexCount() const
 }
 
 
-HRESULT CTerrainModelComp::Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
+HRESULT CTerrainModelComp::Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro)
 {
     if (!m_pEffectComp)
         return E_FAIL;
 
-    return m_pEffectComp->Bind_Effect(strEffectKey, pElements, iNumElements);
+    return m_pEffectComp->Bind_Effect(strEffectKey, pElements, iNumElements, pShaderMacro);
 }
 
 HRESULT CTerrainModelComp::Unbind_Effect()

@@ -9,6 +9,7 @@ BEGIN(Engine)
 
 class FModelData;
 class FMeshGroup;
+class FBoneGroup;
 
 struct FMeshBuffer
 {
@@ -58,6 +59,9 @@ public:
 	HRESULT Unbind_Mesh(const wstring& strMeshKey);
 	// 모든 등록 메쉬 언바인드
 	void Unbind_AllMeshes();
+
+	// 메쉬에 대한 행렬과 계산이 끝난 뼈의 행렬을 셰이더에 바인딩 해준다.
+	HRESULT Bind_MeshOffsetsToEffect(class CEffectComponent* pEffect, const _char* pConstantName, _uint iMeshIndex,  const FBoneGroup& pBoneGroup);
 
 	_uint	Get_MeshesCounts() { return Cast<_uint>(m_vecMeshes.size()); }
 	_float4x4	Get_MeshTransform(_uint iIndex) { return *m_vecMeshes[iIndex].matTransform; }

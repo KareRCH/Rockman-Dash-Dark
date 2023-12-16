@@ -135,7 +135,7 @@ HRESULT CObjectMgr::Add_GameObject(CGameObject* pObj)
 	return S_OK;
 }
 
-CGameObject* CObjectMgr::Find_GameObject(_uint iFindID)
+CGameObject* CObjectMgr::Find_GameObjectByID(_uint iFindID)
 {
 	_uint iMaxIndex = Cast<_uint>(m_vecGameObjects.size() - 1);
 	_uint iMinID = m_vecGameObjects.front()->Get_ID();
@@ -149,7 +149,7 @@ CGameObject* CObjectMgr::Find_GameObject(_uint iFindID)
 
 	auto iter = m_vecGameObjects.begin() + iPivotIndex;
 
-	_uint iPrevIndex = iPivotIndex;
+	_int iPrevIndex = -1;
 	while (true)
 	{
 		// 정리가 안된 상태면 끝낸다.
@@ -181,6 +181,14 @@ CGameObject* CObjectMgr::Find_GameObject(_uint iFindID)
 	}
 
 	return nullptr;
+}
+
+CGameObject* CObjectMgr::Find_GameObjectByIndex(_uint iIndex)
+{
+	if (iIndex < 0 || iIndex >= m_vecGameObjects.size())
+		return nullptr;
+
+	return m_vecGameObjects[iIndex];
 }
 
 void CObjectMgr::Clear_GameObject(const wstring& strLayerTag)

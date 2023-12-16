@@ -32,6 +32,8 @@ sampler DefaultSampler = sampler_state
     Filter = MIN_MAG_MIP_LINEAR;
 };
 
+int g_iObjectID = -1;
+
 
 //-------------------------------------------------
 
@@ -59,6 +61,8 @@ struct PS_OUTPUT
     float4 vNormal : SV_TARGET1;
 };
 
+
+
 //-------------------------------------------------
 
 VPS_INOUT VS_MAIN(VS_INPUT input)
@@ -73,10 +77,10 @@ VPS_INOUT VS_MAIN(VS_INPUT input)
     // 하나라도 값이 들어가 있음
     //if (!all(input.vBoneID))
     {
-        //matBoneTransform = g_matBones[input.vBoneID[0]] * input.vWeight[0];
-        //matBoneTransform += g_matBones[input.vBoneID[1]] * input.vWeight[1];
-        //matBoneTransform += g_matBones[input.vBoneID[2]] * input.vWeight[2];
-        //matBoneTransform += g_matBones[input.vBoneID[3]] * input.vWeight[3];
+        matBoneTransform = g_matBones[input.vBoneID[0]] * input.vWeight[0];
+        matBoneTransform += g_matBones[input.vBoneID[1]] * input.vWeight[1];
+        matBoneTransform += g_matBones[input.vBoneID[2]] * input.vWeight[2];
+        matBoneTransform += g_matBones[input.vBoneID[3]] * input.vWeight[3];
     }
     
     output.vPosition = mul(float4(input.vPosition.xyz, 1.f), mul(matBoneTransform, g_matWorld));
@@ -141,10 +145,75 @@ PS_OUTPUT PS_MAIN(VPS_INOUT input)
     return output;
 }
 
+// ----------------------- 툴 전용 --------------------------------
+
+
+
+#ifdef TOOL
+struct PS_OUTPUT_TOOL
+{
+    float4 vColor : SV_TARGET0;
+    float4 vPosAndID : SV_TARGET1;
+};
+
+PS_OUTPUT_TOOL PS_MAIN_TOOL(VPS_INOUT input)
+{
+    PS_OUTPUT_TOOL output = (PS_OUTPUT_TOOL)0;
+    
+    // 베이스 컬러 세팅
+    float4 textureColor = g_texDiffuse.Sample(DefaultSampler, input.vTexCoord);
+    
+    // 기본 값을 환경광으로 설정
+    float4 color = g_colAmbient;
+    
+    // 정반사 값을 초기화한다.
+    float4 specular = float4(0.f, 0.f, 0.f, 0.f);
+    
+    // 계산을 위해 빛 벡터 방향전환
+    float3 lightDir = -normalize(g_vLightDir);
+    
+    // 이 픽셀의 빛의 양을 계산합니다.
+    float lightIntensity = saturate(dot(input.vNormal, lightDir));
+    
+    // 빛이 노멀에 대해 비추고 있음을 이야기 하는 조건문임
+    if (lightIntensity > 0.f)
+    {
+        color += (g_colDiffuse * lightIntensity);
+        
+        color = saturate(color);
+        
+        float3 reflection = normalize(2 * lightIntensity * input.vNormal - lightDir);
+        
+        specular = pow(saturate(dot(reflection, input.vViewDirection)), g_fSpecularPower);
+    }
+    
+    color = color * textureColor;
+    
+    output.vColor = saturate(color + specular);
+    // 야매긴한데 툴 피킹은 오브젝트 ID를 렌더타겟에 저장한다. 위치값도 같이 전달한다.
+    output.vPosAndID = float4(input.vPosition.xyz, float(g_iObjectID));
+    
+    return output;
+}
+#endif
+
 
 technique11 DefaultTechnique
 {
-    pass Model
+#ifdef TOOL
+// 툴에서 피킹용으로 쓰이는 패스
+    pass Tool
+    {
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_TOOL();
+    }
+#endif
+
+    // 기본 패스
+    pass Default
     {
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
@@ -152,10 +221,5 @@ technique11 DefaultTechnique
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
-
-    pass Particle
-    {
-        VertexShader = compile vs_5_0 VS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN();
-    }
+    
 }

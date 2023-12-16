@@ -29,7 +29,7 @@ HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
 
     Set_Resolution(tInit.iScreenWidth, tInit.iScreenHeight);
 
-    m_iNumRenderTargets = MaxRenderTarget;
+    m_iNumRenderTargets = tInit.iRenderTargetCount;
     m_vecRTV.reserve(MaxRenderTarget);
 
     m_fResolutionRatio = Cast<_float>(m_viResolutionX) / Cast<_float>(m_viResolutionY);
@@ -41,8 +41,8 @@ HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
 
     /* 장치에 바인드해놓을 렌더타겟들과 뎁스스텐실뷰를 셋팅한다. */
     /* 장치는 최대 8개의 렌더타겟을 동시에 들고 있을 수 있다. */
-    Regist_RenderTarget(0);
-    Regist_RenderTarget(1);
+    for (size_t i = 0; i < tInit.iRenderTargetCount; i++)
+        Regist_RenderTarget(Cast<_uint>(i));
     Bind_RenderTargetsOnDevice();
 
 	return S_OK;
@@ -51,12 +51,18 @@ HRESULT CGraphicDev::Initialize(const FDEVICE_INIT& tInit)
 HRESULT CGraphicDev::Clear_BackBuffer_View(_float4 vClearColor)
 {
     _float color[4] = { vClearColor.x, vClearColor.y, vClearColor.z, vClearColor.w };
+    // 개야매
+    _float PosAndID[4] = {0.f, 0.f, 0.f, -1.f};
 
     // 백버퍼 지우기
-    for (auto& item : m_vecRTV)
+    for (auto& pRTV : m_vecRTV)
     {
-        auto pRTV = item;
-        m_pDeviceContext->ClearRenderTargetView(pRTV, color);
+        D3D11_RENDER_TARGET_VIEW_DESC Desc = {};
+        pRTV->GetDesc(&Desc); 
+        if (Desc.Format == DXGI_FORMAT_R32G32B32A32_FLOAT)
+            m_pDeviceContext->ClearRenderTargetView(pRTV, PosAndID);
+        else
+            m_pDeviceContext->ClearRenderTargetView(pRTV, color);
     }
 
     return S_OK;
@@ -111,7 +117,6 @@ void CGraphicDev::Free()
 
     for (_uint i = 0; i < m_iNumRenderTargets; i++)
     {
-        m_pTexture[i].Reset();
         m_pRTV[i].Reset();
     }
     m_pDepthStencilBuffer.Reset();
@@ -221,7 +226,8 @@ HRESULT CGraphicDev::Ready_BackBufferRenderTargetView(const FDEVICE_INIT& tInit)
     if (nullptr == m_pDevice)
         return E_FAIL;
 
-    Create_RenderTargets();
+    m_iNumRenderTargets = tInit.iRenderTargetCount;
+    Create_RenderTargets(true);
 
     return S_OK;
 }
@@ -350,7 +356,7 @@ HRESULT CGraphicDev::Resize_SwapChain(_uint iWidth, _uint iHeight)
 
     CleanUp_RenderTargets();
     m_pSwapChain->ResizeBuffers(0, m_iScreenWidth, m_iScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
-    Create_RenderTargets();
+    Create_RenderTargets(false);
     Resize_DepthStencil();
 
     return S_OK;
@@ -360,14 +366,13 @@ void CGraphicDev::CleanUp_RenderTargets()
 {
     m_vecRTV.clear();
     // PBR 렌더타깃 생성
-    for (_uint i = 0; i < MaxRenderTarget; i++)
+    for (_uint i = 0; i < m_iNumRenderTargets; i++)
     {
-        m_pTexture[i].Reset();
         m_pRTV[i].Reset();
     }
 }
 
-HRESULT CGraphicDev::Create_RenderTargets()
+HRESULT CGraphicDev::Create_RenderTargets(_bool bIsInit)
 {
     /* 내가 앞으로 사용하기위한 용도의 텍스쳐를 생성하기위한 베이스 데이터를 가지고 있는 객체이다. */
     /* 내가 앞으로 사용하기위한 용도의 텍스쳐 : ID3D11RenderTargetView, ID3D11ShaderResoureView, ID3D11DepthStencilView */
@@ -386,25 +391,52 @@ HRESULT CGraphicDev::Create_RenderTargets()
     pTexture->GetDesc(&textureDesc);
     pRTV->GetDesc(&rtvDesc);
     textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    
+    // 초기화 때만 설정을 백버퍼의 정보로부터 모든 내용을 저장한다.
+    if (bIsInit)
+    {
+        m_RTV_Descs[0] = rtvDesc;
+        m_RTVTexture_Descs[0] = textureDesc;
+    }
+    // 아니면 변경된 사이즈만 저장한다.
+    else
+    {
+        m_RTVTexture_Descs[0].Width = textureDesc.Width;
+        m_RTVTexture_Descs[0].Height = textureDesc.Height;
+    }
 
-    m_pTexture[0] = pTexture.Get();
+
     m_pRTV[0] = pRTV.Get();
+    
     pTexture.Reset();
     pRTV.Reset();
 
     textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
 
     // 렌더타깃 생성
-    for (_uint i = 1; i < MaxRenderTarget; i++)
+    for (_uint i = 1; i < m_iNumRenderTargets; i++)
     {
-        if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf())))
+        // 초기화 때만 설정을 백버퍼의 정보로부터 모든 내용을 저장한다.
+        if (bIsInit)
+        {
+            m_RTV_Descs[i] = rtvDesc;
+            m_RTVTexture_Descs[i] = textureDesc;
+        }
+        // 아니면 변경된 사이즈만 저장한다.
+        else
+        {
+            m_RTVTexture_Descs[i].Width = textureDesc.Width;
+            m_RTVTexture_Descs[i].Height = textureDesc.Height;
+        }
+
+        if (FAILED(m_pDevice->CreateTexture2D(&m_RTVTexture_Descs[i], nullptr, pTexture.GetAddressOf())))
             return E_FAIL;
 
-        if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &rtvDesc, pRTV.GetAddressOf())))
+        if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &m_RTV_Descs[i], pRTV.GetAddressOf())))
             return E_FAIL;
 
-        m_pTexture[i] = pTexture.Get();
         m_pRTV[i] = pRTV.Get();
+
         pTexture.Reset();
         pRTV.Reset();
     }
@@ -469,6 +501,50 @@ void CGraphicDev::TurnOn_Cull()
 void CGraphicDev::TurnOff_Cull()
 {
     m_pDeviceContext->RSSetState(m_pRasterCullNoneState.Get());
+}
+
+HRESULT CGraphicDev::Copy_RenderTargetViewToTexture_ByViewport(ComPtr<ID3D11Texture2D>& pTexture, _uint iRenderTargetIndex, _uint iViewportIndex)
+{
+    if (iViewportIndex < 0 || iViewportIndex >= m_iNumViewports)
+        return E_FAIL;
+    if (iRenderTargetIndex < 0 || iRenderTargetIndex >= m_iNumRenderTargets)
+        return E_FAIL;
+
+    ID3D11Resource* pRenderTargetTexture;
+    m_pRTV[iRenderTargetIndex]->GetResource(&pRenderTargetTexture);
+
+    D3D11_TEXTURE2D_DESC Desc = {};
+    Cast<ID3D11Texture2D*>(pRenderTargetTexture)->GetDesc(&Desc);
+
+    // 뷰포트 사이즈 얻어오기
+    D3D11_BOX regionBox = {};
+    regionBox.left = Cast<_uint>(m_vecViewports[iViewportIndex].TopLeftX);
+    regionBox.top = Cast<_uint>(m_vecViewports[iViewportIndex].TopLeftY);
+    regionBox.front = 0;
+    regionBox.right = Cast<_uint>(regionBox.left + m_vecViewports[iViewportIndex].Width);
+    regionBox.bottom = Cast<_uint>(regionBox.top + m_vecViewports[iViewportIndex].Height);
+    regionBox.back = 1;
+
+    // 용도 스테이징 용으로 바꾸기
+    Desc.Width = regionBox.right - regionBox.left;
+    Desc.Height = regionBox.bottom - regionBox.top;
+    Desc.Usage = D3D11_USAGE_STAGING;
+    Desc.BindFlags = 0;
+    Desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+    Desc.MiscFlags = 0;
+
+    ComPtr<ID3D11Texture2D> pStagingTexture;
+    if (FAILED(m_pDevice->CreateTexture2D(&Desc, nullptr, pStagingTexture.GetAddressOf())))
+        return E_FAIL;
+
+    m_pDeviceContext->CopySubresourceRegion(pStagingTexture.Get(), 0, 0, 0, 0, Cast<ID3D11Texture2D*>(pRenderTargetTexture), 0, &regionBox);
+
+    // 복사한거 반환해주기
+    pTexture = pStagingTexture;
+
+    Safe_Release(pRenderTargetTexture);
+
+    return S_OK;
 }
 
 HRESULT CGraphicDev::Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex)
@@ -558,6 +634,45 @@ HRESULT CGraphicDev::Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResource
     return S_OK;
 }
 
+
+const D3D11_TEXTURE2D_DESC* CGraphicDev::Get_RTV_Desc(_uint iIndex) const
+{
+    if (iIndex < 0 || iIndex >= m_iNumRenderTargets)
+        return nullptr;
+
+    return &m_RTVTexture_Descs[iIndex];
+}
+
+void CGraphicDev::Set_RTV_Desc(_uint iIndex, D3D11_TEXTURE2D_DESC& Desc)
+{
+    if (iIndex < 0 || iIndex >= m_iNumRenderTargets)
+        return;
+
+    D3D11_TEXTURE2D_DESC PrevTextureDesc = m_RTVTexture_Descs[iIndex];
+    m_RTVTexture_Descs[iIndex] = Desc;
+    D3D11_RENDER_TARGET_VIEW_DESC PrevDesc = m_RTV_Descs[iIndex];
+    m_RTV_Descs[iIndex].Format = Desc.Format;
+
+    // 세팅 후 RTV 교체한다.
+    ID3D11Texture2D* pTexture = { nullptr };
+    if (FAILED(m_pDevice->CreateTexture2D(&m_RTVTexture_Descs[iIndex], nullptr, &pTexture)))
+    {
+        m_RTVTexture_Descs[iIndex] = PrevTextureDesc;
+        m_RTV_Descs[iIndex] = PrevDesc;
+        return;
+    }
+
+    ComPtr<ID3D11RenderTargetView> pRTV = { nullptr };
+    if (FAILED(m_pDevice->CreateRenderTargetView(pTexture, &m_RTV_Descs[iIndex], pRTV.GetAddressOf())))
+    {
+        m_RTVTexture_Descs[iIndex] = PrevTextureDesc;
+        m_RTV_Descs[iIndex] = PrevDesc;
+        return;
+    }
+    m_pRTV[iIndex] = pRTV;
+
+    Safe_Release(pTexture);
+}
 
 void CGraphicDev::Add_Viewport(D3D11_VIEWPORT Viewport)
 {

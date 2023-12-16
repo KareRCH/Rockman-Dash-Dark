@@ -5,6 +5,7 @@
 
 BEGIN(Engine)
 
+
 struct FMeshVertexData
 {
 	_float3			vPosition;
@@ -16,7 +17,11 @@ struct FMeshVertexData
 	vector<_float>	vecWeights;
 };
 
-
+struct FMeshBoneData
+{
+	_int		iBoneID;
+	_float4x4	matOffset;
+};
 
 /// <summary>
 /// 메쉬의 정보
@@ -34,13 +39,18 @@ private:
 public:
 	static FMeshData* Create();
 	virtual void Free() override;
+
+public:
+	// 뼈에 대해 업데이트
+	const vector<FMeshBoneData>& Provide_Offsets() const { return vecMeshBoneDatas; }
 	
 public:
-	_uint						iID;			// 메쉬의 ID
-	vector<FMeshVertexData>		vecVertices;	// 정점 데이터
-	vector<_uint>				vecIndices;		// 인덱스 데이터
-	_uint						iMaterialIndex;	// 머터리얼 인덱스
-	_float4x4					matOffset;		// 메쉬 트랜스폼 데이터
+	_uint						iID;				// 메쉬의 ID
+	vector<FMeshVertexData>		vecVertices;		// 정점 데이터
+	vector<_uint>				vecIndices;			// 인덱스 데이터
+	_uint						iMaterialIndex;		// 머터리얼 인덱스
+
+	vector<FMeshBoneData>		vecMeshBoneDatas;			// 뼈에 대한 오프셋 데이터와 뼈에 대한 ID
 };
 
 

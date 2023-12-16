@@ -18,6 +18,7 @@ struct FDEVICE_INIT
 	_float	fScreenDepth;
 	_uint	iResolutionX;
 	_uint	iResolutionY;
+	_uint	iRenderTargetCount;
 };
 
 /// <summary>
@@ -61,7 +62,7 @@ private:
 	// 렌더 타겟 파괴
 	void		CleanUp_RenderTargets();
 	// 렌더 타겟 생성, 재생성용
-	HRESULT		Create_RenderTargets();
+	HRESULT		Create_RenderTargets(_bool bIsInit);
 	// 깊이 스텐실 버퍼
 	HRESULT		Resize_DepthStencil();
 
@@ -71,9 +72,7 @@ public:
 	void		TurnOn_Cull();
 	void		TurnOff_Cull();
 
-public:
-	HRESULT		Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex);
-	HRESULT		Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, const D3D11_VIEWPORT Viewport);
+
 
 public:
 	GETSET_1(ComPtr<ID3D11Device>, m_pDevice, Device, GET_C_REF)
@@ -88,12 +87,25 @@ private:
 	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
 	ComPtr<IDXGIDevice>				m_pDxgiDevice = { nullptr };
 	ComPtr<IDXGISwapChain>			m_pSwapChain = { nullptr };
+
+
+public:
+	// 뷰포트 사이즈로 렌더타겟에 기록된 정보들을 텍스처 리소스로 복사해오는 함수. 툴에서 쓰임.
+	HRESULT		Copy_RenderTargetViewToTexture_ByViewport(ComPtr<ID3D11Texture2D>& pTexture, _uint iRenderTargetIndex, _uint iViewportIndex);
+	// 뷰포트 사이즈로 백버퍼에 기록된 픽셀들을 셰이덜 리소스로 복사해오는 함수
+	HRESULT		Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, _uint iViewportIndex);
+	HRESULT		Copy_BackBufferToSRV_ByViewport(ComPtr<ID3D11ShaderResourceView>& pSRV, const D3D11_VIEWPORT Viewport);
+	// 렌더타겟 데이터 불러와 설정을 변경하는데 쓸 수 있다.
+	const D3D11_TEXTURE2D_DESC* Get_RTV_Desc(_uint iIndex) const;
+	// 렌더타겟 설정변경, 렌더타겟도 같이 바뀐다.
+	void						Set_RTV_Desc(_uint iIndex, D3D11_TEXTURE2D_DESC& Desc);
 	
 
 private:	// 렌더 타겟
-	ComPtr<ID3D11Texture2D>			m_pTexture[MaxRenderTarget] = { nullptr };
+	D3D11_RENDER_TARGET_VIEW_DESC	m_RTV_Descs[MaxRenderTarget] = {};			// 렌더 타겟 설정들을 세팅한다.
+	D3D11_TEXTURE2D_DESC			m_RTVTexture_Descs[MaxRenderTarget] = {};	// 렌더 타겟의 텍스처 설정을 세팅할 수 있다.
 	ComPtr<ID3D11RenderTargetView>	m_pRTV[MaxRenderTarget] = { nullptr };		// 0번은 항상 스왑체인 RTV
-	_uint	m_iNumRenderTargets = 0U;
+	_uint							m_iNumRenderTargets = 0U;					// 렌더타겟 수
 
 	using vector_RTV = vector<ID3D11RenderTargetView*>;
 	vector_RTV						m_vecRTV;									// 실제 할당되는 렌더타깃의 벡터

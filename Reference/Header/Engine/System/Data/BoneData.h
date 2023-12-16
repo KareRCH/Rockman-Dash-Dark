@@ -55,17 +55,19 @@ public:
 	FBoneData* Find_BoneData(const wstring& strBoneNodeKey);
 
 public:
-	HRESULT				Add_BoneData(const wstring& strBoneNodeKey, FBoneData* pNode);
-	vector<_float4x4>	Provide_FinalTransforms();
+	// 뼈 추가함수
+	HRESULT					Add_BoneData(const wstring& strBoneNodeKey, FBoneData* pNode);
+	// 뼈의 행렬 주소를 얻는 함수, 셰이더에 바인딩할 때 쓰인다.
+	const _float4x4* const	Provide_BoneFinalTransformPtr(_uint iIndex) const;
 
 public:
-	// 행렬 웨이트값을 적용하기 위해 행렬값을 더하는 연산을 하는 함수
-	void Apply_Transforms(vector<_float4x4>* pVecMatrices);
-
-private:
-	void Calculate_FinalTransforms();
+	// 트랜스폼 행렬을 특정 뼈에 적용한다. 애니메이션을 적용할 때 쓰인다.
+	HRESULT			Set_BoneTransform(_uint iIndex, _fmatrix& matTransform);
+	// 뼈 업데이트 함수, 애니메이션 적용 후에 불러온다.
+	void			Invalidate_FinalTransforms();
 
 public:
+	// 뼈의 개수
 	const _uint		Get_BoneDatas_Count() const { return Cast<_uint>(vecBones.size()); }
 
 private:

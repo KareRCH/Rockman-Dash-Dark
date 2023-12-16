@@ -52,7 +52,10 @@ private:
 #pragma region 오브젝트 관리
 public:
 	HRESULT				Add_GameObject(class CGameObject* pObj);
-	class CGameObject*	Find_GameObject(_uint iFindID);
+	// 오브젝트의 ID 기반 검색
+	class CGameObject*	Find_GameObjectByID(_uint iFindID);
+	// 오브젝트의 단순 인덱스 기반 검색, 툴에서 쓰임
+	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);
 	void				Clear_GameObject(const wstring& strLayerTag);
 
 	// 벡터 정리 함수, 빈공간을 채워준다. 0(n)의 시간복잡도를 지닌다. 주로 업데이트가 끝날 때 사용된다.

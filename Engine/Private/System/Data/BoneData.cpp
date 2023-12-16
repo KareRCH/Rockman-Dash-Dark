@@ -123,36 +123,25 @@ HRESULT FBoneGroup::Add_BoneData(const wstring& strBoneNodeKey, FBoneData* pNode
 	return S_OK;
 }
 
-vector<_float4x4> FBoneGroup::Provide_FinalTransforms()
+const _float4x4* const FBoneGroup::Provide_BoneFinalTransformPtr(_uint iIndex) const
 {
-	vector<_float4x4> vecFinalTransforms;
-	vecFinalTransforms.reserve(vecBones.size());
+	if (iIndex < 0 || iIndex >= vecBones.size())
+		return nullptr;
 
-	Calculate_FinalTransforms();
-
-	for (_uint i = 0; i < vecBones.size(); i++)
-	{
-		vecFinalTransforms.push_back(vecBones[i]->matFinalTransform);
-	}
-
-	return vecFinalTransforms;
+	return &vecBones[iIndex]->matFinalTransform;
 }
 
-void FBoneGroup::Apply_Transforms(vector<_float4x4>* pVecMatrices)
+HRESULT FBoneGroup::Set_BoneTransform(_uint iIndex, _fmatrix& matTransform)
 {
-	if (pVecMatrices->size() != vecBones.size())
-		return;
+	if (iIndex < 0 || iIndex >= vecBones.size())
+		return E_FAIL;
 
-	// 적용전에 한번은 clear 된 상태여야 한다.
-	// 받은 행렬은 Weight가 곱해진 값이어야 한다.
-	for (_uint i = 0; i < vecBones.size(); i++)
-	{
-		// 행렬 더하기, Weight가 총합이 1이어야 한다.
-		XMStoreFloat4x4(&vecBones[i]->matTransform, XMLoadFloat4x4(&(*pVecMatrices)[i]));
-	}
+	XMStoreFloat4x4(&vecBones[iIndex]->matTransform, matTransform);
+
+	return S_OK;
 }
 
-void FBoneGroup::Calculate_FinalTransforms()
+void FBoneGroup::Invalidate_FinalTransforms()
 {
 	/*OutputDebugString((strName + L"\n").c_str());
 

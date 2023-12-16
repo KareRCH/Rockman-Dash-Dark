@@ -286,6 +286,9 @@
     <Filter Include="01. System\01. Manager\02. GamePipeline\02. ObjectMgr">
       <UniqueIdentifier>{7cbcff4a-8bed-4d2f-b78e-f1a7368cb647}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\07. Delegate">
+      <UniqueIdentifier>{62c897ec-346b-4982-93f2-f871dd5729aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -605,6 +608,9 @@
     </ClInclude>
     <ClInclude Include="Public\System\Data\ModelData.h">
       <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Utility\DelegateTemplate.h">
+      <Filter>02. Utility\07. Delegate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -45,8 +45,23 @@ CMainApp* CMainApp::Create()
 
 HRESULT CMainApp::Initialize()
 {
-	FAILED_CHECK_RETURN(Engine::GI()->Initialize(g_hInst, g_hWnd), E_FAIL);
+	// 장치 초기화에 쓰이는 구조체
+	FDEVICE_INIT tDeviceInit = {};
+	tDeviceInit.hWnd = g_hWnd;
+	tDeviceInit.bVSync = false;
+	tDeviceInit.bFullScreen = false;
+	tDeviceInit.iScreenWidth = g_iWindowSizeX;
+	tDeviceInit.iScreenHeight = g_iWindowSizeY;
+	tDeviceInit.fScreenDepth = 1000.f;
+	tDeviceInit.fScreenNear = 0.1f;
+	tDeviceInit.iRenderTargetCount = 2;
+
+	FAILED_CHECK_RETURN(Engine::GI()->Initialize(g_hInst, g_hWnd, tDeviceInit), E_FAIL);
 	GI()->Add_SystemViewport({ 0.f, 0.f, g_iWindowSizeX, g_iWindowSizeY, 0.f, 1.f });
+	// 위치, 오브젝트 ID를 반환하기 위해 쓰이는 렌더타겟
+	D3D11_TEXTURE2D_DESC Desc = *GI()->Get_RTV_Desc(1);
+	Desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	GI()->Set_RTV_Desc(1, Desc);
 
 	DX11DEVICE_T tDevice = { m_pGI->Get_GraphicDev(), m_pGI->Get_GraphicContext() };
 
@@ -62,7 +77,6 @@ HRESULT CMainApp::Initialize()
 	m_pGI->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
 	m_pGI->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
 	m_pGI->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::InputLayout, SHADER_VTX_SKINMODEL::iMaxIndex);
-	m_pGI->Load_Effect(L"Runtime/FX_Terrain.hlsl", SHADER_VTX_NORM::InputLayout, SHADER_VTX_NORM::iMaxIndex);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 120.f), E_FAIL);
 

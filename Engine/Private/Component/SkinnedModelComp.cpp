@@ -60,7 +60,6 @@ HRESULT CSkinnedModelComp::Render()
     };
 
     
-    vector<_float4x4> vecBones = m_pSkeletalComp->Get_FinalTransforms();
     for (_uint i = 0; i < m_pMultiMeshBufComp->Get_MeshesCounts(); ++i)
     {
         _float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
@@ -70,7 +69,7 @@ HRESULT CSkinnedModelComp::Render()
         m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
         m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
         m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
-        m_pEffectComp->Bind_Matrices("g_matBones", vecBones.data(), (_uint)vecBones.size());
+        m_pMultiMeshBufComp->Bind_MeshOffsetsToEffect(m_pEffectComp, "g_matBones", i, *m_pSkeletalComp->Get_BoneGroup());
 
         m_pEffectComp->Bind_RawValue("g_colDiffuse", VPCast(&lightBuffer.vDiffuseColor), sizeof(_float4));
         m_pEffectComp->Bind_RawValue("g_colAmbient", VPCast(&lightBuffer.vAmbientColor), sizeof(_float4));
@@ -197,6 +196,14 @@ HRESULT CSkinnedModelComp::Bind_Skeletal(const wstring& strSkeletalKey)
         return E_FAIL;
 
     return m_pSkeletalComp->Load_Skeletal(strSkeletalKey);
+}
+
+void CSkinnedModelComp::Invalidate_BoneTransforms()
+{
+    if (!m_pSkeletalComp)
+        return;
+
+    return m_pSkeletalComp->Invalidate_BoneTransforms();
 }
 
 HRESULT CSkinnedModelComp::Create_Mask(const wstring& strMaskName, const wstring& strSkeletalName, _bool bInitBoneActive)

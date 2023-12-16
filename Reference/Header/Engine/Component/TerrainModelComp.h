@@ -65,7 +65,7 @@ private:
 #pragma region 이펙트 컴포넌트
 public:
 	// 이펙트를 바인드 한다.
-	HRESULT Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
+	HRESULT Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro = nullptr);
 	// 이펙트를 언바인드 한다. 안쓸듯
 	HRESULT Unbind_Effect();
 

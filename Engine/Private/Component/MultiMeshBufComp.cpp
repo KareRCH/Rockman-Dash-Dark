@@ -2,6 +2,7 @@
 
 #include "System/GameInstance.h"
 #include "System/ModelMgr.h"
+#include "Component/EffectComponent.h"
 
 CMultiMeshBufComp::CMultiMeshBufComp(const CMultiMeshBufComp& rhs)
 	: Base(rhs)
@@ -112,7 +113,6 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 	tMeshBuffer.iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
 	tMeshBuffer.iIndCount = Cast<_uint>(pMesh->vecIndices.size());
 	tMeshBuffer.strMeshName = strMeshKey;
-	tMeshBuffer.matTransform = &pMesh->matOffset;
 
 	
 	// 정점, 인덱스 버퍼 만들기
@@ -218,6 +218,34 @@ HRESULT CMultiMeshBufComp::Unbind_Mesh(const wstring& strMeshKey)
 void CMultiMeshBufComp::Unbind_AllMeshes()
 {
 
+}
+
+HRESULT CMultiMeshBufComp::Bind_MeshOffsetsToEffect(CEffectComponent* pEffect, const _char* pConstantName, _uint iMeshIndex, const FBoneGroup& pBoneGroup)
+{
+	if (nullptr == pEffect || nullptr == m_pMeshGroup)
+		return E_FAIL;
+
+	_float4x4 matBind[128] = {};
+
+	FMeshData* pMeshData = m_pMeshGroup->Find_Mesh(iMeshIndex);
+	if (nullptr == pMeshData)
+		return E_FAIL;
+
+	size_t iMeshBoneCount = pMeshData->vecMeshBoneDatas.size();
+	for (size_t i = 0; i < iMeshBoneCount; i++)
+	{
+		const _float4x4* const pBoneFinalTransform
+			= pBoneGroup.Provide_BoneFinalTransformPtr(pMeshData->vecMeshBoneDatas[i].iBoneID);
+		if (!pBoneFinalTransform)
+			return E_FAIL;
+
+		XMStoreFloat4x4(&matBind[i], 
+			XMLoadFloat4x4(&pMeshData->vecMeshBoneDatas[i].matOffset) * XMLoadFloat4x4(pBoneFinalTransform));
+	}
+
+	pEffect->Bind_Matrices(pConstantName, matBind, 128);
+
+	return S_OK;
 }
 
 void CMultiMeshBufComp::Bind_Buffer(_uint iBufferIndex)

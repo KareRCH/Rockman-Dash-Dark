@@ -128,9 +128,6 @@ void CModelMgr::Load_Mesh(FModelData* pModelData)
 		wstring strMeshName = Make_Wstring(pMesh->mName.C_Str());
 		pMeshGroup->Add_Mesh(strMeshName, vecMeshes[i]);
 
-		// 트랜스폼 저장
-		vecMeshes[i]->matOffset = pModelData->pBoneGroup->Find_BoneData(strMeshName)->matTransform;;
-
 		// 뼈가 있을 때 루트 노드를 설정한다. 계층을 로드하는데 쓰인다.
 #pragma region 점
 		// 점
@@ -169,6 +166,7 @@ void CModelMgr::Load_Mesh(FModelData* pModelData)
 
 #pragma region 뼈
 		// 정점에 대한 뼈정보 로드
+		vecMeshes[i]->vecMeshBoneDatas.reserve(pMesh->mNumBones);
 		for (_uint j = 0; j < pMesh->mNumBones; j++)
 		{
 			// 뼈 없으면 넘어감. 이거 걸리면 안되는 거임.
@@ -180,8 +178,12 @@ void CModelMgr::Load_Mesh(FModelData* pModelData)
 			wstring strBoneName = Make_Wstring(pMesh->mBones[j]->mName.C_Str());
 			FBoneData* pBoneData = pBoneGroup->Find_BoneData(strBoneName);
 
+			// 뼈의 행렬과 ID 삽입
 			_int iBoneID = pBoneData->iID;
 			aiBone* pBone = pMesh->mBones[j];
+			_float4x4 matOffset = ConvertAiMatrix_ToDXMatrix(pBone->mOffsetMatrix);
+			FMeshBoneData tMeshBoneData = { iBoneID, matOffset };
+			vecMeshes[i]->vecMeshBoneDatas.push_back(tMeshBoneData);
 
 			// 뼈 정보들 저장
 			for (_uint k = 0; k < pBone->mNumWeights; k++)
@@ -192,12 +194,10 @@ void CModelMgr::Load_Mesh(FModelData* pModelData)
 				// 정점 데이터에 뼈ID와 무게 정보 등록
 				if (fWeight != 0.f)
 				{
-					pVecVertices[iVertexID].vecBoneID.push_back(iBoneID);
+					pVecVertices[iVertexID].vecBoneID.push_back(j);
 					pVecVertices[iVertexID].vecWeights.push_back(fWeight);
 				}
 			}
-
-			++iBoneID;
 		}
 
 		// 채워지지 않은 뼈 정보를 할당한다.
@@ -364,7 +364,7 @@ void CModelMgr::Load_Animation(FModelData* pModelData)
 				pAnimNodeData->vecScales.push_back(tScale);
 			}
 
-			pAnimData->Add_AnimNodeData(AnimNodeName, pAnimNodeData);
+			pAnimData->Add_AnimChannelData(AnimNodeName, pAnimNodeData);
 		}
 		pAnimGroup->Add_BoneAnim(AnimName, pAnimData);
 

@@ -14,6 +14,9 @@
 
 #define			SUPER __super
 
+#define STRINGIZE(x) #x
+#define STRINGIZE_VALUE_OF(x) STRINGIZE(x)
+
 
 
 // 특수한 함수 앞에 별도로 붙이기 위한 용도
