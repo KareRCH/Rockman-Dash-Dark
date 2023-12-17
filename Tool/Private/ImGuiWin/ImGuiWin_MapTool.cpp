@@ -5,6 +5,10 @@ HRESULT CImGuiWin_MapTool::Initialize()
 	m_bOpen = true;
 	m_bFirstLoop = true;
 
+    m_pPickedObjects.reserve(100);
+    m_Actions.Add_Action(EAction::CancelMove);
+    m_Actions.Add_Action(EAction::ConfirmMove);
+
 	return S_OK;
 }
 
@@ -55,6 +59,9 @@ void CImGuiWin_MapTool::Tick(const _float& fTimeDelta)
         //ShowDockingDisabledMessage();
     }
 
+    m_Actions.Update();
+    Shortcut_Manage();
+    DoMove_PickedObjects(fTimeDelta);
 
     SUPER::Tick(fTimeDelta);
 
@@ -88,3 +95,202 @@ void CImGuiWin_MapTool::Free()
 {
 	SUPER::Free();
 }
+
+void CImGuiWin_MapTool::Shortcut_Manage()
+{
+    // 행동 취소, 모드 돌아오기
+    if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+    {
+        m_Actions[EAction::CancelMove].Act();
+    }
+
+    if (ImGui::IsKeyPressed(ImGuiKey_Tab))
+    {
+        if (m_eToolMode == EMode::Picking)
+        {
+            m_eToolMode = EMode::Place;
+            Escape_MovePickedObjects();
+        }
+        else if (m_eToolMode == EMode::Place)
+            m_eToolMode = EMode::Picking;
+    }
+
+    // 피킹 된게 없으면 MoveMode를 초기화
+    if (m_pPickedObjects.empty())
+    {
+        m_eMoveMode = EMoveMode::None;
+    }
+
+    // 이동관련 단축키
+    if (m_eToolMode == EMode::Picking && !m_pPickedObjects.empty())
+    {
+        // 이동 
+        if (ImGui::IsKeyPressed(ImGuiKey_G))
+        {
+            m_eMoveMode = EMoveMode::Move;
+        }
+        else if (ImGui::IsKeyPressed(ImGuiKey_R))
+        {
+            m_eMoveMode = EMoveMode::Rotate;
+        }
+        else if (ImGui::IsKeyPressed(ImGuiKey_S))
+        {
+            m_eMoveMode = EMoveMode::Scale;
+        }
+
+        // 편집 축 선택
+        if (ImGui::IsKeyPressed(ImGuiKey_X))
+        {
+            if (ImGui::IsKeyDown(ImGuiKey_LeftShift))
+                m_eMoveAxis = EMoveAxis::YZ;
+            else
+                m_eMoveAxis = EMoveAxis::X;
+        }
+        else if (ImGui::IsKeyPressed(ImGuiKey_Y))
+        {
+            if (ImGui::IsKeyDown(ImGuiKey_LeftShift))
+                m_eMoveAxis = EMoveAxis::ZX;
+            else
+                m_eMoveAxis = EMoveAxis::Y;
+        }
+        else if (ImGui::IsKeyPressed(ImGuiKey_Z))
+        {
+            if (ImGui::IsKeyDown(ImGuiKey_LeftShift))
+                m_eMoveAxis = EMoveAxis::XY;
+            else
+                m_eMoveAxis = EMoveAxis::Z;
+        }
+    }
+
+    if (ImGui::IsKeyPressed(ImGuiKey_Enter))
+    {
+        m_Actions[EAction::ConfirmMove].Act();
+    }
+}
+
+void CImGuiWin_MapTool::DoMove_PickedObjects(const _float& fTimeDelta)
+{
+    if (m_pPickedObjects.empty())
+        return;
+
+    switch (m_eMoveMode)
+    {
+    case EMoveMode::Move:
+        Move_PickedObjects(fTimeDelta);
+        break;
+    case EMoveMode::Rotate:
+        Rotate_PickedObjects(fTimeDelta);
+        break;
+    case EMoveMode::Scale:
+        Scale_PickedObjects(fTimeDelta);
+        break;
+    default:
+        break;
+    }
+}
+
+void CImGuiWin_MapTool::Move_PickedObjects(const _float& fTimeDelta)
+{
+    for (_uint i = 0; i < m_pPickedObjects.size(); i++)
+    {
+        switch (m_eMoveAxis)
+        {
+        case EMoveAxis::X:
+
+            break;
+        case EMoveAxis::Y:
+
+            break;
+        case EMoveAxis::Z:
+
+            break;
+        case EMoveAxis::XY:
+
+            break;
+        case EMoveAxis::YZ:
+
+            break;
+        case EMoveAxis::ZX:
+
+            break;
+        case EMoveAxis::ALL:
+
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void CImGuiWin_MapTool::Rotate_PickedObjects(const _float& fTimeDelta)
+{
+    for (_uint i = 0; i < m_pPickedObjects.size(); i++)
+    {
+        switch (m_eMoveAxis)
+        {
+        case EMoveAxis::X:
+
+            break;
+        case EMoveAxis::Y:
+
+            break;
+        case EMoveAxis::Z:
+
+            break;
+        case EMoveAxis::XY:
+
+            break;
+        case EMoveAxis::YZ:
+
+            break;
+        case EMoveAxis::ZX:
+
+            break;
+        case EMoveAxis::ALL:
+
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void CImGuiWin_MapTool::Scale_PickedObjects(const _float& fTimeDelta)
+{
+    for (_uint i = 0; i < m_pPickedObjects.size(); i++)
+    {
+        switch (m_eMoveAxis)
+        {
+        case EMoveAxis::X:
+
+            break;
+        case EMoveAxis::Y:
+
+            break;
+        case EMoveAxis::Z:
+
+            break;
+        case EMoveAxis::XY:
+
+            break;
+        case EMoveAxis::YZ:
+
+            break;
+        case EMoveAxis::ZX:
+
+            break;
+        case EMoveAxis::ALL:
+
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void CImGuiWin_MapTool::Escape_MovePickedObjects()
+{
+    // 이동 편집 중이던 작업 취소
+}
+
+

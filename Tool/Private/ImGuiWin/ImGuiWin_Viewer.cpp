@@ -22,7 +22,6 @@ HRESULT CImGuiWin_Viewer::Initialize()
     Safe_AddRef(m_pCamera);
 
     // 테스트로 만든 브로드 캐스트 델리게이트
-    OnObjectPicked.Add(MakeDelegate(this, &ThisClass::Test));
 
 	return S_OK;
 }
@@ -32,8 +31,9 @@ void CImGuiWin_Viewer::Tick(const _float& fTimeDelta)
 	if (!m_bOpen)
 		return;
 
+    Link_ToTerrainEditor();
+
 	ImGui::Begin(u8"뷰어");
-	
     
     Layout_TopBar(fTimeDelta);
     Layout_View(fTimeDelta);
@@ -340,7 +340,7 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
     }
 
     // 누름
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+    if (m_ePickingMode == EPickingMode::Object && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
     {
         CGameObject* pPickedObject = { nullptr };
 
@@ -359,7 +359,16 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
             // 렌더타겟으로부터 얻어온 데이터를 순회해서 찾을 수 있게 한뒤에 필요한 값을 찾아낸다.
             D3D11_MAPPED_SUBRESOURCE mappedResource;
             m_pGI->Get_GraphicContext()->Map(pTexture.Get(), 0, D3D11_MAP_READ, 0, &mappedResource);
-            memcpy_s(vecPosAndIDs.data(), iSize, mappedResource.pData, iSize);
+            _float4* sourcData = Cast<_float4*>(mappedResource.pData);
+            _float4* destData = vecPosAndIDs.data();
+            size_t iRowSize = sizeof(_float4) * Desc.Width;
+            _uint iMappedRowPitchByte = mappedResource.RowPitch / sizeof(_float4);
+            for (_uint i = 0; i < Desc.Height; i++)
+            {
+                memcpy(destData, sourcData, iRowSize);
+                sourcData += iMappedRowPitchByte;
+                destData += Desc.Width;
+            }
             m_pGI->Get_GraphicContext()->Unmap(pTexture.Get(), 0);
 
             // 정보를 옮겼으면 피킹을 하자
@@ -378,90 +387,37 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
         }
         
         pTexture.Reset();
-        if (nullptr != pPickedObject)
-            OnObjectPicked.Broadcast(pPickedObject);
-        
-        //_bool bIsPicking_Ready = false;
-        //CTerrain* pTerrain = m_pGuiTerrain->Get_Terrain();
-        //CTerrainModelComp* pModel = { nullptr };
-        //if (pTerrain)
-        //{
-        //    pModel = pTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"));
-        //    if (pModel)
-        //    {
-        //        if (S_OK == pModel->IsRender_Ready())
-        //            bIsPicking_Ready = true;
-        //    }
-        //}
-        //
-        //if (bIsPicking_Ready)
-        //{
-        //    m_TerrainVertices.resize(pModel->Get_VertexCount());
-        //    pModel->Copy_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size(), sizeof(SHADER_VTX_NORM));
-
-        //    /*srand(_uint(time(nullptr)));
-        //    for (_uint i = 0; i < m_TerrainVertices.size(); i++)
-        //    {
-        //        m_TerrainVertices[i].vPosition.y = (rand() % m_TerrainVertices.size()) * 0.0001f;
-        //    }
-
-        //    pModel->Update_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size());*/
-        //    D3D11_VIEWPORT viewport = *GI()->Get_SystemViewportPtr(0);
-        //    _float3 vNear, vFar;
-        //    vNear = { m_vMousePosOnViewer.x, m_vMousePosOnViewer.y, 0.01f };
-        //    vFar = { m_vMousePosOnViewer.x, m_vMousePosOnViewer.y, 1000.f };
-        //    _matrix matProj = PipelineComp().Get_CamMatrix(ECamType::Persp, ECamMatrix::Proj, ECamNum::One);
-        //    _matrix matView = PipelineComp().Get_CamMatrix(ECamType::Persp, ECamMatrix::View, ECamNum::One);
-        //    //_matrix matWorld = XMMatrixInverse(nullptr, matView);
-        //    _vector vMouseNear = XMVector3Unproject(XMLoadFloat3(&vNear),
-        //        viewport.TopLeftX, viewport.TopLeftY, viewport.Width, viewport.Height, viewport.MinDepth, viewport.MaxDepth,
-        //        matProj, matView, XMMatrixIdentity()
-        //    );
-        //    _vector vMouseFar = XMVector3Unproject(XMLoadFloat3(&vFar),
-        //        viewport.TopLeftX, viewport.TopLeftY, viewport.Width, viewport.Height, viewport.MinDepth, viewport.MaxDepth,
-        //        matProj, matView, XMMatrixIdentity()
-        //    );
-        //    // 카메라에서 쏘는 광선
-        //    _vector vRay = XMVector3Normalize(vMouseFar - vMouseNear);
-
-        //    // 야매 피킹
-        //    _float3 vPos1 = m_TerrainVertices.front().vPosition;
-        //    vPos1.y = 0.f;
-        //    _float3 vPos2 = m_TerrainVertices.back().vPosition;
-        //    vPos1.y = 0.f;
-        //    _float3 vPos3 = { vPos2.x, 0.f, vPos1.z };
-        //    _vector vsimPos1 = XMLoadFloat3(&vPos1);
-        //    _vector vsimPos2 = XMLoadFloat3(&vPos2);
-        //    _vector vsimPos3 = XMLoadFloat3(&vPos3);
-        //    _vector vsimNormal = XMVectorSet(0.f, 1.f, 0.f, 0.f);
-
-        //    // 평면을 만들고 교차점을 찾아낸다.
-        //    _float fRadius = 5.f;   // 임시용 브러쉬 범위
-        //    _vector vPlane = XMPlaneFromPointNormal(vsimPos1, vsimNormal);
-        //    // 교차점 구하기
-        //    _vector vsimInterPoint = XMPlaneIntersectLine(vPlane, vMouseNear, vMouseFar);
-        //    _float3 vInterPoint;
-        //    XMStoreFloat3(&vInterPoint, vsimInterPoint);
-        //    vInterPoint.y = 0.f;
-
-        //    if (vPos1.x < vInterPoint.x && vInterPoint.x < vPos2.x
-        //        && vPos1.z < vInterPoint.z && vInterPoint.z < vPos2.z)
-        //    {
-        //        for (_uint i = 0; i < m_TerrainVertices.size(); i++)
-        //        {
-        //            _vector vsimVertexPos = XMLoadFloat3(&m_TerrainVertices[i].vPosition);
-        //            _float f = XMVector3Length(vsimInterPoint - vsimVertexPos).m128_f32[0];
-        //            if (f <= fRadius)
-        //                m_TerrainVertices[i].vPosition.y += fTimeDelta * (fRadius - f);
-        //        }
-
-        //        pModel->Update_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size());
-        //    }
-        //    
-
-        //    // 결과를 XMFLOAT3로 변환
-        //    //XMStoreFloat3(&intersectionPoint, vInterPoint);
-        //    _int t = 0;
-        //}
+        OnObjectPicked.Broadcast(pPickedObject);
     }
+
+    // 브러쉬
+    if (m_ePickingMode == EPickingMode::Brush && ImGui::IsMouseDown(ImGuiMouseButton_Left))
+    {
+        OnBrushPicked.Broadcast(m_vMousePosOnViewer);
+    }
+}
+
+void CImGuiWin_Viewer::Link_ToTerrainEditor()
+{
+    if (m_bIsLinkedToTerrainEditor || !m_pParentWin)
+        return;
+
+    CImGuiWin_Terrain* pTerrainEditor = { nullptr };
+    m_pParentWin->Find_Child(&pTerrainEditor);
+    if (pTerrainEditor != nullptr)
+    {
+        pTerrainEditor->Add_ModeSelectedListener(MakeDelegate(this, &ThisClass::Handle_ModeSelected));
+        m_bIsLinkedToTerrainEditor = true;
+    }
+
+    return;
+}
+
+void CImGuiWin_Viewer::Handle_ModeSelected(_bool bIsEdit)
+{
+    // 모드를 바꾼다.
+    if (bIsEdit)
+        m_ePickingMode = EPickingMode::Brush;
+    else
+        m_ePickingMode = EPickingMode::Object;
 }

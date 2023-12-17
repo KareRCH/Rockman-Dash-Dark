@@ -736,6 +736,14 @@ HRESULT CGameInstance::Initialize_PipelineMgr()
 	return S_OK;
 }
 
+void CGameInstance::Tick_PipelineMgr()
+{
+	if (nullptr == m_pPipelineMgr)
+		return;
+
+	m_pPipelineMgr->Tick();
+}
+
 CPipelineMgr* CGameInstance::Get_PipelineMgr()
 {
 	return m_pPipelineMgr;

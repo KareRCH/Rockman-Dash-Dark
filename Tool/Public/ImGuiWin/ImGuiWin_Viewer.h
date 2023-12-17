@@ -13,7 +13,10 @@ END
 BEGIN(Tool)
 
 typedef FastDelegate1<CGameObject*> PickedObjectDelegate;
-typedef BroadcastDelegate<PickedObjectDelegate, CGameObject*> BroadPickedObjectDelegate;
+typedef MulticastDelegate<PickedObjectDelegate, CGameObject*> PickedObjectMultiDelegate;
+
+typedef FastDelegate1<_float2> PickedBrushDelegate;
+typedef MulticastDelegate<PickedBrushDelegate, _float2> PickedBrushMultiDelegate;
 
 /// <summary>
 /// 실제 게임상의 카메라를 통해 화면을 보여준다.
@@ -104,31 +107,33 @@ private:
 public:
 	// 피킹되었을 때 어떤 객체에 대한 모드는 이를 통해 설정한다.
 	enum class EPickingMode { None, Object, Brush };
-	EPickingMode m_ePickingMode = { EPickingMode::None };
+	EPickingMode m_ePickingMode = { EPickingMode::Object };
 	
 	vector<SHADER_VTX_NORM>		m_TerrainVertices;
 
 private:
 	class CToolCamera*			m_pCamera = { nullptr };		// 뷰어용 카메라
 
+public:
+	// 터레인 에디터에 연결
+	void Link_ToTerrainEditor();
+	// 터레인 창으로부터 모드 선택을 처리
+	void Handle_ModeSelected(_bool bIsEdit);
+
+	// 외부에서 브로드 캐스트 델리게이트에 리스너추가
+	void Add_PickedObjectListener(const PickedObjectDelegate& Listener) { OnObjectPicked.Add(Listener); }
+	void Remove_PickeObjectListener(const PickedObjectDelegate& Listener) { OnObjectPicked.Remove(Listener); }
+
+	// 외부에서 브로드 캐스트 델리게이트에 리스너추가
+	void Add_PickedBrushListener(const PickedBrushDelegate& Listener) { OnBrushPicked.Add(Listener); }
+	void Remove_PickedBrushListener(const PickedBrushDelegate& Listener) { OnBrushPicked.Remove(Listener); }
 
 private:
-	BroadPickedObjectDelegate	OnObjectPicked;		// 피킹 델리게이트
+	PickedObjectMultiDelegate	OnObjectPicked;		// 피킹 델리게이트
+	PickedBrushMultiDelegate	OnBrushPicked;		// 브러쉬 피킹 델리게이트
+	_bool						m_bIsLinkedToTerrainEditor = false;
 
 private:
-	void Test(CGameObject* pObj)
-	{
-		if (pObj == nullptr)
-			OutputDebugString(L"테스트\n");
-		else
-		{
-			wstringstream ss;
-			ss << pObj->Get_ID();
-			wstring strTest;
-			strTest = ss.str();
-			OutputDebugString(strTest.c_str());
-		}
-	}
 
 };
 

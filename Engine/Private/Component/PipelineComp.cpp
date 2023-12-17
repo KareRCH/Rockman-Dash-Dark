@@ -98,12 +98,28 @@ void CPipelineComp::Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eN
     return m_pPipelineMgr->Set_CamMatrix(eType, eMatrix, eNum, mat);
 }
 
-void CPipelineComp::Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _matrix mat)
+void CPipelineComp::Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _fmatrix mat)
 {
     if (!m_pPipelineMgr)
         return;
 
     return m_pPipelineMgr->Set_CamMatrix(eType, eMatrix, eNum, mat);
+}
+
+const _float4 CPipelineComp::Get_CamPositionFloat4(ECamType eType, ECamNum eNum) const
+{
+    if (!m_pPipelineMgr)
+        return _float4();
+
+    return m_pPipelineMgr->Get_CamPositionFloat4(eType, eNum);
+}
+
+const _vector CPipelineComp::Get_CamPositionVector(ECamType eType, ECamNum eNum) const
+{
+    if (!m_pPipelineMgr)
+        return _vector();
+
+    return m_pPipelineMgr->Get_CamPositionVector(eType, eNum);
 }
 
 const D3D11_VIEWPORT CPipelineComp::Get_Viewport(EViewportNum eNum)

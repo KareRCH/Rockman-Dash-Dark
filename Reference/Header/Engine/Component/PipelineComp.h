@@ -50,7 +50,11 @@ public:
 
 public:
 	void	Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _float4x4 mat);
-	void	Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _matrix mat);
+	void	Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _fmatrix mat);
+
+public:
+	const _float4		Get_CamPositionFloat4(ECamType eType, ECamNum eNum) const;
+	const _vector		Get_CamPositionVector(ECamType eType, ECamNum eNum) const;
 
 public:
 	const D3D11_VIEWPORT Get_Viewport(EViewportNum eNum);

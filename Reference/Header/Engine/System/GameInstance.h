@@ -166,6 +166,7 @@ public:		// 타이머 매니저
 	friend class CPipelineComp;
 public:		// 타이머 매니저
 	HRESULT Initialize_PipelineMgr();
+	void Tick_PipelineMgr();
 
 private:
 	class CPipelineMgr* Get_PipelineMgr();

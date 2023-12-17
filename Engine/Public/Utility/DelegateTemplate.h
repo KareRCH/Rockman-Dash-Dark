@@ -47,7 +47,7 @@ using namespace fastdelegate;
 //};
 
 template<typename Delegate, typename... Args>
-class BroadcastDelegate
+class MulticastDelegate
 {
 public:
 	void Add(const Delegate& Listener)

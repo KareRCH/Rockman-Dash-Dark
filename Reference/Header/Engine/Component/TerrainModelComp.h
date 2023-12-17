@@ -52,7 +52,9 @@ public:
 	HRESULT Copy_VBuffer(void* pArray, size_t iSize, size_t iSizePerIndex);
 	// 버퍼 업데이트
 	void	Update_VBuffer(void* pData, _uint iSize);
+	HRESULT Copy_IBuffer(void* pArray, size_t iSize);
 	const size_t Get_VertexCount() const;
+	const size_t Get_IndexCount() const;
 
 	CTerrainBufferComp* Get_TerrainBufferComp() { return m_pTerrainBufferComp; }
 

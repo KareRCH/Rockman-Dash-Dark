@@ -40,6 +40,7 @@ public:
 	void Update_VBuffer(void* pData, _uint iCount);
 	// 사용전에 사이즈 확보해놓을 것. 배열자체의 인덱스 사이즈와, 요소별 사이즈가 필요하다.
 	HRESULT Copy_VBufferToArray(void* pArray, size_t iSize, size_t iSizePerIndex);
+	HRESULT Copy_IBufferToArray(void* pArray, size_t iSize);
 
 public:
 	GETSET_1(_uint, m_iNumVertices, VertexCount, GET_C_REF)
