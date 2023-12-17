@@ -24,6 +24,7 @@ cbuffer BoneBuffer : register(b2)
     float4x4 g_matBones[128];
 };
 
+vector g_vCamPosition = vector(0.f, 0.f, 0.f, 0.f);
 
 // ≈ÿΩ∫√≥
 Texture2D g_texDiffuse;
@@ -32,8 +33,9 @@ sampler DefaultSampler = sampler_state
     Filter = MIN_MAG_MIP_LINEAR;
 };
 
+#ifdef TOOL
 int g_iObjectID = -1;
-
+#endif
 
 //-------------------------------------------------
 

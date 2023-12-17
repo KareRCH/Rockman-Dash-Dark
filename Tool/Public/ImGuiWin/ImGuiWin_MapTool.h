@@ -33,8 +33,31 @@ public:
 private:
 	virtual void	Free() override;
 
+
 public:
-	//class C
+	void Shortcut_Manage();
+	void DoMove_PickedObjects(const _float& fTimeDelta);
+	void Move_PickedObjects(const _float& fTimeDelta);
+	void Rotate_PickedObjects(const _float& fTimeDelta);
+	void Scale_PickedObjects(const _float& fTimeDelta);
+	void Escape_MovePickedObjects();
+
+public:
+	enum class EAction { CancelMove, ConfirmMove };
+	ACTION_SET<EAction> m_Actions;
+
+public:
+	// 피킹, 배치, 또는 다른 조작
+	// 피킹 모드에서는 선택된 물체를 옮길 수 있다.
+	enum class EMode { Picking, Place, Other };
+	enum class EMoveMode { None, Move, Rotate, Scale };
+	enum class EMoveAxis { X, Y, Z, XY, YZ, ZX, ALL };
+
+private:
+	EMode						m_eToolMode = { EMode::Picking };
+	EMoveMode					m_eMoveMode = { EMoveMode::None };
+	EMoveAxis					m_eMoveAxis = { EMoveAxis::ALL };
+	vector<class CGameObject*>	m_pPickedObjects;	// 선택된 객체들 (드래그로 객체를 선택할 수 있다.
 	
 };
 

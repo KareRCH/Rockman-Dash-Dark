@@ -116,6 +116,7 @@ HRESULT CTerrainModelComp::IsRender_Ready()
 HRESULT CTerrainModelComp::Bind_ShaderResources()
 {
     _float4x4 matTemp = {};
+    _float4 vTemp = {};
 
     if (FAILED(Transform().Bind_EffectMatrix(m_pEffectComp, "g_WorldMatrix")))
         return E_FAIL;
@@ -129,9 +130,10 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
         return E_FAIL;
     if (FAILED(m_pTextureComps[TYPE_BRUSH]->Bind_SRV(m_pEffectComp, "g_BrushTexture")))
         return E_FAIL;
-    // 클라이언트에서 하면 안될거임. 셰이더 코드에서 TOOL이 정의 되어있지 않으면 사용 못함.
-    if (FAILED(m_pEffectComp->Bind_RawValue("g_iObjectID", &Get_OwnerObject()->Get_ID(), sizeof(_int))))
+    if (FAILED(m_pEffectComp->Bind_RawValue("g_vCamPosition", &(vTemp = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
         return E_FAIL;
+    // 클라이언트에서 하면 안될거임. 셰이더 코드에서 TOOL이 정의 되어있지 않으면 사용 못함.
+    m_pEffectComp->Bind_RawValue("g_iObjectID", &Get_OwnerObject()->Get_ID(), sizeof(_int));
 
     return S_OK;
 }
@@ -168,12 +170,28 @@ void CTerrainModelComp::Update_VBuffer(void* pData, _uint iSize)
     m_pTerrainBufferComp->Update_VBuffer(pData, iSize);
 }
 
+HRESULT CTerrainModelComp::Copy_IBuffer(void* pArray, size_t iSize)
+{
+    if (!m_pTerrainBufferComp)
+        return E_FAIL;
+
+    return m_pTerrainBufferComp->Copy_IBufferToArray(pArray, iSize);
+}
+
 const size_t CTerrainModelComp::Get_VertexCount() const
 {
     if (!m_pTerrainBufferComp)
         return E_FAIL;
 
     return m_pTerrainBufferComp->Get_VertexCount();
+}
+
+const size_t CTerrainModelComp::Get_IndexCount() const
+{
+    if (!m_pTerrainBufferComp)
+        return E_FAIL;
+
+    return m_pTerrainBufferComp->Get_IndexCount();
 }
 
 

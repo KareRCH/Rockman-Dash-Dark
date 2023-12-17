@@ -60,6 +60,8 @@ public:
 	
 public:
 	const size_t Get_VertexCount() const { return m_viNumTerrainVertices.x * m_viNumTerrainVertices.z; }
+	const _uint Get_VertexCountX() const { return m_viNumTerrainVertices.x; }
+	const _uint Get_VertexCountZ() const { return m_viNumTerrainVertices.z; }
 
 private:
 	_int3	m_viNumTerrainVertices;		// 터레인 점 개수

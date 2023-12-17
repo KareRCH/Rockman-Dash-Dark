@@ -32,6 +32,8 @@ cbuffer BrushBuffer
     float g_fBrushRange = 10.f;
 }
 
+vector g_vCamPosition;
+
 Texture2D g_DiffuseTexture[2];
 Texture2D g_MaskTexture;
 Texture2D g_BrushTexture;
@@ -122,7 +124,7 @@ PS_OUT PS_MAIN(VPS_INOUT In)
     float fShade = max(dot(normalize(g_vLightDir) * -1.f, normalize(In.vNormal)), 0.f);
 
 	/* 스펙큘러가 보여져야하는 영역에서는 1로, 아닌 영역에서는 0으로 정의되는 스펙큘러의 세기가 필요하다. */
-    float3 vLook = In.vWorldPos.xyz - g_ViewMatrix[3].xyz;
+    float3 vLook = In.vWorldPos.xyz - g_vCamPosition.xyz;
     float3 vReflect = reflect(normalize(g_vLightDir), normalize(In.vNormal));
 
     float fSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), g_fLightRange);
@@ -201,7 +203,7 @@ PS_OUT_TOOL PS_MAIN_TOOL(VPS_INOUT In)
     float fShade = max(dot(normalize(g_vLightDir) * -1.f, normalize(In.vNormal)), 0.f);
 
 	/* 스펙큘러가 보여져야하는 영역에서는 1로, 아닌 영역에서는 0으로 정의되는 스펙큘러의 세기가 필요하다. */
-    float3 vLook = In.vWorldPos.xyz - g_ViewMatrix[3].xyz;
+    float3 vLook = In.vWorldPos.xyz - g_vCamPosition.xyz;
     float3 vReflect = reflect(normalize(g_vLightDir), normalize(In.vNormal));
 
     float fSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), g_fLightRange);
@@ -211,7 +213,7 @@ PS_OUT_TOOL PS_MAIN_TOOL(VPS_INOUT In)
     
     // 툴 피킹 때문에 만든 기능. 화면에 그려지는 픽셀들을 기준으로 물체를 선택 할 수 있다.
     Out.vPosAndID = float4(In.vWorldPos.xyz, g_iObjectID);
-    Out.vColor = Out.vPosAndID;
+    //Out.vColor = Out.vPosAndID;
 
     return Out;
 }
