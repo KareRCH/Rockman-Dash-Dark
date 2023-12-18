@@ -17,7 +17,7 @@ BEGIN(Engine)
 /// [참조하는 관리자]
 /// - 셰이더 매니저
 /// </summary>
-class CEffectComponent final : public CInternalComponent, public ID3D11DeviceComp
+class ENGINE_DLL CEffectComponent final : public CInternalComponent, public ID3D11DeviceComp
 {
 	DERIVED_CLASS(CInternalComponent, CEffectComponent)
 

@@ -4,6 +4,9 @@
 
 BEGIN(Engine)
 
+/// <summary>
+/// 박스 버퍼 
+/// </summary>
 class CBoxBufferComp : public CVIBufferComp
 {
 	DERIVED_CLASS(CVIBufferComp, CBoxBufferComp)
@@ -15,8 +18,6 @@ protected:
 public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
-
-	void	Render_Buffer();
 
 public:
 	static	CBoxBufferComp* Create();

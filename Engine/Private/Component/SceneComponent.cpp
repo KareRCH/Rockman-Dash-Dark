@@ -2,20 +2,25 @@
 
 #include "System/GameInstance.h"
 
+CSceneComponent::CSceneComponent()
+{
+	// 필수 컴포넌트 내부 생성
+	NULL_CHECK(m_pTransformComp = CTransformComponent::Create());
+	NULL_CHECK(m_pPipelineComp = Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp")))
+}
+
 CSceneComponent::CSceneComponent(const CSceneComponent& rhs)
 	: Base(rhs)
 	, m_pPipelineComp(rhs.m_pPipelineComp)
 {
 	m_pTransformComp = Cast<CTransformComponent*>(rhs.m_pTransformComp->Clone());
+	Safe_AddRef(m_pPipelineComp);
 }
 
 HRESULT CSceneComponent::Initialize_Prototype(void* Arg)
 {
 	if (S_OK != SUPER::Initialize_Prototype())
 		return E_FAIL;
-
-	m_pTransformComp = CTransformComponent::Create();
-	m_pPipelineComp = Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp"));
 
 	return S_OK;
 }
@@ -43,7 +48,7 @@ void CSceneComponent::Free()
 {
 	SUPER::Free();
 
-	Release_Transform();
+	Safe_Release(m_pTransformComp);
 	Safe_Release(m_pPipelineComp);
 }
 

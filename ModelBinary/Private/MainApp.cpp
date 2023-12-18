@@ -1,5 +1,11 @@
 #include "MainApp.h"
 
+#include "ModelBinary_Define.h"
+#include "Engine_Define.h"
+
+#include "System/GraphicDev.h"
+#include "System/ShaderMgr_Enum.h"
+
 IMPLEMENT_SINGLETON(CMainApp)
 
 CMainApp::CMainApp()

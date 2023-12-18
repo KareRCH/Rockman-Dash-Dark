@@ -121,8 +121,6 @@ CTestObject* CTestObject::Create()
     {
         MSG_BOX("TestObject Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -136,8 +134,6 @@ CTestObject* CTestObject::Create(const _float3 vPos)
     {
         MSG_BOX("TestObject Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -151,8 +147,6 @@ CGameObject* CTestObject::Clone(void* Arg)
     {
         MSG_BOX("TestObject Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     /* Arg에서 넘겨받은 데이터 적용하기 */

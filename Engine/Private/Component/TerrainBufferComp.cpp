@@ -130,7 +130,8 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_HeightMap tInit)
         for (_uint j = 0; j < Cast<_uint>(m_viNumTerrainVertices.x); j++)
         {
             _uint		iIndex = (i * m_viNumTerrainVertices.x) + j;
-            _float      fCalcHeight = Cast<_float>(pPixel[iIndex]);
+            _float      fCalcHeight = 0.f;
+            memcpy(&fCalcHeight, &pPixel[iIndex], sizeof(_float));
 
             pVertices[iIndex].vPosition = _float3(j * m_fInterval, fCalcHeight, i * m_fInterval);
             pVertices[iIndex].vNormal = _float3(0.0f, 0.0f, 0.f);
@@ -377,41 +378,6 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_NoHeightMap tIni
 
     Safe_Delete_Array(pIndices);
     Safe_Delete_Array(pVertices);
-
-    return S_OK;
-}
-
-HRESULT CTerrainBufferComp::Bind_Buffer()
-{
-    if (nullptr == m_pVB || nullptr == m_pIB)
-        return E_FAIL;
-
-    ID3D11Buffer* pVBs[] = {
-        m_pVB.Get()
-    };
-
-    _uint           iStrides[] = {
-        m_iVertexStride
-    };
-    _uint           iOffsets[] = {
-        0,
-    };
-
-    /* 어떤 버텍스 버퍼들을 이용할거다. */
-    D3D11Context()->IASetVertexBuffers(0, m_iNumVertexBuffers, pVBs, iStrides, iOffsets);
-
-    /* 어떤 인덱스 버퍼를 이용할거다. */
-    D3D11Context()->IASetIndexBuffer(m_pIB.Get(), m_eIndexFormat, 0);
-
-    /* 정점을 어떤식으로 이어서 그릴거다. */
-    D3D11Context()->IASetPrimitiveTopology(m_eTopology);
-
-    return S_OK;
-}
-
-HRESULT CTerrainBufferComp::Render_Buffer()
-{
-    D3D11Context()->DrawIndexed(m_iNumIndices, 0, 0);
 
     return S_OK;
 }

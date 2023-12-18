@@ -86,6 +86,12 @@ private:
 	CTextureComponent* m_pTextureComps[TYPE_END] = {nullptr};
 	
 #pragma endregion
+
+
+
+
+private:
+	_uint m_iPass = { 0 };
 };
 
 

@@ -6,6 +6,7 @@
 #include "System/Define/ModelMgr_Define.h"
 #include "System/GameInstance.h"
 #include "Component/TerrainModelComp.h"
+#include "GameObject/SkyBox.h"
 
 HRESULT CTestScene::Initialize()
 {
@@ -24,6 +25,12 @@ HRESULT CTestScene::Initialize()
     tInit.iMaxWidth = 100;
     pTerrain->Create_TerrainByHeightMap(tInit);
     pTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"))->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_1.dds"));
+
+    CSkyBox* pSkyBox = { nullptr };
+    GI()->Add_GameObject(pSkyBox = CSkyBox::Create());
+    auto pModel = pSkyBox->Get_Component<CBoxModelComp>(TEXT("ModelComp"));
+    pModel->TextureComp()->Bind_Texture(TEXT("Textures/Study/SkBox/Sky_3.dds"));
+    pModel->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxCube.hlsl"), SHADER_VTX_CUBETEX::InputLayout, SHADER_VTX_CUBETEX::iMaxIndex);
 
     return S_OK;
 }

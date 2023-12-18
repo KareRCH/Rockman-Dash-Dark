@@ -19,7 +19,7 @@ class ENGINE_DLL CGameObjectComp abstract : public CComponent, public ID3D11Devi
 {
 	DERIVED_CLASS(CComponent, CGameObjectComp)
 protected:
-	explicit CGameObjectComp() = default;
+	explicit CGameObjectComp();
 	explicit CGameObjectComp(const CGameObjectComp& rhs);
 	virtual ~CGameObjectComp() = default;
 

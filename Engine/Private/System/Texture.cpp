@@ -46,8 +46,6 @@ HRESULT CTexture::Load(ID3D11Texture2D* _pTexture, ID3D11ShaderResourceView* _pS
 	if (m_bLoaded)
 	{
 		// 들어온 정보를 자동으로 해제한다.
-		Safe_Release(_pTexture);
-		Safe_Release(_pSRV);
 
 		return E_FAIL;
 	}

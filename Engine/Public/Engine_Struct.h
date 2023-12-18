@@ -88,6 +88,18 @@ namespace Engine
 		};
 	};
 
+	struct SHADER_VTX_CUBETEX
+	{
+		_float3		vPosition;
+		_float3		vTexCoord;
+
+		static constexpr _uint iMaxIndex = 2;
+		static constexpr D3D11_INPUT_ELEMENT_DESC InputLayout[iMaxIndex] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+	};
+
 	struct SHADER_VTX_COMMODEL
 	{
 		_float3		vPosition;

@@ -16,7 +16,7 @@ class ENGINE_DLL CSceneComponent abstract : public CGameObjectComp, public ITran
 {
 	DERIVED_CLASS(CGameObjectComp, CSceneComponent)
 protected:
-	explicit CSceneComponent() = default;
+	explicit CSceneComponent();
 	explicit CSceneComponent(const CSceneComponent& rhs);
 	virtual ~CSceneComponent() = default;
 

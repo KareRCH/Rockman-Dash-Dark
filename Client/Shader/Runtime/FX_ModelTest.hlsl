@@ -24,6 +24,7 @@ cbuffer BoneBuffer : register(b2)
     float4x4 g_matBones[128];
 };
 
+vector g_vCamPosition = vector(0.f, 0.f, 0.f, 0.f);
 
 // 텍스처
 Texture2D g_texDiffuse;
@@ -32,8 +33,9 @@ sampler DefaultSampler = sampler_state
     Filter = MIN_MAG_MIP_LINEAR;
 };
 
+#ifdef TOOL
 int g_iObjectID = -1;
-
+#endif
 
 //-------------------------------------------------
 
@@ -201,7 +203,7 @@ PS_OUTPUT_TOOL PS_MAIN_TOOL(VPS_INOUT input)
 technique11 DefaultTechnique
 {
 #ifdef TOOL
-// 툴에서 피킹용으로 쓰이는 패스
+    // 툴에서 피킹용으로 쓰이는 패스
     pass Tool
     {
         VertexShader = compile vs_5_0 VS_MAIN();
