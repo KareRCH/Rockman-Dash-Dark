@@ -7,50 +7,35 @@ CBoxBufferComp::CBoxBufferComp(const CBoxBufferComp& rhs)
 
 HRESULT CBoxBufferComp::Initialize_Prototype(void* Arg)
 {
-	m_iNumVertices = 4;
-	m_iNumIndices = 6;
-
-	SHADER_VTX_TEXCOORD* vertices = new SHADER_VTX_TEXCOORD[m_iNumVertices];
-	if (!vertices)
-	{
-		return E_FAIL;
-	}
-
-	_ushort* indices = new _ushort[m_iNumIndices];
-	if (!indices)
-	{
-		return E_FAIL;
-	}
-
-	vertices[0].vPosition = _float3(-0.5f, 0.5f, 0.f);
-	vertices[0].vTexCoord = _float2(0.f, 0.f);
-
-	vertices[1].vPosition = _float3(0.5f, 0.5f, 0.f);
-	vertices[1].vTexCoord = _float2(1.f, 0.f);
-
-	vertices[2].vPosition = _float3(0.5f, -0.5f, 0.f);
-	vertices[2].vTexCoord = _float2(1.f, 1.f);
-
-	vertices[2].vPosition = _float3(-0.5f, -0.5f, 0.f);
-	vertices[2].vTexCoord = _float2(1.f, 0.f);
-
-	indices[0] = 0;
-	indices[1] = 1;
-	indices[2] = 2;
-
-	indices[3] = 0;
-	indices[4] = 2;
-	indices[5] = 3;
+	m_iNumVertices = 8;
+	m_iNumIndices = 36;
 
 	// 정적 정점 버퍼의 구조체를 설정
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(SHADER_VTX_TEXCOORD) * m_iNumVertices;
+	vertexBufferDesc.ByteWidth = sizeof(SHADER_VTX_CUBETEX) * m_iNumVertices;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
 
+	SHADER_VTX_CUBETEX* vertices = new SHADER_VTX_CUBETEX[m_iNumVertices];
+	if (!vertices)
+	{
+		return E_FAIL;
+	}
+	
+	vertices[0].vPosition = vertices[0].vTexCoord = _float3(-0.5f, 0.5f, -0.5f);
+	vertices[1].vPosition = vertices[1].vTexCoord = _float3(0.5f, 0.5f, -0.5f);
+
+	vertices[2].vPosition = vertices[2].vTexCoord = _float3(0.5f, -0.5f, -0.5f);
+	vertices[3].vPosition = vertices[3].vTexCoord = _float3(-0.5f, -0.5f, -0.5f);
+
+	vertices[4].vPosition = vertices[4].vTexCoord = _float3(-0.5f, 0.5f, 0.5f);
+	vertices[5].vPosition = vertices[5].vTexCoord = _float3(0.5f, 0.5f, 0.5f);
+
+	vertices[6].vPosition = vertices[6].vTexCoord = _float3(0.5f, -0.5f, 0.5f);
+	vertices[7].vPosition = vertices[7].vTexCoord = _float3(-0.5f, -0.5f, 0.5f);
 
 	// 정점 데이터에 대한 포인터 제공
 	D3D11_SUBRESOURCE_DATA vertexData;
@@ -60,6 +45,11 @@ HRESULT CBoxBufferComp::Initialize_Prototype(void* Arg)
 
 	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVB.GetAddressOf()), E_FAIL);
 
+
+
+
+
+
 	// 정적 인덱스 버퍼의 구조체를 설정한다.
 	D3D11_BUFFER_DESC indexBufferDesc;
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -68,6 +58,30 @@ HRESULT CBoxBufferComp::Initialize_Prototype(void* Arg)
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
+
+	_ushort* indices = new _ushort[m_iNumIndices];
+	if (!indices)
+	{
+		return E_FAIL;
+	}
+
+	indices[0] = 1; indices[1] = 5; indices[2] = 6;
+	indices[3] = 1; indices[4] = 6; indices[5] = 2;
+
+	indices[6] = 4; indices[7] = 0; indices[8] = 3;
+	indices[9] = 4; indices[10] = 3; indices[11] = 7;
+
+	indices[12] = 4; indices[13] = 5; indices[14] = 1;
+	indices[15] = 4; indices[16] = 1; indices[17] = 0;
+
+	indices[18] = 3; indices[19] = 2; indices[20] = 6;
+	indices[21] = 3; indices[22] = 6; indices[23] = 7;
+
+	indices[24] = 5; indices[25] = 4; indices[26] = 7;
+	indices[27] = 5; indices[28] = 7; indices[29] = 6;
+
+	indices[30] = 0; indices[31] = 1; indices[32] = 2;
+	indices[33] = 0; indices[34] = 2; indices[35] = 3;
 
 	// 정적 인덱스 데이터를 가리키는 보조 리소스 구조체를 작성
 	D3D11_SUBRESOURCE_DATA indexData;
@@ -80,6 +94,12 @@ HRESULT CBoxBufferComp::Initialize_Prototype(void* Arg)
 	Safe_Delete_Array(vertices);
 	Safe_Delete_Array(indices);
 
+	// 추가 세팅
+	m_iVertexStride = sizeof(SHADER_VTX_CUBETEX);
+	m_iNumVertexBuffers = 1;
+	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	m_eIndexFormat = DXGI_FORMAT_R16_UINT;
+
 	return S_OK;
 }
 
@@ -88,31 +108,14 @@ HRESULT CBoxBufferComp::Initialize(void* Arg)
 	return S_OK;
 }
 
-void CBoxBufferComp::Render_Buffer()
-{
-	_uint iStride = sizeof(SHADER_VTX_TEXCOORD);
-	_uint iOffset = 0;
-
-	// 렌더링 할 수 있도록 입력 어셈블러에서 정점 버퍼를 활성으로 설정
-	D3D11Context()->IASetVertexBuffers(0, 1, m_pVB.GetAddressOf(), &iStride, &iOffset);
-
-	// 렌더링 할 수 있도록 입력 어셈블러에서 인덱스 버퍼를 활성으로 설정
-	D3D11Context()->IASetIndexBuffer(m_pIB.Get(), DXGI_FORMAT_R16_UINT, 0);
-
-	// 정점 버퍼로 그릴 기본형 설정. 삼각형 설정
-	D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
 CBoxBufferComp* CBoxBufferComp::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("BoxBufferComp Create Failed");
-
-		return nullptr;
+		Safe_Release(pInstance);
 	}
 
 	return pInstance;
@@ -124,10 +127,8 @@ CComponent* CBoxBufferComp::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("BoxBufferComp Copy Failed");
-
-		return nullptr;
+		Safe_Release(pInstance);
 	}
 
 	return Cast<CComponent*>(pInstance);

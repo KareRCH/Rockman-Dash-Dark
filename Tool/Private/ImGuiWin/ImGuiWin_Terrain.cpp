@@ -404,7 +404,7 @@ HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 	_float* pSrcData = Cast<_float*>(MappedSubResource.pData);
 	size_t iRowSize = iTypeSize * TextureDesc.Width;
 	size_t iRowPitchElement = MappedSubResource.RowPitch / iTypeSize;
-	memcpy(MappedSubResource.pData, pPixels, iTypeSize * TextureDesc.Width * TextureDesc.Height);
+	memcpy(MappedSubResource.pData, pPixels, MappedSubResource.DepthPitch);
 
 	D3D11Context()->Unmap(pTexture2D, 0);
 
@@ -576,7 +576,7 @@ void CImGuiWin_Terrain::HeightBrush_Draw(const _float& fTimeDelta)
 	            _vector vsimVertexPos = XMLoadFloat3(&vVertexPos);
 	            _float f = XMVector3Length(vsimInterPoint - vsimVertexPos).m128_f32[0];
 	            if (f <= fRadius)
-	                m_TerrainVertices[i].vPosition.y += m_fHeightBrush_Strength * fTimeDelta * (fRadius - f);
+	                m_TerrainVertices[i].vPosition.y += m_fHeightBrush_Strength * fTimeDelta * (fRadius - f) / fRadius;
 	        }
 
 			_uint iNumIndices = 0;

@@ -289,6 +289,9 @@
     <Filter Include="02. Utility\07. Delegate">
       <UniqueIdentifier>{62c897ec-346b-4982-93f2-f871dd5729aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\03. BoxModelComp">
+      <UniqueIdentifier>{a5609ab8-7787-4b77-af7b-d2c1c76f1873}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -612,6 +615,9 @@
     <ClInclude Include="Public\Utility\DelegateTemplate.h">
       <Filter>02. Utility\07. Delegate</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\BoxModelComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\03. BoxModelComp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -866,6 +872,9 @@
     <ClCompile Include="Private\System\Data\ModelData.cpp">
       <Filter>01. System\01. Manager\01. Resource\04. ModelMgr\Data</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Component\BoxModelComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\03. BoxModelComp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">
@@ -895,6 +904,9 @@
     <FxCompile Include="Shader\Runtime\FX_Navigation.hlsl">
       <Filter>03. Shader\03. Effect</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\Runtime\FX_VtxCube.hlsl">
+      <Filter>03. Shader\99. Test\EffectTest</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Runtime\FX_ModelTest.hlsl">
@@ -904,6 +916,9 @@
       <Filter>03. Shader\99. Test\EffectTest</Filter>
     </None>
     <None Include="Shader\Runtime\FX_ModelNoAnim.hlsl">
+      <Filter>03. Shader\99. Test\EffectTest</Filter>
+    </None>
+    <None Include="Shader\Runtime\Shader_Defines.hlsli">
       <Filter>03. Shader\99. Test\EffectTest</Filter>
     </None>
   </ItemGroup>

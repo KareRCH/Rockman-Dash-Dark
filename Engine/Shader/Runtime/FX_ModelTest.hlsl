@@ -203,7 +203,7 @@ PS_OUTPUT_TOOL PS_MAIN_TOOL(VPS_INOUT input)
 technique11 DefaultTechnique
 {
 #ifdef TOOL
-// 툴에서 피킹용으로 쓰이는 패스
+    // 툴에서 피킹용으로 쓰이는 패스
     pass Tool
     {
         VertexShader = compile vs_5_0 VS_MAIN();

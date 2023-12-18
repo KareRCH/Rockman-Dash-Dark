@@ -27,7 +27,7 @@ public:
 	};
 
 protected:
-	explicit CGameObject() = default;
+	explicit CGameObject();
 	explicit CGameObject(const CGameObject& rhs);
 	virtual ~CGameObject() = default;
 

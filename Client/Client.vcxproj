@@ -321,6 +321,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Default\targetver.h" />
     <ClInclude Include="Public\Client_Define.h" />
     <ClInclude Include="Public\GameObject\DynamicCamera.h" />
+    <ClInclude Include="Public\GameObject\SkyBox.h" />
     <ClInclude Include="Public\GameObject\TestObject.h" />
     <ClInclude Include="Public\GameObject\TestTextureObject.h" />
     <ClInclude Include="Public\Level\Level_Loading.h" />
@@ -331,6 +332,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp" />
     <ClCompile Include="Private\GameObject\DynamicCamera.cpp" />
+    <ClCompile Include="Private\GameObject\SkyBox.cpp" />
     <ClCompile Include="Private\GameObject\TestObject.cpp" />
     <ClCompile Include="Private\GameObject\TestTextureObject.cpp" />
     <ClCompile Include="Private\Level\Level_Loading.cpp" />

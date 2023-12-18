@@ -11,7 +11,7 @@ class ENGINE_DLL CVIBufferComp abstract : public CInternalComponent
 	DERIVED_CLASS(CInternalComponent, CVIBufferComp)
 
 protected:
-	explicit CVIBufferComp() = default;
+	explicit CVIBufferComp();
 	explicit CVIBufferComp(const CVIBufferComp& rhs);
 	virtual ~CVIBufferComp() = default;
 
@@ -37,10 +37,16 @@ private:
 
 public:
 	HRESULT Create_Buffer(_Inout_ ID3D11Buffer** ppBuffer);
-	void Update_VBuffer(void* pData, _uint iCount);
+	void	Update_VBuffer(void* pData, _uint iCount);
 	// 사용전에 사이즈 확보해놓을 것. 배열자체의 인덱스 사이즈와, 요소별 사이즈가 필요하다.
 	HRESULT Copy_VBufferToArray(void* pArray, size_t iSize, size_t iSizePerIndex);
 	HRESULT Copy_IBufferToArray(void* pArray, size_t iSize);
+
+	// 버퍼를 장치에 바인드
+	HRESULT Bind_Buffer();
+	// 정점, 인덱스를 렌더링
+	HRESULT Render_Buffer();
+	
 
 public:
 	GETSET_1(_uint, m_iNumVertices, VertexCount, GET_C_REF)

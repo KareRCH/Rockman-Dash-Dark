@@ -3,6 +3,12 @@
 
 #include "System/GameInstance.h"
 
+CGameObject::CGameObject()
+	: m_pPipelineComp(Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp")))
+{
+	m_pTransformComp = CTransformComponent::Create();
+}
+
 CGameObject::CGameObject(const CGameObject& rhs)
 	: m_pPipelineComp(rhs.m_pPipelineComp)
 	, m_iStateFlag(rhs.m_iStateFlag)
@@ -23,11 +29,9 @@ CGameObject::CGameObject(const CGameObject& rhs)
 HRESULT CGameObject::Initialize_Prototype()
 {
 	// 기본 트랜스폼 생성
-	m_pTransformComp = CTransformComponent::Create();
 	// 매니저 참조 컴포넌트는 단순 레퍼런스형으로 공유 컴포넌트로 사용된다.
 	// 카메라 행렬에 대한 데이터 교환을 하는 컴포넌트이다. 파이프라인에 GI통해서 접근하지 않고
 	// 해당 매니저에 대해 컴포넌트로 통신한다.
-	m_pPipelineComp = Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp"));
 
 	return S_OK;
 }

@@ -54,7 +54,7 @@ public:
 	HRESULT Unbind_Texture();
 
 public:
-	HRESULT Bind_SRV(class CEffectComponent* pEffect, const _char* pTextureName);
+	HRESULT Bind_SRVToEffect(class CEffectComponent* pEffect, const _char* pTextureName);
 
 private:
 	// 텍스처 매니저에 연결하는 내부 함수

@@ -48,7 +48,7 @@ HRESULT CTerrainModelComp::Render()
 {
     Bind_ShaderResources();
 
-    m_pEffectComp->Begin(0);
+    m_pEffectComp->Begin(m_iPass);
 
     m_pTerrainBufferComp->Bind_Buffer();
 
@@ -65,8 +65,6 @@ CTerrainModelComp* CTerrainModelComp::Create()
     {
         MSG_BOX("CTerrainModelComp Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -80,8 +78,6 @@ CComponent* CTerrainModelComp::Clone(void* Arg)
     {
         MSG_BOX("SkinnedModelComp Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return Cast<CComponent*>(pInstance);
@@ -124,11 +120,11 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
         return E_FAIL;
-    if (FAILED(m_pTextureComps[TYPE_DIFFUSE]->Bind_SRV(m_pEffectComp, "g_DiffuseTexture")))
+    if (FAILED(m_pTextureComps[TYPE_DIFFUSE]->Bind_SRVToEffect(m_pEffectComp, "g_DiffuseTexture")))
         return E_FAIL;
-    if (FAILED(m_pTextureComps[TYPE_MASK]->Bind_SRV(m_pEffectComp, "g_MaskTexture")))
+    if (FAILED(m_pTextureComps[TYPE_MASK]->Bind_SRVToEffect(m_pEffectComp, "g_MaskTexture")))
         return E_FAIL;
-    if (FAILED(m_pTextureComps[TYPE_BRUSH]->Bind_SRV(m_pEffectComp, "g_BrushTexture")))
+    if (FAILED(m_pTextureComps[TYPE_BRUSH]->Bind_SRVToEffect(m_pEffectComp, "g_BrushTexture")))
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_RawValue("g_vCamPosition", &(vTemp = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
         return E_FAIL;

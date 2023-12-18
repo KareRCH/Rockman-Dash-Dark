@@ -2,6 +2,11 @@
 
 #include "System/GameInstance.h"
 
+CGameObjectComp::CGameObjectComp()
+    : m_pDeviceComp(Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp")))
+{
+}
+
 CGameObjectComp::CGameObjectComp(const CGameObjectComp& rhs)
     : Base(rhs)
     , m_pDeviceComp(rhs.m_pDeviceComp)
@@ -11,8 +16,6 @@ CGameObjectComp::CGameObjectComp(const CGameObjectComp& rhs)
 
 HRESULT CGameObjectComp::Initialize_Prototype(void* Arg)
 {
-    m_pDeviceComp = Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp"));
-
     return S_OK;
 }
 

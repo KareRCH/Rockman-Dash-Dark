@@ -51,10 +51,6 @@ public:
 	HRESULT Create_Buffer(const FTerrainBufInit_HeightMap tInit);
 	// 초기 버퍼 생성 작업, 헤이트 없이
 	HRESULT Create_Buffer(const FTerrainBufInit_NoHeightMap tInit);
-	// 장치에 버퍼 바인드
-	HRESULT Bind_Buffer();
-	// 실제 인덱싱된 버퍼를 드로잉
-	HRESULT Render_Buffer();
 	// 외부에서 버퍼가 준비되었는지 알기 위한 함수
 	HRESULT IsRender_Ready();
 	

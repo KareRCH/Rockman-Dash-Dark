@@ -103,7 +103,7 @@ HRESULT CTextureComponent::Unbind_Texture()
 	return S_OK;
 }
 
-HRESULT CTextureComponent::Bind_SRV(CEffectComponent* pEffect, const _char* pTextureName)
+HRESULT CTextureComponent::Bind_SRVToEffect(CEffectComponent* pEffect, const _char* pTextureName)
 {
 	return pEffect->Bind_SRV(pTextureName, m_pSRV.Get());
 }
