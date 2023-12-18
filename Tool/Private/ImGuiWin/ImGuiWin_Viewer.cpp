@@ -1,6 +1,7 @@
 #include "ImGuiWin/ImGuiWin_Viewer.h"
 
 #include "ImGuiWin/ImGuiWin_Terrain.h"
+#include "ImGuiWin/ImGuiWin_Browser.h"
 #include "BaseClass/Terrain.h"
 #include "GameObject/ToolCamera.h"
 #include "DirectXTex.h"
@@ -32,6 +33,7 @@ void CImGuiWin_Viewer::Tick(const _float& fTimeDelta)
 		return;
 
     Link_ToTerrainEditor();
+    Link_ToBrowser();
 
 	ImGui::Begin(u8"뷰어");
     
@@ -391,9 +393,110 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
     }
 
     // 브러쉬
-    if (m_ePickingMode == EPickingMode::Brush && ImGui::IsMouseDown(ImGuiMouseButton_Left))
+    if (m_ePickingMode == EPickingMode::Brush)// && ImGui::IsMouseDown(ImGuiMouseButton_Left))
     {
-        OnBrushPicked.Broadcast(m_vMousePosOnViewer);
+        CGameObject* pPickedObject = { nullptr };
+        _float3 vPickedWorldPos = {};
+
+        ComPtr<ID3D11Texture2D> pTexture = { nullptr };
+        m_pGI->Copy_RenderTargetViewToTexture_ByViewport(pTexture, 1, 0);
+
+        if (pTexture != nullptr)
+        {
+            D3D11_TEXTURE2D_DESC Desc = {};
+            pTexture->GetDesc(&Desc);
+
+            vector<_float4> vecPosAndIDs;
+            vecPosAndIDs.resize(Desc.Width * Desc.Height);
+            size_t iSize = sizeof(_float4) * vecPosAndIDs.size();
+
+            // 렌더타겟으로부터 얻어온 데이터를 순회해서 찾을 수 있게 한뒤에 필요한 값을 찾아낸다.
+            D3D11_MAPPED_SUBRESOURCE mappedResource;
+            m_pGI->Get_GraphicContext()->Map(pTexture.Get(), 0, D3D11_MAP_READ, 0, &mappedResource);
+            _float4* sourcData = Cast<_float4*>(mappedResource.pData);
+            _float4* destData = vecPosAndIDs.data();
+            size_t iRowSize = sizeof(_float4) * Desc.Width;
+            _uint iMappedRowPitchByte = mappedResource.RowPitch / sizeof(_float4);
+            for (_uint i = 0; i < Desc.Height; i++)
+            {
+                memcpy(destData, sourcData, iRowSize);
+                sourcData += iMappedRowPitchByte;
+                destData += Desc.Width;
+            }
+            m_pGI->Get_GraphicContext()->Unmap(pTexture.Get(), 0);
+
+            // 정보를 옮겼으면 피킹을 하자
+            _uint iIndex = m_vMousePosOnViewer.x + m_vMousePosOnViewer.y * Desc.Width;
+            _float4 vData = vecPosAndIDs[iIndex];
+
+            _int iObjectID = Cast<_int>(vData.w);
+            if (iObjectID != -1)
+            {
+                CGameObject* pObj = m_pGI->Find_GameObjectByID(iObjectID);
+                if (pObj != nullptr)
+                {
+                    pPickedObject = pObj;                               // 찍은 오브젝트
+                    vPickedWorldPos = { vData.x, vData.y, vData.z };    // 찍은 위치
+                }
+            }
+        }
+
+        pTexture.Reset();
+        if (pPickedObject != nullptr)
+            OnBrushPicked.Broadcast(vPickedWorldPos);
+    }
+
+    if (m_ePickingMode == EPickingMode::Place && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+    {
+        CGameObject* pPickedObject = { nullptr };
+        _float3 vPickedWorldPos = {};
+
+        ComPtr<ID3D11Texture2D> pTexture = { nullptr };
+        m_pGI->Copy_RenderTargetViewToTexture_ByViewport(pTexture, 1, 0);
+
+        if (pTexture != nullptr)
+        {
+            D3D11_TEXTURE2D_DESC Desc = {};
+            pTexture->GetDesc(&Desc);
+
+            vector<_float4> vecPosAndIDs;
+            vecPosAndIDs.resize(Desc.Width * Desc.Height);
+            size_t iSize = sizeof(_float4) * vecPosAndIDs.size();
+
+            // 렌더타겟으로부터 얻어온 데이터를 순회해서 찾을 수 있게 한뒤에 필요한 값을 찾아낸다.
+            D3D11_MAPPED_SUBRESOURCE mappedResource;
+            m_pGI->Get_GraphicContext()->Map(pTexture.Get(), 0, D3D11_MAP_READ, 0, &mappedResource);
+            _float4* sourcData = Cast<_float4*>(mappedResource.pData);
+            _float4* destData = vecPosAndIDs.data();
+            size_t iRowSize = sizeof(_float4) * Desc.Width;
+            _uint iMappedRowPitchByte = mappedResource.RowPitch / sizeof(_float4);
+            for (_uint i = 0; i < Desc.Height; i++)
+            {
+                memcpy(destData, sourcData, iRowSize);
+                sourcData += iMappedRowPitchByte;
+                destData += Desc.Width;
+            }
+            m_pGI->Get_GraphicContext()->Unmap(pTexture.Get(), 0);
+
+            // 정보를 옮겼으면 피킹을 하자
+            _uint iIndex = m_vMousePosOnViewer.x + m_vMousePosOnViewer.y * Desc.Width;
+            _float4 vData = vecPosAndIDs[iIndex];
+
+            _int iObjectID = Cast<_int>(vData.w);
+            if (iObjectID != -1)
+            {
+                CGameObject* pObj = m_pGI->Find_GameObjectByID(iObjectID);
+                if (pObj != nullptr)
+                {
+                    pPickedObject = pObj;                               // 찍은 오브젝트
+                    vPickedWorldPos = { vData.x, vData.y, vData.z };    // 찍은 위치
+                }
+            }
+        }
+
+        pTexture.Reset();
+        if (pPickedObject != nullptr)
+            OnPlacePicked.Broadcast(vPickedWorldPos);
     }
 }
 
@@ -409,8 +512,20 @@ void CImGuiWin_Viewer::Link_ToTerrainEditor()
         pTerrainEditor->Add_ModeSelectedListener(MakeDelegate(this, &ThisClass::Handle_ModeSelected));
         m_bIsLinkedToTerrainEditor = true;
     }
+}
 
-    return;
+void CImGuiWin_Viewer::Link_ToBrowser()
+{
+    if (m_bIsLinkedToBrowser || !m_pParentWin)
+        return;
+
+    CImGuiWin_Browser* pBrowser = { nullptr };
+    m_pParentWin->Find_Child(&pBrowser);
+    if (pBrowser != nullptr)
+    {
+        pBrowser->Add_PlaceModeSelectedListener(MakeDelegate(this, &ThisClass::Handle_ModeSelectedPlace));
+        m_bIsLinkedToTerrainEditor = true;
+    }
 }
 
 void CImGuiWin_Viewer::Handle_ModeSelected(_bool bIsEdit)
@@ -418,6 +533,15 @@ void CImGuiWin_Viewer::Handle_ModeSelected(_bool bIsEdit)
     // 모드를 바꾼다.
     if (bIsEdit)
         m_ePickingMode = EPickingMode::Brush;
+    else
+        m_ePickingMode = EPickingMode::Object;
+}
+
+void CImGuiWin_Viewer::Handle_ModeSelectedPlace(_bool bIsPlaceMode)
+{
+    // 모드를 바꾼다.
+    if (bIsPlaceMode)
+        m_ePickingMode = EPickingMode::Place;
     else
         m_ePickingMode = EPickingMode::Object;
 }

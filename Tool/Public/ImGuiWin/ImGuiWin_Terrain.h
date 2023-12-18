@@ -88,8 +88,17 @@ private:
 public:
 	// 뷰어에 연결 대기하는 함수
 	HRESULT Link_ToViewer();
+	// 브라우저에 연결 대기하는 함수
+	void Link_ToBrowser();
+
+private:
+	_bool		m_bIsLinkedToViewer = { false };
+	_bool		m_bIsLinkedToBrowser = { false };
+
+public:
 	void Handle_PickedObject(CGameObject* pGameObj);
-	void Handle_PickedBrush(_float2 vMouseOnViewer);
+	void Handle_PickedBrush(_float3 vPickedWorldPos);
+	void Handle_PlaceModeSelected(_bool bIsSelected);
 	_bool IsCanEdit_Terrain() { return (m_bIsEditing && nullptr != m_pPickedTerrain); }
 
 	// 외부에서 브로드 캐스트 델리게이트에 리스너추가
@@ -103,14 +112,13 @@ public:
 	enum class EBrushType { Circle, Rect };
 
 private:
-	_bool		m_bIsLinkedToViewer = { false };
 	_bool		m_bIsEditing = { false };
 	EEditMode	m_eEditMode = { EEditMode::Create };
 	EBrushType	m_eBrushType = { EBrushType::Circle };
 
 	ModeSeleectedBroadDelegate OnModeSelected;
 	_bool						m_bIsClickedOnViewer = false;
-	_float2						m_vMousePosOnViewer = {};
+	_float3						m_vPickedWorldPos = {};
 
 private:	// 그리기 브러쉬 설정값들
 	_float	m_fDrawBrush_Diameter = 3.f;		// 브러쉬 사이즈, 지름 기준

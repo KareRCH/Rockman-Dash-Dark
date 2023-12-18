@@ -23,7 +23,7 @@ HRESULT CTestScene::Initialize()
     tInit.strHeightMapPath = TEXT("TestHeight.png");
     tInit.iMaxWidth = 100;
     pTerrain->Create_TerrainByHeightMap(tInit);
-    pTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"))->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_0.dds"));
+    pTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"))->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_1.dds"));
 
     return S_OK;
 }

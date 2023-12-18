@@ -15,8 +15,11 @@ BEGIN(Tool)
 typedef FastDelegate1<CGameObject*> PickedObjectDelegate;
 typedef MulticastDelegate<PickedObjectDelegate, CGameObject*> PickedObjectMultiDelegate;
 
-typedef FastDelegate1<_float2> PickedBrushDelegate;
-typedef MulticastDelegate<PickedBrushDelegate, _float2> PickedBrushMultiDelegate;
+typedef FastDelegate1<_float3> PickedBrushDelegate;
+typedef MulticastDelegate<PickedBrushDelegate, _float3> PickedBrushMultiDelegate;
+
+typedef FastDelegate1<_float3> PickedPlaceDelegate;
+typedef MulticastDelegate<PickedPlaceDelegate, _float3> PickedPlaceMultiDelegate;
 
 /// <summary>
 /// 실제 게임상의 카메라를 통해 화면을 보여준다.
@@ -106,7 +109,7 @@ private:
 
 public:
 	// 피킹되었을 때 어떤 객체에 대한 모드는 이를 통해 설정한다.
-	enum class EPickingMode { None, Object, Brush };
+	enum class EPickingMode { None, Object, Place, Brush };
 	EPickingMode m_ePickingMode = { EPickingMode::Object };
 	
 	vector<SHADER_VTX_NORM>		m_TerrainVertices;
@@ -117,8 +120,16 @@ private:
 public:
 	// 터레인 에디터에 연결
 	void Link_ToTerrainEditor();
+	void Link_ToBrowser();
+
+private:
+	_bool	m_bIsLinkedToTerrainEditor = false;
+	_bool	m_bIsLinkedToBrowser = false;
+
+public:
 	// 터레인 창으로부터 모드 선택을 처리
 	void Handle_ModeSelected(_bool bIsEdit);
+	void Handle_ModeSelectedPlace(_bool bIsPlaceMode);
 
 	// 외부에서 브로드 캐스트 델리게이트에 리스너추가
 	void Add_PickedObjectListener(const PickedObjectDelegate& Listener) { OnObjectPicked.Add(Listener); }
@@ -128,10 +139,15 @@ public:
 	void Add_PickedBrushListener(const PickedBrushDelegate& Listener) { OnBrushPicked.Add(Listener); }
 	void Remove_PickedBrushListener(const PickedBrushDelegate& Listener) { OnBrushPicked.Remove(Listener); }
 
+	// 외부에서 브로드 캐스트 델리게이트에 리스너추가
+	void Add_PickedPlaceListener(const PickedPlaceDelegate& Listener) { OnPlacePicked.Add(Listener); }
+	void Remove_PickedPlaceListener(const PickedPlaceDelegate& Listener) { OnPlacePicked.Remove(Listener); }
+
 private:
 	PickedObjectMultiDelegate	OnObjectPicked;		// 피킹 델리게이트
 	PickedBrushMultiDelegate	OnBrushPicked;		// 브러쉬 피킹 델리게이트
-	_bool						m_bIsLinkedToTerrainEditor = false;
+	PickedPlaceMultiDelegate	OnPlacePicked;		// 배치 피킹 델리게이트
+	
 
 private:
 

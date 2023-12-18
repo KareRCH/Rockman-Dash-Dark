@@ -1,6 +1,7 @@
 #include "ImGuiWin/ImGuiWin_Terrain.h"
 
 #include "ImGuiWin/ImGuiWin_Viewer.h"
+#include "ImGuiWin/ImGuiWin_Browser.h"
 #include "System/GameInstance.h"
 #include "BaseClass/Terrain.h"
 
@@ -200,6 +201,7 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 		// 텍스처를 바인딩
 		CTerrainModelComp* pTerrainModel = m_pPickedTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"));
 		pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_1.dds"));
+		pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_BRUSH, TEXT("Textures/Tool/Brushes/RoundHeightBrush.png"));
 	}
 }
 
@@ -446,6 +448,20 @@ HRESULT CImGuiWin_Terrain::Link_ToViewer()
 	return S_OK;
 }
 
+void CImGuiWin_Terrain::Link_ToBrowser()
+{
+	if (m_bIsLinkedToBrowser || !m_pParentWin)
+		return;
+
+	CImGuiWin_Browser* pBrowser = { nullptr };
+	m_pParentWin->Find_Child(&pBrowser);
+	if (pBrowser != nullptr)
+	{
+		pBrowser->Add_PlaceModeSelectedListener(MakeDelegate(this, &ThisClass::Handle_PlaceModeSelected));
+		m_bIsLinkedToBrowser = true;
+	}
+}
+
 void CImGuiWin_Terrain::Handle_PickedObject(CGameObject* pGameObj)
 {
 	if (pGameObj == nullptr)
@@ -465,10 +481,18 @@ void CImGuiWin_Terrain::Handle_PickedObject(CGameObject* pGameObj)
 	}
 }
 
-void CImGuiWin_Terrain::Handle_PickedBrush(_float2 vMouseOnViewer)
+void CImGuiWin_Terrain::Handle_PickedBrush(_float3 vPickedWorldPos)
 {
-	m_vMousePosOnViewer = vMouseOnViewer;
+	m_vPickedWorldPos = vPickedWorldPos;
 	m_bIsClickedOnViewer = true;
+}
+
+void CImGuiWin_Terrain::Handle_PlaceModeSelected(_bool bIsSelected)
+{
+	if (bIsSelected)
+	{
+		m_bIsEditing = false;
+	}
 }
 
 void CImGuiWin_Terrain::HeightBrush_Draw(const _float& fTimeDelta)
@@ -485,7 +509,7 @@ void CImGuiWin_Terrain::HeightBrush_Draw(const _float& fTimeDelta)
 	        bIsPicking_Ready = true;
 	}
 	
-	if (bIsPicking_Ready && ImGui::IsMouseDown(ImGuiMouseButton_Left))
+	if (m_bIsClickedOnViewer && bIsPicking_Ready && ImGui::IsMouseDown(ImGuiMouseButton_Left))
 	{
 		if (m_pPrevPickedTerrain != m_pPickedTerrain)
 		{
@@ -505,8 +529,8 @@ void CImGuiWin_Terrain::HeightBrush_Draw(const _float& fTimeDelta)
 
 	    D3D11_VIEWPORT viewport = *GI()->Get_SystemViewportPtr(0);
 	    _float3 vNear, vFar;
-	    vNear = { m_vMousePosOnViewer.x, m_vMousePosOnViewer.y, 0.01f };
-	    vFar = { m_vMousePosOnViewer.x, m_vMousePosOnViewer.y, 1000.f };
+	    vNear = { m_vPickedWorldPos.x, m_vPickedWorldPos.y, 0.01f };
+	    vFar = { m_vPickedWorldPos.x, m_vPickedWorldPos.y, 1000.f };
 	    _matrix matProj = PipelineComp().Get_CamMatrix(ECamType::Persp, ECamMatrix::Proj, ECamNum::One);
 	    _matrix matView = PipelineComp().Get_CamMatrix(ECamType::Persp, ECamMatrix::View, ECamNum::One);
 	    //_matrix matWorld = XMMatrixInverse(nullptr, matView);
@@ -536,10 +560,11 @@ void CImGuiWin_Terrain::HeightBrush_Draw(const _float& fTimeDelta)
 	    _float fRadius = m_fHeightBrush_Diameter * 0.5f;				// 브러쉬 범위
 	    _vector vPlane = XMPlaneFromPointNormal(vsimPos1, vsimNormal);
 	    // 교차점 구하기
-	    _vector vsimInterPoint = XMPlaneIntersectLine(vPlane, vMouseNear, vMouseFar);
-	    _float3 vInterPoint;
+		_vector vsimInterPoint = XMLoadFloat3(&m_vPickedWorldPos);//XMPlaneIntersectLine(vPlane, vMouseNear, vMouseFar);
+		_float3 vInterPoint = {};
 	    XMStoreFloat3(&vInterPoint, vsimInterPoint);
 	    vInterPoint.y = 0.f;
+		vsimInterPoint = XMLoadFloat3(&vInterPoint);
 
 	    if (vPos1.x < vInterPoint.x && vInterPoint.x < vPos2.x
 	        && vPos1.z < vInterPoint.z && vInterPoint.z < vPos2.z)
