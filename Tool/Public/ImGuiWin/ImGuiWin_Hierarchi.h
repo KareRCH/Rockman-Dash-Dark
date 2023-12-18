@@ -31,6 +31,20 @@ public:
 
 private:
 	virtual void	Free() override;
+
+public:
+	void Layout_ObjectList(const _float& fTimeDelta);
+
+private:
+	void Handle_ObjectPlaced(CGameObject* pObj);
+
+	void Link_ToBrowser();
+
+private:
+	_bool					m_bIsLinkedToBrowser = false;
+	vector<class CGameObject*>	m_vecGameObjects;
+	_int					m_iSelected_GameObject = -1;
+
 };
 
 END
