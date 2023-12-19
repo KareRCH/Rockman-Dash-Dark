@@ -91,9 +91,16 @@ void CTestObject::Tick(const _float& fTimeDelta)
     _float3 t = Transform().Get_RotationEulerFloat3();
 
     if (m_Gauge.Increase(fTimeDelta))
+    {
+        m_bTest = !m_bTest;
+        if (m_bTest)
+            m_pModelComp->Set_MaskAnimation(0, L"Idle");
+        else
+            m_pModelComp->Set_MaskAnimation(0, L"Idle2");
         m_Gauge.Reset();
+    }
 
-    m_pModelComp->Set_MaskAnimation(0, L"Idle");
+    
     m_pModelComp->Set_MaskTime(0, m_Gauge.fCur);
     m_pModelComp->Apply_Pose();
     m_pModelComp->Invalidate_BoneTransforms();
@@ -149,8 +156,6 @@ CGameObject* CTestObject::Clone(void* Arg)
         Safe_Release(pInstance);
     }
 
-    /* Arg에서 넘겨받은 데이터 적용하기 */
-
     return Cast<CGameObject*>(pInstance);
 }
 
@@ -179,7 +184,6 @@ HRESULT CTestObject::Initialize_Component()
     m_pModelComp->Active_BoneMask(2, L"Bone");
     m_pModelComp->Create_Mask(L"LeftArm", L"Armature", false);
     m_pModelComp->Create_Mask(L"RightArm", L"Armature", false);
-    m_pModelComp->Set_TickDeltaTime(60.f);
 
     return S_OK;
 }

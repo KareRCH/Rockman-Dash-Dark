@@ -302,69 +302,72 @@ void CModelMgr::Load_Animation(FModelData* pModelData)
 		wstring AnimNameWithTK = Make_Wstring(pAnimAI->mName.C_Str());
 		pAnimData->fDuration = Cast<_float>(pAnimAI->mDuration);
 		pAnimData->fTickPerSecond = Cast<_float>(pAnimAI->mTicksPerSecond);
+		
 
 		// 애니메이션 이름 추출
 		size_t iTokkenInd = AnimNameWithTK.find_first_of(L'|') + Cast<size_t>(1);
 		wstring SkeletalName = AnimNameWithTK.substr(0, iTokkenInd - 1);
 		wstring AnimName = AnimNameWithTK.substr(iTokkenInd);
-
-
+		pAnimData->strName = AnimName;
+		pAnimData->iID = i;
 
 		// 애니메이션 채널
 		for (_uint j = 0; j < pAnimAI->mNumChannels; j++)
 		{
-			aiNodeAnim* pNodeAnimAI = pAnimAI->mChannels[j];
-			FBoneAnimChannelData* pAnimNodeData = FBoneAnimChannelData::Create();
-			wstring AnimNodeName = Make_Wstring(pNodeAnimAI->mNodeName.C_Str());
+			aiNodeAnim* pChannelAI = pAnimAI->mChannels[j];
+			FBoneAnimChannelData* pAnimChannelData = FBoneAnimChannelData::Create();
+			wstring AnimChannelName = Make_Wstring(pChannelAI->mNodeName.C_Str());
 
 			// 뼈 없으면 넘어감. 이거 걸리면 안되는 거임.
 			FBoneGroup* pBoneGroup = pModelData->pBoneGroup;
 			if (nullptr == pBoneGroup)
 				continue;
-			FBoneData* pBoneData = pBoneGroup->Find_BoneData(AnimNodeName);
+			FBoneData* pBoneData = pBoneGroup->Find_BoneData(AnimChannelName);
 
-			pAnimNodeData->iBoneID = pBoneData->iID;
-			pAnimNodeData->vecPositions.reserve(pNodeAnimAI->mNumPositionKeys);
-			pAnimNodeData->vecRotations.reserve(pNodeAnimAI->mNumRotationKeys);
-			pAnimNodeData->vecScales.reserve(pNodeAnimAI->mNumScalingKeys);
+			// 채널, 즉, 뼈의 ID를 저장한다.
+			pAnimChannelData->iBoneID = pBoneData->iID;
+			// 가장 긴 키프레임으로 공간을 만든다.
+			pAnimChannelData->m_iNumKeyFrames = max(pChannelAI->mNumPositionKeys, max(pChannelAI->mNumRotationKeys, pChannelAI->mNumScalingKeys));
+			pAnimChannelData->vecKeyFrames.reserve(pAnimChannelData->m_iNumKeyFrames);
 
-			// Pos 값 추출
-			for (_uint k = 0; k < pNodeAnimAI->mNumPositionKeys; k++)
+			// 값을 차례대로 저장할 것이다.
+			_float3 vScale = {};
+			_float4 vRotation = {};
+			_float3 vPosition = {};
+
+			// 데이터 추출
+			for (_uint k = 0; k < pAnimChannelData->m_iNumKeyFrames; k++)
 			{
-				auto fTime = pNodeAnimAI->mPositionKeys[k].mTime;
-				auto vPos = pNodeAnimAI->mPositionKeys[k].mValue;
-				FBoneAnimChannelData::FPosition tPosition = {
-					Cast<_float>(fTime),
-					{ vPos.x, vPos.y, vPos.z }
-				};
-				pAnimNodeData->vecPositions.push_back(tPosition);
+				FKeyFrame KeyFrame = {};
+				if (k < pChannelAI->mNumScalingKeys)
+				{
+					auto vChannelScale = pChannelAI->mScalingKeys[k].mValue;
+					vScale = { vChannelScale.x, vChannelScale.y, vChannelScale.z };
+					KeyFrame.fTrackPosition = Cast<_float>(pChannelAI->mScalingKeys[k].mTime);
+				}
+
+				if (k < pChannelAI->mNumRotationKeys)
+				{
+					auto vChannelRot = pChannelAI->mRotationKeys[k].mValue;
+					vRotation = { vChannelRot.x, vChannelRot.y, vChannelRot.z, vChannelRot.w };
+					KeyFrame.fTrackPosition = Cast<_float>(pChannelAI->mRotationKeys[k].mTime);
+				}
+
+				if (k < pChannelAI->mNumPositionKeys)
+				{
+					auto vChannelPos = pChannelAI->mPositionKeys[k].mValue;
+					vPosition = { vChannelPos.x, vChannelPos.y, vChannelPos.z };
+					KeyFrame.fTrackPosition = Cast<_float>(pChannelAI->mPositionKeys[k].mTime);
+				}
+
+				KeyFrame.vScale = vScale;
+				KeyFrame.qtRot = vRotation;
+				KeyFrame.vPos = vPosition;
+
+				pAnimChannelData->vecKeyFrames.push_back(KeyFrame);
 			}
 
-			// Rot 값 추출 (쿼터니언)
-			for (_uint k = 0; k < pNodeAnimAI->mNumRotationKeys; k++)
-			{
-				auto fTime = pNodeAnimAI->mRotationKeys[k].mTime;
-				auto vRot = pNodeAnimAI->mRotationKeys[k].mValue;
-				FBoneAnimChannelData::FRotation tRotation = {
-					Cast<_float>(fTime),
-					{ vRot.x, vRot.y, vRot.z, vRot.w }
-				};
-				pAnimNodeData->vecRotations.push_back(tRotation);
-			}
-
-			// Scale 값 추출
-			for (_uint k = 0; k < pNodeAnimAI->mNumScalingKeys; k++)
-			{
-				auto fTime = pNodeAnimAI->mScalingKeys[k].mTime;
-				auto vScale = pNodeAnimAI->mScalingKeys[k].mValue;
-				FBoneAnimChannelData::FScale tScale = {
-					Cast<_float>(fTime),
-					{ vScale.x, vScale.y, vScale.z }
-				};
-				pAnimNodeData->vecScales.push_back(tScale);
-			}
-
-			pAnimData->Add_AnimChannelData(AnimNodeName, pAnimNodeData);
+			pAnimData->Add_AnimChannelData(AnimChannelName, pAnimChannelData);
 		}
 		pAnimGroup->Add_BoneAnim(AnimName, pAnimData);
 

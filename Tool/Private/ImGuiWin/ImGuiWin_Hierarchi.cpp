@@ -43,8 +43,6 @@ CImGuiWin_Hierarchi* CImGuiWin_Hierarchi::Create()
 	{
 		MSG_BOX("CImGuiWin_Viewer Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;

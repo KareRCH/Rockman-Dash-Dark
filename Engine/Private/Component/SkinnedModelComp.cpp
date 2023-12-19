@@ -2,28 +2,30 @@
 
 #include "System/GameInstance.h"
 
+CSkinnedModelComp::CSkinnedModelComp()
+{
+    m_pMultiMeshBufComp = CMultiMeshBufComp::Create();
+    m_pSkeletalComp = CSkeletalComponent::Create();
+    m_pAnimationComp = CAnimationComponent::Create();
+    m_pEffectComp = CEffectComponent::Create();
+}
+
 CSkinnedModelComp::CSkinnedModelComp(const CSkinnedModelComp& rhs)
     : Base(rhs)
     , m_pModelData(rhs.m_pModelData)
     , m_pMultiMeshBufComp(rhs.m_pMultiMeshBufComp)
     , m_pSkeletalComp(rhs.m_pSkeletalComp)
-    , m_pAnimationComp(rhs.m_pAnimationComp)
     , m_pEffectComp(rhs.m_pEffectComp)
 {
     Safe_AddRef(m_pModelData);
     Safe_AddRef(m_pMultiMeshBufComp);
     Safe_AddRef(m_pSkeletalComp);
-    Safe_AddRef(m_pAnimationComp);
+    m_pAnimationComp = Cast<CAnimationComponent*>(rhs.m_pAnimationComp->Clone());
 }
 
 HRESULT CSkinnedModelComp::Initialize_Prototype(void* Arg)
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
-
-    m_pMultiMeshBufComp = CMultiMeshBufComp::Create();
-    m_pSkeletalComp = CSkeletalComponent::Create();
-    m_pAnimationComp = CAnimationComponent::Create();
-    m_pEffectComp = CEffectComponent::Create();
 
     return S_OK;
 }
@@ -41,7 +43,7 @@ void CSkinnedModelComp::Priority_Tick(const _float& fTimeDelta)
 
 void CSkinnedModelComp::Tick(const _float& fTimeDelta)
 {
-    m_pAnimationComp->Set_TickDeltaTime(fTimeDelta);
+
 }
 
 void CSkinnedModelComp::Late_Tick(const _float& fTimeDelta)
@@ -100,8 +102,6 @@ CSkinnedModelComp* CSkinnedModelComp::Create()
     {
         MSG_BOX("SkinnedModelComp Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -115,8 +115,6 @@ CComponent* CSkinnedModelComp::Clone(void* Arg)
     {
         MSG_BOX("SkinnedModelComp Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return Cast<CComponent*>(pInstance);
@@ -145,7 +143,6 @@ HRESULT CSkinnedModelComp::Bind_Model(EModelGroupIndex eGroup, const wstring& st
 
     m_pMultiMeshBufComp->Set_ModelData(m_pModelData);
     m_pSkeletalComp->Set_ModelData(m_pModelData);
-    m_pAnimationComp->Set_ModelData(m_pModelData);
 
     return S_OK;
 }
@@ -194,8 +191,9 @@ HRESULT CSkinnedModelComp::Bind_Skeletal(const wstring& strSkeletalKey)
 {
     if (!m_pSkeletalComp)
         return E_FAIL;
+    m_pSkeletalComp->Load_Skeletal(strSkeletalKey);
 
-    return m_pSkeletalComp->Load_Skeletal(strSkeletalKey);
+    return m_pAnimationComp->Bind_BoneGroup(m_pSkeletalComp);
 }
 
 void CSkinnedModelComp::Invalidate_BoneTransforms()
@@ -244,14 +242,6 @@ void CSkinnedModelComp::Set_MaskTime(_uint iIndex, _float fTime)
         return;
 
     m_pAnimationComp->Set_MaskTime(iIndex, fTime);
-}
-
-void CSkinnedModelComp::Set_TickDeltaTime(_float fDeltaTime)
-{
-    if (!m_pAnimationComp)
-        return;
-
-    m_pAnimationComp->Set_TickDeltaTime(fDeltaTime);
 }
 
 HRESULT CSkinnedModelComp::Apply_Pose()

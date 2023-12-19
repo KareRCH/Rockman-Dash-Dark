@@ -4,6 +4,30 @@
 
 BEGIN(Engine)
 
+struct FKeyFrame
+{
+	_float fTrackPosition;
+	_float3 vPos;
+	_float4 qtRot;
+	_float3 vScale;
+};
+
+// 단순 키프레임 보간 할 때 쓰인다. 이떄는 키 프레임의 결과가 나와 있어야 한다.
+struct FKeyFrameInterpolate
+{
+	_float				fWeight;
+	vector<FKeyFrame>	KeyFrames;
+};
+
+// 애니메이션 정보를 보간, 애니메이션에 현재 위치를 통해 보간하기 때문에. 마스크 내에서 트랜지션할 때 쓰인다.
+struct FAnimInterpolate
+{
+	_int			iAnimID;		// 보간 후보 애니메이션 ID
+	vector<_int>	vecChannelIDs;	// 보간 후보 애니메이션의 채널 ID들
+	_float			fTrackPos;		// 트랙 위치
+	_float			fWeight;		// 보간 가중치
+};
+
 /// <summary>
 /// 애니메이션 채널의 프레임별 노드
 /// </summary>
@@ -23,39 +47,21 @@ public:
 	/// <summary>
 	/// 설정한 시간으로 보간된 행렬을 반환하는 함수
 	/// </summary>
-	/// <param name="fTime">변환된 시간을 넣어주어야함</param>
+	/// <param name="fTime">프레임 값으로 넣어준다.</param>
 	/// <returns></returns>
-	_float4x4 Interporated_Matrix(const _float& fCurTime) const;
+	_float4x4 Interpolated_Matrix(const _float& fCurTrackPos) const;
+	FKeyFrame Interpolated_KeyFrame(const _float& fCurTrackPos) const;
 
-	// 각각 배열의 기준점을 찾아주는 함수, 해당 기준점을 통해
-	_uint Calculate_PivotPosition(const _float& fCurTime) const;
-	_uint Calculate_PivotRotation(const _float& fCurTime) const;
-	_uint Calculate_PivotScale(const _float& fCurTime) const;
-	
-public:
-	struct FPosition
-	{
-		_float fTime;
-		_float3 vPos;
-	};
-
-	struct FRotation
-	{
-		_float fTime;
-		_float4 qtRot;
-	};
-
-	struct FScale
-	{
-		_float fTime;
-		_float3 vScale;
-	};
+	// 각각 배열의 기준점을 찾아주는 함수, 해당 기준점을 통해 애니메이션 위치를 알아낸다.
+	// 유틸성을 위해서 현재 위치를 저장하는 방식을 사용하지 않고, 기준점을 찾아준다.
+	// 반복문을 통해 기준점을 찾아내는데. 기본적인 기준점은 비율로 구하며, 이는 Baking된 데이터에 대한 처리라
+	// 왠만한 상황에서 상수시간의 알고리즘을 갖는다.
+	_uint Calculate_Pivot(const _float& fCurTrackPos) const;
 
 public:
 	_int					iBoneID = -1;			// 뼈 ID
-	vector<FPosition>		vecPositions;			// 위치 데이터들
-	vector<FRotation>		vecRotations;			// 회전 데이터들
-	vector<FScale>			vecScales;				// 크기 데이터들
+	_uint					m_iNumKeyFrames;		// 키 프레임 개수
+	vector<FKeyFrame>		vecKeyFrames;			// 위치 데이터들
 };
 
 
@@ -85,9 +91,12 @@ public:
 	// 시간 변화율로 애니메이션 타임라인의 현재 시간을 구해주는 함수, Mod를 켜면 반복됨
 	_float Calculate_Time(_float fCurTime, _bool bMod = true) const;
 	
+	
 public:
-	_float fDuration = 0.0;			// 진행 길이
-	_float fTickPerSecond = 0.0;	// 시간당 프레임
+	_uint	iID = 0;				// 애니메이션 ID
+	wstring strName = L"";			// 애니메이션 이름
+	_float	fDuration = 0.0;		// 진행 길이
+	_float	fTickPerSecond = 0.0;	// 시간당 프레임
 
 public:
 	map<const wstring, FBoneAnimChannelData*>	mapAnimNodes;	// 노드 이름으로 검색 시스템
@@ -116,6 +125,15 @@ public:
 	FBoneAnimData* const	Find_BoneAnim(const _uint iIndex);
 	FBoneAnimData* const	Find_BoneAnim(const wstring& strAnimKey);
 	void Add_BoneAnim(const wstring& strAnimKey, FBoneAnimData* pAnimData);
+
+	
+	// 한 애니메이션에 대한 단일 보간값을 받아내야 할 때 사용한다.
+	FKeyFrame Interpolated_Anim(const _uint iAnimIndex, const _uint iChannelIndex, const _float& fCurTrackPos) const;
+	// 보간에 필요한 정보를 받아 내부의 애니메이션을 이용해 보간된 키프레임을 돌려주는 함수
+	void Interpolated_Anims(FKeyFrame* pKeyFrames, _uint iNumKeyFrames, FAnimInterpolate* pArrInterpolateData, _uint iNumInterpolates);
+	// 키프레임끼리 보간, 이미 나온 키프레임 결과물에 대해 시행한다.
+	void Interpolated_KeyFrames(FKeyFrame* pKeyFrames, _uint iNumKeyFrames, FKeyFrameInterpolate* pArrInterpolate, _uint iNumInterpolates);
+	
 
 private:
 	_unmap<wstring, FBoneAnimData*> mapAnimDatas;	// 애니메이션 저장 맵, 키는 애니메이션 이름

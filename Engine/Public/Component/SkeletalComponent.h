@@ -13,6 +13,7 @@ class FBoneGroup;
 /// 스켈레톤을 관리할 수 있는 컴포넌트
 /// 하나의 인스턴스화 된 스켈레톤 그룹을 가진다.
 /// 이 컴포넌트는 메쉬 컴포넌트의 부품으로 취급된다.
+/// 뼈는 복제하여 사용한다.
 /// </summary>
 class ENGINE_DLL CSkeletalComponent final : public CInternalComponent
 {
@@ -41,6 +42,7 @@ public:
 	HRESULT		Load_Skeletal(const wstring& strSkeletalKey);
 
 	// 최종 트랜스폼의 주소를 저장한 벡터를 내보내, 버퍼에 전달 할 수 있도록 해준다.
+	FModelData* Get_ModelData();
 	FBoneGroup* Get_BoneGroup();
 	void		Invalidate_BoneTransforms();
 
