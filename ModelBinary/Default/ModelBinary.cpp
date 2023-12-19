@@ -11,7 +11,7 @@
 #define MAX_LOADSTRING 100
 
 // 콘솔창 키고 싶으면 이거 1로 설정
-#define _DEBUG_CONSOLE 0
+#define _DEBUG_CONSOLE 1
 
 // 전역 변수:
 HWND	    g_hWnd;                             // 윈도우 창 변수입니다.
@@ -41,7 +41,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 #ifdef _DEBUG
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-#if _TEST_CONSOLE
+#if _DEBUG_CONSOLE
     // 디버그용 콘솔창
     if (::AllocConsole() == TRUE)
     {
@@ -69,6 +69,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
     msg.message = WM_NULL;
+
+    CMainApp* pMainApp = CMainApp::Create();
 
     if (nullptr == pMainApp)
         return FALSE;

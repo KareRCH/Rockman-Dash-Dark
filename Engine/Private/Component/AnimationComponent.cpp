@@ -1,14 +1,15 @@
 #include "Component/AnimationComponent.h"
 
+#include "Component/SkeletalComponent.h"
 #include "System/Data/BoneAnimData.h"
 #include "System/ModelMgr.h"
 
 CAnimationComponent::CAnimationComponent(const CAnimationComponent& rhs)
 	: Base(rhs)
-	, m_pModelData(rhs.m_pModelData)
+	, m_pBoneGroup(rhs.m_pBoneGroup)
 	, m_pAnimGroup(rhs.m_pAnimGroup)
 {
-	Safe_AddRef(m_pModelData);
+	Safe_AddRef(m_pBoneGroup);
 	Safe_AddRef(m_pAnimGroup);
 }
 
@@ -30,8 +31,6 @@ CAnimationComponent* CAnimationComponent::Create()
 	{
 		MSG_BOX("CAnimationComponent Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -45,8 +44,6 @@ CComponent* CAnimationComponent::Clone(void* Arg)
 	{
 		MSG_BOX("CAnimationComponent Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return Cast<CComponent*>(pInstance);
@@ -54,24 +51,27 @@ CComponent* CAnimationComponent::Clone(void* Arg)
 
 void CAnimationComponent::Free()
 {
-	Safe_Release(m_pModelData);
+	Safe_Release(m_pBoneGroup);
 	Safe_Release(m_pAnimGroup);
 }
 
-void CAnimationComponent::Set_ModelData(FModelData* pModelData)
+HRESULT CAnimationComponent::Bind_BoneGroup(CSkeletalComponent* pSkeletalComp)
 {
-	m_pModelData = pModelData;
-	Safe_AddRef(m_pModelData);
-
-	Bind_AnimGroup();
-}
-
-HRESULT CAnimationComponent::Bind_AnimGroup()
-{
-	if (!m_pModelData)
+	if (!pSkeletalComp)
 		return E_FAIL;
 
-	m_pAnimGroup = m_pModelData->pAnimGroup;
+	m_pBoneGroup = pSkeletalComp->Get_BoneGroup();
+	Safe_AddRef(m_pBoneGroup);
+
+	Bind_AnimGroup(pSkeletalComp->Get_ModelData());
+}
+
+HRESULT CAnimationComponent::Bind_AnimGroup(FModelData* pModelData)
+{
+	if (!pModelData)
+		return E_FAIL;
+
+	m_pAnimGroup = pModelData->pAnimGroup;
 	Safe_AddRef(m_pAnimGroup);
 
 	return S_OK;
@@ -79,19 +79,17 @@ HRESULT CAnimationComponent::Bind_AnimGroup()
 
 HRESULT CAnimationComponent::Create_Mask(const wstring& strMaskName, const wstring& strSkeletalName, _bool bInitBoneActive)
 {
-	if (!m_pModelData)
-		return E_FAIL;
-
-	FBoneGroup* pBoneGroup = m_pModelData->pBoneGroup;
-	if (!pBoneGroup)
+	if (!m_pBoneGroup)
 		return E_FAIL;
 
 	// 기본 세팅
 	FAnimMask tMask = {};
 	tMask.strName = strMaskName;
 	tMask.fWeight = 1.f;
-	tMask.vecBoneMasks.resize(pBoneGroup->Get_BoneDatas_Count(), bInitBoneActive);
-	tMask.strSkeletaName = strSkeletalName;
+	tMask.iNumMasks = m_pBoneGroup->Get_BoneDatas_Count();
+	tMask.vecBoneMasks.resize(tMask.iNumMasks, bInitBoneActive);
+	tMask.fTransitionSpeed = 0.1f;
+	tMask.strAnimName = L"Idle";
 
 	m_vecAnimMask.push_back(tMask);
 
@@ -108,17 +106,13 @@ FAnimMask* CAnimationComponent::Get_Mask(_uint iIndex)
 
 void CAnimationComponent::Deactive_BoneMask(_uint iIndex, const wstring& strBoneName)
 {
-	if (!m_pModelData)
+	if (!m_pBoneGroup)
 		return;
 
 	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
 		return;
 
-	FBoneGroup* pBoneGroup = m_pModelData->pBoneGroup;
-	if (!pBoneGroup)
-		return;
-
-	FBoneData* pBoneData = pBoneGroup->Find_BoneData(strBoneName);
+	FBoneData* pBoneData = m_pBoneGroup->Find_BoneData(strBoneName);
 	if (!pBoneData)
 		return;
 
@@ -127,17 +121,13 @@ void CAnimationComponent::Deactive_BoneMask(_uint iIndex, const wstring& strBone
 
 void CAnimationComponent::Active_BoneMask(_uint iIndex, const wstring& strBoneName)
 {
-	if (!m_pModelData)
+	if (!m_pBoneGroup)
 		return;
 
 	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
 		return;
 
-	FBoneGroup* pBoneGroup = m_pModelData->pBoneGroup;
-	if (!pBoneGroup)
-		return;
-
-	FBoneData* pBoneData = pBoneGroup->Find_BoneData(strBoneName);
+	FBoneData* pBoneData = m_pBoneGroup->Find_BoneData(strBoneName);
 	if (!pBoneData)
 		return;
 
@@ -149,7 +139,24 @@ void CAnimationComponent::Set_MaskAnimation(_uint iIndex, const wstring& strAnim
 	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
 		return;
 
-	m_vecAnimMask[iIndex].strAnimName = strAnimName;
+	FAnimMask& rMask = m_vecAnimMask[iIndex];
+	const FBoneAnimData* pBoneAnimData = m_pAnimGroup->Find_BoneAnim(strAnimName);
+	if (pBoneAnimData == nullptr)
+		return;
+
+	if (strAnimName != rMask.strPrevAnimName)
+	{
+		rMask.strPrevAnimName = rMask.strAnimName;
+		rMask.iPrevAnimID = rMask.iAnimID;
+		rMask.fPrevTrackPos = rMask.fCurTrackPos;
+		rMask.fTransitionGauge = 0.f;
+	}
+
+	rMask.strAnimName = pBoneAnimData->strName;
+	rMask.iAnimID = pBoneAnimData->iID;
+	rMask.fTickPerSeconds = pBoneAnimData->fTickPerSecond;
+	rMask.fDuration = pBoneAnimData->fDuration;
+	rMask.fCurTrackPos = 0.f;
 }
 
 void CAnimationComponent::Set_MaskTime(_uint iIndex, _float fTime)
@@ -157,12 +164,16 @@ void CAnimationComponent::Set_MaskTime(_uint iIndex, _float fTime)
 	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
 		return;
 
-	m_vecAnimMask[iIndex].fCurTime = fTime;
-}
+	FAnimMask& rMask = m_vecAnimMask[iIndex];
+	const FBoneAnimData* pBoneAnimData = m_pAnimGroup->Find_BoneAnim(rMask.strAnimName);
+	if (pBoneAnimData == nullptr)
+		return;
 
-void CAnimationComponent::Set_TickDeltaTime(_float fDeltaTime)
-{
-	m_fSystemTPS = fDeltaTime;
+	// 실제 시간을 프레임 단위로 변환
+	m_vecAnimMask[iIndex].fCurTrackPos = pBoneAnimData->Calculate_Time(fTime);
+	// 게이지가 1이 아니면 시간 추가
+	if (rMask.fTransitionGauge < 1.f)
+		m_vecAnimMask[iIndex].fPrevTrackPos = pBoneAnimData->Calculate_Time(fTime);
 }
 
 void CAnimationComponent::Apply_MaskTime(_uint iIndex, const wstring& strAnimName, _float fCurTime)
@@ -170,7 +181,7 @@ void CAnimationComponent::Apply_MaskTime(_uint iIndex, const wstring& strAnimNam
 	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
 		return;
 
-	m_vecAnimMask[iIndex].fCurTime = fCurTime;
+	m_vecAnimMask[iIndex].fCurTrackPos = fCurTime;
 	m_vecAnimMask[iIndex].strAnimName = strAnimName;
 }
 
@@ -192,39 +203,53 @@ void CAnimationComponent::Apply_MaskTime(const wstring& strMaskName, const wstri
 	if (!bFound)
 		return;
 
-	m_vecAnimMask[iIndex].fCurTime = fCurTime;
+	m_vecAnimMask[iIndex].fCurTrackPos = fCurTime;
 	m_vecAnimMask[iIndex].strAnimName = strAnimName;
 }
 
 void CAnimationComponent::Apply_FinalMask()
 {
-	if (!m_pModelData || !m_pAnimGroup)
+	if (!m_pBoneGroup || !m_pAnimGroup)
 		return;
 
 	if (m_vecAnimMask.empty())
 		return;
+
+	_uint iNumAnimMasks = m_vecAnimMask.size();
+	_uint iNumBoneMasks = m_vecAnimMask[0].iNumMasks;
+	_matrix matIdentity = XMMatrixIdentity();
 	
 	// 남은 가중치
 	vector<_float> vecBoneRemainWeights;
 	vector<_matrix> vecBoneMatrices;
+	vector<FKeyFrame> vecKeyFrames;
+	vector<FKeyFrameInterpolate> vecKeyFrameInters;
 
-	_matrix matIdentity = XMMatrixIdentity();
+	
+	vecBoneRemainWeights.resize(iNumBoneMasks, 0.f);
+	vecBoneMatrices.resize(iNumBoneMasks, {});
+	vecKeyFrames.resize(iNumBoneMasks, {});
+	vecKeyFrameInters.resize(iNumAnimMasks, {});
+	for (_uint i = 0; i < iNumAnimMasks; i++)
+	{
+		vecKeyFrameInters[i].KeyFrames.resize(iNumBoneMasks, {});
+	}
+	
+
+	_bool bIsTransition = false;
+
 	// 뼈에 대한 가중치 계산을 한다.
 	for (_int i = Cast<_int>(m_vecAnimMask.size() - 1); i >= 0; --i)
 	{
 		FAnimMask& rAnimMask = m_vecAnimMask[i];
-
-		if (vecBoneRemainWeights.empty())
-		{
-			vecBoneRemainWeights.resize(rAnimMask.vecBoneMasks.size(), 0.f);
-			vecBoneMatrices.resize(rAnimMask.vecBoneMasks.size(), {});
-		}
+		_float fCurWeight = 0.f;
 
 		// 애니메이션이 없으면 건너뛰기
 		if (rAnimMask.strAnimName.empty())
 			continue;
 
-		for (_uint j = 0; j < rAnimMask.vecBoneMasks.size(); j++)
+		// 가중치 보정
+		for (_uint j = 0; j < iNumBoneMasks; j++)
 		{
 			// 상위 레이어의 마스크가 우선적으로 조정된다.
 			// min 함수를 사용해서 남아있는 값으로만 웨이트가 정해지도록 조정한다.
@@ -236,29 +261,77 @@ void CAnimationComponent::Apply_FinalMask()
 				vecBoneRemainWeights[j] = fWeight;
 			else
 				vecBoneRemainWeights[j] = max((1.f - vecBoneRemainWeights[j]) - fWeight, 0.f);	// 0이하로 떨어지지 않게 보정
-		}
 
-		const FBoneAnimData* pBoneAnimData = m_pAnimGroup->Find_BoneAnim(rAnimMask.strAnimName);
-		_float fCurAnimTime = pBoneAnimData->Calculate_Time(rAnimMask.fCurTime);	// 변환된 시간 값
 
-		// 행렬 계산
-		for (_uint j = 0; j < rAnimMask.vecBoneMasks.size(); j++)
-		{
-			_float4x4 matTemp = {};
-			const FBoneAnimChannelData* pBoneAnimNodeData= pBoneAnimData->Find_AnimChannelData(j);
 
-			// 만약 애니메이션이 있다면 행렬더하기를 한다.
-			if (nullptr != pBoneAnimNodeData)
-				vecBoneMatrices[j] += XMLoadFloat4x4(&(matTemp = pBoneAnimNodeData->Interporated_Matrix(fCurAnimTime))) * vecBoneRemainWeights[j];
+
+			// 마스크 트랜지션이 있으면 그에 대한 보간을 한 결과물을 KeyFrameInterpolate로 뽑아낸다.
+			if (rAnimMask.fTransitionGauge < 1.f)
+			{
+				FAnimInterpolate AnimInter = {};
+				AnimInter.iAnimID = rAnimMask.iAnimID;
+				AnimInter.fTrackPos = rAnimMask.fCurTrackPos;
+				AnimInter.fWeight = rAnimMask.fTransitionGauge;
+				AnimInter.vecChannelIDs.reserve(iNumBoneMasks);
+				for (_uint j = 0; j < iNumBoneMasks; j++)
+				{
+					_int iID = rAnimMask.vecBoneMasks[j] ? rAnimMask.vecBoneMasks[j] * j : -1;	// 마스크가 없으면 -1로 구분
+					AnimInter.vecChannelIDs.push_back(iID);
+				}
+
+				FAnimInterpolate PrevAnimInter = AnimInter;
+				PrevAnimInter.iAnimID = rAnimMask.iPrevAnimID;
+				PrevAnimInter.fTrackPos = rAnimMask.fPrevTrackPos;
+				PrevAnimInter.fWeight = 1.f - rAnimMask.fTransitionGauge;
+
+				FAnimInterpolate ArrAnimInter[2] = {
+					AnimInter, PrevAnimInter
+				};
+
+				// 마스크 애니메이션끼리 보간한다.
+				m_pAnimGroup->Interpolated_Anims(vecKeyFrames.data(), vecKeyFrames.size(), ArrAnimInter, 2);
+
+				vecKeyFrameInters[i].fWeight = fWeight;
+				vecKeyFrameInters[i].KeyFrames[j] = vecKeyFrames[j];
+			}
+			// 없으면 KeyFrameInterpolate를 한 애니메이션으로부터 얻어온다.
 			else
-				vecBoneMatrices[j] = matIdentity;
+			{
+				FKeyFrame KeyFrame = m_pAnimGroup->Interpolated_Anim(rAnimMask.iAnimID, j, rAnimMask.fCurTrackPos);
+				vecKeyFrameInters[i].fWeight = fWeight;
+				vecKeyFrameInters[i].KeyFrames[j] = KeyFrame;
+			}
 		}
+
+		if (rAnimMask.fTransitionGauge < 1.f)
+			rAnimMask.fTransitionGauge += rAnimMask.fTransitionSpeed;
 	}
 
-	// 뼈 트랜스폼에 애니메이션 적용
-	FBoneGroup* pBoneGroup = ConCast<FBoneGroup*>(m_pModelData->pBoneGroup);
-	for (_uint i = 0; i < vecBoneMatrices.size(); i++)
+	// 보간데이터를 넘겨서 계산한다.
+	m_pAnimGroup->Interpolated_KeyFrames(vecKeyFrames.data(), vecKeyFrames.size(), vecKeyFrameInters.data(), vecKeyFrameInters.size());
+	FAnimMask& rAnimMask = m_vecAnimMask[0];
+	const FBoneAnimData* pBoneAnimData = m_pAnimGroup->Find_BoneAnim(rAnimMask.strAnimName);
+	for (_uint i = 0; i < iNumBoneMasks; i++)
 	{
-		pBoneGroup->Set_BoneTransform(i, vecBoneMatrices[i]);
+		const FBoneAnimChannelData* pBoneAnimChannelData = pBoneAnimData->Find_AnimChannelData(i);
+
+		if (nullptr != pBoneAnimChannelData)
+		{
+			vecBoneMatrices[i] =
+				XMMatrixAffineTransformation(
+					XMLoadFloat3(&vecKeyFrames[i].vScale),
+					XMQuaternionIdentity(),
+					XMLoadFloat4(&vecKeyFrames[i].qtRot),
+					XMLoadFloat3(&vecKeyFrames[i].vPos));
+		}
+		else
+			vecBoneMatrices[i] = matIdentity;
+	}
+	
+
+	// 뼈 트랜스폼에 애니메이션 적용
+	for (_uint i = 0; i < iNumBoneMasks; i++)
+	{
+		m_pBoneGroup->Set_BoneTransform(i, vecBoneMatrices[i]);
 	}
 }

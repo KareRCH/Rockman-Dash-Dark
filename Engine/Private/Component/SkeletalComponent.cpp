@@ -31,8 +31,6 @@ CSkeletalComponent* CSkeletalComponent::Create()
     {
         MSG_BOX("CSkeletonComponent Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -46,8 +44,6 @@ CComponent* CSkeletalComponent::Clone(void* Arg)
     {
         MSG_BOX("CSkeletonComponent Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return Cast<CComponent*>(pInstance);
@@ -74,11 +70,15 @@ HRESULT CSkeletalComponent::Load_Skeletal(const wstring& strSkeletalKey)
 
     if (!pBoneGroup)
         return E_FAIL;
-    
-    m_pBoneDatas = pBoneGroup;
-    Safe_AddRef(m_pBoneDatas);
+
+    m_pBoneDatas = pBoneGroup->Clone();
 
     return S_OK;
+}
+
+FModelData* CSkeletalComponent::Get_ModelData()
+{
+    return m_pModelData;
 }
 
 FBoneGroup* CSkeletalComponent::Get_BoneGroup()

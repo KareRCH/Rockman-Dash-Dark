@@ -56,6 +56,7 @@ private:
 
 private:
 	FGauge	m_Gauge = FGauge(1.f);
+	_bool	m_bTest = false;
 };
 
 END

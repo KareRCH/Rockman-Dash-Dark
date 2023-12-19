@@ -33,7 +33,7 @@ xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)Tool\Shader\Compiled\" /y /e
 
 xcopy "$(OutDir)$(TargetName).dll" "$(SolutionDir)ModelBinary\Bin\$(PlatformTarget)\$(Configuration)\" /y
 xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)ModelBinary\Bin\$(PlatformTarget)\$(Configuration)\Shader\" /y /e
-xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)ModelBinaryl\Shader\Compiled\" /y /e
+xcopy "$(OutDir)Shader\*.*" "$(SolutionDir)ModelBinary\Shader\Compiled\" /y /e
 
 xcopy "Shader\Runtime\*.*" "$(SolutionDir)Client\Shader\Runtime\" /y /e</Command>
     </PostBuildEvent>

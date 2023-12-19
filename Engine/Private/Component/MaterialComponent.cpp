@@ -34,8 +34,6 @@ CMaterialComponent* CMaterialComponent::Create()
 	{
 		MSG_BOX("CMaterialComponent Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -49,8 +47,6 @@ CComponent* CMaterialComponent::Clone(void* Arg)
 	{
 		MSG_BOX("CMaterialComponent Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return Cast<CComponent*>(pInstance);

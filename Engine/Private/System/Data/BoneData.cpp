@@ -42,11 +42,15 @@ void FBoneData::Free()
 
 
 FBoneGroup::FBoneGroup(const FBoneGroup& rhs)
-	: mapBones(rhs.mapBones), vecBones(rhs.vecBones)
+	: vecBones(rhs.vecBones)
 {
 	// ±Ì¿∫ ∫πªÁ
 	for (size_t i = 0; i < vecBones.size(); i++)
+	{
 		vecBones[i] = vecBones[i]->Clone();
+		mapBones.emplace(vecBones[i]->strName, vecBones[i]);
+	}
+
 }
 
 FBoneGroup* FBoneGroup::Create()
@@ -68,7 +72,6 @@ FBoneGroup* FBoneGroup::Clone()
 	if (!pInstance)
 	{
 		MSG_BOX("FBoneNodeData Copy Failed");
-		return nullptr;
 	}
 
 	return pInstance;

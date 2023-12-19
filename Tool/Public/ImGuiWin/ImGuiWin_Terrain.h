@@ -116,7 +116,7 @@ private:
 	EEditMode	m_eEditMode = { EEditMode::Create };
 	EBrushType	m_eBrushType = { EBrushType::Circle };
 
-	ModeSeleectedBroadDelegate OnModeSelected;
+	ModeSeleectedBroadDelegate	OnModeSelected;
 	_bool						m_bIsClickedOnViewer = false;
 	_float3						m_vPickedWorldPos = {};
 
