@@ -241,6 +241,7 @@
     <ClInclude Include="Public\Component\PlaneModelComp.h" />
     <ClInclude Include="Public\Component\TerrainBufferComp.h" />
     <ClInclude Include="Public\Component\TerrainModelComp.h" />
+    <ClInclude Include="Public\ModelLoad.h" />
     <ClInclude Include="Public\System\Data\MaterialData.h" />
     <ClInclude Include="Public\System\Data\ModelData.h" />
     <ClInclude Include="Public\Utility\DelegateTemplate.h" />
@@ -381,6 +382,7 @@
     <ClCompile Include="Private\Component\TransformComponent.cpp" />
     <ClCompile Include="Private\Component\TriBufferComp.cpp" />
     <ClCompile Include="Private\Component\VIBufferComp.cpp" />
+    <ClCompile Include="Private\ModelLoad.cpp" />
     <ClCompile Include="Private\Physics\Collide.cpp" />
     <ClCompile Include="Private\Physics\CollisionPrimitive.cpp" />
     <ClCompile Include="Private\Physics\Contact.cpp" />

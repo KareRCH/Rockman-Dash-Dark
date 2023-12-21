@@ -53,7 +53,7 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGI->Create_Font(L"MonsterUI", L"ÇÔÃÊ·Õ¹ÙÅÁ", 14, 25, FW_THIN), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Initialize_TextureMgr(tDevice, L"Resource/"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr("Resource/"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr(L"Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
 	GameInstance()->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
 	GameInstance()->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");

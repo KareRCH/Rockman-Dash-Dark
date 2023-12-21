@@ -29,29 +29,36 @@ private:
 	virtual ~CModelMgr() = default;
 
 public:
-	HRESULT	Initialize(const string& strMainDir);
+	HRESULT	Initialize(const wstring& strMainDir);
 
 public:
-	static CModelMgr* Create(const string& strMainDir);
+	static CModelMgr* Create(const wstring& strMainDir);
 private:
 	virtual void Free() override;
 
 
 private:
-	string	m_strMainDir = { "" };			// 참조할 메인 디렉터리
+	wstring	m_strMainDir = { L"" };			// 참조할 메인 디렉터리
 
 
 public:
-	void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strModelKey);
-	void	Load_Mesh(FModelData* pModelData);
+	//void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strModelKey);
+	/*void	Load_Mesh(FModelData* pModelData);
 	void	Load_Material(FModelData* pModelData);
 	void	Load_Animation(FModelData* pModelData);
 	void	Load_Hierarchi(FBoneGroup* pBoneGroup, aiNode* pArmatureNode);
-	void	Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FBoneData* pParentNode);
+	void	Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FBoneData* pParentNode);*/
+
+	HRESULT Load_Binary(const wstring& strFileName, class CModelLoad* pModel);
+	void Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName);
+	void Load_Meshes(FModelData* pModelData, class CModelLoad* pModel);
+	void Load_Materials(FModelData* pModelData, class CModelLoad* pModel);
+	void Load_Animations(FModelData* pModelData, class CModelLoad* pModel);
+	void Load_Bones(FModelData* pModelData, class CModelLoad* pModel);
 
 public:
 	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey);
-	FBoneGroup*			Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	FBoneGroup*				Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 
 public:
 	const FModelData* const	Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);

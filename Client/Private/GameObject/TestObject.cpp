@@ -94,9 +94,9 @@ void CTestObject::Tick(const _float& fTimeDelta)
     {
         m_bTest = !m_bTest;
         if (m_bTest)
-            m_pModelComp->Set_MaskAnimation(0, L"Idle");
+            m_pModelComp->Set_MaskAnimation(0, L"Armature|Idle2");
         else
-            m_pModelComp->Set_MaskAnimation(0, L"Idle2");
+            m_pModelComp->Set_MaskAnimation(0, L"Armature|Idle2");
         m_Gauge.Reset();
     }
 
@@ -171,7 +171,7 @@ HRESULT CTestObject::Initialize_Component()
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CSkinnedModelComp::Create()), E_FAIL);
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    m_pModelComp->Bind_Model(EModelGroupIndex::Permanent, L"RockVolnutt");
+    m_pModelComp->Bind_Model(EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Test.amodel");
     m_pModelComp->Bind_Mesh(L"Body");
     m_pModelComp->Bind_Mesh(L"Arms");
     m_pModelComp->Bind_Mesh(L"Legs");

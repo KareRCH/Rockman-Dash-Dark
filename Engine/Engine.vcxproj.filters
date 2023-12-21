@@ -618,6 +618,9 @@
     <ClInclude Include="Public\Component\BoxModelComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\03. BoxModelComp</Filter>
     </ClInclude>
+    <ClInclude Include="Public\ModelLoad.h">
+      <Filter>02. Utility\04. Serialize</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -874,6 +877,9 @@
     </ClCompile>
     <ClCompile Include="Private\Component\BoxModelComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\03. BoxModelComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ModelLoad.cpp">
+      <Filter>02. Utility\04. Serialize</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

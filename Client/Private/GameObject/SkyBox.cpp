@@ -53,6 +53,9 @@ void CSkyBox::Late_Tick(const _float& fTimeDelta)
 {
     SUPER::Late_Tick(fTimeDelta);
 
+    Transform().Set_Position(PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One));
+
+    m_pModelComp->Late_Tick(fTimeDelta);
 }
 
 HRESULT CSkyBox::Render()

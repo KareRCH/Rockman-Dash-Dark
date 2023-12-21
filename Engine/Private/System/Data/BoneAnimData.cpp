@@ -202,6 +202,8 @@ _uint FBoneAnimChannelData::Calculate_Pivot(const _float& fCurTrackPos) const
 	
 	while (true)
 	{
+		if (iSize == 21 && iPivot == 9 || iPivot == 10)
+			cout << iPivot << endl;
 		// 현재 기준점에 해당하는 시간 값이 해당된다면, 더 작은 인덱스와의 비교 후에 결정한다.
 		// 현재 시간 값이 비교값을 넘을 때, 최대한 하위 인덱스와 비교하여 맞춘다.
 		if (fCurTrackPos >= vecKeyFrames[iPivot].fTrackPosition)
@@ -225,6 +227,9 @@ _uint FBoneAnimChannelData::Calculate_Pivot(const _float& fCurTrackPos) const
 		}
 	}
 
+	if (iSize == 21)
+		int t = 0;
+
 	return iPivot;
 }
 
@@ -243,23 +248,23 @@ FBoneAnimData* FBoneAnimData::Create()
 
 void FBoneAnimData::Free()
 {
-	for (auto& Pair : mapAnimNodes)
+	for (auto& Pair : mapAnimChannels)
 		Safe_Release(Pair.second);
-	mapAnimNodes.clear();
+	mapAnimChannels.clear();
 }
 
 const FBoneAnimChannelData* const FBoneAnimData::Find_AnimChannelData(_uint iIndex) const
 {
-	if (iIndex < 0 || iIndex >= vecAnimNodes.size())
+	if (iIndex < 0 || iIndex >= vecAnimChannels.size())
 		return nullptr;
 
-	return vecAnimNodes[iIndex];
+	return vecAnimChannels[iIndex];
 }
 
 const FBoneAnimChannelData* const FBoneAnimData::Find_AnimChannelData(const wstring& strNodeKey) const
 {
-	auto iter = mapAnimNodes.find(strNodeKey);
-	if (iter == mapAnimNodes.end())
+	auto iter = mapAnimChannels.find(strNodeKey);
+	if (iter == mapAnimChannels.end())
 		return nullptr;
 
 	return (*iter).second;
@@ -267,25 +272,25 @@ const FBoneAnimChannelData* const FBoneAnimData::Find_AnimChannelData(const wstr
 
 void FBoneAnimData::Add_AnimChannelData(const wstring& strNodeKey, FBoneAnimChannelData* pAnimNodeData)
 {
-	if (pAnimNodeData->iBoneID >= vecAnimNodes.size())
-		vecAnimNodes.resize(Cast<_uint>(pAnimNodeData->iBoneID + 1), nullptr);
+	if (pAnimNodeData->iBoneID >= vecAnimChannels.size())
+		vecAnimChannels.resize(Cast<_uint>(pAnimNodeData->iBoneID + 1), nullptr);
 
-	if (vecAnimNodes[pAnimNodeData->iBoneID] != nullptr)
+	if (vecAnimChannels[pAnimNodeData->iBoneID] != nullptr)
 	{
 		Safe_Release(pAnimNodeData);
 		return;
 	}
 
-	vecAnimNodes[pAnimNodeData->iBoneID] = pAnimNodeData;
+	vecAnimChannels[pAnimNodeData->iBoneID] = pAnimNodeData;
 
-	auto iter = mapAnimNodes.find(strNodeKey);
-	if (iter != mapAnimNodes.end())
+	auto iter = mapAnimChannels.find(strNodeKey);
+	if (iter != mapAnimChannels.end())
 	{
 		Safe_Release(pAnimNodeData);
 		return;
 	}
 
-	mapAnimNodes.emplace(strNodeKey, pAnimNodeData);
+	mapAnimChannels.emplace(strNodeKey, pAnimNodeData);
 }
 
 _float FBoneAnimData::Calculate_Time(_float fCurTime, _bool bMod) const
