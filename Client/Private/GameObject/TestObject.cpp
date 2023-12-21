@@ -92,14 +92,18 @@ void CTestObject::Tick(const _float& fTimeDelta)
 
     if (m_Gauge.Increase(fTimeDelta))
     {
-        m_bTest = !m_bTest;
-        if (m_bTest)
-            m_pModelComp->Set_MaskAnimation(0, L"Armature|Idle2");
-        else
-            m_pModelComp->Set_MaskAnimation(0, L"Armature|Idle2");
+        
         m_Gauge.Reset();
     }
 
+    if (GI()->IsKey_Pressed(DIK_T))
+    {
+        m_bTest = !m_bTest;
+        if (m_bTest)
+            m_pModelComp->Set_MaskAnimation(0, L"Armature|Idle");
+        else
+            m_pModelComp->Set_MaskAnimation(0, L"Armature|Idle2");
+    }
     
     m_pModelComp->Set_MaskTime(0, m_Gauge.fCur);
     m_pModelComp->Apply_Pose();
