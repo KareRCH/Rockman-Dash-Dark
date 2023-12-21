@@ -257,8 +257,8 @@ public:		// 렌더 매니저
 
 #pragma region 모델 매니저
 public:		// 모델 매니저
-	HRESULT					Initialize_ModelMgr(const string& strMainPath);
-	void					Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey);
+	HRESULT					Initialize_ModelMgr(const wstring& strMainPath);
+	void					Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName);
 	const FModelData* const Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey);
 	const FMeshGroup* const Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);

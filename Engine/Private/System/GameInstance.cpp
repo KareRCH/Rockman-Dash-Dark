@@ -1125,7 +1125,7 @@ const _matrix CGameInstance::Get_OrthogonalProjMatrix(const _uint iCam) const
 
 #pragma endregion
 
-HRESULT CGameInstance::Initialize_ModelMgr(const string& strMainPath)
+HRESULT CGameInstance::Initialize_ModelMgr(const wstring& strMainPath)
 {
 	if (nullptr != m_pModelMgr)
 		return E_FAIL;
@@ -1135,12 +1135,12 @@ HRESULT CGameInstance::Initialize_ModelMgr(const string& strMainPath)
 	return S_OK;
 }
 
-void CGameInstance::Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strGroupKey)
+void CGameInstance::Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName)
 {
 	if (nullptr == m_pModelMgr)
 		return;
 
-	m_pModelMgr->Load_Model(eGroupIndex, strFileName, strGroupKey);
+	m_pModelMgr->Load_Model(eGroupIndex, strFileName);
 }
 
 const FModelData* const CGameInstance::Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)

@@ -128,6 +128,7 @@ HRESULT CVIBufferComp::Bind_Buffer()
 	_uint           iStrides[] = {
 		m_iVertexStride
 	};
+
 	_uint           iOffsets[] = {
 		0,
 	};

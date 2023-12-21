@@ -55,7 +55,7 @@ private:
 	CSkinnedModelComp* m_pModelComp = { nullptr };
 
 private:
-	FGauge	m_Gauge = FGauge(1.f);
+	FGauge	m_Gauge = FGauge(2.f);
 	_bool	m_bTest = false;
 };
 

@@ -8,38 +8,12 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+#include "ModelLoad.h"
 
 #include <future>
 #include <chrono>
 
 BEGIN(ModelBinary)
-
-
-struct FMesh
-{
-
-};
-
-struct FAnim
-{
-
-};
-
-struct FChannel
-{
-
-};
-
-struct FBone
-{
-	wstring strName;
-	_float4x4 matTransform;
-};
-
-struct FBones
-{
-	vector<FBone> vecBones;
-};
 
 class CImGuiWin_Convert : public CImGuiWin
 {
@@ -67,20 +41,30 @@ public:
 	void ConvertToBinary();
 
 	void Load_FBX(const wstring& strPath);
-	void Load_Bones(const aiScene* pScene);
-	void Load_Bone(const aiNode* pNode);
-	void Load_Animations(const aiScene* pScene);
-	void Load_Meshes(const aiScene* pScene);
-	void Load_Materials(const aiScene* pScene);
+
+	HRESULT Load_Bones(const aiScene* pScene, class CModelLoad* pModel);
+	HRESULT Load_Bone(const aiNode* pNode, class CModelLoad* pModel, _uint& iID, const TBone& ParentBone);
+	HRESULT Load_Animations(const aiScene* pScene, class CModelLoad* pModel);
+	HRESULT Load_Meshes(const aiScene* pScene, class CModelLoad* pModel);
+	HRESULT Load_Materials(const aiScene* pScene, class CModelLoad* pModel, const string& strModelFilePath);
+
+	// 바이너리 저장 함수
+	HRESULT Save_Binary(const wstring& strPath, class CModelLoad* pModel);
+	// 테스트용 바이너리 로드 함수
+	HRESULT Load_Binary(const wstring& strPath, class CModelLoad* pModel);
 
 private:
 	string					m_strDirectory = { "" };
 
 	vector<wstring>			m_FBX_Paths;
+	mutex					m_Mutex;
+	_uint					m_iLimit_Async;
 
-	const aiScene* m_pAiScene = { nullptr };
+	const aiScene*			m_pAiScene = { nullptr };
 
 	_bool					m_bShowComplete = false;
+
+
 };
 
 END

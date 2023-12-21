@@ -99,8 +99,8 @@ public:
 	_float	fTickPerSecond = 0.0;	// 시간당 프레임
 
 public:
-	map<const wstring, FBoneAnimChannelData*>	mapAnimNodes;	// 노드 이름으로 검색 시스템
-	vector<FBoneAnimChannelData*>				vecAnimNodes;	// 애니메이션 인덱스 검색 시스템
+	map<const wstring, FBoneAnimChannelData*>	mapAnimChannels;	// 노드 이름으로 검색 시스템
+	vector<FBoneAnimChannelData*>				vecAnimChannels;	// 애니메이션 인덱스 검색 시스템
 	
 };
 

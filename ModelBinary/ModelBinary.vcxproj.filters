@@ -22,6 +22,9 @@
     <Filter Include="02. Window">
       <UniqueIdentifier>{3b29f47b-e11a-4756-995f-8100d0f435f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Model">
+      <UniqueIdentifier>{1a80766a-723e-462a-bc60-0379b55b40ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\framework.h">
@@ -49,7 +52,7 @@
       <Filter>01. ImGuiMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Convert.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -66,7 +69,7 @@
       <Filter>01. ImGuiMgr</Filter>
     </ClCompile>
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Convert.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

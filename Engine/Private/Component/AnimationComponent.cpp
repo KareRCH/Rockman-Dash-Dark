@@ -89,7 +89,7 @@ HRESULT CAnimationComponent::Create_Mask(const wstring& strMaskName, const wstri
 	tMask.iNumMasks = m_pBoneGroup->Get_BoneDatas_Count();
 	tMask.vecBoneMasks.resize(tMask.iNumMasks, bInitBoneActive);
 	tMask.fTransitionSpeed = 0.1f;
-	tMask.strAnimName = L"Idle";
+	tMask.strAnimName = L"Armature|Idle";
 
 	m_vecAnimMask.push_back(tMask);
 
@@ -150,13 +150,13 @@ void CAnimationComponent::Set_MaskAnimation(_uint iIndex, const wstring& strAnim
 		rMask.iPrevAnimID = rMask.iAnimID;
 		rMask.fPrevTrackPos = rMask.fCurTrackPos;
 		rMask.fTransitionGauge = 0.f;
+		rMask.fCurTrackPos = 0.f;
 	}
 
 	rMask.strAnimName = pBoneAnimData->strName;
 	rMask.iAnimID = pBoneAnimData->iID;
 	rMask.fTickPerSeconds = pBoneAnimData->fTickPerSecond;
 	rMask.fDuration = pBoneAnimData->fDuration;
-	rMask.fCurTrackPos = 0.f;
 }
 
 void CAnimationComponent::Set_MaskTime(_uint iIndex, _float fTime)

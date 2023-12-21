@@ -53,6 +53,8 @@ void CBoxModelComp::Late_Tick(const _float& fTimeDelta)
 {
     SUPER::Late_Tick(fTimeDelta);
     
+    _float4x4 matParent = Calculate_TransformFloat4x4FromParent();
+    Transform().Set_Transform(Transform().Get_TransformMatrix() * XMLoadFloat4x4(&matParent));
 }
 
 HRESULT CBoxModelComp::Render()
