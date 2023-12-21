@@ -54,6 +54,7 @@ _float4x4 FBoneAnimChannelData::Interpolated_Matrix(const _float& fCurTrackPos) 
 			vEndValue = XMLoadFloat3(&vecKeyFrames[iPivot + 1].vPos);
 			vFinalValue += (vEndValue - vStartValue) * fRatioTime;				// 기준점과 다음점의 위치 값의 차를 구해 시간 변화율을 곱함
 		}
+
 		vCalcPos = vFinalValue;
 	}
 
@@ -134,8 +135,12 @@ FKeyFrame FBoneAnimChannelData::Interpolated_KeyFrame(const _float& fCurTrackPos
 		{
 			// 다음 요소에 대한 값을 저장
 			vEndValue = XMLoadFloat3(&vecKeyFrames[iPivot + 1].vPos);
-			vFinalValue += (vEndValue - vStartValue) * fRatioTime;				// 기준점과 다음점의 위치 값의 차를 구해 시간 변화율을 곱함
+			vFinalValue = XMVectorLerp(vStartValue, vEndValue, fRatioTime);		// 기준점과 다음점의 위치 값의 차를 구해 시간 변화율을 곱함
+
+			//if (m_iNumKeyFrames == 21)
+				//cout << iPivot << "[" << fCurTrackPos << ", " << fStartTime << ", " << fEndTime << ", " << fRatioTime << "] : " << XMVectorGetX(vFinalValue) << " " << XMVectorGetY(vFinalValue) << " " << XMVectorGetZ(vFinalValue) << endl;
 		}
+
 		vCalcPos = vFinalValue;
 	}
 
@@ -170,7 +175,7 @@ FKeyFrame FBoneAnimChannelData::Interpolated_KeyFrame(const _float& fCurTrackPos
 		{
 			// 다음 요소에 대한 값을 저장
 			vEndValue = XMLoadFloat3(&vecKeyFrames[iPivot + 1].vScale);
-			vFinalValue += (vEndValue - vStartValue) * fRatioTime;				// 기준점과 다음점의 위치 값의 차를 구해 시간 변화율을 곱함
+			vFinalValue = XMVectorLerp(vStartValue, vEndValue, fRatioTime);		// 기준점과 다음점의 위치 값의 차를 구해 시간 변화율을 곱함
 		}
 
 		vCalcScale = vFinalValue;
@@ -186,49 +191,82 @@ FKeyFrame FBoneAnimChannelData::Interpolated_KeyFrame(const _float& fCurTrackPos
 
 _uint FBoneAnimChannelData::Calculate_Pivot(const _float& fCurTrackPos) const
 {
-	_uint iPivot;
-
 	// 벡터의 크기는 인덱스의 시간과 끝의 차이를 뜻함.
-	_uint iSize = Cast<_uint>(vecKeyFrames.size());
+	if (m_iNumKeyFrames == 0)
+		return 0;
+
+	_uint iPivot;
 	// 첫점과 끝점의 시간차를 구해둠
 	iPivot = Cast<_uint>(vecKeyFrames.back().fTrackPosition - vecKeyFrames.front().fTrackPosition);
 	// 비율을 구해 현재 시간을 구해 실제 기준점을 구한다.
-	iPivot = Cast<_uint>(fCurTrackPos * (Cast<_float>(iSize) / Cast<_float>(iPivot)));
+	iPivot = Cast<_uint>(fCurTrackPos * (Cast<_float>(m_iNumKeyFrames) / Cast<_float>(iPivot)));
 
 	if (iPivot - 1 == UINT_MAX)
 		iPivot = 0;
-	if (iPivot >= iSize)
-		iPivot = iSize - 1;
+	if (iPivot >= m_iNumKeyFrames)
+		iPivot = m_iNumKeyFrames - 1;
 	
 	while (true)
 	{
-		if (iSize == 21 && iPivot == 9 || iPivot == 10)
-			cout << iPivot << endl;
+		/*if (iSize == 21 && iPivot == 9 || iPivot == 10)
+			cout << iPivot << endl;*/
 		// 현재 기준점에 해당하는 시간 값이 해당된다면, 더 작은 인덱스와의 비교 후에 결정한다.
 		// 현재 시간 값이 비교값을 넘을 때, 최대한 하위 인덱스와 비교하여 맞춘다.
+		// 넘겼으니 이전 키와 비교해야한다.
 		if (fCurTrackPos >= vecKeyFrames[iPivot].fTrackPosition)
 		{
-			if (iPivot + 1 < iSize
-			&& fCurTrackPos >= vecKeyFrames[iPivot + 1].fTrackPosition)
+			// 다음 프레임 존재
+			if (iPivot + 1 < m_iNumKeyFrames)
 			{
-				++iPivot;
+				// 사이값임
+				if (fCurTrackPos < vecKeyFrames[iPivot + 1].fTrackPosition)
+				{ break; }
+				// 다음 값에서 사이값 찾기
+				else { ++iPivot; continue; }
 			}
-			else { break; }
+			// 다음 프레임이 없다. 이전 프레임 검사한다.
+			if (iPivot - 1 != UINT_MAX)
+			{
+				// 이전 프레임의 값과 비교해서 기준점 옮겨야하는지 판별한다.
+				if (fCurTrackPos >= vecKeyFrames[iPivot - 1].fTrackPosition)
+				{
+					--iPivot;
+					continue;
+				}
+				else
+					break;
+			}
+			// 이전, 다음 프레임이 없다. 현재값에 만족한다.
+			break; 
 		}
+		// 사이값을 구하기 위해 피봇 위치를 변경해야한다.
 		else
 		{
-			// 여전히 시간 값이 작은 값이면 기준점을 내린다.
-			if (iPivot - 1 != UINT_MAX
-				&& fCurTrackPos >= vecKeyFrames[iPivot - 1].fTrackPosition)
+			// 다음 프레임 존재
+			if (iPivot + 1 < m_iNumKeyFrames)
 			{
-				--iPivot;
+				// 다음값에서 비교하기
+				if (fCurTrackPos >= vecKeyFrames[iPivot + 1].fTrackPosition)
+				{ ++iPivot; continue; }
 			}
-			else { break; }
+			// 다음 프레임이 없다. 이전 프레임 검사한다.
+			if (iPivot - 1 != UINT_MAX)
+			{
+				if (m_iNumKeyFrames == 21 && fCurTrackPos >= 15.f)
+				{
+					int t = 0;
+				}
+				// 이전 프레임의 값과 비교해서 기준점 옮겨야하는지 판별한다.
+				if (fCurTrackPos >= vecKeyFrames[iPivot - 1].fTrackPosition
+					|| fCurTrackPos < vecKeyFrames[iPivot - 1].fTrackPosition)
+				{ --iPivot; continue; }
+			}
+			break;
 		}
 	}
 
-	if (iSize == 21)
-		int t = 0;
+	/*if (m_iNumKeyFrames == 21)
+		cout << iPivot << endl;*/
 
 	return iPivot;
 }

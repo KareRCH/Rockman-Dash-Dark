@@ -53,8 +53,7 @@ void CBoxModelComp::Late_Tick(const _float& fTimeDelta)
 {
     SUPER::Late_Tick(fTimeDelta);
     
-    _float4x4 matParent = Calculate_TransformFloat4x4FromParent();
-    Transform().Set_Transform(Transform().Get_TransformMatrix() * XMLoadFloat4x4(&matParent));
+    
 }
 
 HRESULT CBoxModelComp::Render()
@@ -109,7 +108,10 @@ HRESULT CBoxModelComp::Bind_ShaderResources()
 {
     _float4x4 matTemp = {};
 
-    if (FAILED(Transform().Bind_EffectMatrix(m_pEffectComp, "g_WorldMatrix")))
+    _float4x4 matParent = Calculate_TransformFloat4x4FromParent();
+    XMStoreFloat4x4(&matTemp, Transform().Get_TransformMatrix() * XMLoadFloat4x4(&matParent));
+
+    if (FAILED(m_pEffectComp->Bind_Matrix("g_WorldMatrix", &matTemp)))
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
         return E_FAIL;
