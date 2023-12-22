@@ -643,7 +643,7 @@ void CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const wstring& st
 
 	Load_Animations(pModelData, pModel);
 
-    int t = 0;
+    Safe_Release(pModel);
 }
 
 void CModelMgr::Load_Meshes(FModelData* pModelData, CModelLoad* pModel)

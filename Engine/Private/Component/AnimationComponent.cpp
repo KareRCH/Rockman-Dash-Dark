@@ -88,7 +88,7 @@ HRESULT CAnimationComponent::Create_Mask(const wstring& strMaskName, const wstri
 	tMask.fWeight = 1.f;
 	tMask.iNumMasks = m_pBoneGroup->Get_BoneDatas_Count();
 	tMask.vecBoneMasks.resize(tMask.iNumMasks, bInitBoneActive);
-	tMask.fTransitionSpeed = 0.01f;
+	tMask.fTransitionSpeed = 0.1f;
 	tMask.strAnimName = L"Megaman|anim_000_Megaman";
 
 	m_vecAnimMask.push_back(tMask);
@@ -144,7 +144,7 @@ void CAnimationComponent::Set_MaskAnimation(_uint iIndex, const wstring& strAnim
 	if (pBoneAnimData == nullptr)
 		return;
 
-	if (strAnimName != rMask.strPrevAnimName)
+	if (strAnimName != rMask.strAnimName)
 	{
 		rMask.strPrevAnimName = rMask.strAnimName;
 		rMask.iPrevAnimID = rMask.iAnimID;
