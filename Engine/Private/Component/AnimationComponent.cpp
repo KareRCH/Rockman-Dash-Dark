@@ -64,6 +64,8 @@ HRESULT CAnimationComponent::Bind_BoneGroup(CSkeletalComponent* pSkeletalComp)
 	Safe_AddRef(m_pBoneGroup);
 
 	Bind_AnimGroup(pSkeletalComp->Get_ModelData());
+
+	return S_OK;
 }
 
 HRESULT CAnimationComponent::Bind_AnimGroup(FModelData* pModelData)
@@ -215,7 +217,7 @@ void CAnimationComponent::Apply_FinalMask()
 	if (m_vecAnimMask.empty())
 		return;
 
-	_uint iNumAnimMasks = m_vecAnimMask.size();
+	_uint iNumAnimMasks = Cast<_uint>(m_vecAnimMask.size());
 	_uint iNumBoneMasks = m_vecAnimMask[0].iNumMasks;
 	_matrix matIdentity = XMMatrixIdentity();
 	

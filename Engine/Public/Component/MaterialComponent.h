@@ -30,7 +30,7 @@ protected:
 
 
 public:
-	ID3D11ShaderResourceView* Get_Texture(_uint iIndex);
+	ID3D11ShaderResourceView* Get_SRV(_uint iIndex);
 
 private:
 	const static _uint	g_iNumTextures = AI_TEXTURE_TYPE_MAX;

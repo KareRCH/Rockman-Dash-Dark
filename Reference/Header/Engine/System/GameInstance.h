@@ -226,9 +226,8 @@ public:		// 블랙보드 매니저
 public:		// 텍스처 매니저
 	HRESULT						Initialize_TextureMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
 	HRESULT						IsReady_TextureMgr();
-	HRESULT						Load_Texture(const wstring& strFileName, const _bool bPermanent);
-	ID3D11Texture2D*			Find_Texture2D(const wstring& strTextureKey);
-	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey);
+	HRESULT						Load_Texture(const wstring& strFileName, const _uint iNumTextures, const _bool bPermanent);
+	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey, const _uint iIndex = 0);
 	const wstring				Get_TextureMainPath();
 
 private:
@@ -260,7 +259,7 @@ public:		// 모델 매니저
 	HRESULT					Initialize_ModelMgr(const wstring& strMainPath);
 	void					Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName);
 	const FModelData* const Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
-	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey);
+	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey, const _uint iRangeIndex);
 	const FMeshGroup* const Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 	class FBoneGroup*		Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
 	class FBoneGroup*		Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);

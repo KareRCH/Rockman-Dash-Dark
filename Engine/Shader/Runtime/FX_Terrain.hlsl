@@ -1,5 +1,6 @@
 //#define TOOL // 툴 전용을 편집할 때 주석 풀어라
 
+#include "Shader_Defines.hlsli"
 
 cbuffer MatrixBuffer : register(b0)
 {
@@ -227,6 +228,10 @@ technique11 DefaultTechnique
     // 툴 전용 패스, 렌더링 될 때 이걸로 패스를 돌도록 설계
     pass Tool
     {
+        SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+
 		/* 렌더스테이츠 */
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
@@ -239,6 +244,10 @@ technique11 DefaultTechnique
 	// 기본 패스
     pass Default
     {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+
 		/* 렌더스테이츠 */
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;

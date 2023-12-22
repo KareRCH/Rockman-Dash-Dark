@@ -244,6 +244,7 @@
     <ClInclude Include="Public\ModelLoad.h" />
     <ClInclude Include="Public\System\Data\MaterialData.h" />
     <ClInclude Include="Public\System\Data\ModelData.h" />
+    <ClInclude Include="Public\System\Define\RenderMgr_Define.h" />
     <ClInclude Include="Public\Utility\DelegateTemplate.h" />
     <ClInclude Include="Public\Utility\LogicDeviceBasic.h" />
     <ClInclude Include="Public\Base.h" />

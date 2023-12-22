@@ -39,25 +39,40 @@ HRESULT CTextureMgr::Initialize(const wstring& strMainPath)
 	return S_OK;
 }
 
-ID3D11Texture2D* CTextureMgr::Find_Texture2D(const wstring& strTextureKey)
+HRESULT CTextureMgr::IsExists_SRV(const wstring& strTextureKey)
+{
+	auto iter = m_mapTextures.find(strTextureKey);
+	if (iter == m_mapTextures.end())
+		return E_FAIL;
+
+	if ((*iter).second->Get_TextureCount() == 0)
+		return E_NOTIMPL;
+
+	return S_OK;
+}
+
+ID3D11ShaderResourceView* CTextureMgr::Find_SRV(const wstring& strTextureKey, const _uint iIndex)
 {
 	auto iter = m_mapTextures.find(strTextureKey);
 	if (iter == m_mapTextures.end())
 		return nullptr;
 
-	return (*iter).second->Get_Texture();
+	return (*iter).second->Get_SRV(iIndex);
 }
 
-ID3D11ShaderResourceView* CTextureMgr::Find_SRV(const wstring& strTextureKey)
+HRESULT CTextureMgr::Reference_SRVs(const wstring& strTextureKey, vector<ComPtr<ID3D11ShaderResourceView>>& RefSRVs)
 {
 	auto iter = m_mapTextures.find(strTextureKey);
 	if (iter == m_mapTextures.end())
-		return nullptr;
+		return E_FAIL;
 
-	return (*iter).second->Get_SRV();
+	if (FAILED((*iter).second->Reference_SRVs(RefSRVs)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
-HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _bool bPermanent)
+HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent)
 {
 	CTexture* pTexture;
 	HRESULT hr = S_OK;
@@ -86,7 +101,7 @@ HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _bool bPerma
 			pTexture = iter->second;
 		}
 
-		hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, strName, bPermanent);
+		hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, iNumTextures, bPermanent);
 	}
 
 	return hr;
@@ -94,7 +109,7 @@ HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _bool bPerma
 
 HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent)
 {
-	CTexture* pTexture;
+	//CTexture* pTexture;
 	HRESULT hr = S_OK;
 
 	// 파일 존재여부 확인, 잘못된 경로가 있다면 오류 반환
@@ -105,41 +120,25 @@ HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const wstring& str
 	// 아니면 기존의 텍스처 객체에 스테이트 키를 추가한다.
 
 	// 뮤텍스를 통해 m_mapTexture에 객체를 제조하는 것에 대해 보호한다.
-	{
-		//lock_guard<mutex> lock(m_mapMutex);			// 이 코드블록만 보호한다.
+	//{
+	//	//lock_guard<mutex> lock(m_mapMutex);			// 이 코드블록만 보호한다.
 
-		auto iter = m_mapTextures.find(strGroupKey);
+	//	auto iter = m_mapTextures.find(strGroupKey);
 
-		// 텍스처가 없으니 새로만든다.
-		if (iter == m_mapTextures.end())
-		{
-			pTexture = CMultiStateTexture::Create({ m_pDevice, m_pDeviceContext });
-			m_mapTextures.emplace(strGroupKey, pTexture);
-		}
-		// 텍스처가 있으니 기존에 것에 추가한다.
-		else
-		{
-			pTexture = iter->second;
-		}
-	}
+	//	// 텍스처가 없으니 새로만든다.
+	//	if (iter == m_mapTextures.end())
+	//	{
+	//		pTexture = CMultiStateTexture::Create({ m_pDevice, m_pDeviceContext });
+	//		m_mapTextures.emplace(strGroupKey, pTexture);
+	//	}
+	//	// 텍스처가 있으니 기존에 것에 추가한다.
+	//	else
+	//	{
+	//		pTexture = iter->second;
+	//	}
+	//}
 
-	hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, strTextureKey, bPermanent);
+	//hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, bPermanent);
 
 	return hr;
-}
-
-HRESULT CTextureMgr::Transfer_Texture(vector<ID3D11Texture2D>* pVecTexture, const wstring& strTextureKey)
-{
-	auto iter = m_mapTextures.find(strTextureKey);
-	FALSE_CHECK_RETURN(iter != m_mapTextures.end(), E_FAIL);		// 키 없으면 실패
-
-	CTexture* pTexture = iter->second;
-
-	CMultiStateTexture* pMultiTex = DynCast<CMultiStateTexture*>(pTexture);
-	//if (pMultiTex)
-		//pMultiTex->Transfer_Texture(pVecTexture, pStateKey);
-
-	
-
-	return S_OK;
 }

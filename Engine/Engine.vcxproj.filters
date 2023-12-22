@@ -621,6 +621,9 @@
     <ClInclude Include="Public\ModelLoad.h">
       <Filter>02. Utility\04. Serialize</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\Define\RenderMgr_Define.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\04. RenderMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">

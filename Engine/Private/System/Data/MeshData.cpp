@@ -53,26 +53,34 @@ FMeshData* const FMeshGroup::Find_Mesh(const _uint iIndex) const
 	return vecMeshDatas[iIndex];
 }
 
-FMeshData* const FMeshGroup::Find_Mesh(const wstring& strMeshKey) const
+FMeshData* const FMeshGroup::Find_Mesh(const wstring& strMeshKey, const _uint iRangeIndex) const
 {
-	auto iter = mapMeshDatas.find(strMeshKey);
-	if (iter == mapMeshDatas.end())
+	auto range = mapMeshDatas.equal_range(strMeshKey);
+
+	_uint i = 0;
+	auto iter = range.first;
+	for (; iter != range.second; ++iter)
+	{
+		if (iRangeIndex == i++)
+			break;
+	}
+	if (iter == range.second)
 		return nullptr;
+
 
 	return (*iter).second;
 }
 
 HRESULT FMeshGroup::Add_Mesh(const wstring& strMeshKey, FMeshData* const pMeshData)
 {
-	// 맵 컨테이너
-	auto iter = mapMeshDatas.find(strMeshKey);
-	if (iter != mapMeshDatas.end())
+	if (pMeshData == nullptr)
 		return E_FAIL;
 
+	// 멀티맵 컨테이너, 메쉬는 중복이 일어날 수 있음
 	mapMeshDatas.emplace(strMeshKey, pMeshData);
 
 	// 벡터 컨테이너
-	vecMeshDatas.resize(pMeshData->iID + 1, nullptr);
+	vecMeshDatas.resize(Cast<size_t>(pMeshData->iID + 1), nullptr);
 	vecMeshDatas[pMeshData->iID] = pMeshData;
 
 	return S_OK;

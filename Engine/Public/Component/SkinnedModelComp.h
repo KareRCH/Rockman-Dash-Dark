@@ -61,7 +61,7 @@ private:
 	// 외부 설정용
 public:
 	// 로드된 모델에 따라 사용할 메시를 바인드 한다.
-	HRESULT Bind_Mesh(const wstring& strMeshKey);
+	HRESULT Bind_Mesh(const wstring& strMeshKey, const _uint iRangeIndex);
 	// 바인딩 된 메시중 필요없는 메시를 뺀다.
 	HRESULT Unbind_Mesh(const wstring& strMeshKey);
 	// 바인딩 된 메시들을 모두 언바인드 한다.

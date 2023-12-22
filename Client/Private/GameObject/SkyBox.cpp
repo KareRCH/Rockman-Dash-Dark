@@ -21,9 +21,7 @@ HRESULT CSkyBox::Initialize_Prototype()
         return E_FAIL;
 
     TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
-    TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
-    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
-
+    Set_RenderGroup(ERenderGroup::Priority);
 
     return S_OK;
 }
@@ -53,7 +51,7 @@ void CSkyBox::Late_Tick(const _float& fTimeDelta)
 {
     SUPER::Late_Tick(fTimeDelta);
 
-    //Transform().Set_Position(PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One));
+    Transform().Set_Position(PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One));
 
     m_pModelComp->Late_Tick(fTimeDelta);
 }

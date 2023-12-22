@@ -26,7 +26,6 @@ HRESULT CTestObject::Initialize_Prototype()
 
     TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
     TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
-    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
 
     return S_OK;
 }
@@ -38,7 +37,6 @@ HRESULT CTestObject::Initialize_Prototype(const _float3 vPos)
 
     TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
     TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
-    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
 
     Transform().Set_Position(vPos);
 
@@ -176,16 +174,23 @@ HRESULT CTestObject::Initialize_Component()
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CSkinnedModelComp::Create()), E_FAIL);
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    m_pModelComp->Bind_Model(EModelGroupIndex::Permanent, L"Model/Character/Megaman/Megaman.amodel");
-    m_pModelComp->Bind_Mesh(L"Mesh_0");
     m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::InputLayout, SHADER_VTX_SKINMODEL::iMaxIndex);
+
+    m_pModelComp->Bind_Model(EModelGroupIndex::Permanent, L"Model/Character/Megaman/Megaman.amodel");
+
+    m_pModelComp->Bind_Mesh(L"Mesh_0", 0);
+    m_pModelComp->Bind_Mesh(L"Mesh_0", 1);
+    
     m_pModelComp->Bind_Skeletal(L"Armature");
+
     m_pModelComp->Create_Mask(L"Main", L"Armature", true);
     m_pModelComp->Create_Mask(L"Head", L"Armature", false);
     m_pModelComp->Create_Mask(L"Leg", L"Armature", false);
-    m_pModelComp->Active_BoneMask(2, L"bone_000");
     m_pModelComp->Create_Mask(L"LeftArm", L"Armature", false);
     m_pModelComp->Create_Mask(L"RightArm", L"Armature", false);
+
+    m_pModelComp->Active_BoneMask(2, L"bone_000");
+
 
     return S_OK;
 }

@@ -72,12 +72,12 @@ public:
 	
 public:
 	FMeshData* const	Find_Mesh(const _uint iIndex) const;
-	FMeshData* const	Find_Mesh(const wstring& strMeshKey) const;
+	FMeshData* const	Find_Mesh(const wstring& strMeshKey, const _uint iRangeIndex) const;
 	HRESULT				Add_Mesh(const wstring& strMeshKey, FMeshData* const pMeshData);
 	
 public:
-	_unmap<wstring, FMeshData*> mapMeshDatas;	// 이름 탐색
-	vector<FMeshData*>			vecMeshDatas;	// 인덱스 검색 메쉬 데이터
+	multimap<wstring, FMeshData*>	mapMeshDatas;	// 이름 탐색
+	vector<FMeshData*>				vecMeshDatas;	// 인덱스 검색 메쉬 데이터
 };
 
 

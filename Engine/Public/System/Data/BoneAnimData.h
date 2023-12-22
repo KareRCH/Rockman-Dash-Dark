@@ -130,9 +130,9 @@ public:
 	// 한 애니메이션에 대한 단일 보간값을 받아내야 할 때 사용한다.
 	FKeyFrame Interpolated_Anim(const _uint iAnimIndex, const _uint iChannelIndex, const _float& fCurTrackPos) const;
 	// 보간에 필요한 정보를 받아 내부의 애니메이션을 이용해 보간된 키프레임을 돌려주는 함수
-	void Interpolated_Anims(FKeyFrame* pKeyFrames, _uint iNumKeyFrames, FAnimInterpolate* pArrInterpolateData, _uint iNumInterpolates);
+	void Interpolated_Anims(FKeyFrame* pKeyFrames, size_t iNumKeyFrames, FAnimInterpolate* pArrInterpolateData, size_t iNumInterpolates);
 	// 키프레임끼리 보간, 이미 나온 키프레임 결과물에 대해 시행한다.
-	void Interpolated_KeyFrames(FKeyFrame* pKeyFrames, _uint iNumKeyFrames, FKeyFrameInterpolate* pArrInterpolate, _uint iNumInterpolates);
+	void Interpolated_KeyFrames(FKeyFrame* pKeyFrames, size_t iNumKeyFrames, FKeyFrameInterpolate* pArrInterpolate, size_t iNumInterpolates);
 	
 
 private:

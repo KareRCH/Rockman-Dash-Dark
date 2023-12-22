@@ -79,7 +79,7 @@ HRESULT CSkinnedModelComp::Render()
         m_pEffectComp->Bind_RawValue("g_fSpecularPower", VPCast(&lightBuffer.fSpecularPower), sizeof(_float));
         m_pEffectComp->Bind_RawValue("g_vLightDir", VPCast(&lightBuffer.vLightDirection), sizeof(_float3));
 
-        m_pEffectComp->Bind_SRV("g_texDiffuse", GI()->Find_SRV(L"Model/Character/Megaman/Image_0.png"));
+        m_pEffectComp->Bind_SRV("g_texDiffuse", GI()->Find_SRV(L"Model/Character/Megaman/Image_%d.png"));
 
         // 그리기 시작
         m_pEffectComp->Begin(0);
@@ -148,12 +148,12 @@ HRESULT CSkinnedModelComp::Bind_Model(EModelGroupIndex eGroup, const wstring& st
     return S_OK;
 }
 
-HRESULT CSkinnedModelComp::Bind_Mesh(const wstring& strMeshKey)
+HRESULT CSkinnedModelComp::Bind_Mesh(const wstring& strMeshKey, const _uint iRangeIndex)
 {
     if (!m_pMultiMeshBufComp)
         return E_FAIL;
 
-    return m_pMultiMeshBufComp->Bind_Mesh(strMeshKey);
+    return m_pMultiMeshBufComp->Bind_Mesh(strMeshKey, iRangeIndex);
 }
 
 HRESULT CSkinnedModelComp::Unbind_Mesh(const wstring& strMeshKey)

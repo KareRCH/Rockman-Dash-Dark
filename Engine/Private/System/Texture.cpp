@@ -23,8 +23,6 @@ CTexture* CTexture::Create(const DX11DEVICE_T tDevice)
 	{
 		MSG_BOX("Texture Create Failed");
 		Safe_Release(pInstance);
-		
-		return nullptr;
 	}
 
 	return pInstance;
@@ -36,107 +34,153 @@ void CTexture::Free()
 
 void CTexture::UnLoad()
 {
-	m_pTexture.Reset();
-	m_pSRV.Reset();
+	for (auto& Texture : m_vecSRV)
+		Texture.Reset();
+	m_vecSRV.clear();
+	m_iNumTextures = 0;
 	m_bLoaded = false;
 }
 
-HRESULT CTexture::Load(ID3D11Texture2D* _pTexture, ID3D11ShaderResourceView* _pSRV)
+HRESULT CTexture::Load(ID3D11ShaderResourceView* _pSRV)
 {
-	if (m_bLoaded)
-	{
-		// 들어온 정보를 자동으로 해제한다.
-
+	if (m_bLoaded || _pSRV == nullptr)
 		return E_FAIL;
-	}
 
-	m_pTexture = _pTexture;
-	m_pSRV = _pSRV;
-
-	// 둘중 하나가 nullptr이면 로드되지 않았음.
-	if (m_pTexture.Get() && m_pSRV.Get())
-		m_bLoaded = true;
+	m_vecSRV.push_back(_pSRV);
 
 	return S_OK;
 }
 
-HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const wstring& strName, const _bool bPermanent)
+HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent)
 {
 	// 파일 존재여부 확인, 특히 사이즈에 해당하는 카운트 값이 존재하는지 확인, 잘못된 경로가 있다면 오류 반환
-	_tchar szFileName[256] = L"";
-	wsprintf(szFileName, strFilePath.c_str());
+	vector<wstring> vecStrFullPath;
+	vector<wstring> vecStrName;
+	vecStrFullPath.reserve(iNumTextures);
+	vecStrName.reserve(iNumTextures);
 
-	ifstream file(szFileName);
-	if (file.fail())
-		return E_FAIL;
-
-	// 텍스처 로드
-	ScratchImage image;
-	HRESULT hr = S_OK;
-	hr = CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
-	if (FAILED(hr))
-		return E_FAIL;
-
-	size_t iSubstrPoint = strFilePath.find_last_of(TEXT("."));
-	wstring strEXT = strFilePath.substr(iSubstrPoint);
-	TexMetadata* pMetadata = { nullptr };
-
-	if (strEXT == TEXT(".dds"))
+	for (_uint i = 0; i < iNumTextures; i++)
 	{
-		hr = LoadFromDDSFile((strFilePath).c_str(), DDS_FLAGS_NONE, nullptr, image);
-		if (FAILED(hr))
+		/* ..\정의훈\139\Framework\Client\Bin\Resources\Textures\Default.jpg */
+		_tchar		szFullPath[MAX_PATH] = TEXT("");
+
+		wsprintf(szFullPath, strFilePath.c_str(), i);
+
+		/* D:\ */
+		_tchar		szDrive[MAX_PATH] = TEXT("");
+
+		/* 정의훈\139\Framework\Client\Bin\Resources\Textures\ */
+		_tchar		szDirectory[MAX_PATH] = TEXT("");
+
+		/* Default_0 */
+		_tchar		szFileName[MAX_PATH] = TEXT("");
+
+		/* .jpg */
+		_tchar		szExt[MAX_PATH] = TEXT("");
+
+		_wsplitpath_s(szFullPath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
+
+		ifstream file(szFullPath);
+		if (file.fail())
+		{
+			file.close();
 			return E_FAIL;
+		}
+
+		vecStrFullPath.push_back(szFullPath);
+		vecStrName.push_back(szFileName);
+
+		file.close();
 	}
-	else if (strEXT.compare(TEXT(".png")) || strEXT.compare(TEXT(".bmp")))
+
+	m_vecSRV.reserve(iNumTextures);
+	for (_uint i = 0; i < iNumTextures; i++)
 	{
-		hr = LoadFromWICFile((strFilePath).c_str(), WIC_FLAGS_NONE, pMetadata, image);
+		// 텍스처 로드
+		ScratchImage image;
+		HRESULT hr = S_OK;
+		hr = CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
 		if (FAILED(hr))
+		{
+			CoUninitialize();
 			return E_FAIL;
-	}
-	else if (strEXT.compare(TEXT(".tga")))
-	{
-		hr = LoadFromTGAFile((strFilePath).c_str(), pMetadata, image);
+		}
+
+		size_t iSubstrPoint = vecStrFullPath[i].find_last_of(TEXT("."));
+		wstring strEXT = vecStrFullPath[i].substr(iSubstrPoint);
+		TexMetadata* pMetadata = { nullptr };
+
+		if (strEXT == TEXT(".dds"))
+		{
+			hr = LoadFromDDSFile((vecStrFullPath[i]).c_str(), DDS_FLAGS_NONE, nullptr, image);
+			if (FAILED(hr))
+			{
+				CoUninitialize();
+				return E_FAIL;
+			}
+		}
+		else if (strEXT.compare(TEXT(".png")) || strEXT.compare(TEXT(".bmp")))
+		{
+			hr = LoadFromWICFile((vecStrFullPath[i]).c_str(), WIC_FLAGS_NONE, pMetadata, image);
+			if (FAILED(hr))
+			{
+				CoUninitialize();
+				return E_FAIL;
+			}
+		}
+		else if (strEXT.compare(TEXT(".tga")))
+		{
+			hr = LoadFromTGAFile((vecStrFullPath[i]).c_str(), pMetadata, image);
+			if (FAILED(hr))
+			{
+				CoUninitialize();
+				return E_FAIL;
+			}
+		}
+		else
+		{
+			CoUninitialize();
+			return E_FAIL;
+		}
+
+		ComPtr<ID3D11ShaderResourceView> pSRV = { nullptr };
+		hr = CreateShaderResourceView(m_pDevice.Get(), image.GetImages(), image.GetImageCount(), image.GetMetadata(), pSRV.ReleaseAndGetAddressOf());
 		if (FAILED(hr))
+		{
+			CoUninitialize();
 			return E_FAIL;
-	}
-	else
-		return E_FAIL;
-	
+		}
 
-	// 텍스처, SRV 제작
-	const Image* texData = image.GetImage(0, 0, 0);
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = Cast<_uint>(texData->width);
-	textureDesc.Height = Cast<_uint>(texData->height);
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = texData->format;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.SampleDesc.Quality = 0;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	textureDesc.CPUAccessFlags = 0;
+		D3D11_SHADER_RESOURCE_VIEW_DESC Desc;
+		pSRV->GetDesc(&Desc);
 
-	ComPtr<ID3D11Texture2D> pTexture = { nullptr };
-	hr = m_pDevice->CreateTexture2D(&textureDesc, nullptr, pTexture.GetAddressOf());
-	if (FAILED(hr))
-	{
-		return E_FAIL;
+		// 로드된 리소스 할당
+		Load(pSRV.Get());
+		Set_Permanent(bPermanent);
 	}
 
-	m_pDeviceContext->UpdateSubresource(pTexture.Get(), 0, nullptr, texData->pixels, Cast<_uint>(texData->rowPitch), 0);
+	m_iNumTextures = iNumTextures;
 
-	ComPtr<ID3D11ShaderResourceView> pSRV = { nullptr };
-	hr = CreateShaderResourceView(m_pDevice.Get(), image.GetImages(), image.GetImageCount(), image.GetMetadata(), pSRV.GetAddressOf());
-	if (FAILED(hr))
-	{
+	CoUninitialize();
+
+	return S_OK;
+}
+
+ID3D11ShaderResourceView* const CTexture::Get_SRV(const _uint iIndex)
+{
+	if (iIndex < 0 || iIndex >= m_iNumTextures)
+		return nullptr;
+
+	return m_vecSRV[iIndex].Get();
+}
+
+HRESULT CTexture::Reference_SRVs(vector<ComPtr<ID3D11ShaderResourceView>>& RefSRVs)
+{
+	if (m_iNumTextures == 0)
 		return E_FAIL;
-	}
 
-	// 로드된 리소스 할당
-	Load(pTexture.Get(), pSRV.Get());
-	Set_Permanent(bPermanent);
-	m_strName = strName;
+	RefSRVs.reserve(m_iNumTextures);
+	RefSRVs = m_vecSRV;
 
 	return S_OK;
 }

@@ -60,7 +60,7 @@ void CMaterialComponent::Free()
 	}
 }
 
-ID3D11ShaderResourceView* CMaterialComponent::Get_Texture(_uint iIndex)
+ID3D11ShaderResourceView* CMaterialComponent::Get_SRV(_uint iIndex)
 {
 	if (iIndex < 0 || iIndex >= g_iNumTextures)
 		return nullptr;
@@ -68,5 +68,5 @@ ID3D11ShaderResourceView* CMaterialComponent::Get_Texture(_uint iIndex)
 	if (nullptr == m_vecTextureComp[iIndex])
 		return nullptr;
 
-	return m_vecTextureComp[iIndex]->Get_ShaderResourseView();
+	return m_vecTextureComp[iIndex]->Get_ShaderResourseView(iIndex);
 }

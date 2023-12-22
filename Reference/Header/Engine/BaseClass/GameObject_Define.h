@@ -27,9 +27,6 @@ enum class EGObjectState : _uint
 	Pause = EBIT_FLAG32_1,
 	Render = EBIT_FLAG32_2,				// 렌더링 유무
 	RenderZBuffer = EBIT_FLAG32_3,		// ZBuffer로 렌더링하는 옵션
-	RenderDeferred = EBIT_FLAG32_4,		// Defferred로 렌더링하는 옵션 (불투명), 내부 세팅이 잘되어있어야 작동
-	RenderPriority = EBIT_FLAG32_5,		// ZBuffer가 필요없고 가장 먼저 렌더링 되는 스카이 박스류
-	RenderPostProcess = EBIT_FLAG32_6	// ZBuffer가 필요없고 가장 나중에 렌더링 되는 포스트 프로세스류
 };
 
 END

@@ -22,9 +22,9 @@ HRESULT CModelBufferComp::Initialize(void* Arg)
     return S_OK;
 }
 
-HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strModelKey)
+HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strModelKey, const _uint iRangeIndex)
 {
-	const FMeshData* pMesh = GameInstance()->Find_MeshData(eGroupIndex, strGroupKey, strModelKey);
+	const FMeshData* pMesh = GameInstance()->Find_MeshData(eGroupIndex, strGroupKey, strModelKey, iRangeIndex);
 
 	m_iNumVertices = Cast<_uint>(pMesh->vecVertices.size());
 	m_iNumIndices = Cast<_uint>(pMesh->vecIndices.size());

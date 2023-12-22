@@ -113,23 +113,24 @@ protected:
 public:
 	// 메모리만 해제할 때 사용.
 	void	UnLoad();
-	HRESULT	Load(ID3D11Texture2D* _pTexture, ID3D11ShaderResourceView* _pSRV);
+	HRESULT	Load(ID3D11ShaderResourceView* _pSRV);
 	
 public:
-	virtual HRESULT						Insert_Texture(const wstring& strFilePath, const wstring& strName, const _bool bPermanent);
+	virtual HRESULT						Insert_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent);
+	void	Load_Complete() { m_bLoaded = true; }
 
 public:
 	void								Set_Permanent(const _bool value) { m_bPermanent = value; }
 	const _bool&						Is_Loaded() const { return m_bLoaded; }
-	ID3D11Texture2D* const				Get_Texture() { return m_pTexture.Get(); }
-	ID3D11ShaderResourceView* const		Get_SRV() { return m_pSRV.Get(); }
+	const _uint&						Get_TextureCount() const { return m_iNumTextures;}
+	ID3D11ShaderResourceView* const		Get_SRV(const _uint iIndex);
+	HRESULT								Reference_SRVs(vector<ComPtr<ID3D11ShaderResourceView>>& RefSRVs);
 
 private:
-	wstring								m_strName = { L"" };		// 텍스처 이름	(확장자 제거시 이름)
-	ComPtr<ID3D11Texture2D>				m_pTexture = { nullptr };	// CPU용 텍스처
-	ComPtr<ID3D11ShaderResourceView>	m_pSRV = { nullptr };		// 셰이더 샘플러
-	_bool								m_bLoaded = false;			// 로드된 텍스처 체크용
-	_bool								m_bPermanent = false;		// 영구 유지 텍스처 설정, 전역으로 사용되는 용도
+	_bool										m_bLoaded = false;			// 로드된 텍스처 체크용
+	_bool										m_bPermanent = false;		// 영구 유지 텍스처 설정, 전역으로 사용되는 용도
+	_uint										m_iNumTextures = 0;
+	vector<ComPtr<ID3D11ShaderResourceView>>	m_vecSRV;					// 셰이더 샘플러
 
 };
 
