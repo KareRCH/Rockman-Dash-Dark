@@ -141,6 +141,7 @@ HRESULT CSkinnedModelComp::Bind_Model(EModelGroupIndex eGroup, const wstring& st
     m_pModelData = ConCast<FModelData*>(GI()->Find_ModelData(eGroup, strModelKey));
     Safe_AddRef(m_pModelData);
 
+
     m_pMultiMeshBufComp->Set_ModelData(m_pModelData);
     m_pSkeletalComp->Set_ModelData(m_pModelData);
 
