@@ -14,7 +14,6 @@ HRESULT CTerrain::Initialize_Prototype()
 
     TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
     TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
-    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
 
     return S_OK;
 }
@@ -26,7 +25,6 @@ HRESULT CTerrain::Initialize_Prototype(const FInitTerrain& tInit)
 
     TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
     TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
-    TurnOn_State(EGObjectState::RenderDeferred);    // 디퍼드 셰이딩 사용, ZBuffer 미사용시 무시
 
     return S_OK;
 }

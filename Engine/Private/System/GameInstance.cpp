@@ -928,28 +928,20 @@ HRESULT CGameInstance::IsReady_TextureMgr()
 	return S_OK;
 }
 
-HRESULT CGameInstance::Load_Texture(const wstring& strFileName, const _bool bPermanent)
+HRESULT CGameInstance::Load_Texture(const wstring& strFileName, const _uint iNumTextures, const _bool bPermanent)
 {
 	if (nullptr == m_pTextureMgr)
 		return E_FAIL;
 
-	return m_pTextureMgr->Load_Texture(strFileName, bPermanent);
+	return m_pTextureMgr->Load_Texture(strFileName, iNumTextures, bPermanent);
 }
 
-ID3D11Texture2D* CGameInstance::Find_Texture2D(const wstring& strTextureKey)
+ID3D11ShaderResourceView* CGameInstance::Find_SRV(const wstring& strTextureKey, const _uint iIndex)
 {
 	if (nullptr == m_pTextureMgr)
 		return nullptr;
 
-	return m_pTextureMgr->Find_Texture2D(strTextureKey);
-}
-
-ID3D11ShaderResourceView* CGameInstance::Find_SRV(const wstring& strTextureKey)
-{
-	if (nullptr == m_pTextureMgr)
-		return nullptr;
-
-	return m_pTextureMgr->Find_SRV(strTextureKey);
+	return m_pTextureMgr->Find_SRV(strTextureKey, iIndex);
 }
 
 const wstring CGameInstance::Get_TextureMainPath()
@@ -1151,12 +1143,12 @@ const FModelData* const CGameInstance::Find_ModelData(const EModelGroupIndex eGr
 	return m_pModelMgr->Find_ModelData(eGroupIndex, strModelKey);
 }
 
-const FMeshData* const CGameInstance::Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey)
+const FMeshData* const CGameInstance::Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey, const _uint iRangeIndex)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
-	return m_pModelMgr->Find_MeshData(eGroupIndex, strModelKey, strMeshKey);
+	return m_pModelMgr->Find_MeshData(eGroupIndex, strModelKey, strMeshKey, iRangeIndex);
 }
 
 const FMeshGroup* const CGameInstance::Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)

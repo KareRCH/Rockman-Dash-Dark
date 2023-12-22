@@ -39,11 +39,12 @@ private:
 	ComPtr<ID3D11DeviceContext> m_pDeviceContext = { nullptr };
 
 public:
-	ID3D11Texture2D*			Find_Texture2D(const wstring& strTextureKey);
-	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey);
-	HRESULT						Load_Texture(const wstring& strFilePath, const _bool bPermanent);
+	HRESULT						IsExists_SRV(const wstring& strTextureKey);
+	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey) { return Find_SRV(strTextureKey, 0); }
+	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey, const _uint iIndex);
+	HRESULT						Reference_SRVs(const wstring& strTextureKey, vector<ComPtr<ID3D11ShaderResourceView>>& RefSRVs);
+	HRESULT						Load_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent);
 	HRESULT						Load_Texture(const wstring& strFilePath, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent);
-	HRESULT						Transfer_Texture(vector<ID3D11Texture2D>* pVecTexture, const wstring& strTextureKey);
 
 public:
 	//GETSET_1(mutex, m_mapMutex, Mutex, GET_PTR)

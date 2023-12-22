@@ -78,7 +78,7 @@ private:
 
 #pragma region 텍스처 컴포넌트
 public:
-	HRESULT Bind_Texture(TEXTURE eType, const wstring& strFileName);
+	HRESULT Bind_Texture(TEXTURE eType, const wstring& strFileName, const _uint iNumTextures);
 	HRESULT Unbind_Texture(TEXTURE eType);
 
 

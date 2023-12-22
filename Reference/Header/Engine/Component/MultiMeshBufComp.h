@@ -51,7 +51,7 @@ public:
 
 	// 모델 바인딩을 마친 뒤 사용할 수 있는 함수들, 버퍼를 만들어서 저장한다.
 	// 하나만 골라서 바인딩
-	HRESULT Bind_Mesh(const wstring& strMeshKey);
+	HRESULT Bind_Mesh(const wstring& strMeshKey, const _uint iRangeIndex);
 	// 모델에 존재하는 모든 메쉬 바인딩
 	HRESULT Bind_MeshAll();
 

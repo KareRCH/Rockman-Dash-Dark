@@ -40,12 +40,12 @@ FMeshData* FModelData::Find_Mesh(const _uint iIndex)
 	return pMeshGroup->Find_Mesh(iIndex);
 }
 
-FMeshData* FModelData::Find_Mesh(const wstring& strMesh)
+FMeshData* FModelData::Find_Mesh(const wstring& strMesh, const _uint iRangeIndex)
 {
 	if (nullptr == pMeshGroup)
 		return nullptr;
 
-	return pMeshGroup->Find_Mesh(strMesh);
+	return pMeshGroup->Find_Mesh(strMesh, iRangeIndex);
 }
 
 FMaterialData* FModelData::Find_Material(const _uint iIndex)

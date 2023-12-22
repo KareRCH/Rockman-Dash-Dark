@@ -60,33 +60,33 @@ void CLayer::Priority_Tick(const _float& fTimeDelta)
 			CGameObject* pObj = (*iter).second;
 			if (pObj->IsState(EGObjectState::Render))
 			{
-				if (pObj->IsState(EGObjectState::RenderZBuffer))
-				{
-					if (pObj->IsState(EGObjectState::RenderDeferred))
-					{
-						GameInstance()->Add_RenderGroup(ERenderGroup::NonAlpha, pObj);
-					}
-					else
-					{
-						GameInstance()->Add_RenderGroup(ERenderGroup::Alpha, pObj);
-					}
-				}
-				// ZBuffer가 필요없는 그룹
-				else
-				{
-					if (pObj->IsState(EGObjectState::RenderPriority))
-					{
-						GameInstance()->Add_RenderGroup(ERenderGroup::Priority, pObj);
-					}
-					else if (pObj->IsState(EGObjectState::RenderPostProcess))
-					{
-						GameInstance()->Add_RenderGroup(ERenderGroup::PostProcess, pObj);
-					}
-					else
-					{
-						GameInstance()->Add_RenderGroup(ERenderGroup::UI, pObj);
-					}
-				}
+				//if (pObj->IsState(EGObjectState::RenderZBuffer))
+				//{
+				//	if (pObj->IsState(EGObjectState::RenderDeferred))
+				//	{
+				//		GameInstance()->Add_RenderGroup(ERenderGroup::NonAlpha, pObj);
+				//	}
+				//	else
+				//	{
+				//		GameInstance()->Add_RenderGroup(ERenderGroup::Alpha, pObj);
+				//	}
+				//}
+				//// ZBuffer가 필요없는 그룹
+				//else
+				//{
+				//	if (pObj->IsState(EGObjectState::RenderPriority))
+				//	{
+				//		GameInstance()->Add_RenderGroup(ERenderGroup::Priority, pObj);
+				//	}
+				//	else if (pObj->IsState(EGObjectState::RenderPostProcess))
+				//	{
+				//		GameInstance()->Add_RenderGroup(ERenderGroup::PostProcess, pObj);
+				//	}
+				//	else
+				//	{
+				//		GameInstance()->Add_RenderGroup(ERenderGroup::UI, pObj);
+				//	}
+				//}
 			}
 
 			++iter;

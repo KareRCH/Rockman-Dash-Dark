@@ -772,7 +772,7 @@ void CModelMgr::Load_Bones(FModelData* pModelData, CModelLoad* pModel)
     }
 }
 
-const FMeshData* const CModelMgr::Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey)
+const FMeshData* const CModelMgr::Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey, const _uint iRangeIndex)
 {
 	_uint iIndex = ECast(eGroupIndex);
 
@@ -780,7 +780,7 @@ const FMeshData* const CModelMgr::Find_MeshData(const EModelGroupIndex eGroupInd
 	if (iter == m_mapModelDatas[iIndex].end())
 		return nullptr;
 
-	return (*iter).second->pMeshGroup->Find_Mesh(strMeshKey);
+	return (*iter).second->pMeshGroup->Find_Mesh(strMeshKey, iRangeIndex);
 }
 
 FBoneGroup* CModelMgr::Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)

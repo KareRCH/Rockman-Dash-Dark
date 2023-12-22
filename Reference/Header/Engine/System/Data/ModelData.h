@@ -31,7 +31,7 @@ private:
 
 public:
 	FMeshData*		Find_Mesh(const _uint iIndex);
-	FMeshData*		Find_Mesh(const wstring& strMesh);
+	FMeshData*		Find_Mesh(const wstring& strMesh, const _uint iRangeIndex);
 
 	FMaterialData*	Find_Material(const _uint iIndex);
 	FMaterialData*	Find_Material(const wstring& strMaterial);

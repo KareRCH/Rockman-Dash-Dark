@@ -408,7 +408,7 @@ FKeyFrame FBoneAnimGroup::Interpolated_Anim(const _uint iAnimIndex, const _uint 
 	return pChannel->Interpolated_KeyFrame(fCurTrackPos);
 }
 
-void FBoneAnimGroup::Interpolated_Anims(FKeyFrame* pKeyFrames, _uint iNumKeyFrames, FAnimInterpolate* pArrInterpolateData, _uint iNumInterpolates)
+void FBoneAnimGroup::Interpolated_Anims(FKeyFrame* pKeyFrames, size_t iNumKeyFrames, FAnimInterpolate* pArrInterpolateData, size_t iNumInterpolates)
 {
 	if (iNumInterpolates < 0)
 		return;
@@ -428,7 +428,7 @@ void FBoneAnimGroup::Interpolated_Anims(FKeyFrame* pKeyFrames, _uint iNumKeyFram
 	{
 		FAnimInterpolate* pData = &pArrInterpolateData[i];
 		FBoneAnimData* pBoneAnim = Find_BoneAnim(pData->iAnimID);
-		_uint iNumChannel = pData->vecChannelIDs.size();
+		_uint iNumChannel = Cast<_uint>(pData->vecChannelIDs.size());
 		
 
 		if (pBoneAnim == nullptr)
@@ -464,7 +464,7 @@ void FBoneAnimGroup::Interpolated_Anims(FKeyFrame* pKeyFrames, _uint iNumKeyFram
 	}
 }
 
-void FBoneAnimGroup::Interpolated_KeyFrames(FKeyFrame* pKeyFrames, _uint iNumKeyFrames, FKeyFrameInterpolate* pArrInterpolate, _uint iNumInterpolates)
+void FBoneAnimGroup::Interpolated_KeyFrames(FKeyFrame* pKeyFrames, size_t iNumKeyFrames, FKeyFrameInterpolate* pArrInterpolate, size_t iNumInterpolates)
 {
 	if (iNumKeyFrames < 0)
 		return;

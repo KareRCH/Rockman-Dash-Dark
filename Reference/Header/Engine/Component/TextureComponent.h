@@ -43,27 +43,33 @@ protected:
 
 
 public:
-	ID3D11ShaderResourceView* Get_ShaderResourseView() { return m_pSRV.Get(); }
+	// 단일 SRV를 얻는 함수 [완]
+	ID3D11ShaderResourceView*	Get_ShaderResourseView(const _uint iIndex);
+	// 텍스처 배열을 받아 해당 배열에 SRV를 넘겨주는 함수 [검증중]
+	HRESULT						Get_ShaderResourceViews(ID3D11ShaderResourceView** Arr, const _uint iNumTextures);
 
 public:
-	// 텍스처를 바인드한다. 동시에 텍스처 매니저에 등록도 한다.
-	HRESULT Bind_Texture(const wstring& strFilePath);
-	// 이미 등록된 텍스처를 찾아 저장하는 함수, 앞으로 잘 안쓸듯? [Deprecated]
-	HRESULT Bind_TextureFromManager(const wstring& strFilePath);
-	// 텍스처 연결 끊기
+	// 텍스처를 바인드한다. 동시에 텍스처 매니저에 등록도 한다. [완]
+	HRESULT Bind_Texture(const wstring& strFilePath, const _uint iNumTextures = 1);
+	// 텍스처 정리하기 [완]
 	HRESULT Unbind_Texture();
 
 public:
-	HRESULT Bind_SRVToEffect(class CEffectComponent* pEffect, const _char* pTextureName);
+	// 이펙트에 텍스처 바인드 [완]
+	HRESULT Bind_SRVToEffect(class CEffectComponent* pEffect, const _char* pTextureSymbolName, const _uint iIndex);
 
 private:
-	// 텍스처 매니저에 연결하는 내부 함수
+	// 텍스처 매니저에 연결하는 내부 함수 [완]
 	HRESULT Link_TextureManager();
 
 
 private:
-	class CTextureMgr*					m_pTextureMgr = { nullptr };	// 전역 텍스처 리소스 관리에 쓰인다.
-	ComPtr<ID3D11ShaderResourceView>	m_pSRV = { nullptr };			// 실제 렌더링 되는 텍스처의 주소이다.
+	// S접두어는 심볼이라는 뜻
+	using SShaderResourceViews = vector<ComPtr<ID3D11ShaderResourceView>>;
+	class CTextureMgr*		m_pTextureMgr = { nullptr };	// 전역 텍스처 리소스 관리에 쓰인다.
+
+	_uint					m_iNumTextures = 0;
+	SShaderResourceViews	m_vecSRVs = { nullptr };		// 실제 렌더링 되는 텍스처의 주소이다.
 };
 
 END

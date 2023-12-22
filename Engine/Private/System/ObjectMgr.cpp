@@ -251,33 +251,7 @@ void CObjectMgr::RegistToTick_GameObjects()
 			// 렌더 상태가 켜져있으면 조건에 따라 그룹에 추가한다.
 			if (pObj->IsState(EGObjectState::Render))
 			{
-				if (pObj->IsState(EGObjectState::RenderZBuffer))
-				{
-					if (pObj->IsState(EGObjectState::RenderDeferred))
-					{
-						GameInstance()->Add_RenderGroup(ERenderGroup::NonAlpha, pObj);
-					}
-					else
-					{
-						GameInstance()->Add_RenderGroup(ERenderGroup::Alpha, pObj);
-					}
-				}
-				// ZBuffer가 필요없는 그룹
-				else
-				{
-					if (pObj->IsState(EGObjectState::RenderPriority))
-					{
-						GameInstance()->Add_RenderGroup(ERenderGroup::Priority, pObj);
-					}
-					else if (pObj->IsState(EGObjectState::RenderPostProcess))
-					{
-						GameInstance()->Add_RenderGroup(ERenderGroup::PostProcess, pObj);
-					}
-					else
-					{
-						GameInstance()->Add_RenderGroup(ERenderGroup::UI, pObj);
-					}
-				}
+				GI()->Add_RenderGroup(pObj->Get_RenderGroup(), pObj);
 			}
 		}
 	}

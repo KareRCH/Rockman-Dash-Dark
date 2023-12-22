@@ -1,4 +1,6 @@
 
+#include "Shader_Defines.hlsli"
+
 // 행렬 변환
 cbuffer MatrixBuffer : register(b0)
 {
@@ -206,6 +208,10 @@ technique11 DefaultTechnique
     // 툴에서 피킹용으로 쓰이는 패스
     pass Tool
     {
+        SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_None, 0);
+		SetBlendState(BS_AlphaBlend_Add, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         HullShader = NULL;
@@ -217,6 +223,10 @@ technique11 DefaultTechnique
     // 기본 패스
     pass Default
     {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         HullShader = NULL;

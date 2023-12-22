@@ -120,11 +120,11 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
         return E_FAIL;
-    if (FAILED(m_pTextureComps[TYPE_DIFFUSE]->Bind_SRVToEffect(m_pEffectComp, "g_DiffuseTexture")))
+    if (FAILED(m_pTextureComps[TYPE_DIFFUSE]->Bind_SRVToEffect(m_pEffectComp, "g_DiffuseTexture", 0)))
         return E_FAIL;
-    if (FAILED(m_pTextureComps[TYPE_MASK]->Bind_SRVToEffect(m_pEffectComp, "g_MaskTexture")))
+    if (FAILED(m_pTextureComps[TYPE_MASK]->Bind_SRVToEffect(m_pEffectComp, "g_MaskTexture", 0)))
         return E_FAIL;
-    if (FAILED(m_pTextureComps[TYPE_BRUSH]->Bind_SRVToEffect(m_pEffectComp, "g_BrushTexture")))
+    if (FAILED(m_pTextureComps[TYPE_BRUSH]->Bind_SRVToEffect(m_pEffectComp, "g_BrushTexture", 0)))
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_RawValue("g_vCamPosition", &(vTemp = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
         return E_FAIL;
@@ -207,12 +207,12 @@ HRESULT CTerrainModelComp::Unbind_Effect()
     return m_pEffectComp->Unbind_Effect();
 }
 
-HRESULT CTerrainModelComp::Bind_Texture(TEXTURE eType, const wstring& strFileName)
+HRESULT CTerrainModelComp::Bind_Texture(TEXTURE eType, const wstring& strFileName, const _uint iNumTextures)
 {
     if (!m_pTextureComps[eType])
         return E_FAIL;
 
-    return m_pTextureComps[eType]->Bind_Texture(strFileName);
+    return m_pTextureComps[eType]->Bind_Texture(strFileName, iNumTextures);
 }
 
 HRESULT CTerrainModelComp::Unbind_Texture(TEXTURE eType)

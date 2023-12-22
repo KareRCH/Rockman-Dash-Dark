@@ -93,7 +93,7 @@ HRESULT CMultiMeshBufComp::Set_ModelData(FModelData* pModelData)
 	return S_OK;
 }
 
-HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
+HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey, const _uint iRangeIndex)
 {
 	// 메쉬 그룹이 바인딩 되어 있는지 확인
 	if (!m_pMeshGroup)
@@ -105,7 +105,7 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey)
 		return E_FAIL;
 
 	// 메쉬 얻어오기
-	const FMeshData* pMesh = m_pMeshGroup->Find_Mesh(strMeshKey);
+	const FMeshData* pMesh = m_pMeshGroup->Find_Mesh(strMeshKey, iRangeIndex);
 	if (!pMesh)
 		return E_FAIL;
 
@@ -195,7 +195,7 @@ HRESULT CMultiMeshBufComp::Bind_MeshAll()
 
 	for (auto iter = m_pMeshGroup->mapMeshDatas.begin(); iter != m_pMeshGroup->mapMeshDatas.end(); ++iter)
 	{
-		Bind_Mesh((*iter).first);
+		//Bind_Mesh((*iter).first);
 	}
 
 	return S_OK;

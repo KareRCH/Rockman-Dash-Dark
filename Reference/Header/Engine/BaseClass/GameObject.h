@@ -3,6 +3,7 @@
 #include "Component/TransformComponent.h"
 #include "Component/PipelineComp.h"
 
+#include "System/Define/RenderMgr_Define.h"
 #include "Component/Define/Component_Define.h"
 #include "BaseClass/GameObject_Define.h"
 #include "Component/GameObjectComp.h"
@@ -55,19 +56,22 @@ public:
 	GETSET_2(wstring, m_strName, Name, GET_C_REF, SET_C_REF)
 
 	void		Add_Tag(const EGObjTag eTagType, const wstring& strTag) { m_setTag[ECast(eTagType)].emplace(strTag); }
-	_bool		Has_Tag(const EGObjTag eTagType, const wstring& strTag) { return (m_setTag[ECast(eTagType)].find(strTag) != m_setTag[ECast(eTagType)].end()); }
+	_bool		Has_Tag(const EGObjTag eTagType, const wstring& strTag) const { return (m_setTag[ECast(eTagType)].find(strTag) != m_setTag[ECast(eTagType)].end()); }
 	void		Delete_Tag(const EGObjTag eTagType, const wstring& strTag);
-	_uint		Tag_Size(const EGObjTag eTagType) { return Cast<_uint>(m_setTag[ECast(eTagType)].size()); }
+	_uint		Tag_Size(const EGObjTag eTagType) const { return Cast<_uint>(m_setTag[ECast(eTagType)].size()); }
 
-	_bool		IsDead() { return m_iStateFlag & ECast(EGObjectState::Dead); }
+	_bool		IsDead() const { return m_iStateFlag & ECast(EGObjectState::Dead); }
 	void		Set_Dead() { m_iStateFlag |= ECast(EGObjectState::Dead); }
 
-	_float		Get_Priority(_uint iIndex) { return m_fPriority[iIndex]; }
+	_float		Get_Priority(_uint iIndex) const { return m_fPriority[iIndex]; }
 
 	void		TurnOn_State(const EGObjectState value) { m_iStateFlag |= ECast(value); }
 	void		TurnOff_State(const EGObjectState value) { m_iStateFlag &= ~ECast(value); }
 	void		Toggle_State(const EGObjectState value) { m_iStateFlag ^= ECast(value); }
-	_bool		IsState(const EGObjectState value) { return (m_iStateFlag & ECast(value)); }
+	_bool		IsState(const EGObjectState value) const { return (m_iStateFlag & ECast(value)); }
+
+	void					Set_RenderGroup(const ERenderGroup eRenderGroup) { m_eRenderGroup = eRenderGroup; }
+	const ERenderGroup&		Get_RenderGroup() const { return m_eRenderGroup; }
 
 private:	// 기본 속성
 	_uint				m_iID = 0U;							// 식별용 ID, 오브젝트 관리에 사용된다.
@@ -75,6 +79,7 @@ private:	// 기본 속성
 	_uint				m_iStateFlag = 0U;					// 상태 플래그, 32가지의 상태를 구현한다. 시스템에서 쓰인다.
 	_unset<wstring>		m_setTag[ECast(EGObjTag::Size)];	// 분류 태그. 시스템과 게임 로직에 사용된다.
 
+	ERenderGroup		m_eRenderGroup = ERenderGroup::Alpha;
 
 	_float				m_fPriority[ECast(EGObjTickPriority::Size)];	// 우선도
 
