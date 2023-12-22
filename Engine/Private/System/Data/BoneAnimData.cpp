@@ -224,6 +224,8 @@ _uint FBoneAnimChannelData::Calculate_Pivot(const _float& fCurTrackPos) const
 				// 다음 값에서 사이값 찾기
 				else { ++iPivot; continue; }
 			}
+			// 다음 프레임이 없다. 현재값에 만족한다.
+			else { break; }
 			// 다음 프레임이 없다. 이전 프레임 검사한다.
 			if (iPivot - 1 != UINT_MAX)
 			{
@@ -236,8 +238,7 @@ _uint FBoneAnimChannelData::Calculate_Pivot(const _float& fCurTrackPos) const
 				else
 					break;
 			}
-			// 이전, 다음 프레임이 없다. 현재값에 만족한다.
-			break; 
+			
 		}
 		// 사이값을 구하기 위해 피봇 위치를 변경해야한다.
 		else

@@ -10,7 +10,7 @@ HRESULT CImGuiWin_Browser::Initialize()
 {
 	m_bOpen = true;
 
-	GI()->Load_Model(EModelGroupIndex::Permanent, "Model/Character/RockVolnutt/Test.fbx", L"RockVolnutt");
+	GI()->Load_Model(EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Test.fbx");
 
 	return S_OK;
 }

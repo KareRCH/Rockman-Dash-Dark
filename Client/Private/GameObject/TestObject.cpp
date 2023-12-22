@@ -58,6 +58,7 @@ HRESULT CTestObject::Initialize(const _float3 vPos)
     FAILED_CHECK_RETURN(Initialize(), E_FAIL);
 
     Transform().Set_Position(vPos);
+    //Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
 
     return S_OK;
 }
@@ -86,7 +87,7 @@ void CTestObject::Tick(const _float& fTimeDelta)
     if (GI()->IsKey_Pressed(DIK_BACK))
         Set_Dead();
     
-    Transform().Set_Scale(_float3(1.f, 1.f, 1.f));
+    Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
     
     _float3 t = Transform().Get_RotationEulerFloat3();
 
@@ -100,9 +101,9 @@ void CTestObject::Tick(const _float& fTimeDelta)
     {
         m_bTest = !m_bTest;
         if (m_bTest)
-            m_pModelComp->Set_MaskAnimation(0, L"Armature|Idle");
+            m_pModelComp->Set_MaskAnimation(0, L"Megaman|anim_000_Megaman");
         else
-            m_pModelComp->Set_MaskAnimation(0, L"Armature|Idle2");
+            m_pModelComp->Set_MaskAnimation(0, L"Megaman|anim_001_Megaman");
     }
     
     m_pModelComp->Set_MaskTime(0, m_Gauge.fCur);
@@ -175,17 +176,14 @@ HRESULT CTestObject::Initialize_Component()
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CSkinnedModelComp::Create()), E_FAIL);
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    m_pModelComp->Bind_Model(EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Test.amodel");
-    m_pModelComp->Bind_Mesh(L"Body");
-    m_pModelComp->Bind_Mesh(L"Arms");
-    m_pModelComp->Bind_Mesh(L"Legs");
-    m_pModelComp->Bind_Mesh(L"Head");
+    m_pModelComp->Bind_Model(EModelGroupIndex::Permanent, L"Model/Character/Megaman/Megaman.amodel");
+    m_pModelComp->Bind_Mesh(L"Mesh_0");
     m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::InputLayout, SHADER_VTX_SKINMODEL::iMaxIndex);
     m_pModelComp->Bind_Skeletal(L"Armature");
     m_pModelComp->Create_Mask(L"Main", L"Armature", true);
     m_pModelComp->Create_Mask(L"Head", L"Armature", false);
     m_pModelComp->Create_Mask(L"Leg", L"Armature", false);
-    m_pModelComp->Active_BoneMask(2, L"Bone");
+    m_pModelComp->Active_BoneMask(2, L"bone_000");
     m_pModelComp->Create_Mask(L"LeftArm", L"Armature", false);
     m_pModelComp->Create_Mask(L"RightArm", L"Armature", false);
 
