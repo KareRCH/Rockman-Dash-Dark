@@ -7,25 +7,12 @@ CRectBufferComp::CRectBufferComp(const CRectBufferComp& rhs)
 
 HRESULT CRectBufferComp::Initialize_Prototype(void* Arg)
 {
-	return S_OK;
-}
-
-HRESULT CRectBufferComp::Initialize(void* Arg)
-{
 	m_iNumVertices = 4;
 	m_iNumIndices = 6;
 
 	SHADER_VTX_TEXCOORD* vertices = new SHADER_VTX_TEXCOORD[m_iNumVertices];
 	if (!vertices)
-	{
 		return E_FAIL;
-	}
-
-	_ushort* indices = new _ushort[m_iNumIndices];
-	if (!indices)
-	{
-		return E_FAIL;
-	}
 
 	vertices[0].vPosition = _float3(-0.5f, 0.5f, 0.f);
 	vertices[0].vTexCoord = _float2(0.f, 0.f);
@@ -36,16 +23,9 @@ HRESULT CRectBufferComp::Initialize(void* Arg)
 	vertices[2].vPosition = _float3(0.5f, -0.5f, 0.f);
 	vertices[2].vTexCoord = _float2(1.f, 1.f);
 
-	vertices[2].vPosition = _float3(-0.5f, -0.5f, 0.f);
-	vertices[2].vTexCoord = _float2(1.f, 0.f);
+	vertices[3].vPosition = _float3(-0.5f, -0.5f, 0.f);
+	vertices[3].vTexCoord = _float2(0.f, 1.f);
 
-	indices[0] = 0;
-	indices[1] = 1;
-	indices[2] = 2;
-
-	indices[3] = 0;
-	indices[4] = 2;
-	indices[5] = 3;
 
 	// 정적 정점 버퍼의 구조체를 설정
 	D3D11_BUFFER_DESC vertexBufferDesc;
@@ -64,6 +44,25 @@ HRESULT CRectBufferComp::Initialize(void* Arg)
 	vertexData.SysMemSlicePitch = 0;
 
 	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVB.GetAddressOf()), E_FAIL);
+
+
+
+
+
+
+
+	_ushort* indices = new _ushort[m_iNumIndices];
+	if (!indices)
+		return E_FAIL;
+
+	indices[0] = 0;
+	indices[1] = 1;
+	indices[2] = 2;
+
+	indices[3] = 0;
+	indices[4] = 2;
+	indices[5] = 3;
+
 
 	// 정적 인덱스 버퍼의 구조체를 설정한다.
 	D3D11_BUFFER_DESC indexBufferDesc;
@@ -85,34 +84,37 @@ HRESULT CRectBufferComp::Initialize(void* Arg)
 	Safe_Delete_Array(vertices);
 	Safe_Delete_Array(indices);
 
+
+
+
+
+	// 추가 세팅
+	m_iVertexStride = sizeof(SHADER_VTX_TEXCOORD);
+	m_iNumVertexBuffers = 1;
+	m_iIndexStride = sizeof(_ushort);
+	m_eIndexFormat = DXGI_FORMAT_R16_UINT;
+	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	
+
 	return S_OK;
 }
 
-void CRectBufferComp::Render_Buffer()
+HRESULT CRectBufferComp::Initialize(void* Arg)
 {
-	_uint iStride = sizeof(SHADER_VTX_TEXCOORD);
-	_uint iOffset = 0;
+	
 
-	// 렌더링 할 수 있도록 입력 어셈블러에서 정점 버퍼를 활성으로 설정
-	D3D11Context()->IASetVertexBuffers(0, 1, m_pVB.GetAddressOf(), &iStride, &iOffset);
-
-	// 렌더링 할 수 있도록 입력 어셈블러에서 인덱스 버퍼를 활성으로 설정
-	D3D11Context()->IASetIndexBuffer(m_pIB.Get(), DXGI_FORMAT_R16_UINT, 0);
-
-	// 정점 버퍼로 그릴 기본형 설정. 삼각형 설정
-	D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	return S_OK;
 }
+
 
 CRectBufferComp* CRectBufferComp::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("RectBufferComp Create Failed");
-
-		return nullptr;
+		Safe_Release(pInstance);
 	}
 
 	return pInstance;
@@ -124,10 +126,8 @@ CComponent* CRectBufferComp::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("RectBufferComp Copy Failed");
-
-		return nullptr;
+		Safe_Release(pInstance);
 	}
 
 	return Cast<CComponent*>(pInstance);

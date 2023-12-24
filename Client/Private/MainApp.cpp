@@ -6,6 +6,7 @@
 #include "TestScene.h"
 #include "System/GraphicDev.h"
 #include "System/ShaderMgr_Enum.h"
+#include "Level/Level_Loading.h"
 
 IMPLEMENT_SINGLETON(CMainApp)
 
@@ -23,8 +24,6 @@ CMainApp* CMainApp::Create()
 	{
 		MSG_BOX("MainApp Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -52,20 +51,21 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGI->Create_Font(L"Font_Thin_Jinji", L"궁서", 18, 30, FW_THIN), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Create_Font(L"MonsterUI", L"함초롱바탕", 14, 25, FW_THIN), E_FAIL);
 
+	FAILED_CHECK_RETURN(m_pGI->Initialize_SoundMgr("Resource/Sound/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Initialize_TextureMgr(tDevice, L"Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr(L"Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
 	GameInstance()->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
 	GameInstance()->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
-	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::InputLayout, SHADER_VTX_SKINMODEL::iMaxIndex);
-	GI()->Load_Effect(L"Runtime/FX_Terrain.hlsl", SHADER_VTX_NORM::InputLayout, SHADER_VTX_NORM::iMaxIndex);
+	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
+	GI()->Load_Effect(L"Runtime/FX_Terrain.hlsl", SHADER_VTX_NORM::Elements, SHADER_VTX_NORM::iNumElements);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 60.f), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_Immediate"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_FPS"), E_FAIL);
 
-	m_pGI->Open_Level(0, CTestScene::Create());
+	FAILED_CHECK_RETURN(Open_Level(LEVEL_LOGO), E_FAIL);
 	
 	return S_OK;
 }
@@ -91,6 +91,7 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 void CMainApp::Late_Tick(const _float& fTimeDelta)
 {
 	m_pGI->Late_Tick_Object(fTimeDelta);
+	m_pGI->Tick_LevelMgr(fTimeDelta);
 	m_pGI->Late_Tick_KeyMgr();
 	m_pGI->Late_Tick_InputDev();
 }
@@ -116,6 +117,7 @@ void CMainApp::Render()
 void CMainApp::Free()
 {
 	// dll 싱글톤 제거
+	m_pGI->Release_Managers();
 	Safe_Release(m_pGI);
 }
 
@@ -139,4 +141,17 @@ void CMainApp::Render_FrameRate()
 		colorFont = DXCOLOR_RED;
 
 	m_pGI->Render_Font(L"Font_Jinji", str.c_str(), &vFontPos, colorFont);
+}
+
+HRESULT CMainApp::Open_Level(LEVEL eStartLevelID)
+{
+	if (nullptr == m_pGI)
+		return E_FAIL;
+
+	// 로딩 레벨에서 시작, 그 후 선택된 레벨로 로드한다.
+	CLevel* pLevel = CLevel_Loading::Create(eStartLevelID);
+	if (nullptr == pLevel)
+		return E_FAIL;
+
+	return m_pGI->Open_Level(LEVEL_LOADING, pLevel);
 }

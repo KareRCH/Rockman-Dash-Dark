@@ -41,7 +41,7 @@ HRESULT CNavigationComponent::Initialize_Prototype(const wstring& strNavigationF
         if (0 == dwByte)
             break;
 
-        CNaviCell* pCell = CNaviCell::Create(vPoints);
+        CNaviCell* pCell = CNaviCell::Create(vPoints, Cast<_uint>(m_vecCells.size()));
         if (nullptr == pCell)
             return E_FAIL;
 
@@ -51,9 +51,11 @@ HRESULT CNavigationComponent::Initialize_Prototype(const wstring& strNavigationF
     CloseHandle(hFile);
 
 #ifdef _DEBUG
-    //m_pEffectComp = CEffectComponent::Create(TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements);
+    m_pEffectComp = CEffectComponent::Create();
     if (nullptr == m_pEffectComp)
         return E_FAIL;
+    m_pEffectComp->Bind_Effect(TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"), SHADER_VTX_SINGLE::Elements, SHADER_VTX_SINGLE::iNumElements);
+
 #endif
 
     return S_OK;
@@ -95,7 +97,7 @@ CNavigationComponent* CNavigationComponent::Create(const wstring& strNavigationF
 
     if (FAILED(pInstance->Initialize_Prototype(strNavigationFilePath)))
     {
-        MSG_BOX("BoxBufferComp Create Failed");
+        MSG_BOX("NavigationComponent Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -108,7 +110,7 @@ CComponent* CNavigationComponent::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        MSG_BOX("BoxBufferComp Copy Failed");
+        MSG_BOX("NavigationComponent Copy Failed");
         Safe_Release(pInstance);
     }
 

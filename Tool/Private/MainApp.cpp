@@ -77,7 +77,7 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"../Client/Shader/"), E_FAIL);
 	m_pGI->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
 	m_pGI->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
-	m_pGI->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::InputLayout, SHADER_VTX_SKINMODEL::iMaxIndex);
+	m_pGI->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 120.f), E_FAIL);
 

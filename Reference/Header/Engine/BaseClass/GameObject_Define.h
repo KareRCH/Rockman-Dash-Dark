@@ -16,7 +16,7 @@ enum class EGObjTickPriority : _uint
 enum class EGObjTag : _uint
 {
 	Common,		// 일반 분류 태그, 일반 게임 로직에 쓰인다.
-	Level,		// 레벨 분류 태그, 어느 레벨에 속해있는지에 대해 쓰인다.
+	Level,		// 레벨 분류 태그, 어느 레벨에 속해있는지에 대해 쓰인다. 동적으로 바뀔 수 있다.
 	Layer,		// 레이어 분류 태그, 에디터에서 쓰인다.
 	Size
 };

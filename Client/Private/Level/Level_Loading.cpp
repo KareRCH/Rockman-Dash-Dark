@@ -1,10 +1,30 @@
 #include "Level/Level_Loading.h"
 
 #include "Loader.h"
+#include "Level/Level_Logo.h"
+#include "Level/Level_GamePlay.h"
 
-HRESULT CLevel_Loading::Initialize()
+#include "GameObject/LoadingScreen.h"
+#include "Component/PlaneModelComp.h"
+#include "Component/RectBufferComp.h"
+#include "Component/EffectComponent.h"
+#include "Component/TextureComponent.h"
+
+CLevel_Loading::CLevel_Loading()
 {
-	m_pLoader = CLoader::Create();
+	Set_Name(TEXT("Loading"));
+}
+
+HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
+{
+	if (FAILED(Ready_Objects()))
+		return E_FAIL;
+
+	m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("04. Kitchen Fire.mp3"), 1.f);
+
+	m_eNextLevelID = eNextLevelID;
+
+	m_pLoader = CLoader::Create(eNextLevelID);
 	if (nullptr == m_pLoader)
 		return E_FAIL;
 
@@ -13,29 +33,32 @@ HRESULT CLevel_Loading::Initialize()
 
 void CLevel_Loading::Tick(const _float& fTimeDelta)
 {
-	/*if (m_pLoader->IsFinished())
+	if (nullptr == m_pGI)
+		return;
+
+	if (m_pLoader->IsFinished())
 	{
-		if (GetKeyState(VK_RETURN) & 0x8000)
+		if (m_pGI->IsKey_Pressed(DIK_RETURN))
 		{
 			CLevel* pNewLevel = { nullptr };
 
 			switch (m_eNextLevelID)
 			{
 			case LEVEL_LOGO:
-				pNewLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
+				pNewLevel = CLevel_Logo::Create();
 				break;
 			case LEVEL_GAMEPLAY:
-				pNewLevel = CLevel_GamePlay::Create(m_pDevice, m_pContext);
+				pNewLevel = CLevel_GamePlay::Create();
 				break;
 			}
 
 			if (nullptr == pNewLevel)
 				return;
 
-			if (FAILED(m_pGameInstance->Open_Level(m_eNextLevelID, pNewLevel)))
+			if (FAILED(m_pGI->Open_Level(m_eNextLevelID, pNewLevel)))
 				return;
 		}
-	}*/
+	}
 }
 
 HRESULT CLevel_Loading::Render()
@@ -45,11 +68,11 @@ HRESULT CLevel_Loading::Render()
     return S_OK;
 }
 
-CLevel_Loading* CLevel_Loading::Create()
+CLevel_Loading* CLevel_Loading::Create(LEVEL eNextLevelID)
 {
 	CLevel_Loading* pInstance = new CLevel_Loading();
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize(eNextLevelID)))
 	{
 		MSG_BOX("Failed to Created : CLevel_Loading");
 		Safe_Release(pInstance);
@@ -60,5 +83,23 @@ CLevel_Loading* CLevel_Loading::Create()
 
 void CLevel_Loading::Free()
 {
+	SUPER::Free();
+
 	Safe_Release(m_pLoader);
+}
+
+HRESULT CLevel_Loading::Ready_Objects()
+{
+	m_pGI->Set_LevelTag(Get_Name());
+
+	CLoadingScreen* pLoadingScreen = { nullptr };
+
+	if (FAILED(m_pGI->Add_GameObject(pLoadingScreen = CLoadingScreen::Create())))
+		return E_FAIL;
+
+	CPlaneModelComp* pModel = pLoadingScreen->Get_Component<CPlaneModelComp>(TEXT("LoadingScreen"));
+	pModel->Transform().Set_Scale(XMVectorSet(g_iWindowSizeX, g_iWindowSizeY, 1.f, 0.f));
+	pModel->Transform().Set_Position(XMVectorSet(0.f, 0.f, 10.f, 1.f));
+
+	return S_OK;
 }

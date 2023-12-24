@@ -229,6 +229,15 @@ namespace Engine
 #pragma endregion
 
 
+#pragma region 수학
+	inline _bool IsOnRange(_float Value, _float LowerBound, _float UpperBound)
+	{
+		return (Value >= LowerBound && Value <= UpperBound);
+	}
+#pragma endregion
+
+
+
 #pragma region 디버깅용 행렬 요소 추출기
 	// 행렬로부터 위치값 추출
 	inline _float3 Get_PosFromMatrix(_float4x4 mat)

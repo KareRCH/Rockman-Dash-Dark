@@ -4,22 +4,30 @@
 #include "Component/EffectComponent.h"
 #include "Component/NaviCellBufferComp.h"
 
-CNaviCell::CNaviCell(const CNaviCell& rhs)
-    : m_pDeviceComp(rhs.m_pDeviceComp)
+CNaviCell::CNaviCell()
 {
 }
 
-HRESULT CNaviCell::Initialize(const _float3* pPoints)
+CNaviCell::CNaviCell(const CNaviCell& rhs)
 {
-    // 디바이스에 접근 할 수 있는 컴포넌트 참조
-    m_pDeviceComp = Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp"));
+}
 
-    rsize_t iSize = sizeof(_float3);
-    memcpy_s(m_vPoints, iSize, pPoints, iSize);
+HRESULT CNaviCell::Initialize(const _float3* pPoints, _uint iIndex)
+{
+    memcpy(m_vPoints, pPoints, sizeof(_float3));
+
+    m_iIndex = iIndex;
+
+    _vector		vLine = XMLoadFloat3(&m_vPoints[POINT_B]) - XMLoadFloat3(&m_vPoints[POINT_A]);
+    XMStoreFloat3(&m_vNormals[LINE_AB], XMVectorSet(XMVectorGetZ(vLine) * -1.f, 0.f, XMVectorGetX(vLine), 0.f));
+
+    vLine = XMLoadFloat3(&m_vPoints[POINT_C]) - XMLoadFloat3(&m_vPoints[POINT_B]);
+    XMStoreFloat3(&m_vNormals[LINE_BC], XMVectorSet(XMVectorGetZ(vLine) * -1.f, 0.f, XMVectorGetX(vLine), 0.f));
+
+    vLine = XMLoadFloat3(&m_vPoints[POINT_A]) - XMLoadFloat3(&m_vPoints[POINT_C]);
+    XMStoreFloat3(&m_vNormals[LINE_CA], XMVectorSet(XMVectorGetZ(vLine) * -1.f, 0.f, XMVectorGetX(vLine), 0.f));
 
 #ifdef _DEBUG
-
-
     //m_pVIBuffer = CNaviCellBufferComp::Create(pPoints);
     if (nullptr == m_pVIBuffer)
         return E_FAIL;
@@ -28,8 +36,18 @@ HRESULT CNaviCell::Initialize(const _float3* pPoints)
     return S_OK;
 }
 
+
+
+#ifdef _DEBUG
 HRESULT CNaviCell::Render(CEffectComponent* pEffectComp)
 {
+
+    /*m_pVIBuffer->Bind_VIBuffers();
+
+    m_pVIBuffer->Render();*/
+
+
+
     //_float4x4		WorldMatrix;
 
     /*XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
@@ -49,12 +67,14 @@ HRESULT CNaviCell::Render(CEffectComponent* pEffectComp)
 
     return S_OK;
 }
+#endif // _DEBUG
 
-CNaviCell* CNaviCell::Create(const _float3* pPoints)
+
+CNaviCell* CNaviCell::Create(const _float3* pPoints, _uint iIndex)
 {
     ThisClass* pInstance = new ThisClass();
 
-    if (FAILED(pInstance->Initialize(pPoints)))
+    if (FAILED(pInstance->Initialize(pPoints, iIndex)))
     {
         MSG_BOX("BoxBufferComp Create Failed");
         Safe_Release(pInstance);
@@ -65,5 +85,61 @@ CNaviCell* CNaviCell::Create(const _float3* pPoints)
 
 void CNaviCell::Free()
 {
-    Safe_Release(m_pDeviceComp);
+#ifdef _DEBUG	
+    Safe_Release(m_pVIBuffer);
+#endif	
+}
+
+_bool CNaviCell::Compare_Points(const _float3* pSourPoint, const _float3* pDestPoint)
+{
+    if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(pSourPoint)))
+    {
+        if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(pDestPoint)))
+            return true;
+
+        if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(pDestPoint)))
+            return true;
+    }
+    if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(pSourPoint)))
+    {
+        if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(pDestPoint)))
+            return true;
+
+        if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(pDestPoint)))
+            return true;
+    }
+    if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(pSourPoint)))
+    {
+        if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(pDestPoint)))
+            return true;
+
+        if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(pDestPoint)))
+            return true;
+    }
+
+    return false;
+}
+
+_bool CNaviCell::IsIn(_fvector vPosition, _fmatrix WorldMatrix, _int* pNeighborIndex)
+{
+    for (size_t i = 0; i < LINE_END; i++)
+    {
+        _vector	vStartPoint = XMVector3TransformCoord(XMLoadFloat3(&m_vPoints[i]), WorldMatrix);
+        _vector	vNormal = XMVector3TransformNormal(XMLoadFloat3(&m_vNormals[i]), WorldMatrix);
+
+        _vector	vSourDir = vPosition - vStartPoint;
+
+        if (0 < XMVectorGetX(XMVector3Dot(XMVector3Normalize(vSourDir),
+            XMVector3Normalize(vNormal))))
+        {
+            *pNeighborIndex = m_iNeighbors[i];
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void CNaviCell::Update(_fmatrix WorldMatrix)
+{
 }

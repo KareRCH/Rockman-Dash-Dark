@@ -232,9 +232,13 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Public\BaseClass\Navigation.h" />
     <ClInclude Include="Public\Component\BoxModelComp.h" />
     <ClInclude Include="Public\Component\CommonModelComp.h" />
+    <ClInclude Include="Public\Component\CylinderBufferComp.h" />
+    <ClInclude Include="Public\Component\CylinderModelComp.h" />
     <ClInclude Include="Public\Component\Data\NaviCell.h" />
+    <ClInclude Include="Public\Component\Data\NaviRegion.h" />
     <ClInclude Include="Public\Component\MeshBufferComp.h" />
     <ClInclude Include="Public\Component\NaviCellBufferComp.h" />
     <ClInclude Include="Public\Component\NavigationComponent.h" />
@@ -348,12 +352,16 @@
     <ClCompile Include="Private\BaseClass\Camera.cpp" />
     <ClCompile Include="Private\BaseClass\Layer.cpp" />
     <ClCompile Include="Private\BaseClass\Level.cpp" />
+    <ClCompile Include="Private\BaseClass\Navigation.cpp" />
     <ClCompile Include="Private\BaseClass\Terrain.cpp" />
     <ClCompile Include="Private\Component\AnimationComponent.cpp" />
     <ClCompile Include="Private\Component\BoxBufferComp.cpp" />
     <ClCompile Include="Private\Component\BoxModelComp.cpp" />
     <ClCompile Include="Private\Component\CommonModelComp.cpp" />
+    <ClCompile Include="Private\Component\CylinderBufferComp.cpp" />
+    <ClCompile Include="Private\Component\CylinderModelComp.cpp" />
     <ClCompile Include="Private\Component\Data\NaviCell.cpp" />
+    <ClCompile Include="Private\Component\Data\NaviRegion.cpp" />
     <ClCompile Include="Private\Component\MeshBufferComp.cpp" />
     <ClCompile Include="Private\Component\NaviCellBufferComp.cpp" />
     <ClCompile Include="Private\Component\NavigationComponent.cpp" />
@@ -464,14 +472,30 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="Shader\Runtime\FX_Navigation.hlsl">
+    <None Include="Shader\Runtime\FX_VtxPosTex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shader\Runtime\FX_Navigation.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="Shader\Runtime\FX_VtxCube.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS_MAIN</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS_MAIN</EntryPointName>

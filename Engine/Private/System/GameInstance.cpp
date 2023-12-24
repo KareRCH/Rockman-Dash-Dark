@@ -40,7 +40,6 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDevi
 	FAILED_CHECK_RETURN(Initialize_InputDev(hInst, hWnd), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_RenderMgr(tDevice), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_PipelineMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(Initialize_SoundMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_PhysicsMgr(1), E_FAIL);
 
 	FAILED_CHECK_RETURN(Initialize_KeyMgr(), E_FAIL);
@@ -61,7 +60,21 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDevi
 	return S_OK;
 }
 
+void CGameInstance::Clear(const wstring& strLevelTag)
+{
+	if (nullptr == m_pObjectMgr
+		|| nullptr == m_pComponentMgr)
+		return;
+
+	m_pObjectMgr->Clear_GameObject(strLevelTag);
+}
+
 void CGameInstance::Free()
+{
+	
+}
+
+void CGameInstance::Release_Managers()
 {
 	Safe_Release(m_pModelMgr);
 	Safe_Release(m_pRenderMgr);
@@ -69,11 +82,11 @@ void CGameInstance::Free()
 	Safe_Release(m_pObjectMgr);
 	Safe_Release(m_pLevelMgr);
 	Safe_Release(m_pBlackBoardMgr);
-	
+
 
 	Safe_Release(m_pParticleMgr);
 	Safe_Release(m_pShaderMgr);
-	
+
 
 	Safe_Release(m_pFontMgr);
 	Safe_Release(m_pTextureMgr);
@@ -85,7 +98,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pFrameMgr);
 	Safe_Release(m_pTimerMgr);
 	Safe_Release(m_pKeyMgr);
-	
+
 	Safe_Release(m_pInputDev);
 	Safe_Release(m_pGraphicDev);
 }
@@ -582,14 +595,54 @@ inline void CGameInstance::Delete_ColliderToPhysicsWorld(const _uint iWorldID, F
 
 #pragma region 사운드 매니저
 
-HRESULT CGameInstance::Initialize_SoundMgr()
+HRESULT CGameInstance::Initialize_SoundMgr(const string& strMainPath)
 {
 	if (nullptr != m_pSoundMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pSoundMgr = CSoundMgr::Create(), E_FAIL);
+	NULL_CHECK_RETURN(m_pSoundMgr = CSoundMgr::Create(strMainPath), E_FAIL);
 
 	return S_OK;
+}
+
+void CGameInstance::Play_Sound(const wstring& strGroupKey, const wstring& strSoundKey, CHANNELID eID, _float fVolume)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Play_Sound(strGroupKey, strSoundKey, eID, fVolume);
+}
+
+void CGameInstance::Play_BGM(const wstring& strGroupKey, const wstring& strSoundKey, _float fVolume)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Play_BGM(strGroupKey, strSoundKey, fVolume);
+}
+
+void CGameInstance::Stop_Sound(CHANNELID eID)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Stop_Sound(eID);
+}
+
+void CGameInstance::Stop_SoundAll()
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Stop_All();
+}
+
+void CGameInstance::Set_ChannelVolume(CHANNELID eID, _float fVolume)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Set_ChannelVolume(eID, fVolume);
 }
 
 #pragma endregion
@@ -768,6 +821,14 @@ HRESULT CGameInstance::Initialize_LevelMgr()
 	return S_OK;
 }
 
+void CGameInstance::Tick_LevelMgr(const _float& fTimeDelta)
+{
+	if (nullptr == m_pLevelMgr)
+		return;
+
+	return m_pLevelMgr->Tick(fTimeDelta);
+}
+
 HRESULT CGameInstance::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel)
 {
 	if (nullptr == m_pLevelMgr)
@@ -849,6 +910,14 @@ void CGameInstance::Clear_PrototypeObejcts(const wstring& strContainTag)
 		return;
 
 	m_pObjectMgr->Clear_Prototypes(strContainTag);
+}
+
+void CGameInstance::Set_LevelTag(const wstring& strLevelTag)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->Set_LevelTag(strLevelTag);
 }
 
 HRESULT CGameInstance::Add_GameObject(CGameObject* pObj)

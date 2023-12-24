@@ -21,9 +21,7 @@ HRESULT CBoxBufferComp::Initialize_Prototype(void* Arg)
 
 	SHADER_VTX_CUBETEX* vertices = new SHADER_VTX_CUBETEX[m_iNumVertices];
 	if (!vertices)
-	{
 		return E_FAIL;
-	}
 	
 	vertices[0].vPosition = vertices[0].vTexCoord = _float3(-0.5f, 0.5f, -0.5f);
 	vertices[1].vPosition = vertices[1].vTexCoord = _float3(0.5f, 0.5f, -0.5f);

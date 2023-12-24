@@ -114,7 +114,7 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
     _float4x4 matTemp = {};
     _float4 vTemp = {};
 
-    if (FAILED(Transform().Bind_EffectMatrix(m_pEffectComp, "g_WorldMatrix")))
+    if (FAILED(Transform().Bind_TransformToEffect(m_pEffectComp, "g_WorldMatrix")))
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
         return E_FAIL;

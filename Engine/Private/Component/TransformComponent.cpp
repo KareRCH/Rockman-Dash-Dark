@@ -32,8 +32,6 @@ CTransformComponent* CTransformComponent::Create()
 	{
 		MSG_BOX("CGraphicDev Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -47,8 +45,6 @@ CComponent* CTransformComponent::Clone(void* Arg)
 	{
 		MSG_BOX("TransformComponent Copy Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return Cast<CComponent*>(pInstance);
@@ -59,7 +55,7 @@ void CTransformComponent::Free()
 	
 }
 
-HRESULT CTransformComponent::Bind_EffectMatrix(CEffectComponent* pEffect, const _char* pConstantName)
+HRESULT CTransformComponent::Bind_TransformToEffect(CEffectComponent* pEffect, const _char* pConstantName)
 {
 	return pEffect->Bind_Matrix(pConstantName, &m_matTransform);
 }

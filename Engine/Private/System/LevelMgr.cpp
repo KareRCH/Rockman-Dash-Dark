@@ -30,10 +30,8 @@ CLevelMgr* CLevelMgr::Create()
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		Engine::Safe_Release(pInstance);
 		MSG_BOX("RenderMgr Create Failed");
-
-		return nullptr;
+		Safe_Release(pInstance);
 	}
 
 	return pInstance;
@@ -50,8 +48,8 @@ HRESULT CLevelMgr::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel)
 		return E_FAIL;
 
 	// 씬 옮겨갈 때 오브젝트 없애기
-	/*if (nullptr != m_pCurrentLevel)
-		GI()->Clear(m_iCurrentLevelIndex);*/
+	if (nullptr != m_pCurrentLevel)
+		GI()->Clear(m_pCurrentLevel->Get_Name());
 
 	if (0 != Safe_Release(m_pCurrentLevel))
 		return E_FAIL;

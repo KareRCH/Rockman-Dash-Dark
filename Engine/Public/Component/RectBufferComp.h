@@ -16,8 +16,6 @@ public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 
-	void Render_Buffer();
-
 public:
 	static CRectBufferComp* Create();
 	virtual CComponent* Clone(void* Arg = nullptr) override;
