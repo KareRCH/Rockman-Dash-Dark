@@ -4,9 +4,10 @@
 #include "BaseClass/GameObject.h"
 
 #include "Component/BoxModelComp.h"
-
+#include "Component/CylinderModelComp.h"
 
 BEGIN(Engine)
+
 
 END
 
@@ -43,7 +44,7 @@ private:
 	HRESULT Initialize_Component();
 
 private:
-	CBoxModelComp* m_pModelComp = { nullptr };
+	CCylinderModelComp* m_pModelComp = { nullptr };
 
 };
 

@@ -11,8 +11,29 @@ HRESULT CPipelineMgr::Initialize()
             for (_uint k = 0; k < ECast(ECamNum::Size); k++)
             {
                 m_bActiveCams[i][k] = false;
-                m_CamMatrices[i][j][k] = matIdentity;
-                m_CamInvMatrices[i][j][k] = matIdentity;
+                // Persp 타입
+                if (i == 1)
+                {
+                    m_CamMatrices[i][j][k] = matIdentity;
+                    m_CamInvMatrices[i][j][k] = matIdentity;
+                }
+                // Ortho 타입
+                else if (i == 0)
+                {
+                    // View
+                    if (j == 0)
+                    {
+                        XMStoreFloat4x4(&m_CamMatrices[i][j][k], XMMatrixLookAtLH(
+                            XMVectorSet(0.f, 0.f, -1000.f, 0.f), 
+                            XMVectorSet(0.f, 0.f, 0.f, 0.f),
+                            XMVectorSet(0.f, 1.f, 0.f, 0.f)
+                        ));
+                    }
+                    // Proj
+                    else
+                        XMStoreFloat4x4(&m_CamMatrices[i][j][k], XMMatrixOrthographicLH(g_iWindowSizeX, g_iWindowSizeY, 0.f, 2000.f));
+                    m_CamInvMatrices[i][j][k] = matIdentity;
+                }
             }
         }
     }
@@ -28,6 +49,7 @@ HRESULT CPipelineMgr::Initialize()
     }
 
     Active_Camera(ECamType::Persp, ECamNum::One);
+    Active_Camera(ECamType::Ortho, ECamNum::One);
 
     return S_OK;
 }

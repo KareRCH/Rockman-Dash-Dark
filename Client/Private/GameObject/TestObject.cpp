@@ -97,6 +97,7 @@ void CTestObject::Tick(const _float& fTimeDelta)
 
     if (GI()->IsKey_Pressed(DIK_T))
     {
+        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
         m_bTest = !m_bTest;
         if (m_bTest)
             m_pModelComp->Set_MaskAnimation(0, L"Megaman|anim_000_Megaman");
@@ -174,7 +175,7 @@ HRESULT CTestObject::Initialize_Component()
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CSkinnedModelComp::Create()), E_FAIL);
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
-    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::InputLayout, SHADER_VTX_SKINMODEL::iMaxIndex);
+    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 
     m_pModelComp->Bind_Model(EModelGroupIndex::Permanent, L"Model/Character/Megaman/Megaman.amodel");
 

@@ -1,7 +1,7 @@
 #include "GameObject/SkyBox.h"
 
 #include "Component/BoxBufferComp.h"
-#include "Component/BoxModelComp.h"
+
 
 CSkyBox::CSkyBox()
 {
@@ -98,8 +98,8 @@ void CSkyBox::Free()
 
 HRESULT CSkyBox::Initialize_Component()
 {
-    // 기본형 컴포넌트에 대한 정의
-    if (FAILED(Add_Component(TEXT("ModelComp"), m_pModelComp = CBoxModelComp::Create())))
+    // 컴포넌트의 기본을 추가
+    if (FAILED(Add_Component(TEXT("ModelComp"), m_pModelComp = CCylinderModelComp::Create())))
         return E_FAIL;
 
     return S_OK;

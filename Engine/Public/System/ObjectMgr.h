@@ -37,10 +37,10 @@ private:
 
 #pragma region 프로토타입 관리
 public:
-	HRESULT Add_Prototype(const wstring& strPrototypeKey, class CGameObject* pPrototype);
-	HRESULT Add_CloneObject(const wstring& strPrototypeKey, void* pArg);
-	class CGameObject* Find_Prototype(const wstring& strPrototypeKey);
-	void	Clear_Prototypes(const wstring& strContainTag);
+	HRESULT				Add_Prototype(const wstring& strPrototypeKey, class CGameObject* pPrototype);
+	HRESULT				Add_CloneObject(const wstring& strPrototypeKey, void* pArg);
+	class CGameObject*	Find_Prototype(const wstring& strPrototypeKey);
+	void				Clear_Prototypes(const wstring& strContainTag);
 
 private:
 	_unmap<wstring, class CGameObject*>			m_mapPrototypes;			// 오브젝트의 프로토타입  
@@ -51,20 +51,27 @@ private:
 	
 #pragma region 오브젝트 관리
 public:
+	// 오브젝트를 추가할 때 자동으로 추가될 레벨 태그를 설정한다.
+	void				Set_LevelTag(const wstring& strLevelTag);
+	// 게임 오브젝트를 추가한다. 
 	HRESULT				Add_GameObject(class CGameObject* pObj);
+	// 추가 레벨 태그와 함께 게임 오브젝트를 추가한다. 주로 영구적인 객체를 추가할 때 설정한다.
+	HRESULT				Add_GameObject(const wstring& strLevelTag, class CGameObject* pObj);
 	// 오브젝트의 ID 기반 검색
 	class CGameObject*	Find_GameObjectByID(_uint iFindID);
 	// 오브젝트의 단순 인덱스 기반 검색, 툴에서 쓰임
 	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);
-	void				Clear_GameObject(const wstring& strLayerTag);
+	// 특정 레벨 태그를 가진 객체를 제거한다.
+	void				Clear_GameObject(const wstring& strLevelTag);
 
-	// 벡터 정리 함수, 빈공간을 채워준다. 0(n)의 시간복잡도를 지닌다. 주로 업데이트가 끝날 때 사용된다.
 private:
+	// 벡터 정리 함수, 빈공간을 채워준다. 0(n)의 시간복잡도를 지닌다. 주로 업데이트가 끝날 때 사용된다.
 	void				Straighten_GameObjects();
 
 private:
 	_uint							m_iGiveObjectID = 0;		// 부여되는 게임 오브젝트의 ID
-	vector<class CGameObject*>		m_vecGameObjects;			// 게임 오브젝트 저장공간  
+	vector<class CGameObject*>		m_vecGameObjects;			// 게임 오브젝트 저장공간
+	wstring							m_strLevelTag;				// 생성할 오브젝트에 대한 부여 레벨 태그
 #pragma endregion
 
 

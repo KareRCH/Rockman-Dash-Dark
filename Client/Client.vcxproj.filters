@@ -40,6 +40,15 @@
     <Filter Include="02. GameObject\03. SkyBox">
       <UniqueIdentifier>{d70ba9c3-721c-4c7a-964d-8a0d55b51496}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. LoadingScreen">
+      <UniqueIdentifier>{a1d76843-716d-4950-b31d-e31cb37afb01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\02. Logo">
+      <UniqueIdentifier>{b90030c6-b4f2-41d4-85a3-561a5c5b8a7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\03. GamePlay">
+      <UniqueIdentifier>{492d7f50-a129-4a7f-9cf1-96eeff86244b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -81,6 +90,15 @@
     <ClInclude Include="Public\GameObject\SkyBox.h">
       <Filter>02. GameObject\03. SkyBox</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\LoadingScreen.h">
+      <Filter>02. GameObject\01. LoadingScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Level\Level_Logo.h">
+      <Filter>01. Level\02. Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Level\Level_GamePlay.h">
+      <Filter>01. Level\03. GamePlay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -109,6 +127,15 @@
     </ClCompile>
     <ClCompile Include="Private\GameObject\SkyBox.cpp">
       <Filter>02. GameObject\03. SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\LoadingScreen.cpp">
+      <Filter>02. GameObject\01. LoadingScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Level\Level_Logo.cpp">
+      <Filter>01. Level\02. Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Level\Level_GamePlay.cpp">
+      <Filter>01. Level\03. GamePlay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

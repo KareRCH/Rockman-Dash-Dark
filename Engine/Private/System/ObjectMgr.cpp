@@ -45,10 +45,8 @@ CObjectMgr* CObjectMgr::Create(_uint iNumLevels)
 
 	if (FAILED(pInstance->Initialize(iNumLevels)))
 	{
-		MSG_BOX("Management Create Failed");
-		Engine::Safe_Release(pInstance);
-
-		return nullptr;
+		MSG_BOX("ObjectMgr Create Failed");
+		Safe_Release(pInstance);
 	}
 
 	return pInstance;
@@ -127,10 +125,28 @@ void CObjectMgr::Clear_Prototypes(const wstring& strContainTag)
 	}
 }
 
+void CObjectMgr::Set_LevelTag(const wstring& strLevelTag)
+{
+	m_strLevelTag = strLevelTag;
+}
+
 HRESULT CObjectMgr::Add_GameObject(CGameObject* pObj)
 {
 	m_vecGameObjects.push_back(pObj);
 	pObj->m_iID = m_iGiveObjectID++;
+
+	pObj->m_setTag[ECast(EGObjTag::Level)].emplace(m_strLevelTag);
+
+	return S_OK;
+}
+
+HRESULT CObjectMgr::Add_GameObject(const wstring& strLevelTag, CGameObject* pObj)
+{
+	m_vecGameObjects.push_back(pObj);
+	pObj->m_iID = m_iGiveObjectID++;
+
+	pObj->m_setTag[ECast(EGObjTag::Level)].emplace(m_strLevelTag);
+	pObj->m_setTag[ECast(EGObjTag::Level)].emplace(strLevelTag);
 
 	return S_OK;
 }
@@ -144,43 +160,16 @@ CGameObject* CObjectMgr::Find_GameObjectByID(_uint iFindID)
 	if (iFindID > iMaxID)
 		return nullptr;
 
-	_float fRatio = (Cast<_float>(iFindID) / (Cast<_float>(iMaxID) - Cast<_float>(iMinID)));
-	_uint iPivotIndex = Cast<_uint>(iMaxIndex * fRatio);
+	auto iter = lower_bound(m_vecGameObjects.begin(), m_vecGameObjects.end(), iFindID, 
+		[&iFindID](CGameObject* pObj, _uint iID) {
+			if (pObj == nullptr)
+				return false;
+			return (pObj->Get_ID() == iID);
+		});
+	if (iter == m_vecGameObjects.end())
+		return nullptr;
 
-	auto iter = m_vecGameObjects.begin() + iPivotIndex;
-
-	_int iPrevIndex = -1;
-	while (true)
-	{
-		// 정리가 안된 상태면 끝낸다.
-		if ((*iter) == nullptr)
-			return nullptr;
-
-		// 이전 ID와 같은경우 찾지 못하고 나간다.
-		if (iPrevIndex == iPivotIndex)
-			return nullptr;
-
-		_uint iID = (*iter)->Get_ID();
-		if (iID == iFindID)
-			return (*iter);
-		else
-		{
-			if (iID < iFindID)
-			{
-				fRatio = Cast<_float>(iFindID - iMinID) / (Cast<_float>(iID - iMinID));
-				iPivotIndex -= Cast<_uint>(iPivotIndex * fRatio);
-			}
-			else if (iID > iFindID)
-			{
-				fRatio = Cast<_float>(iID - iFindID) / (Cast<_float>(iMaxID - iID));
-				iPivotIndex += Cast<_uint>((iMaxIndex - iPivotIndex) * fRatio);
-			}
-		}
-
-		iPrevIndex = iPivotIndex;
-	}
-
-	return nullptr;
+	return (*iter);
 }
 
 CGameObject* CObjectMgr::Find_GameObjectByIndex(_uint iIndex)
@@ -191,30 +180,26 @@ CGameObject* CObjectMgr::Find_GameObjectByIndex(_uint iIndex)
 	return m_vecGameObjects[iIndex];
 }
 
-void CObjectMgr::Clear_GameObject(const wstring& strLayerTag)
+void CObjectMgr::Clear_GameObject(const wstring& strLevelTag)
 {
-	_bool bChanged = false;
 	for (_uint i = 0; i < m_vecGameObjects.size(); i++)
 	{
 		CGameObject** ppObj = &m_vecGameObjects[i];
-		if ((*ppObj)->Has_Tag(EGObjTag::Level, strLayerTag))
+		if ((*ppObj)->Has_Tag(EGObjTag::Level, strLevelTag))
 		{
 			// 태그 삭제후 다른 태그가 있으면 삭제하지 않는다. (다른 레벨에도 속해있음)
-			(*ppObj)->Delete_Tag(EGObjTag::Level, strLayerTag);
+			(*ppObj)->Delete_Tag(EGObjTag::Level, strLevelTag);
 			if ((*ppObj)->Tag_Size(EGObjTag::Level) == 0U)
 			{
-				Safe_Release(*ppObj);
-				bChanged = true;
+				(*ppObj)->Set_Dead();
 			}
 		}
 	}
-
-	if (bChanged)
-		Straighten_GameObjects();
 }
 
 void CObjectMgr::Straighten_GameObjects()
 {
+	// 새로운 공간을 만들고 스위칭한다.
 	vector<CGameObject*> vecNewVector;
 	vecNewVector.reserve(m_vecGameObjects.capacity());
 
@@ -256,6 +241,7 @@ void CObjectMgr::RegistToTick_GameObjects()
 		}
 	}
 
+	// 삭제시 정렬
 	if (bChanged)
 		Straighten_GameObjects();
 

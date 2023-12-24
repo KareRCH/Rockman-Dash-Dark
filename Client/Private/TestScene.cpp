@@ -7,6 +7,7 @@
 #include "System/GameInstance.h"
 #include "Component/TerrainModelComp.h"
 #include "GameObject/SkyBox.h"
+#include "Component/CylinderBufferComp.h"
 
 HRESULT CTestScene::Initialize()
 {
@@ -27,9 +28,10 @@ HRESULT CTestScene::Initialize()
 
     CSkyBox* pSkyBox = { nullptr };
     GI()->Add_GameObject(pSkyBox = CSkyBox::Create());
-    auto pModel = pSkyBox->Get_Component<CBoxModelComp>(TEXT("ModelComp"));
-    pModel->TextureComp()->Bind_Texture(TEXT("Textures/Study/SkyBox/Sky_%d.dds"), 4);
-    pModel->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxCube.hlsl"), SHADER_VTX_CUBETEX::InputLayout, SHADER_VTX_CUBETEX::iMaxIndex);
+    auto pModel = pSkyBox->Get_Component<CCylinderModelComp>(TEXT("ModelComp"));
+    pModel->VIBufferComp()->Create_Buffer({10});
+    pModel->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/SkyBox/IceSea.dds"), 1);
+    pModel->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxCube.hlsl"), SHADER_VTX_CUBETEX::Elements, SHADER_VTX_CUBETEX::iNumElements);
 
     return S_OK;
 }
@@ -53,8 +55,6 @@ CTestScene* CTestScene::Create()
     {
         MSG_BOX("TestScene Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -62,4 +62,5 @@ CTestScene* CTestScene::Create()
 
 void CTestScene::Free()
 {
+    SUPER::Free();
 }

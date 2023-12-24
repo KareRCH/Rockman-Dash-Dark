@@ -16,10 +16,14 @@ _uint APIENTRY LoadingThread(void* pArg)
 	return 0;
 }
 
-HRESULT CLoader::Initialize()
+CLoader::CLoader()
 {
-	// 디바이스 참조
-	m_pDeviceComp = Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp"));
+
+}
+
+HRESULT CLoader::Initialize(LEVEL eNextLevelID)
+{
+	m_eNextLevelID = eNextLevelID;
 
 	InitializeCriticalSection(&m_CriticalSection);
 
@@ -33,11 +37,11 @@ HRESULT CLoader::Initialize()
 	return S_OK;
 }
 
-CLoader* CLoader::Create()
+CLoader* CLoader::Create(LEVEL eNextLevelID)
 {
 	CLoader* pInstance = new CLoader();
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize(eNextLevelID)))
 	{
 		MSG_BOX("Failed to Created : CLoader");
 		Safe_Release(pInstance);
@@ -54,8 +58,6 @@ void CLoader::Free()
 
 	DeleteObject(m_hThread);
 	CloseHandle(m_hThread);
-
-	Safe_Release(m_pDeviceComp);
 }
 
 void CLoader::Print_LoadingText()
@@ -69,7 +71,7 @@ HRESULT CLoader::Loading()
 
 	HRESULT hr = 0;
 
-	/*switch (m_eNextLevelID)
+	switch (m_eNextLevelID)
 	{
 	case LEVEL_LOGO:
 		hr = Loading_For_Logo_Level();
@@ -78,10 +80,13 @@ HRESULT CLoader::Loading()
 	case LEVEL_GAMEPLAY:
 		hr = Loading_For_GamePlay_Level();
 		break;
-	}*/
+	}
 
 	if (FAILED(hr))
+	{
+		LeaveCriticalSection(&m_CriticalSection);
 		return E_FAIL;
+	}
 
 	LeaveCriticalSection(&m_CriticalSection);
 
@@ -100,7 +105,6 @@ HRESULT CLoader::Loading_For_Logo_Level()
 HRESULT CLoader::Loading_For_GamePlay_Level()
 {
 	// 파싱형 게임 플레이 레벨 로드
-
 
 	m_bIsFinished = true;
 

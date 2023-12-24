@@ -38,9 +38,13 @@ private:
 
 public:
 	HRESULT Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDeviceInit);
+	void	Clear(const wstring& strLevelTag);
 
 private:
 	virtual void Free() override;
+
+public:
+	void Release_Managers();
 
 
 #pragma region 그래픽 디바이스
@@ -126,7 +130,12 @@ public:		// 피직스 매니저
 
 #pragma region 사운드 매니저
 public:		// 사운드 매니저
-	HRESULT Initialize_SoundMgr();
+	HRESULT Initialize_SoundMgr(const string& strMainPath);
+	void	Play_Sound(const wstring& strGroupKey, const wstring& strSoundKey, CHANNELID eID, _float fVolume);
+	void	Play_BGM(const wstring& strGroupKey, const wstring& strSoundKey, _float fVolume);
+	void	Stop_Sound(CHANNELID eID);
+	void	Stop_SoundAll();
+	void	Set_ChannelVolume(CHANNELID eID, _float fVolume);
 #pragma endregion
 
 
@@ -178,6 +187,7 @@ private:
 #pragma region 레벨 매니저
 public:
 	HRESULT Initialize_LevelMgr();
+	void	Tick_LevelMgr(const _float& fTimeDelta);
 	HRESULT Open_Level(_uint iCurrentLevelIndex, class CLevel* pNewLevel);
 #pragma endregion
 
@@ -195,6 +205,7 @@ public:		// 매니지먼트
 	class CGameObject*	Find_PrototypeObject(const wstring& strPrototypeKey);
 	void				Clear_PrototypeObejcts(const wstring& strContainTag);
 
+	void				Set_LevelTag(const wstring& strLevelTag);
 	HRESULT				Add_GameObject(class CGameObject* pObj);
 	class CGameObject*	Find_GameObjectByID(_uint iFindID);
 	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);

@@ -30,7 +30,7 @@ protected:
 
 
 public:
-	HRESULT Bind_EffectMatrix(class CEffectComponent* pEffect, const _char* pConstantName);
+	HRESULT Bind_TransformToEffect(class CEffectComponent* pEffect, const _char* pConstantName);
 
 
 public:
@@ -273,12 +273,12 @@ public:
 	}
 	void Set_Scale(_fvector value)
 	{
+		m_matTransform._11 *= XMVectorGetX(value) / m_vScale.x; m_matTransform._12 *= XMVectorGetX(value) / m_vScale.x; m_matTransform._13 *= XMVectorGetX(value) / m_vScale.x;
+		m_matTransform._21 *= XMVectorGetY(value) / m_vScale.y; m_matTransform._22 *= XMVectorGetY(value) / m_vScale.y; m_matTransform._23 *= XMVectorGetY(value) / m_vScale.y;
+		m_matTransform._31 *= XMVectorGetZ(value) / m_vScale.z; m_matTransform._32 *= XMVectorGetZ(value) / m_vScale.z; m_matTransform._33 *= XMVectorGetZ(value) / m_vScale.z;
+
 		// 부동소수점 문제로 Scale값은 따로 저장
 		XMStoreFloat3(&m_vScale, value);
-
-		m_matTransform._11 *= m_vScale.x / m_vScale.x; m_matTransform._12 *= m_vScale.x / m_vScale.x; m_matTransform._13 *= m_vScale.x / m_vScale.x;
-		m_matTransform._21 *= m_vScale.y / m_vScale.y; m_matTransform._22 *= m_vScale.y / m_vScale.y; m_matTransform._23 *= m_vScale.y / m_vScale.y;
-		m_matTransform._31 *= m_vScale.z / m_vScale.z; m_matTransform._32 *= m_vScale.z / m_vScale.z; m_matTransform._33 *= m_vScale.z / m_vScale.z;
 	}
 	void Set_Scale(const _float3 value)
 	{

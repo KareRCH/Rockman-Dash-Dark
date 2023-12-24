@@ -113,7 +113,7 @@ HRESULT CSkinnedModelShaderComp::Initialize_Shader(HWND hWnd, const wstring& str
     /***********************************
     * 정점 레이아웃 구성 (시맨틱 전달자)
     ************************************/
-    FAILED_CHECK_RETURN(D3D11Device()->CreateInputLayout(SHADER_VTX_SKINMODEL::InputLayout, SHADER_VTX_SKINMODEL::iMaxIndex,
+    FAILED_CHECK_RETURN(D3D11Device()->CreateInputLayout(SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements,
         pVertexShaderBuf->GetBufferPointer(), pVertexShaderBuf->GetBufferSize(), m_pLayout.GetAddressOf()), E_FAIL);
 
 

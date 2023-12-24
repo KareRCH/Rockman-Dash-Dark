@@ -3,8 +3,8 @@
 #include "System/GameInstance.h"
 
 CGameObjectComp::CGameObjectComp()
-    : m_pDeviceComp(Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp")))
 {
+    NULL_CHECK(m_pDeviceComp = Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp")));
 }
 
 CGameObjectComp::CGameObjectComp(const CGameObjectComp& rhs)

@@ -226,9 +226,6 @@
     <Filter Include="02. Utility\02. Component\03. InternalComponent\06. EffectComponent">
       <UniqueIdentifier>{0a3c6a8e-8769-417e-8609-357b17ab8f7c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Shader\99. Test\EffectTest">
-      <UniqueIdentifier>{ccb7b8fe-4b1c-4906-bd9c-bf01fb12618b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Utility\02. Component\03. InternalComponent\07. CamViewComponent">
       <UniqueIdentifier>{5da46c9f-d97e-4069-b876-8bb38a757515}</UniqueIdentifier>
     </Filter>
@@ -237,9 +234,6 @@
     </Filter>
     <Filter Include="02. Utility\02. Component\03. InternalComponent\01. BufferComponent\06. Terrain">
       <UniqueIdentifier>{7410f83b-89ab-4e3f-9abb-9d0af3c88997}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Utility\02. Component\01. SceneComponent\05. PlaneModelComp">
-      <UniqueIdentifier>{f168956a-5b98-4a62-aa1e-d10394f2d783}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Utility\02. Component\03. InternalComponent\08. TextureComponent">
       <UniqueIdentifier>{e944931a-4f57-4403-9301-a8b715b47b9f}</UniqueIdentifier>
@@ -291,6 +285,18 @@
     </Filter>
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\03. BoxModelComp">
       <UniqueIdentifier>{a5609ab8-7787-4b77-af7b-d2c1c76f1873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\04. CylinderModelComp">
+      <UniqueIdentifier>{3cb0b79f-4bc1-4013-83e8-eb2ba2908d46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\04. CylinderModelComp\Buffer">
+      <UniqueIdentifier>{73bc1dd6-7c30-411e-a6b1-e12be98c34c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\NaviRegion">
+      <UniqueIdentifier>{6b5c7f86-5ad0-42b9-ad43-02b906c4e049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\05. PlaneModelComp">
+      <UniqueIdentifier>{f168956a-5b98-4a62-aa1e-d10394f2d783}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -586,7 +592,7 @@
       <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\06. Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\PlaneModelComp.h">
-      <Filter>02. Utility\02. Component\01. SceneComponent\05. PlaneModelComp</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\05. PlaneModelComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\CommonModelComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp</Filter>
@@ -623,6 +629,18 @@
     </ClInclude>
     <ClInclude Include="Public\System\Define\RenderMgr_Define.h">
       <Filter>01. System\01. Manager\02. GamePipeline\04. RenderMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\CylinderModelComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\04. CylinderModelComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\CylinderBufferComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\04. CylinderModelComp\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BaseClass\Navigation.h">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\Data\NaviRegion.h">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\NaviRegion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -852,7 +870,7 @@
       <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\06. Terrain</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\PlaneModelComp.cpp">
-      <Filter>02. Utility\02. Component\01. SceneComponent\05. PlaneModelComp</Filter>
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\05. PlaneModelComp</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\CommonModelComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp</Filter>
@@ -884,6 +902,18 @@
     <ClCompile Include="Private\ModelLoad.cpp">
       <Filter>02. Utility\04. Serialize</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Component\CylinderModelComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\04. CylinderModelComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\CylinderBufferComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\04. CylinderModelComp\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BaseClass\Navigation.cpp">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\Data\NaviRegion.cpp">
+      <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\NaviRegion</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">
@@ -910,25 +940,28 @@
     <FxCompile Include="Shader\Compiled\PS_Deferred_GBuffer.hlsl">
       <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\Runtime\FX_Navigation.hlsl">
-      <Filter>03. Shader\03. Effect</Filter>
-    </FxCompile>
     <FxCompile Include="Shader\Runtime\FX_VtxCube.hlsl">
-      <Filter>03. Shader\99. Test\EffectTest</Filter>
+      <Filter>03. Shader\03. Effect</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\Runtime\FX_ModelNoAnim.hlsl">
+      <Filter>03. Shader\03. Effect</Filter>
+    </None>
     <None Include="Shader\Runtime\FX_ModelTest.hlsl">
-      <Filter>03. Shader\99. Test\EffectTest</Filter>
+      <Filter>03. Shader\03. Effect</Filter>
     </None>
     <None Include="Shader\Runtime\FX_Terrain.hlsl">
-      <Filter>03. Shader\99. Test\EffectTest</Filter>
-    </None>
-    <None Include="Shader\Runtime\FX_ModelNoAnim.hlsl">
-      <Filter>03. Shader\99. Test\EffectTest</Filter>
+      <Filter>03. Shader\03. Effect</Filter>
     </None>
     <None Include="Shader\Runtime\Shader_Defines.hlsli">
-      <Filter>03. Shader\99. Test\EffectTest</Filter>
+      <Filter>03. Shader\03. Effect</Filter>
+    </None>
+    <None Include="Shader\Runtime\FX_Navigation.hlsl">
+      <Filter>03. Shader\03. Effect</Filter>
+    </None>
+    <None Include="Shader\Runtime\FX_VtxPosTex.hlsl">
+      <Filter>03. Shader\03. Effect</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
