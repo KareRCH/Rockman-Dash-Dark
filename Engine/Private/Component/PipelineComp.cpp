@@ -31,8 +31,6 @@ CPipelineComp* CPipelineComp::Create()
     {
         MSG_BOX("CamViewComp Copy Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -46,8 +44,6 @@ CComponent* CPipelineComp::Clone(void* Arg)
     {
         MSG_BOX("CamViewComp Copy Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return Cast<CComponent*>(pInstance);
@@ -55,6 +51,8 @@ CComponent* CPipelineComp::Clone(void* Arg)
 
 void CPipelineComp::Free()
 {
+    SUPER::Free();
+
     Safe_Release(m_pPipelineMgr);
 }
 

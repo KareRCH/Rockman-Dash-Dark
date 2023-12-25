@@ -27,6 +27,8 @@ HRESULT CVIBufferComp::Initialize(void* Arg)
 
 void CVIBufferComp::Free()
 {
+	SUPER::Free();
+
 	Safe_Release(m_pDeviceComp);
 }
 

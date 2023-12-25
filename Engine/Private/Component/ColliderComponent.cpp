@@ -84,10 +84,8 @@ CColliderComponent* CColliderComponent::Create(ECOLLISION eType)
 
     if (FAILED(pInstance->Initialize(eType)))
     {
-        Safe_Release(pInstance);
         MSG_BOX("Player Create Failed");
-
-        return nullptr;
+        Safe_Release(pInstance);
     }
 
     return pInstance;
@@ -99,10 +97,8 @@ CComponent* CColliderComponent::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        Engine::Safe_Release(pInstance);
         MSG_BOX("ColliderBufferComp Copy Failed");
-
-        return nullptr;
+        Engine::Safe_Release(pInstance);
     }
 
     return Cast<CComponent*>(pInstance);

@@ -52,6 +52,8 @@ CComponent* CTextureComponent::Clone(void* Arg)
 
 void CTextureComponent::Free()
 {
+	SUPER::Free();
+
 	Safe_Release(m_pTextureMgr);
 }
 

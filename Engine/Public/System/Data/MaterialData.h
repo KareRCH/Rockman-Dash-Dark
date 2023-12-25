@@ -23,26 +23,28 @@ public:
 
 
 
-class ENGINE_DLL FMaterialGroup final : public CBase
+class ENGINE_DLL CMaterialGroup final : public CBase
 {
-	DERIVED_CLASS(CBase, FMaterialGroup)
+	DERIVED_CLASS(CBase, CMaterialGroup)
 
 private:
-	explicit FMaterialGroup() = default;
-	explicit FMaterialGroup(const FMaterialGroup& rhs) = delete;
-	virtual ~FMaterialGroup() = default;
+	explicit CMaterialGroup() = default;
+	explicit CMaterialGroup(const CMaterialGroup& rhs) = delete;
+	virtual ~CMaterialGroup() = default;
 
 public:
-	static FMaterialGroup* Create();
+	static CMaterialGroup* Create();
 	virtual void Free() override;
 
 public:
+	_uint			Get_NumMaterials() const { return m_iNumMaterials; }
 	FMaterialData* Find_Material(const _uint iIndex);
 	FMaterialData* Find_Material(const wstring& strName);
 	HRESULT Add_Material(const wstring& strName, FMaterialData* pMatData);
 
 
 private:
+	_uint							m_iNumMaterials = { 0 };
 	map<wstring, FMaterialData*>	mapMaterialDatas;
 	vector<FMaterialData*>			vecMaterialDatas;
 };

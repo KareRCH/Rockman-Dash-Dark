@@ -3,10 +3,10 @@
 
 HRESULT FModelData::Initialize()
 {
-	pMeshGroup = FMeshGroup::Create();
-	pBoneGroup = FBoneGroup::Create();
-	pAnimGroup = FBoneAnimGroup::Create();
-	pMaterialGroup = FMaterialGroup::Create();
+	pMeshGroup = CMeshGroup::Create();
+	pBoneGroup = CBoneGroup::Create();
+	pAnimGroup = CBoneAnimGroup::Create();
+	pMaterialGroup = CMaterialGroup::Create();
 
 	return S_OK;
 }
@@ -64,7 +64,7 @@ FMaterialData* FModelData::Find_Material(const wstring& strMaterial)
 	return pMaterialGroup->Find_Material(strMaterial);
 }
 
-FBoneGroup* FModelData::Find_BoneGroup()
+CBoneGroup* FModelData::Find_BoneGroup()
 {
 	if (nullptr == pBoneGroup)
 		return nullptr;

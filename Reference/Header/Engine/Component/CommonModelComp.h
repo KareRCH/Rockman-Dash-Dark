@@ -21,7 +21,7 @@ public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
 
 protected:
-	explicit CCommonModelComp() = default;
+	explicit CCommonModelComp();
 	explicit CCommonModelComp(const CCommonModelComp& rhs);
 	virtual ~CCommonModelComp() = default;
 
@@ -41,31 +41,54 @@ protected:
 	virtual void	Free() override;
 
 
+
+public:
+	HRESULT Link_ToModelMgr();
+	HRESULT Bind_Model(TYPE eType, EModelGroupIndex eGroupIndex, const wstring& strModelFilePath);
+	void Add_MaskTime(_uint iIndex, _float fAddTrackPos);
+	void Apply_Pos();
+	void Invalidate_BoneTransforms();
+
+
 private:
 	// 데이터들을 모두 컴포넌트 형태로 저장함. 원본과 다른 부분
 	TYPE	m_eModelType = { TYPE_END };
 
 
-private:	// 메쉬 관련
-	_uint m_iNumMeshes = { 0 };
-	vector<class CMeshComponent*>	m_Meshes;
+private:		// 메쉬 관련
+	_uint								m_iNumMeshes = { 0 };
+	vector<class CMeshComp*>			m_pMeshComps;
 
 
-public:		// 머터리얼 관련
-	_uint	m_iNumMaterials = { 0 };
-	vector<class CMaterialComponent*>	m_pMaterials;
+
+private:		// 머터리얼 관련
+	_uint								m_iNumMaterials = { 0 };
+	vector<class CMaterialComponent*>	m_pMaterialComps;
 
 
-private:	// 뼈 관련
+
+private:		// 뼈 관련
 	// 뼈 하나의 정보가 저장된 컴포넌트 여러개, 언리얼 용어를 따왔다.
-	_uint	m_iNumSkeletals = { 0 };
-	vector<class CSkeletalComponent*>	m_Skeletals;
+	class CSkeletalComponent*			m_pSkeletalComp = { nullptr };
 
 
-private:	// 애니메이션 관련
-	_uint	m_iNumAnimations = { 0 };
-	_uint	m_iCurrentAnimIndex = { 0 };
-	vector<class CAnimationComponent*>	m_pAnimations;
+
+private:		// 애니메이션 관련
+	class CAnimationComponent*			m_pAnimationComp = { nullptr };
+
+
+#pragma region 뼈와 함께 셰이딩 되는 셰이더
+	// 외부 설정용
+public:
+	// 이펙트를 바인드 한다.
+	HRESULT Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
+	// 이펙트를 언바인드 한다. 안쓸듯
+	HRESULT Unbind_Effect();
+
+
+private:
+	class CEffectComponent* m_pEffectComp = { nullptr };
+#pragma endregion
 
 };
 

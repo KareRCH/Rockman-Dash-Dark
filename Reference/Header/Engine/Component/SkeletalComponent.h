@@ -7,7 +7,7 @@
 BEGIN(Engine)
 
 enum class EModelGroupIndex : _uint;
-class FBoneGroup;
+class CBoneGroup;
 
 /// <summary>
 /// 스켈레톤을 관리할 수 있는 컴포넌트
@@ -36,19 +36,15 @@ protected:
 	virtual void	Free() override;
 
 public:
-	// 참조할 모델 데이터를 추가한다.
-	void		Set_ModelData(class FModelData* pModelData);
-	// 아마추어를 로드한다.
-	HRESULT		Load_Skeletal(const wstring& strSkeletalKey);
+	// 뼈를 로드한다.
+	HRESULT		Load_Skeletal(EModelGroupIndex eGroupIndex, const wstring& strModelFilePath);
 
 	// 최종 트랜스폼의 주소를 저장한 벡터를 내보내, 버퍼에 전달 할 수 있도록 해준다.
-	FModelData* Get_ModelData();
-	FBoneGroup* Get_BoneGroup();
+	CBoneGroup* Get_BoneGroup();
 	void		Invalidate_BoneTransforms();
 
 private:	// 뼈 정보
-	class FModelData* m_pModelData = { nullptr };		// 모델 데이터, 해당 모델을 바인딩 시켜놓기 위해 해놓는다.
-	class FBoneGroup* m_pBoneDatas = { nullptr };		// 아마추어, 이 녀석이 뼈의 계층구조와 직렬화된 배열을 가지고 있다.
+	class CBoneGroup* m_pBoneGroup = { nullptr };		// 모든 뼈에 대한 정보를 가지고 있는 객체
 	
 };
 

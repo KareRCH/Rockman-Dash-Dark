@@ -29,8 +29,6 @@ CD3D11DeviceComp* CD3D11DeviceComp::Create()
 	{
 		MSG_BOX("D3D11DeviceComp Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -44,10 +42,12 @@ CComponent* CD3D11DeviceComp::Clone(void* Arg)
 	{
 		MSG_BOX("D3D11DeviceComp Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return Cast<CComponent*>(pInstance);
 }
 
+void CD3D11DeviceComp::Free()
+{
+	SUPER::Free();
+}

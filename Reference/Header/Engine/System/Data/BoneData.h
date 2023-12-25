@@ -34,20 +34,20 @@ public:
 
 
 /// <summary>
-/// »À °èÃþµé, 
+/// »À ³ëµå µ¥ÀÌÅÍ ÁýÇÕ
 /// </summary>
-class FBoneGroup final : public CBase
+class CBoneGroup final : public CBase
 {
-	DERIVED_CLASS(CBase, FBoneGroup)
+	DERIVED_CLASS(CBase, CBoneGroup)
 
 private:
-	explicit FBoneGroup() = default;
-	explicit FBoneGroup(const FBoneGroup& rhs);
-	virtual ~FBoneGroup() = default;
+	explicit CBoneGroup() = default;
+	explicit CBoneGroup(const CBoneGroup& rhs);
+	virtual ~CBoneGroup() = default;
 
 public:
-	static FBoneGroup* Create();
-	virtual FBoneGroup* Clone();
+	static CBoneGroup* Create();
+	virtual CBoneGroup* Clone();
 	virtual void Free() override;
 
 public:
@@ -71,8 +71,9 @@ public:
 	const _uint		Get_BoneDatas_Count() const { return Cast<_uint>(vecBones.size()); }
 
 private:
-	_unmap<wstring, FBoneData*>		mapBones;	// ½ºÄÌ·¹Å» ÀÌ¸§ °Ë»ö
-	vector<FBoneData*>				vecBones;	// ½ºÄÌ·¹Å» ÀÎµ¦½º °Ë»ö
+	_uint							m_iNumBones;	// »À °³¼ö
+	_unmap<wstring, FBoneData*>		mapBones;		// »À ÀÌ¸§ °Ë»ö
+	vector<FBoneData*>				vecBones;		// »À ÀÎµ¦½º °Ë»ö
 
 };
 

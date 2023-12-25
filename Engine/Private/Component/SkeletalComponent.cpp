@@ -6,11 +6,9 @@
 
 CSkeletalComponent::CSkeletalComponent(const CSkeletalComponent& rhs)
     : Base(rhs)
-    , m_pModelData(rhs.m_pModelData)
-    , m_pBoneDatas(rhs.m_pBoneDatas)
+    , m_pBoneGroup(rhs.m_pBoneGroup)
 {
-    Safe_AddRef(m_pModelData);
-    Safe_AddRef(m_pBoneDatas);
+    m_pBoneGroup = rhs.m_pBoneGroup->Clone();
 }
 
 HRESULT CSkeletalComponent::Initialize_Prototype(void* Arg)
@@ -51,45 +49,34 @@ CComponent* CSkeletalComponent::Clone(void* Arg)
 
 void CSkeletalComponent::Free()
 {
-    Safe_Release(m_pModelData);
-    Safe_Release(m_pBoneDatas);
+    SUPER::Free();
+
+    Safe_Release(m_pBoneGroup);
 }
 
-void CSkeletalComponent::Set_ModelData(FModelData* pModelData)
+HRESULT CSkeletalComponent::Load_Skeletal(EModelGroupIndex eGroupIndex, const wstring& strModelFilePath)
 {
-    m_pModelData = pModelData;
-    Safe_AddRef(m_pModelData);
-}
-
-HRESULT CSkeletalComponent::Load_Skeletal(const wstring& strSkeletalKey)
-{
-    if (!m_pModelData)
+    if (nullptr == m_pGI)
         return E_FAIL;
 
-    FBoneGroup* pBoneGroup = m_pModelData->pBoneGroup;
-
-    if (!pBoneGroup)
+    CBoneGroup* pBoneGroup = m_pGI->Clone_BoneGroup(eGroupIndex, strModelFilePath);
+    if (nullptr == pBoneGroup)
         return E_FAIL;
 
-    m_pBoneDatas = pBoneGroup->Clone();
+    m_pBoneGroup = pBoneGroup;
 
     return S_OK;
 }
 
-FModelData* CSkeletalComponent::Get_ModelData()
+CBoneGroup* CSkeletalComponent::Get_BoneGroup()
 {
-    return m_pModelData;
-}
-
-FBoneGroup* CSkeletalComponent::Get_BoneGroup()
-{
-    return m_pBoneDatas;
+    return m_pBoneGroup;
 }
 
 void CSkeletalComponent::Invalidate_BoneTransforms()
 {
-    if (!m_pBoneDatas)
+    if (!m_pBoneGroup)
         return;
 
-    m_pBoneDatas->Invalidate_FinalTransforms();
+    m_pBoneGroup->Invalidate_FinalTransforms();
 }

@@ -29,7 +29,7 @@ public:
 	virtual CComponent* Clone(void* Arg = nullptr) override;				// º¹Á¦
 
 protected:
-	virtual void	Free() {}
+	virtual void	Free();
 
 public:
 	GETSET_1(ID3D11Device*, m_pDevice.Get(), Device, GET__C)

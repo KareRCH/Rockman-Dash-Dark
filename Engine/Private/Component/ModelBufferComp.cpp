@@ -26,79 +26,79 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 {
 	const FMeshData* pMesh = GameInstance()->Find_MeshData(eGroupIndex, strGroupKey, strModelKey, iRangeIndex);
 
-	m_iNumVertices = Cast<_uint>(pMesh->vecVertices.size());
-	m_iNumIndices = Cast<_uint>(pMesh->vecIndices.size());
+	//m_iNumVertices = Cast<_uint>(pMesh->vecVertices.size());
+	//m_iNumIndices = Cast<_uint>(pMesh->vecIndices.size());
 
-	SHADER_VTX_SKINMODEL* vertices = new SHADER_VTX_SKINMODEL[m_iNumVertices];
-	if (!vertices)
-		return E_FAIL;
+	//SHADER_VTX_SKINMODEL* vertices = new SHADER_VTX_SKINMODEL[m_iNumVertices];
+	//if (!vertices)
+	//	return E_FAIL;
 
-	_uint* indices = new _uint[m_iNumIndices];
-	if (!indices)
-		return E_FAIL;
+	//_uint* indices = new _uint[m_iNumIndices];
+	//if (!indices)
+	//	return E_FAIL;
 
-	// 정점 버퍼 제작
-	for (_uint i = 0; i < m_iNumVertices; i++)
-	{
-		vertices[i].vPosition = pMesh->vecVertices[i].vPosition;
-		vertices[i].vNormal = pMesh->vecVertices[i].vNormal;
-		vertices[i].vTexCoord = pMesh->vecVertices[i].vTexCoord;
-		vertices[i].vTangent = pMesh->vecVertices[i].vTangent;
-		for (_uint j = 0; j < (_uint)pMesh->vecVertices[j].vecBoneID.size() / 4; j++)
-		{
-			_uint iIndex = j * 4;
-			vertices[i].vBoneID.x = pMesh->vecVertices[i].vecBoneID[iIndex];
-			vertices[i].vBoneID.y = pMesh->vecVertices[i].vecBoneID[iIndex + 1];
-			vertices[i].vBoneID.z = pMesh->vecVertices[i].vecBoneID[iIndex + 2];
-			vertices[i].vBoneID.w = pMesh->vecVertices[i].vecBoneID[iIndex + 3];
+	//// 정점 버퍼 제작
+	//for (_uint i = 0; i < m_iNumVertices; i++)
+	//{
+	//	vertices[i].vPosition = pMesh->vecVertices[i].vPosition;
+	//	vertices[i].vNormal = pMesh->vecVertices[i].vNormal;
+	//	vertices[i].vTexCoord = pMesh->vecVertices[i].vTexCoord;
+	//	vertices[i].vTangent = pMesh->vecVertices[i].vTangent;
+	//	for (_uint j = 0; j < (_uint)pMesh->vecVertices[j].vecBoneID.size() / 4; j++)
+	//	{
+	//		_uint iIndex = j * 4;
+	//		vertices[i].vBoneID.x = pMesh->vecVertices[i].vecBoneID[iIndex];
+	//		vertices[i].vBoneID.y = pMesh->vecVertices[i].vecBoneID[iIndex + 1];
+	//		vertices[i].vBoneID.z = pMesh->vecVertices[i].vecBoneID[iIndex + 2];
+	//		vertices[i].vBoneID.w = pMesh->vecVertices[i].vecBoneID[iIndex + 3];
 
-			vertices[i].vWeight.x = pMesh->vecVertices[i].vecWeights[iIndex];
-			vertices[i].vWeight.y = pMesh->vecVertices[i].vecWeights[iIndex + 1];
-			vertices[i].vWeight.z = pMesh->vecVertices[i].vecWeights[iIndex + 2];
-			vertices[i].vWeight.w = pMesh->vecVertices[i].vecWeights[iIndex + 3];
-		}
-	}
+	//		vertices[i].vWeight.x = pMesh->vecVertices[i].vecWeights[iIndex];
+	//		vertices[i].vWeight.y = pMesh->vecVertices[i].vecWeights[iIndex + 1];
+	//		vertices[i].vWeight.z = pMesh->vecVertices[i].vecWeights[iIndex + 2];
+	//		vertices[i].vWeight.w = pMesh->vecVertices[i].vecWeights[iIndex + 3];
+	//	}
+	//}
 
-	D3D11_BUFFER_DESC vertexBufferDesc;
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(SHADER_VTX_SKINMODEL) * m_iNumVertices;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.StructureByteStride = 0;
+	//D3D11_BUFFER_DESC vertexBufferDesc;
+	//vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//vertexBufferDesc.ByteWidth = sizeof(SHADER_VTX_SKINMODEL) * m_iNumVertices;
+	//vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	//vertexBufferDesc.CPUAccessFlags = 0;
+	//vertexBufferDesc.MiscFlags = 0;
+	//vertexBufferDesc.StructureByteStride = 0;
 
-	D3D11_SUBRESOURCE_DATA vertexData;
-	vertexData.pSysMem = vertices;
-	vertexData.SysMemPitch = 0;
-	vertexData.SysMemSlicePitch = 0;
+	//D3D11_SUBRESOURCE_DATA vertexData;
+	//vertexData.pSysMem = vertices;
+	//vertexData.SysMemPitch = 0;
+	//vertexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVB.GetAddressOf()), E_FAIL);
+	//FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, m_pVB.GetAddressOf()), E_FAIL);
 
-	// 인덱스 버퍼 제작
-	for (_uint i = 0; i < m_iNumIndices; i++)
-	{
-		indices[i] = pMesh->vecIndices[i];
-	}
+	//// 인덱스 버퍼 제작
+	//for (_uint i = 0; i < m_iNumIndices; i++)
+	//{
+	//	indices[i] = pMesh->vecIndices[i];
+	//}
 
-	// 정적 인덱스 버퍼의 구조체를 설정한다.
-	D3D11_BUFFER_DESC indexBufferDesc;
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(_uint) * m_iNumIndices;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
+	//// 정적 인덱스 버퍼의 구조체를 설정한다.
+	//D3D11_BUFFER_DESC indexBufferDesc;
+	//indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//indexBufferDesc.ByteWidth = sizeof(_uint) * m_iNumIndices;
+	//indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	//indexBufferDesc.CPUAccessFlags = 0;
+	//indexBufferDesc.MiscFlags = 0;
+	//indexBufferDesc.StructureByteStride = 0;
 
-	// 정적 인덱스 데이터를 가리키는 보조 리소스 구조체를 작성
-	D3D11_SUBRESOURCE_DATA indexData;
-	indexData.pSysMem = indices;
-	indexData.SysMemPitch = 0;
-	indexData.SysMemSlicePitch = 0;
+	//// 정적 인덱스 데이터를 가리키는 보조 리소스 구조체를 작성
+	//D3D11_SUBRESOURCE_DATA indexData;
+	//indexData.pSysMem = indices;
+	//indexData.SysMemPitch = 0;
+	//indexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&indexBufferDesc, &indexData, m_pIB.GetAddressOf()), E_FAIL);
+	//FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&indexBufferDesc, &indexData, m_pIB.GetAddressOf()), E_FAIL);
 
-	Safe_Delete_Array(vertices);
-	Safe_Delete_Array(indices);
+	//Safe_Delete_Array(vertices);
+	//Safe_Delete_Array(indices);
 
 	return S_OK;
 }

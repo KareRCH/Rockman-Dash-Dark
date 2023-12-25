@@ -26,31 +26,25 @@ class ENGINE_DLL_DBG CModelMgr final : public CBase
 
 private:
 	explicit CModelMgr() = default;
+	explicit CModelMgr(const CModelMgr& rhs) = delete;
 	virtual ~CModelMgr() = default;
 
 public:
-	HRESULT	Initialize(const wstring& strMainDir);
+	HRESULT				Initialize(const wstring& strMainDir);
 
 public:
-	static CModelMgr* Create(const wstring& strMainDir);
+	static CModelMgr*	Create(const wstring& strMainDir);
 private:
-	virtual void Free() override;
+	virtual void		Free() override;
 
 
 private:
-	wstring	m_strMainDir = { L"" };			// 참조할 메인 디렉터리
+	wstring	m_strMainDir = { TEXT("") };			// 참조할 메인 디렉터리
 
 
 public:
-	//void	Load_Model(const EModelGroupIndex eGroupIndex, const string& strFileName, const wstring& strModelKey);
-	/*void	Load_Mesh(FModelData* pModelData);
-	void	Load_Material(FModelData* pModelData);
-	void	Load_Animation(FModelData* pModelData);
-	void	Load_Hierarchi(FBoneGroup* pBoneGroup, aiNode* pArmatureNode);
-	void	Load_HierarchiNode(FBoneGroup* pBoneGroup, aiNode* pBoneNode, FBoneData* pParentNode);*/
-
 	HRESULT Load_Binary(const wstring& strFileName, class CModelLoad* pModel);
-	void Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName);
+	HRESULT Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName);
 	void Load_Meshes(FModelData* pModelData, class CModelLoad* pModel);
 	void Load_Materials(FModelData* pModelData, class CModelLoad* pModel);
 	void Load_Animations(FModelData* pModelData, class CModelLoad* pModel);
@@ -58,20 +52,21 @@ public:
 
 public:
 	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey, const _uint iRangeIndex);
-	FBoneGroup*				Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const _uint iIndex);
+	CBoneGroup*				Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 
 public:
 	const FModelData* const	Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 	FModelData*				Add_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 
 public:
-	FMeshGroup*				Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
-	FBoneGroup*				Find_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
-	FBoneAnimGroup*			Find_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
-	FMaterialGroup*			Find_MaterialGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	const FMaterialData* const Find_MaterialData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const _uint iIndex);
 
-private:
-	_float4x4				ConvertAiMatrix_ToDXMatrix(aiMatrix4x4& matrix);
+public:
+	CMeshGroup*				Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	CBoneGroup*				Find_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	CBoneAnimGroup*			Find_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	CMaterialGroup*			Find_MaterialGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 
 private:
 	const aiScene*		m_pScene = nullptr;				// 내부 통신용 씬 저장변수

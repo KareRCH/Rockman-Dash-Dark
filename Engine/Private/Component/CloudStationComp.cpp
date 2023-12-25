@@ -63,4 +63,5 @@ CComponent* CCloudStationComp::Clone(void* Arg)
 
 void CCloudStationComp::Free()
 {
+	SUPER::Free();
 }

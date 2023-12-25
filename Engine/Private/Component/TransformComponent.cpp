@@ -52,7 +52,7 @@ CComponent* CTransformComponent::Clone(void* Arg)
 
 void CTransformComponent::Free()
 {
-	
+	SUPER::Free();
 }
 
 HRESULT CTransformComponent::Bind_TransformToEffect(CEffectComponent* pEffect, const _char* pConstantName)

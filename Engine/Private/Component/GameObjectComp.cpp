@@ -21,6 +21,8 @@ HRESULT CGameObjectComp::Initialize_Prototype(void* Arg)
 
 void CGameObjectComp::Free()
 {
+    SUPER::Free();
+
     for (auto& Pair : m_mapPrimComponent)
         Safe_Release(Pair.second);
     m_mapPrimComponent.clear();

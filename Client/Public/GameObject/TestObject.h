@@ -8,7 +8,7 @@
 BEGIN(Engine)
 
 class CTriBufferComp;
-class CSkinnedModelComp;
+class CCommonModelComp;
 class CColorShaderComp;
 class CModelShaderComp;
 
@@ -52,7 +52,7 @@ private:
 	HRESULT	Initialize_Component();
 
 private:
-	CSkinnedModelComp* m_pModelComp = { nullptr };
+	CCommonModelComp* m_pModelComp = { nullptr };
 
 private:
 	FGauge	m_Gauge = FGauge(2.f);

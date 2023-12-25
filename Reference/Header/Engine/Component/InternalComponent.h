@@ -28,7 +28,7 @@ public:
 	virtual CComponent* Clone(void* Arg = nullptr) PURE;
 
 protected:
-	virtual void Free() PURE;
+	virtual void Free();
 
 };
 

@@ -1196,12 +1196,12 @@ HRESULT CGameInstance::Initialize_ModelMgr(const wstring& strMainPath)
 	return S_OK;
 }
 
-void CGameInstance::Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName)
+HRESULT CGameInstance::Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName)
 {
 	if (nullptr == m_pModelMgr)
-		return;
+		return E_FAIL;
 
-	m_pModelMgr->Load_Model(eGroupIndex, strFileName);
+	return m_pModelMgr->Load_Model(eGroupIndex, strFileName);
 }
 
 const FModelData* const CGameInstance::Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
@@ -1220,7 +1220,15 @@ const FMeshData* const CGameInstance::Find_MeshData(const EModelGroupIndex eGrou
 	return m_pModelMgr->Find_MeshData(eGroupIndex, strModelKey, strMeshKey, iRangeIndex);
 }
 
-const FMeshGroup* const CGameInstance::Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
+const FMeshData* const CGameInstance::Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const _uint iIndex)
+{
+	if (nullptr == m_pModelMgr)
+		return nullptr;
+
+	return m_pModelMgr->Find_MeshData(eGroupIndex, strModelKey, iIndex);
+}
+
+const CMeshGroup* const CGameInstance::Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
@@ -1228,7 +1236,7 @@ const FMeshGroup* const CGameInstance::Find_MeshGroup(const EModelGroupIndex eGr
 	return m_pModelMgr->Find_MeshGroup(eGroupIndex, strModelKey);
 }
 
-FBoneGroup* CGameInstance::Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
+CBoneGroup* CGameInstance::Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
@@ -1236,12 +1244,28 @@ FBoneGroup* CGameInstance::Clone_BoneGroup(const EModelGroupIndex eGroupIndex, c
 	return m_pModelMgr->Clone_BoneGroup(eGroupIndex, strModelKey);
 }
 
-FBoneGroup* CGameInstance::Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
+CBoneGroup* CGameInstance::Find_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
 {
 	if (nullptr == m_pModelMgr)
 		return nullptr;
 
 	return m_pModelMgr->Find_BoneGroup(eGroupIndex, strModelKey);
+}
+
+CBoneAnimGroup* CGameInstance::Find_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey)
+{
+	if (nullptr == m_pModelMgr)
+		return nullptr;
+
+	return m_pModelMgr->Find_AnimGroup(eGroupIndex, strModelKey);
+}
+
+const FMaterialData* const CGameInstance::Find_MaterialData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const _uint iIndex)
+{
+	if (nullptr == m_pModelMgr)
+		return nullptr;
+
+	return m_pModelMgr->Find_MaterialData(eGroupIndex, strModelKey, iIndex);
 }
 
 HRESULT CGameInstance::Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)

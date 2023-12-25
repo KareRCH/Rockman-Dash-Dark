@@ -109,16 +109,16 @@ public:
 /// <summary>
 /// 뼈 애니메이션들을 저장하는 그룹
 /// </summary>
-class ENGINE_DLL FBoneAnimGroup final : public CBase
+class ENGINE_DLL CBoneAnimGroup final : public CBase
 {
-	DERIVED_CLASS(CBase, FBoneAnimGroup)
+	DERIVED_CLASS(CBase, CBoneAnimGroup)
 private:
-	explicit FBoneAnimGroup() = default;
-	explicit FBoneAnimGroup(const FBoneAnimGroup& rhs) = delete;
-	virtual ~FBoneAnimGroup() = default;
+	explicit CBoneAnimGroup() = default;
+	explicit CBoneAnimGroup(const CBoneAnimGroup& rhs) = delete;
+	virtual ~CBoneAnimGroup() = default;
 
 public:
-	static FBoneAnimGroup* Create();
+	static CBoneAnimGroup* Create();
 	virtual void Free() override;
 
 public:
