@@ -14,7 +14,8 @@ enum class EMANAGE_SCENE : _uint;
 enum class ERenderGroup : _uint;
 class FModelData;
 class FMeshData;
-class FMeshGroup;
+class CMeshGroup;
+class FMaterialData;
 
 class CLevel;
 class FCollisionPrimitive;
@@ -268,12 +269,16 @@ public:		// 렌더 매니저
 #pragma region 모델 매니저
 public:		// 모델 매니저
 	HRESULT					Initialize_ModelMgr(const wstring& strMainPath);
-	void					Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName);
+	HRESULT					Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName);
 	const FModelData* const Find_ModelData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const wstring& strMeshKey, const _uint iRangeIndex);
-	const FMeshGroup* const Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
-	class FBoneGroup*		Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
-	class FBoneGroup*		Find_Skeletal(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	const FMeshData* const	Find_MeshData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const _uint iIndex);
+	const CMeshGroup* const Find_MeshGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	class CBoneGroup*		Clone_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	class CBoneGroup*		Find_BoneGroup(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey);
+	class CBoneAnimGroup*	Find_AnimGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
+	const FMaterialData* const Find_MaterialData(const EModelGroupIndex eGroupIndex, const wstring& strModelKey, const _uint iIndex);
+
 #pragma endregion
 
 
@@ -290,7 +295,7 @@ public:		// 셰이더 매니저
 	ID3DX11Effect*					Find_Effect(const wstring& strEffectFileName) const;
 	class FEffectData*				Find_EffectData(const wstring& strEffectFileName) const;
 
-private:
+private:	// 셰이더 매니저 귀속형 객체 전용
 	class CShaderMgr*				Get_ShaderMgr();
 #pragma endregion
 

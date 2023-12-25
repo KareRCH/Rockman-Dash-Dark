@@ -51,29 +51,33 @@ CComponent* CAnimationComponent::Clone(void* Arg)
 
 void CAnimationComponent::Free()
 {
+	SUPER::Free();
+
 	Safe_Release(m_pBoneGroup);
 	Safe_Release(m_pAnimGroup);
 }
 
-HRESULT CAnimationComponent::Bind_BoneGroup(CSkeletalComponent* pSkeletalComp)
+
+HRESULT CAnimationComponent::Bind_BoneGroup(CBoneGroup* pBoneGroup)
 {
-	if (!pSkeletalComp)
+	if (pBoneGroup == nullptr)
 		return E_FAIL;
 
-	m_pBoneGroup = pSkeletalComp->Get_BoneGroup();
-	Safe_AddRef(m_pBoneGroup);
-
-	Bind_AnimGroup(pSkeletalComp->Get_ModelData());
+	m_pBoneGroup = pBoneGroup;
 
 	return S_OK;
 }
 
-HRESULT CAnimationComponent::Bind_AnimGroup(FModelData* pModelData)
+HRESULT CAnimationComponent::Load_Animations(EModelGroupIndex eGroupIndex, const wstring& strModelFilePath)
 {
-	if (!pModelData)
+	if (nullptr == m_pGI)
 		return E_FAIL;
 
-	m_pAnimGroup = pModelData->pAnimGroup;
+	auto pAnimGroup = m_pGI->Find_AnimGroup(eGroupIndex, strModelFilePath);
+	if (nullptr == pAnimGroup)
+		return E_FAIL;
+
+	m_pAnimGroup = pAnimGroup;
 	Safe_AddRef(m_pAnimGroup);
 
 	return S_OK;
@@ -81,7 +85,7 @@ HRESULT CAnimationComponent::Bind_AnimGroup(FModelData* pModelData)
 
 HRESULT CAnimationComponent::Create_Mask(const wstring& strMaskName, const wstring& strSkeletalName, _bool bInitBoneActive)
 {
-	if (!m_pBoneGroup)
+	if (nullptr == m_pBoneGroup)
 		return E_FAIL;
 
 	// 기본 세팅

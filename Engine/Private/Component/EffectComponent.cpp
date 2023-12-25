@@ -58,6 +58,8 @@ CComponent* CEffectComponent::Clone(void* Arg)
 
 void CEffectComponent::Free()
 {
+    SUPER::Free();
+
     Safe_Release(m_pDeviceComp);
     Safe_Release(m_pEffectData);
     Safe_Release(m_pShaderMgr);

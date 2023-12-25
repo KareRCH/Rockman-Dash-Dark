@@ -36,16 +36,16 @@ public:
 	FMaterialData*	Find_Material(const _uint iIndex);
 	FMaterialData*	Find_Material(const wstring& strMaterial);
 
-	FBoneGroup*		Find_BoneGroup();
+	CBoneGroup*		Find_BoneGroup();
 
 	FBoneAnimData*	Find_BoneAnim(const _uint iIndex);
 	FBoneAnimData*	Find_BoneAnim(const wstring& strBoneAnim);
 
 public:
-	class FMeshGroup*		pMeshGroup = { nullptr };			// 메쉬를 모아놓은 그룹
-	class FMaterialGroup*	pMaterialGroup = { nullptr };		// 재질 정보 그룹
-	class FBoneGroup*		pBoneGroup = { nullptr };		// 뼈 정보 그룹
-	class FBoneAnimGroup*	pAnimGroup = { nullptr };			// 애니메이션 그룹
+	class CMeshGroup*		pMeshGroup = { nullptr };			// 메쉬를 모아놓은 그룹
+	class CMaterialGroup*	pMaterialGroup = { nullptr };		// 재질 정보 그룹
+	class CBoneGroup*		pBoneGroup = { nullptr };		// 뼈 정보 그룹
+	class CBoneAnimGroup*	pAnimGroup = { nullptr };			// 애니메이션 그룹
 	
 };
 

@@ -41,7 +41,7 @@ void FBoneData::Free()
 // ------------------------ ModelNodeGroup ----------------------------
 
 
-FBoneGroup::FBoneGroup(const FBoneGroup& rhs)
+CBoneGroup::CBoneGroup(const CBoneGroup& rhs)
 	: vecBones(rhs.vecBones)
 {
 	// 깊은 복사
@@ -53,7 +53,7 @@ FBoneGroup::FBoneGroup(const FBoneGroup& rhs)
 
 }
 
-FBoneGroup* FBoneGroup::Create()
+CBoneGroup* CBoneGroup::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -65,7 +65,7 @@ FBoneGroup* FBoneGroup::Create()
 	return pInstance;
 }
 
-FBoneGroup* FBoneGroup::Clone()
+CBoneGroup* CBoneGroup::Clone()
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
@@ -77,7 +77,7 @@ FBoneGroup* FBoneGroup::Clone()
 	return pInstance;
 }
 
-void FBoneGroup::Free()
+void CBoneGroup::Free()
 {
 	for (auto& Pair : mapBones)
 		Safe_Release(Pair.second);
@@ -86,7 +86,7 @@ void FBoneGroup::Free()
 }
 
 
-FBoneData* FBoneGroup::Find_BoneData(_int iID)
+FBoneData* CBoneGroup::Find_BoneData(_int iID)
 {
 	if (iID < 0 || iID >= vecBones.size())
 		return nullptr;
@@ -94,7 +94,7 @@ FBoneData* FBoneGroup::Find_BoneData(_int iID)
 	return vecBones[iID];
 }
 
-FBoneData* FBoneGroup::Find_BoneData(const wstring& strBoneNodeKey)
+FBoneData* CBoneGroup::Find_BoneData(const wstring& strBoneNodeKey)
 {
 	auto iter = mapBones.find(strBoneNodeKey);
 	if (iter == mapBones.end())
@@ -103,7 +103,7 @@ FBoneData* FBoneGroup::Find_BoneData(const wstring& strBoneNodeKey)
 	return (*iter).second;
 }
 
-HRESULT FBoneGroup::Add_BoneData(const wstring& strBoneNodeKey, FBoneData* pNode)
+HRESULT CBoneGroup::Add_BoneData(const wstring& strBoneNodeKey, FBoneData* pNode)
 {
 	// ID 추가
 	if (pNode->iID >= vecBones.size())
@@ -126,7 +126,7 @@ HRESULT FBoneGroup::Add_BoneData(const wstring& strBoneNodeKey, FBoneData* pNode
 	return S_OK;
 }
 
-const _float4x4* const FBoneGroup::Provide_BoneFinalTransformPtr(_uint iIndex) const
+const _float4x4* const CBoneGroup::Provide_BoneFinalTransformPtr(_uint iIndex) const
 {
 	if (iIndex < 0 || iIndex >= vecBones.size())
 		return nullptr;
@@ -134,7 +134,7 @@ const _float4x4* const FBoneGroup::Provide_BoneFinalTransformPtr(_uint iIndex) c
 	return &vecBones[iIndex]->matFinalTransform;
 }
 
-HRESULT FBoneGroup::Set_BoneTransform(_uint iIndex, _fmatrix& matTransform)
+HRESULT CBoneGroup::Set_BoneTransform(_uint iIndex, _fmatrix& matTransform)
 {
 	if (iIndex < 0 || iIndex >= vecBones.size())
 		return E_FAIL;
@@ -144,7 +144,7 @@ HRESULT FBoneGroup::Set_BoneTransform(_uint iIndex, _fmatrix& matTransform)
 	return S_OK;
 }
 
-void FBoneGroup::Invalidate_FinalTransforms()
+void CBoneGroup::Invalidate_FinalTransforms()
 {
 	/*OutputDebugString((strName + L"\n").c_str());
 

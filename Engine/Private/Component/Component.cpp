@@ -1,16 +1,21 @@
 #include "Component/Component.h"
 
-#include "System/GameInstance.h"
 
 CComponent::CComponent()
 	: m_bClone(true)
-	, m_pGameInst(GI())
 {
+	NULL_CHECK(m_pGI = GI());
+	Safe_AddRef(m_pGI);
 }
 
 CComponent::CComponent(const CComponent& rhs)
 	: m_bClone(false)
 {
+}
+
+void CComponent::Free()
+{
+	Safe_Release(m_pGI);
 }
 
 void CComponent::Delete_LevelTag(const wstring& strTag)

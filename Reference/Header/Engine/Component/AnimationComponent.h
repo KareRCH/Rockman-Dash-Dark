@@ -5,11 +5,11 @@
 
 BEGIN(Engine)
 
-class FBoneAnimGroup;
+class CBoneAnimGroup;
 class FBoneAnimData;
 class FSkeletalData;
 class FModelData;
-class FBoneGroup;
+class CBoneGroup;
 
 
 struct FAnimMask
@@ -60,9 +60,8 @@ protected:
 	virtual void	Free() override;
 
 public:
-	// 
-	HRESULT Bind_BoneGroup(class CSkeletalComponent* pSkeletalComp);
-	HRESULT Bind_AnimGroup(FModelData* pModelData);
+	HRESULT Bind_BoneGroup(CBoneGroup* pBoneGroup);
+	HRESULT Load_Animations(EModelGroupIndex eGroupIndex, const wstring& strModelFilePath);
 
 	// 마스크 생성
 	HRESULT Create_Mask(const wstring& strMaskName, const wstring& strSkeletalName, _bool bInitBoneActive);
@@ -82,12 +81,11 @@ public:
 	void Apply_FinalMask();
 
 private:
-	FBoneGroup*			m_pBoneGroup = { nullptr };		// 모델 데이터, 해당 모델을 바인딩 시켜놓기 위해 해놓는다.
-	FBoneAnimGroup*		m_pAnimGroup = { nullptr };		// 단 하나의 뼈에 대한 애니메이션 정보를 가진다.
+	CBoneGroup*			m_pBoneGroup = { nullptr };
+	CBoneAnimGroup*		m_pAnimGroup = { nullptr };		// 단 하나의 뼈에 대한 애니메이션 정보를 가진다.
 														// 이 녀석이 설정되어 있어야 기능을 할 수 있다.
 	
 	vector<FAnimMask>	m_vecAnimMask;					// 애니메이션이 적용되는 마스크, 기본적으로 0번 마스크에 적용되어 작동한다.
-	_float				m_fSystemTPS;				// 1 프레임당 속도값
 };
 
 END

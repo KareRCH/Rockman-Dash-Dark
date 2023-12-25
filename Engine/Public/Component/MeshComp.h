@@ -1,31 +1,27 @@
 #pragma once
 
-#include "VIBufferComp.h"
+#include "Component/InternalComponent.h"
 
 BEGIN(Engine)
 
 /// <summary>
 /// CommonModelComp에 쓸 수 있도록 만들어진 버퍼 컴포넌트
 /// </summary>
-class CMeshBufferComp : public CVIBufferComp
+class ENGINE_DLL CMeshComp : public CInternalComponent
 {
-	DERIVED_CLASS(CVIBufferComp, CMeshBufferComp)
+	DERIVED_CLASS(CInternalComponent, CMeshComp)
 
 protected:
-	explicit CMeshBufferComp() = default;
-	explicit CMeshBufferComp(const CMeshBufferComp& rhs);
-	virtual ~CMeshBufferComp() = default;
+	explicit CMeshComp() = default;
+	explicit CMeshComp(const CMeshComp& rhs);
+	virtual ~CMeshComp() = default;
 
 public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
-	virtual void	Priority_Tick(const _float& fTimeDelta);
-	virtual void	Tick(const _float& fTimeDelta);
-	virtual void	Late_Tick(const _float& fTimeDelta);
-	virtual HRESULT	Render();
 
 public:
-	static CMeshBufferComp* Create();
+	static CMeshComp* Create();
 	virtual CComponent* Clone(void* Arg = nullptr);
 
 protected:
@@ -33,9 +29,12 @@ protected:
 
 public:
 	_bool	IsMeshLoaded() const { return (m_pMeshData != nullptr); }
+	_uint	Get_MeshMaterialIndex() const;
 	HRESULT Load_Mesh(EModelGroupIndex eGroupIndex, const wstring& strModelFilePath, _uint iIndex);
 	// 이펙트에 뼈 행렬 전달 (상수 버퍼 버전)
-	HRESULT	Bind_EffectBoneMatrices(class CEffectComponent* pEffect, const _char* pConstantName);
+	HRESULT	Bind_BoneMatricesToEffect(class CEffectComponent* pEffect, const _char* pConstantName, const CBoneGroup& BoneGroup);
+	HRESULT Bind_Buffer();
+	HRESULT Render_Buffer();
 
 private:
 	class FMeshData* m_pMeshData = { nullptr };

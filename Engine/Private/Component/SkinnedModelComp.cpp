@@ -143,7 +143,7 @@ HRESULT CSkinnedModelComp::Bind_Model(EModelGroupIndex eGroup, const wstring& st
 
 
     m_pMultiMeshBufComp->Set_ModelData(m_pModelData);
-    m_pSkeletalComp->Set_ModelData(m_pModelData);
+    //m_pSkeletalComp->Set_ModelData(m_pModelData);
 
     return S_OK;
 }
@@ -192,9 +192,9 @@ HRESULT CSkinnedModelComp::Bind_Skeletal(const wstring& strSkeletalKey)
 {
     if (!m_pSkeletalComp)
         return E_FAIL;
-    m_pSkeletalComp->Load_Skeletal(strSkeletalKey);
+    //m_pSkeletalComp->Load_Skeletal(strSkeletalKey);
 
-    return m_pAnimationComp->Bind_BoneGroup(m_pSkeletalComp);
+    return S_OK;// m_pAnimationComp->Bind_BoneGroup(m_pSkeletalComp);
 }
 
 void CSkinnedModelComp::Invalidate_BoneTransforms()

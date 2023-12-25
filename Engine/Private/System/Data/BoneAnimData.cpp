@@ -343,7 +343,7 @@ _float FBoneAnimData::Calculate_Time(_float fCurTime, _bool bMod) const
 
 
 //---------------------------------- AnimGroup
-FBoneAnimGroup* FBoneAnimGroup::Create()
+CBoneAnimGroup* CBoneAnimGroup::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -358,7 +358,7 @@ FBoneAnimGroup* FBoneAnimGroup::Create()
 	return pInstance;
 }
 
-void FBoneAnimGroup::Free()
+void CBoneAnimGroup::Free()
 {
 	for (auto& Pair : mapAnimDatas)
 		Safe_Release(Pair.second);
@@ -366,7 +366,7 @@ void FBoneAnimGroup::Free()
 	mapAnimDatas.clear();
 }
 
-FBoneAnimData* const FBoneAnimGroup::Find_BoneAnim(const _uint iIndex)
+FBoneAnimData* const CBoneAnimGroup::Find_BoneAnim(const _uint iIndex)
 {
 	if (iIndex < 0 && iIndex >= vecAnimDatas.size())
 		return nullptr;
@@ -374,7 +374,7 @@ FBoneAnimData* const FBoneAnimGroup::Find_BoneAnim(const _uint iIndex)
 	return vecAnimDatas[iIndex];
 }
 
-FBoneAnimData* const FBoneAnimGroup::Find_BoneAnim(const wstring& strAnimKey)
+FBoneAnimData* const CBoneAnimGroup::Find_BoneAnim(const wstring& strAnimKey)
 {
 	auto iter = mapAnimDatas.find(strAnimKey);
 	if (iter == mapAnimDatas.end())
@@ -383,7 +383,7 @@ FBoneAnimData* const FBoneAnimGroup::Find_BoneAnim(const wstring& strAnimKey)
 	return (*iter).second;
 }
 
-void FBoneAnimGroup::Add_BoneAnim(const wstring& strAnimKey, FBoneAnimData* pAnimData)
+void CBoneAnimGroup::Add_BoneAnim(const wstring& strAnimKey, FBoneAnimData* pAnimData)
 {
 	auto iter = mapAnimDatas.find(strAnimKey);
 	if (iter != mapAnimDatas.end())
@@ -396,7 +396,7 @@ void FBoneAnimGroup::Add_BoneAnim(const wstring& strAnimKey, FBoneAnimData* pAni
 	vecAnimDatas.push_back(pAnimData);
 }
 
-FKeyFrame FBoneAnimGroup::Interpolated_Anim(const _uint iAnimIndex, const _uint iChannelIndex, const _float& fCurTrackPos) const
+FKeyFrame CBoneAnimGroup::Interpolated_Anim(const _uint iAnimIndex, const _uint iChannelIndex, const _float& fCurTrackPos) const
 {
 	if (iAnimIndex < 0 || iAnimIndex >= vecAnimDatas.size())
 		return FKeyFrame();
@@ -408,7 +408,7 @@ FKeyFrame FBoneAnimGroup::Interpolated_Anim(const _uint iAnimIndex, const _uint 
 	return pChannel->Interpolated_KeyFrame(fCurTrackPos);
 }
 
-void FBoneAnimGroup::Interpolated_Anims(FKeyFrame* pKeyFrames, size_t iNumKeyFrames, FAnimInterpolate* pArrInterpolateData, size_t iNumInterpolates)
+void CBoneAnimGroup::Interpolated_Anims(FKeyFrame* pKeyFrames, size_t iNumKeyFrames, FAnimInterpolate* pArrInterpolateData, size_t iNumInterpolates)
 {
 	if (iNumInterpolates < 0)
 		return;
@@ -464,7 +464,7 @@ void FBoneAnimGroup::Interpolated_Anims(FKeyFrame* pKeyFrames, size_t iNumKeyFra
 	}
 }
 
-void FBoneAnimGroup::Interpolated_KeyFrames(FKeyFrame* pKeyFrames, size_t iNumKeyFrames, FKeyFrameInterpolate* pArrInterpolate, size_t iNumInterpolates)
+void CBoneAnimGroup::Interpolated_KeyFrames(FKeyFrame* pKeyFrames, size_t iNumKeyFrames, FKeyFrameInterpolate* pArrInterpolate, size_t iNumInterpolates)
 {
 	if (iNumKeyFrames < 0)
 		return;

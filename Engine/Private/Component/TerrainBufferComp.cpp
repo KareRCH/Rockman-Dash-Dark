@@ -31,8 +31,6 @@ CTerrainBufferComp* CTerrainBufferComp::Create()
     {
         MSG_BOX("CTerrainBufferComp Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -46,8 +44,6 @@ CComponent* CTerrainBufferComp::Clone(void* Arg)
     {
         MSG_BOX("CTerrainBufferComp Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return Cast<CComponent*>(pInstance);

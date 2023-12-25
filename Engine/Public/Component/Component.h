@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Base.h"
+#include "System/GameInstance.h"
 
 BEGIN(Engine)
 
@@ -25,7 +26,7 @@ public:
 	virtual CComponent* Clone(void* Arg = nullptr) PURE;
 
 protected:
-	virtual void		Free() PURE;
+	virtual void		Free();
 
 public:
 	GETSET_2(wstring, m_strName, Name, GET_C_REF, SET_C_REF)		// 이름을 얻기만 가능
@@ -48,8 +49,8 @@ private:
 	CComponent*			m_pParentComp = { nullptr };		// 이 컴포넌트를 관리하는 컴포넌트
 	vector<CComponent*>	m_pChildrenComp;					// 이 컴포넌트가 관리하는 컴포넌트
 
-private:
-	class CGameInstance* m_pGameInst = { nullptr };
+protected:
+	CGameInstance* m_pGI = { nullptr };
 };
 
 END

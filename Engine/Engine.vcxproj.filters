@@ -597,7 +597,7 @@
     <ClInclude Include="Public\Component\CommonModelComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Component\MeshBufferComp.h">
+    <ClInclude Include="Public\Component\MeshComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\01. MeshComp</Filter>
     </ClInclude>
     <ClInclude Include="Public\Component\NavigationComponent.h">
@@ -875,7 +875,7 @@
     <ClCompile Include="Private\Component\CommonModelComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Component\MeshBufferComp.cpp">
+    <ClCompile Include="Private\Component\MeshComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\01. MeshComp</Filter>
     </ClCompile>
     <ClCompile Include="Private\Component\NavigationComponent.cpp">

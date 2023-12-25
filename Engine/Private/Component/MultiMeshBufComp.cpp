@@ -35,8 +35,6 @@ CMultiMeshBufComp* CMultiMeshBufComp::Create()
 	{
 		MSG_BOX("MultiMeshBufComp Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -50,8 +48,6 @@ CComponent* CMultiMeshBufComp::Clone(void* Arg)
 	{
 		MSG_BOX("MultiMeshBufComp Copy Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return Cast<CComponent*>(pInstance);
@@ -79,7 +75,7 @@ HRESULT CMultiMeshBufComp::Set_ModelData(FModelData* pModelData)
 		m_strBindedMeshes.clear();
 	}
 
-	FMeshGroup* pMeshGroup = pModelData->pMeshGroup;
+	CMeshGroup* pMeshGroup = pModelData->pMeshGroup;
 
 	if (!pMeshGroup || !pModelData)
 		return E_FAIL;
@@ -99,91 +95,91 @@ HRESULT CMultiMeshBufComp::Bind_Mesh(const wstring& strMeshKey, const _uint iRan
 	if (!m_pMeshGroup)
 		return E_FAIL;
 
-	// 중복 메쉬 검사
-	auto iter = m_strBindedMeshes.find(strMeshKey);
-	if (iter != m_strBindedMeshes.end())
-		return E_FAIL;
+	//// 중복 메쉬 검사
+	//auto iter = m_strBindedMeshes.find(strMeshKey);
+	//if (iter != m_strBindedMeshes.end())
+	//	return E_FAIL;
 
-	// 메쉬 얻어오기
-	const FMeshData* pMesh = m_pMeshGroup->Find_Mesh(strMeshKey, iRangeIndex);
-	if (!pMesh)
-		return E_FAIL;
+	//// 메쉬 얻어오기
+	//const FMeshData* pMesh = m_pMeshGroup->Find_Mesh(strMeshKey, iRangeIndex);
+	//if (!pMesh)
+	//	return E_FAIL;
 
-	FMeshBuffer tMeshBuffer;
-	tMeshBuffer.iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
-	tMeshBuffer.iIndCount = Cast<_uint>(pMesh->vecIndices.size());
-	tMeshBuffer.strMeshName = strMeshKey;
+	//FMeshBuffer tMeshBuffer;
+	//tMeshBuffer.iVtxCount = Cast<_uint>(pMesh->vecVertices.size());
+	//tMeshBuffer.iIndCount = Cast<_uint>(pMesh->vecIndices.size());
+	//tMeshBuffer.strMeshName = strMeshKey;
 
-	
-	// 정점, 인덱스 버퍼 만들기
-	SHADER_VTX_SKINMODEL* vertices = new SHADER_VTX_SKINMODEL[tMeshBuffer.iVtxCount];
-	if (!vertices)
-		return E_FAIL;
+	//
+	//// 정점, 인덱스 버퍼 만들기
+	//SHADER_VTX_SKINMODEL* vertices = new SHADER_VTX_SKINMODEL[tMeshBuffer.iVtxCount];
+	//if (!vertices)
+	//	return E_FAIL;
 
-	_uint* indices = new _uint[tMeshBuffer.iIndCount];
-	if (!indices)
-		return E_FAIL;
+	//_uint* indices = new _uint[tMeshBuffer.iIndCount];
+	//if (!indices)
+	//	return E_FAIL;
 
-	// 정점 버퍼 제작
-	for (_uint i = 0; i < tMeshBuffer.iVtxCount; i++)
-	{
-		vertices[i].vPosition = pMesh->vecVertices[i].vPosition;
-		vertices[i].vNormal = pMesh->vecVertices[i].vNormal;
-		vertices[i].vTexCoord = pMesh->vecVertices[i].vTexCoord;
-		vertices[i].vTangent = pMesh->vecVertices[i].vTangent;
+	//// 정점 버퍼 제작
+	//for (_uint i = 0; i < tMeshBuffer.iVtxCount; i++)
+	//{
+	//	vertices[i].vPosition = pMesh->vecVertices[i].vPosition;
+	//	vertices[i].vNormal = pMesh->vecVertices[i].vNormal;
+	//	vertices[i].vTexCoord = pMesh->vecVertices[i].vTexCoord;
+	//	vertices[i].vTangent = pMesh->vecVertices[i].vTangent;
 
-		memcpy_s(&vertices[i].vBoneID, sizeof(_int4), pMesh->vecVertices[i].vecBoneID.data(), sizeof(_int4));
-		memcpy_s(&vertices[i].vWeight, sizeof(_float4), pMesh->vecVertices[i].vecWeights.data(), sizeof(_float4));
-		_int t = 0;
-	}
+	//	memcpy_s(&vertices[i].vBoneID, sizeof(_int4), pMesh->vecVertices[i].vecBoneID.data(), sizeof(_int4));
+	//	memcpy_s(&vertices[i].vWeight, sizeof(_float4), pMesh->vecVertices[i].vecWeights.data(), sizeof(_float4));
+	//	_int t = 0;
+	//}
 
-	D3D11_BUFFER_DESC vertexBufferDesc;
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(SHADER_VTX_SKINMODEL) * tMeshBuffer.iVtxCount;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.StructureByteStride = 0;
+	//D3D11_BUFFER_DESC vertexBufferDesc;
+	//vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//vertexBufferDesc.ByteWidth = sizeof(SHADER_VTX_SKINMODEL) * tMeshBuffer.iVtxCount;
+	//vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	//vertexBufferDesc.CPUAccessFlags = 0;
+	//vertexBufferDesc.MiscFlags = 0;
+	//vertexBufferDesc.StructureByteStride = 0;
 
-	D3D11_SUBRESOURCE_DATA vertexData;
-	vertexData.pSysMem = vertices;
-	vertexData.SysMemPitch = 0;
-	vertexData.SysMemSlicePitch = 0;
+	//D3D11_SUBRESOURCE_DATA vertexData;
+	//vertexData.pSysMem = vertices;
+	//vertexData.SysMemPitch = 0;
+	//vertexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, tMeshBuffer.pVtxBuffer.GetAddressOf()), E_FAIL);
+	//FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexData, tMeshBuffer.pVtxBuffer.GetAddressOf()), E_FAIL);
 
 
-	// 인덱스 버퍼 제작
-	for (_uint i = 0; i < tMeshBuffer.iIndCount; i++)
-	{
-		indices[i] = pMesh->vecIndices[i];
-	}
+	//// 인덱스 버퍼 제작
+	//for (_uint i = 0; i < tMeshBuffer.iIndCount; i++)
+	//{
+	//	indices[i] = pMesh->vecIndices[i];
+	//}
 
-	// 정적 인덱스 버퍼의 구조체를 설정한다.
-	D3D11_BUFFER_DESC indexBufferDesc;
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(_uint) * tMeshBuffer.iIndCount;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
+	//// 정적 인덱스 버퍼의 구조체를 설정한다.
+	//D3D11_BUFFER_DESC indexBufferDesc;
+	//indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//indexBufferDesc.ByteWidth = sizeof(_uint) * tMeshBuffer.iIndCount;
+	//indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	//indexBufferDesc.CPUAccessFlags = 0;
+	//indexBufferDesc.MiscFlags = 0;
+	//indexBufferDesc.StructureByteStride = 0;
 
-	// 정적 인덱스 데이터를 가리키는 보조 리소스 구조체를 작성
-	D3D11_SUBRESOURCE_DATA indexData;
-	indexData.pSysMem = indices;
-	indexData.SysMemPitch = 0;
-	indexData.SysMemSlicePitch = 0;
+	//// 정적 인덱스 데이터를 가리키는 보조 리소스 구조체를 작성
+	//D3D11_SUBRESOURCE_DATA indexData;
+	//indexData.pSysMem = indices;
+	//indexData.SysMemPitch = 0;
+	//indexData.SysMemSlicePitch = 0;
 
-	FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&indexBufferDesc, &indexData, tMeshBuffer.pIndBuffer.GetAddressOf()), E_FAIL);
+	//FAILED_CHECK_RETURN(D3D11Device()->CreateBuffer(&indexBufferDesc, &indexData, tMeshBuffer.pIndBuffer.GetAddressOf()), E_FAIL);
 
-	Safe_Delete_Array(vertices);
-	Safe_Delete_Array(indices);
+	//Safe_Delete_Array(vertices);
+	//Safe_Delete_Array(indices);
 
 
 
 	// 다 만들었으니 메쉬 버퍼 정보를 벡터에 넣어준다.
-	tMeshBuffer.bBinded = true;
-	m_vecMeshes[pMesh->iID] = (tMeshBuffer);
+	//tMeshBuffer.bBinded = true;
+	//m_vecMeshes[pMesh->iID] = (tMeshBuffer);
 
 	return S_OK;
 }
@@ -220,7 +216,7 @@ void CMultiMeshBufComp::Unbind_AllMeshes()
 
 }
 
-HRESULT CMultiMeshBufComp::Bind_MeshOffsetsToEffect(CEffectComponent* pEffect, const _char* pConstantName, _uint iMeshIndex, const FBoneGroup& pBoneGroup)
+HRESULT CMultiMeshBufComp::Bind_MeshOffsetsToEffect(CEffectComponent* pEffect, const _char* pConstantName, _uint iMeshIndex, const CBoneGroup& pBoneGroup)
 {
 	if (nullptr == pEffect || nullptr == m_pMeshGroup)
 		return E_FAIL;

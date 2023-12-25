@@ -30,11 +30,14 @@ protected:
 
 
 public:
+	// 모델로부터 머터리얼의 정보를 얻어온다. 이때 경로를 사용해서 실제 텍스처 정보도 얻어온다.
+	HRESULT Load_Materials(EModelGroupIndex eGroupIndex, const wstring& strModelKey, _uint iIndex);
 	ID3D11ShaderResourceView* Get_SRV(_uint iIndex);
+	HRESULT Bind_TextureToEffect(class CEffectComponent* pEffectComp, const _char* pConstantName, _uint iTextureIndex);
 
 private:
 	const static _uint	g_iNumTextures = AI_TEXTURE_TYPE_MAX;
-	array<class CTextureComponent*, g_iNumTextures>	m_vecTextureComp = { nullptr };
+	array<class CTextureComponent*, g_iNumTextures>	m_arrTextureComps = { nullptr };
 	
 
 };

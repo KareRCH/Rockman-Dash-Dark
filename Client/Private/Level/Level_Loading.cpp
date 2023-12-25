@@ -98,7 +98,9 @@ HRESULT CLevel_Loading::Ready_Objects()
 		return E_FAIL;
 
 	CPlaneModelComp* pModel = pLoadingScreen->Get_Component<CPlaneModelComp>(TEXT("LoadingScreen"));
-	pModel->Transform().Set_Scale(XMVectorSet(g_iWindowSizeX, g_iWindowSizeY, 1.f, 0.f));
+	_float fX = 1024.f * (g_iWindowSizeX / 660.f);
+	_float fY = 660.f * (g_iWindowSizeY / 512.f);
+	pModel->Transform().Set_Scale(XMVectorSet(fX, fY, 1.f, 0.f));
 	pModel->Transform().Set_Position(XMVectorSet(0.f, 0.f, 10.f, 1.f));
 
 	return S_OK;

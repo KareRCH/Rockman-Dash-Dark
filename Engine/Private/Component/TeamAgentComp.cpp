@@ -40,8 +40,6 @@ CTeamAgentComp* CTeamAgentComp::Create()
     {
         MSG_BOX("TeamAgentComp Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -55,8 +53,6 @@ CComponent* CTeamAgentComp::Clone(void* Arg)
     {
         MSG_BOX("TeamAgentComp Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return Cast<CComponent*>(pInstance);

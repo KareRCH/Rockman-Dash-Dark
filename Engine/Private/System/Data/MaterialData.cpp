@@ -16,19 +16,19 @@ void FMaterialData::Free()
 {
 }
 
-FMaterialGroup* FMaterialGroup::Create()
+CMaterialGroup* CMaterialGroup::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
 	if (nullptr == pInstance)
 	{
-		MSG_BOX("FMaterialGroup Create Failed");
+		MSG_BOX("CMaterialGroup Create Failed");
 	}
 
 	return pInstance;
 }
 
-void FMaterialGroup::Free()
+void CMaterialGroup::Free()
 {
 	for (auto& Mat : vecMaterialDatas)
 		Safe_Release(Mat);
@@ -36,7 +36,7 @@ void FMaterialGroup::Free()
 	mapMaterialDatas.clear();
 }
 
-FMaterialData* FMaterialGroup::Find_Material(const _uint iIndex)
+FMaterialData* CMaterialGroup::Find_Material(const _uint iIndex)
 {
 	if (iIndex < 0 && iIndex >= vecMaterialDatas.size())
 		return nullptr;
@@ -44,7 +44,7 @@ FMaterialData* FMaterialGroup::Find_Material(const _uint iIndex)
 	return vecMaterialDatas[iIndex];
 }
 
-FMaterialData* FMaterialGroup::Find_Material(const wstring& strName)
+FMaterialData* CMaterialGroup::Find_Material(const wstring& strName)
 {
 	auto iter = mapMaterialDatas.find(strName);
 	if (iter == mapMaterialDatas.end())
@@ -53,7 +53,7 @@ FMaterialData* FMaterialGroup::Find_Material(const wstring& strName)
 	return (*iter).second;
 }
 
-HRESULT FMaterialGroup::Add_Material(const wstring& strName, FMaterialData* pMatData)
+HRESULT CMaterialGroup::Add_Material(const wstring& strName, FMaterialData* pMatData)
 {
 	auto iter = mapMaterialDatas.find(strName);
 	if (iter != mapMaterialDatas.end())
@@ -61,6 +61,8 @@ HRESULT FMaterialGroup::Add_Material(const wstring& strName, FMaterialData* pMat
 
 	mapMaterialDatas.emplace(strName, pMatData);
 	vecMaterialDatas.push_back(pMatData);
+
+	++m_iNumMaterials;
 
 	return S_OK;
 }
