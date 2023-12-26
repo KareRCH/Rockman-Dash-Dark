@@ -49,6 +49,24 @@
     <Filter Include="01. Level\03. GamePlay">
       <UniqueIdentifier>{492d7f50-a129-4a7f-9cf1-96eeff86244b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. CloudStation">
+      <UniqueIdentifier>{1e916816-7232-4e51-be12-74ad1438eb40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. CloudStation\01. PlayerCloud">
+      <UniqueIdentifier>{7e764d0b-f042-45ff-b505-ab212115f870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. Object">
+      <UniqueIdentifier>{27674aba-c994-4bc5-8b70-7b94931fe323}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. Character">
+      <UniqueIdentifier>{c0f794d7-eefa-4a78-9665-80029cfb3054}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. UI">
+      <UniqueIdentifier>{160bfc08-823f-4d61-9dff-50347acda5e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. Object\01. Chest">
+      <UniqueIdentifier>{6a5c5299-cf61-4def-abc2-aef1e8a0d390}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -65,9 +83,6 @@
     </ClInclude>
     <ClInclude Include="Public\MainApp.h">
       <Filter>00. MainApp</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\GameObject\TestObject.h">
-      <Filter>02. GameObject\99. Test</Filter>
     </ClInclude>
     <ClInclude Include="Public\GameObject\DynamicCamera.h">
       <Filter>02. GameObject\02. Camera</Filter>
@@ -99,6 +114,18 @@
     <ClInclude Include="Public\Level\Level_GamePlay.h">
       <Filter>01. Level\03. GamePlay</Filter>
     </ClInclude>
+    <ClInclude Include="Public\CloudStation\CloudStation_Player.h">
+      <Filter>03. CloudStation\01. PlayerCloud</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\UI_Player.h">
+      <Filter>02. GameObject\06. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Player.h">
+      <Filter>02. GameObject\04. Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\ItemChest.h">
+      <Filter>02. GameObject\05. Object\01. Chest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -106,9 +133,6 @@
     </ClCompile>
     <ClCompile Include="Private\MainApp.cpp">
       <Filter>00. MainApp</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\GameObject\TestObject.cpp">
-      <Filter>02. GameObject\99. Test</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\DynamicCamera.cpp">
       <Filter>02. GameObject\02. Camera</Filter>
@@ -136,6 +160,18 @@
     </ClCompile>
     <ClCompile Include="Private\Level\Level_GamePlay.cpp">
       <Filter>01. Level\03. GamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\CloudStation\CloudStation_Player.cpp">
+      <Filter>03. CloudStation\01. PlayerCloud</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\UI_Player.cpp">
+      <Filter>02. GameObject\06. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Player.cpp">
+      <Filter>02. GameObject\04. Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\ItemChest.cpp">
+      <Filter>02. GameObject\05. Object\01. Chest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

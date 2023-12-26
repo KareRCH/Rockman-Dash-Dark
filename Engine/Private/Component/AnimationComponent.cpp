@@ -3,6 +3,13 @@
 #include "Component/SkeletalComponent.h"
 #include "System/Data/BoneAnimData.h"
 #include "System/ModelMgr.h"
+#include "Component/AnimMaskComp.h"
+
+CAnimationComponent::CAnimationComponent()
+	: m_fTransitionGauge(1.f), m_fTransitionSpeed(0.1f)
+{
+
+}
 
 CAnimationComponent::CAnimationComponent(const CAnimationComponent& rhs)
 	: Base(rhs)
@@ -15,6 +22,8 @@ CAnimationComponent::CAnimationComponent(const CAnimationComponent& rhs)
 
 HRESULT CAnimationComponent::Initialize_Prototype(void* Arg)
 {
+
+
 	return S_OK;
 }
 
@@ -81,105 +90,6 @@ HRESULT CAnimationComponent::Load_Animations(EModelGroupIndex eGroupIndex, const
 	Safe_AddRef(m_pAnimGroup);
 
 	return S_OK;
-}
-
-HRESULT CAnimationComponent::Create_Mask(const wstring& strMaskName, const wstring& strSkeletalName, _bool bInitBoneActive)
-{
-	if (nullptr == m_pBoneGroup)
-		return E_FAIL;
-
-	// 기본 세팅
-	FAnimMask tMask = {};
-	tMask.strName = strMaskName;
-	tMask.fWeight = 1.f;
-	tMask.iNumMasks = m_pBoneGroup->Get_BoneDatas_Count();
-	tMask.vecBoneMasks.resize(tMask.iNumMasks, bInitBoneActive);
-	tMask.fTransitionSpeed = 0.1f;
-	tMask.strAnimName = L"Megaman|anim_000_Megaman";
-
-	m_vecAnimMask.push_back(tMask);
-
-	return S_OK;
-}
-
-FAnimMask* CAnimationComponent::Get_Mask(_uint iIndex)
-{
-	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
-		return nullptr;
-
-	return &m_vecAnimMask[iIndex];
-}
-
-void CAnimationComponent::Deactive_BoneMask(_uint iIndex, const wstring& strBoneName)
-{
-	if (!m_pBoneGroup)
-		return;
-
-	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
-		return;
-
-	FBoneData* pBoneData = m_pBoneGroup->Find_BoneData(strBoneName);
-	if (!pBoneData)
-		return;
-
-	m_vecAnimMask[iIndex].vecBoneMasks[pBoneData->iID] = false;
-}
-
-void CAnimationComponent::Active_BoneMask(_uint iIndex, const wstring& strBoneName)
-{
-	if (!m_pBoneGroup)
-		return;
-
-	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
-		return;
-
-	FBoneData* pBoneData = m_pBoneGroup->Find_BoneData(strBoneName);
-	if (!pBoneData)
-		return;
-
-	m_vecAnimMask[iIndex].vecBoneMasks[pBoneData->iID] = true;
-}
-
-void CAnimationComponent::Set_MaskAnimation(_uint iIndex, const wstring& strAnimName)
-{
-	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
-		return;
-
-	FAnimMask& rMask = m_vecAnimMask[iIndex];
-	const FBoneAnimData* pBoneAnimData = m_pAnimGroup->Find_BoneAnim(strAnimName);
-	if (pBoneAnimData == nullptr)
-		return;
-
-	if (strAnimName != rMask.strAnimName)
-	{
-		rMask.strPrevAnimName = rMask.strAnimName;
-		rMask.iPrevAnimID = rMask.iAnimID;
-		rMask.fPrevTrackPos = rMask.fCurTrackPos;
-		rMask.fTransitionGauge = 0.f;
-		rMask.fCurTrackPos = 0.f;
-	}
-
-	rMask.strAnimName = pBoneAnimData->strName;
-	rMask.iAnimID = pBoneAnimData->iID;
-	rMask.fTickPerSeconds = pBoneAnimData->fTickPerSecond;
-	rMask.fDuration = pBoneAnimData->fDuration;
-}
-
-void CAnimationComponent::Set_MaskTime(_uint iIndex, _float fTime)
-{
-	if (iIndex < 0 || iIndex >= m_vecAnimMask.size())
-		return;
-
-	FAnimMask& rMask = m_vecAnimMask[iIndex];
-	const FBoneAnimData* pBoneAnimData = m_pAnimGroup->Find_BoneAnim(rMask.strAnimName);
-	if (pBoneAnimData == nullptr)
-		return;
-
-	// 실제 시간을 프레임 단위로 변환
-	m_vecAnimMask[iIndex].fCurTrackPos = pBoneAnimData->Calculate_Time(fTime);
-	// 게이지가 1이 아니면 시간 추가
-	if (rMask.fTransitionGauge < 1.f)
-		m_vecAnimMask[iIndex].fPrevTrackPos = pBoneAnimData->Calculate_Time(fTime);
 }
 
 void CAnimationComponent::Apply_MaskTime(_uint iIndex, const wstring& strAnimName, _float fCurTime)
@@ -340,4 +250,181 @@ void CAnimationComponent::Apply_FinalMask()
 	{
 		m_pBoneGroup->Set_BoneTransform(i, vecBoneMatrices[i]);
 	}
+}
+
+void CAnimationComponent::Set_Animation(_uint iAnimIndex, _bool bIsLoop)
+{
+	if (iAnimIndex < 0 || iAnimIndex >= m_pAnimGroup->Get_NumAnims())
+		return;
+
+	auto pBoneAnimData = m_pAnimGroup->Find_BoneAnim(iAnimIndex);
+	if (pBoneAnimData == nullptr)
+		return;
+
+	// 이전 애니메이션 설정
+	if (m_CurAnim.iAnimID != iAnimIndex)
+	{
+		m_PrevAnim = m_CurAnim;
+		m_fTransitionGauge = 0.f;
+	}
+
+	m_CurAnim.iAnimID = iAnimIndex;
+	m_CurAnim.fDuration = pBoneAnimData->fDuration;
+	m_CurAnim.fTickPerSeconds = pBoneAnimData->fTickPerSecond;
+	m_CurAnim.bIsLoop = bIsLoop;
+	m_CurAnim.fTrackPos = 0.f;
+}
+
+void CAnimationComponent::Add_AnimTime(const _float& fTimeDelta)
+{
+	m_CurAnim.fTrackPos += fTimeDelta * m_CurAnim.fTickPerSeconds;
+	if (m_CurAnim.fTrackPos > m_CurAnim.fDuration)
+		m_CurAnim.fTrackPos = (m_CurAnim.bIsLoop) ? (0.f) : (m_CurAnim.fDuration);
+
+	if (m_fTransitionGauge < 1.f)
+	{
+		m_PrevAnim.fTrackPos += fTimeDelta * m_PrevAnim.fTickPerSeconds;
+		if (m_PrevAnim.fTrackPos > m_PrevAnim.fDuration)
+			m_PrevAnim.fTrackPos = (m_PrevAnim.bIsLoop) ? (0.f) : (m_PrevAnim.fDuration);
+	}
+}
+
+void CAnimationComponent::Invalidate_Animation()
+{
+	if (!m_pBoneGroup || !m_pAnimGroup)
+		return;
+
+	_uint iNumBones = m_pBoneGroup->Get_BoneDatas_Count();
+
+	vector<_matrix> vecBoneMatrices;
+	vector<FKeyFrame> vecKeyFrames;
+	vector<FKeyFrameInterpolate> vecKeyFrameInters;
+
+
+	vecBoneMatrices.resize(iNumBones, {});
+	vecKeyFrames.resize(iNumBones, {});
+	if (m_fTransitionGauge < 1.f)
+	{
+		FAnimInterpolate AnimInter = {};
+		AnimInter.iAnimID = m_CurAnim.iAnimID;
+		AnimInter.fTrackPos = m_CurAnim.fTrackPos;
+		AnimInter.fWeight = m_fTransitionGauge;
+		AnimInter.vecChannelIDs.reserve(iNumBones);
+		for (_uint i = 0; i < iNumBones; i++)
+			AnimInter.vecChannelIDs.push_back(i);
+
+		FAnimInterpolate PrevAnimInter = AnimInter;
+		PrevAnimInter.iAnimID = m_PrevAnim.iAnimID;
+		PrevAnimInter.fTrackPos = m_PrevAnim.fTrackPos;
+		PrevAnimInter.fWeight = 1.f - m_fTransitionGauge;
+
+		FAnimInterpolate ArrAnimInter[2] = {
+			AnimInter, PrevAnimInter
+		};
+
+		// 마스크 애니메이션끼리 보간한다.
+		m_pAnimGroup->Interpolated_Anims(vecKeyFrames.data(), vecKeyFrames.size(), ArrAnimInter, 2);
+	}
+	// 없으면 KeyFrameInterpolate를 한 애니메이션으로부터 얻어온다.
+	else
+	{
+		FAnimInterpolate AnimInter = {};
+		AnimInter.iAnimID = m_CurAnim.iAnimID;
+		AnimInter.fTrackPos = m_CurAnim.fTrackPos;
+		AnimInter.fWeight = 1.f;
+		AnimInter.vecChannelIDs.reserve(iNumBones);
+		for (_uint i = 0; i < iNumBones; i++)
+			AnimInter.vecChannelIDs.push_back(i);
+
+		m_pAnimGroup->Interpolated_Anims(vecKeyFrames.data(), vecKeyFrames.size(), &AnimInter, 1);
+	}
+
+
+	const FBoneAnimData* pBoneAnimData = m_pAnimGroup->Find_BoneAnim(m_CurAnim.iAnimID);
+	for (_uint i = 0; i < iNumBones; i++)
+	{
+		const FBoneAnimChannelData* pBoneAnimChannelData = pBoneAnimData->Find_AnimChannelData(i);
+
+		if (nullptr != pBoneAnimChannelData)
+		{
+			vecBoneMatrices[i] =
+				XMMatrixAffineTransformation(
+					XMLoadFloat3(&vecKeyFrames[i].vScale),
+					XMQuaternionIdentity(),
+					XMLoadFloat4(&vecKeyFrames[i].qtRot),
+					XMLoadFloat3(&vecKeyFrames[i].vPos));
+		}
+		else
+			vecBoneMatrices[i] = XMMatrixIdentity();
+	}
+
+
+	// 뼈 트랜스폼에 애니메이션 적용
+	for (_uint i = 0; i < iNumBones; i++)
+	{
+		m_pBoneGroup->Set_BoneTransform(i, vecBoneMatrices[i]);
+	}
+
+	if (m_fTransitionGauge < 1.f)
+		m_fTransitionGauge += m_fTransitionSpeed;
+}
+
+void CAnimationComponent::Invalidate_AnimationWithMask(CAnimMaskComp* pAnimMaskComp)
+{
+	if (!m_pBoneGroup || !m_pAnimGroup)
+		return;
+
+	if (pAnimMaskComp == nullptr)
+	{
+		Invalidate_Animation();
+		return;
+	}
+
+	auto vecRemainWeights = pAnimMaskComp->Get_RemainWeights();
+	_uint iNumMasks = pAnimMaskComp->Get_NumAnimMasks();
+	_uint iNumBones = m_pBoneGroup->Get_BoneDatas_Count();
+
+	//for (_uint i = 0; i < iNumMasks; i++)
+	//{
+
+	//	// 마스크의 키프레임을 얻음
+	//	for (_uint j = 0; j < iNumBones; j++)
+	//	{
+	//		if (rAnimMask.fTransitionGauge < 1.f)
+	//		{
+	//			FAnimInterpolate AnimInter = {};
+	//			AnimInter.iAnimID = rAnimMask.iAnimID;
+	//			AnimInter.fTrackPos = rAnimMask.fCurTrackPos;
+	//			AnimInter.fWeight = rAnimMask.fTransitionGauge;
+	//			AnimInter.vecChannelIDs.reserve(iNumBoneMasks);
+	//			for (_uint j = 0; j < iNumBoneMasks; j++)
+	//			{
+	//				_int iID = rAnimMask.vecBoneMasks[j] ? rAnimMask.vecBoneMasks[j] * j : -1;	// 마스크가 없으면 -1로 구분
+	//				AnimInter.vecChannelIDs.push_back(iID);
+	//			}
+
+	//			FAnimInterpolate PrevAnimInter = AnimInter;
+	//			PrevAnimInter.iAnimID = rAnimMask.iPrevAnimID;
+	//			PrevAnimInter.fTrackPos = rAnimMask.fPrevTrackPos;
+	//			PrevAnimInter.fWeight = 1.f - rAnimMask.fTransitionGauge;
+
+	//			FAnimInterpolate ArrAnimInter[2] = {
+	//				AnimInter, PrevAnimInter
+	//			};
+
+	//			// 마스크 애니메이션끼리 보간한다.
+	//			m_pAnimGroup->Interpolated_Anims(vecKeyFrames.data(), vecKeyFrames.size(), ArrAnimInter, 2);
+
+	//			vecKeyFrameInters[i].fWeight = fWeight;
+	//			vecKeyFrameInters[i].KeyFrames[j] = vecKeyFrames[j];
+	//		}
+	//		// 없으면 KeyFrameInterpolate를 한 애니메이션으로부터 얻어온다.
+	//		else
+	//		{
+	//			FKeyFrame KeyFrame = m_pAnimGroup->Interpolated_Anim(rAnimMask.iAnimID, j, rAnimMask.fCurTrackPos);
+	//			vecKeyFrameInters[i].fWeight = fWeight;
+	//			vecKeyFrameInters[i].KeyFrames[j] = KeyFrame;
+	//		}
+	//	}
+	//}
 }

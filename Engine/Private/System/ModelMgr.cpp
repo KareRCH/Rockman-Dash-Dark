@@ -402,8 +402,8 @@ const FMaterialData* const CModelMgr::Find_MaterialData(const EModelGroupIndex e
 {
     _uint iGroupIndex = ECast(eGroupIndex);
 
-    auto iter = m_mapModelDatas[iIndex].find(strModelKey);
-    if (iter == m_mapModelDatas[iIndex].end())
+    auto iter = m_mapModelDatas[iGroupIndex].find(strModelKey);
+    if (iter == m_mapModelDatas[iGroupIndex].end())
         return nullptr;
 
     return (*iter).second->pMaterialGroup->Find_Material(iIndex);

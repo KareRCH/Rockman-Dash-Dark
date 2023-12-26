@@ -298,6 +298,9 @@
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\05. PlaneModelComp">
       <UniqueIdentifier>{f168956a-5b98-4a62-aa1e-d10394f2d783}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\05. AnimMaskComp">
+      <UniqueIdentifier>{b34b6046-00fd-4724-b232-a89431eeaf31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -642,6 +645,9 @@
     <ClInclude Include="Public\Component\Data\NaviRegion.h">
       <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\NaviRegion</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\AnimMaskComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\05. AnimMaskComp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -913,6 +919,9 @@
     </ClCompile>
     <ClCompile Include="Private\Component\Data\NaviRegion.cpp">
       <Filter>02. Utility\02. Component\02. GameObjectComp\03. NavigationComponent\NaviRegion</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\AnimMaskComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\05. AnimMaskComp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

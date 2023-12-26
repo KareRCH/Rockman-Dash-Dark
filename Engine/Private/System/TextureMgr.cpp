@@ -72,7 +72,7 @@ HRESULT CTextureMgr::Reference_SRVs(const wstring& strTextureKey, vector<ComPtr<
 	return S_OK;
 }
 
-HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent)
+HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent, _bool bUseMainPath)
 {
 	CTexture* pTexture;
 	HRESULT hr = S_OK;
@@ -101,7 +101,10 @@ HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _uint iNumTe
 			pTexture = iter->second;
 		}
 
-		hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, iNumTextures, bPermanent);
+		if (bUseMainPath)
+			hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, iNumTextures, bPermanent);
+		else
+			hr = pTexture->Insert_Texture(strFilePath, iNumTextures, bPermanent);
 	}
 
 	return hr;

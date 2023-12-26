@@ -83,7 +83,15 @@ HRESULT FMeshData::Create_Buffer(const TMesh& MeshData)
 	if (!indices)
 		return E_FAIL;
 
-	memcpy(indices, MeshData.vecIndices.data(), iIndexStride * iNumIndices);
+	if (iIndexStride == 2)
+	{
+		for (_uint i = 0; i < iNumIndices; i++)
+		{
+			Cast<_ushort*>(indices)[i] = Cast<_ushort>(MeshData.vecIndices[i]);
+		}
+	}
+	else
+		memcpy(indices, MeshData.vecIndices.data(), iIndexStride * iNumIndices);
 
 	// 정적 인덱스 버퍼의 구조체를 설정한다.
 	D3D11_BUFFER_DESC indexBufferDesc;

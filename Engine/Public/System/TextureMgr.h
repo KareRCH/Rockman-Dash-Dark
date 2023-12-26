@@ -43,7 +43,7 @@ public:
 	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey) { return Find_SRV(strTextureKey, 0); }
 	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey, const _uint iIndex);
 	HRESULT						Reference_SRVs(const wstring& strTextureKey, vector<ComPtr<ID3D11ShaderResourceView>>& RefSRVs);
-	HRESULT						Load_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent);
+	HRESULT						Load_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent, _bool bUseMainPath);
 	HRESULT						Load_Texture(const wstring& strFilePath, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent);
 
 public:

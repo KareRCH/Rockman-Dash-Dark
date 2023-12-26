@@ -205,45 +205,6 @@ void CSkinnedModelComp::Invalidate_BoneTransforms()
     return m_pSkeletalComp->Invalidate_BoneTransforms();
 }
 
-HRESULT CSkinnedModelComp::Create_Mask(const wstring& strMaskName, const wstring& strSkeletalName, _bool bInitBoneActive)
-{
-    if (!m_pAnimationComp)
-        return E_FAIL;
-
-    return m_pAnimationComp->Create_Mask(strMaskName, strSkeletalName, bInitBoneActive);
-}
-
-void CSkinnedModelComp::Deactive_BoneMask(_uint iIndex, const wstring& strBoneName)
-{
-    if (!m_pAnimationComp)
-        return;
-
-    m_pAnimationComp->Deactive_BoneMask(iIndex, strBoneName);
-}
-
-void CSkinnedModelComp::Active_BoneMask(_uint iIndex, const wstring& strBoneName)
-{
-    if (!m_pAnimationComp)
-        return;
-
-    m_pAnimationComp->Active_BoneMask(iIndex, strBoneName);
-}
-
-void CSkinnedModelComp::Set_MaskAnimation(_uint iIndex, const wstring& strAnimName)
-{
-    if (!m_pAnimationComp)
-        return;
-
-    m_pAnimationComp->Set_MaskAnimation(iIndex, strAnimName);
-}
-
-void CSkinnedModelComp::Set_MaskTime(_uint iIndex, _float fTime)
-{
-    if (!m_pAnimationComp)
-        return;
-
-    m_pAnimationComp->Set_MaskTime(iIndex, fTime);
-}
 
 HRESULT CSkinnedModelComp::Apply_Pose()
 {

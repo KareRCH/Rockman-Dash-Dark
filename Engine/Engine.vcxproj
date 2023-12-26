@@ -233,6 +233,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Public\BaseClass\Navigation.h" />
+    <ClInclude Include="Public\Component\AnimMaskComp.h" />
     <ClInclude Include="Public\Component\BoxModelComp.h" />
     <ClInclude Include="Public\Component\CommonModelComp.h" />
     <ClInclude Include="Public\Component\CylinderBufferComp.h" />
@@ -355,6 +356,7 @@
     <ClCompile Include="Private\BaseClass\Navigation.cpp" />
     <ClCompile Include="Private\BaseClass\Terrain.cpp" />
     <ClCompile Include="Private\Component\AnimationComponent.cpp" />
+    <ClCompile Include="Private\Component\AnimMaskComp.cpp" />
     <ClCompile Include="Private\Component\BoxBufferComp.cpp" />
     <ClCompile Include="Private\Component\BoxModelComp.cpp" />
     <ClCompile Include="Private\Component\CommonModelComp.cpp" />

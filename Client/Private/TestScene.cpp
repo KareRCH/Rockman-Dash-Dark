@@ -1,6 +1,6 @@
 #include "TestScene.h"
 
-#include "GameObject/TestObject.h"
+#include "GameObject/Player.h"
 #include "GameObject/DynamicCamera.h"
 #include "BaseClass/Terrain.h"
 #include "System/Define/ModelMgr_Define.h"
@@ -14,7 +14,7 @@ HRESULT CTestScene::Initialize()
     GI()->Load_Texture(L"Model/Character/Megaman/Image_%d.png", 2, true);
     GI()->Load_Model(EModelGroupIndex::Permanent, L"Model/Character/Megaman/Megaman.amodel");
 
-    GI()->Add_GameObject(CTestObject::Create(_float3(10.f, 0.f, 10.f)));
+    GI()->Add_GameObject(CPlayer::Create(_float3(10.f, 0.f, 10.f)));
     //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
     GI()->Add_GameObject(CDynamicCamera::Create());
 

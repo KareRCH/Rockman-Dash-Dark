@@ -997,12 +997,12 @@ HRESULT CGameInstance::IsReady_TextureMgr()
 	return S_OK;
 }
 
-HRESULT CGameInstance::Load_Texture(const wstring& strFileName, const _uint iNumTextures, const _bool bPermanent)
+HRESULT CGameInstance::Load_Texture(const wstring& strFileName, const _uint iNumTextures, const _bool bPermanent, const _bool bUseMainPath)
 {
 	if (nullptr == m_pTextureMgr)
 		return E_FAIL;
 
-	return m_pTextureMgr->Load_Texture(strFileName, iNumTextures, bPermanent);
+	return m_pTextureMgr->Load_Texture(strFileName, iNumTextures, bPermanent, bUseMainPath);
 }
 
 ID3D11ShaderResourceView* CGameInstance::Find_SRV(const wstring& strTextureKey, const _uint iIndex)
