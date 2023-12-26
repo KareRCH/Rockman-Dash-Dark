@@ -134,8 +134,11 @@ public:
 	// 키프레임끼리 보간, 이미 나온 키프레임 결과물에 대해 시행한다.
 	void Interpolated_KeyFrames(FKeyFrame* pKeyFrames, size_t iNumKeyFrames, FKeyFrameInterpolate* pArrInterpolate, size_t iNumInterpolates);
 	
+public:
+	const _uint& Get_NumAnims() const { return iNumAnims; }
 
 private:
+	_uint							iNumAnims;
 	_unmap<wstring, FBoneAnimData*> mapAnimDatas;	// 애니메이션 저장 맵, 키는 애니메이션 이름
 	vector<FBoneAnimData*>			vecAnimDatas;	// 애니메이션 인덱스 검색
 	

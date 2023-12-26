@@ -1,4 +1,4 @@
-#include "GameObject/TestObject.h"
+#include "GameObject/Player.h"
 
 #include "Component/TriBufferComp.h"
 #include "Component/ColorShaderComp.h"
@@ -9,18 +9,18 @@
 
 #include "System/RenderMgr.h"
 
-CTestObject::CTestObject()
+CPlayer::CPlayer()
 {
-    Set_Name(L"TestObject");
+    Set_Name(L"Player");
 }
 
-CTestObject::CTestObject(const CTestObject& rhs)
+CPlayer::CPlayer(const CPlayer& rhs)
     : Base(rhs)
     , m_pModelComp(rhs.m_pModelComp)
 {
 }
 
-HRESULT CTestObject::Initialize_Prototype()
+HRESULT CPlayer::Initialize_Prototype()
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
@@ -28,10 +28,12 @@ HRESULT CTestObject::Initialize_Prototype()
     TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
     TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
 
+    m_pModelComp->Set_Animation(0, true);
+
     return S_OK;
 }
 
-HRESULT CTestObject::Initialize_Prototype(const _float3 vPos)
+HRESULT CPlayer::Initialize_Prototype(const _float3 vPos)
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
@@ -41,33 +43,38 @@ HRESULT CTestObject::Initialize_Prototype(const _float3 vPos)
 
     Transform().Set_Position(vPos);
 
+    m_pModelComp->Set_Animation(0, true);
+
     return S_OK;
 }
 
-HRESULT CTestObject::Initialize(void* Arg)
+HRESULT CPlayer::Initialize(void* Arg)
 {
     FAILED_CHECK_RETURN(__super::Initialize(Arg), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 
+    m_pModelComp->Set_Animation(0, true);
+
     return S_OK;
 }
 
-HRESULT CTestObject::Initialize(const _float3 vPos)
+HRESULT CPlayer::Initialize(const _float3 vPos)
 {
     FAILED_CHECK_RETURN(Initialize(), E_FAIL);
 
     Transform().Set_Position(vPos);
     //Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
+    m_pModelComp->Set_Animation(0, true);
 
     return S_OK;
 }
 
-void CTestObject::Priority_Tick(const _float& fTimeDelta)
+void CPlayer::Priority_Tick(const _float& fTimeDelta)
 {
     SUPER::Priority_Tick(fTimeDelta);
 }
 
-void CTestObject::Tick(const _float& fTimeDelta)
+void CPlayer::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
@@ -96,27 +103,29 @@ void CTestObject::Tick(const _float& fTimeDelta)
         m_Gauge.Reset();
     }
 
-    /*if (GI()->IsKey_Pressed(DIK_T))
+    if (GI()->IsKey_Pressed(DIK_T))
     {
         GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
         m_bTest = !m_bTest;
-        if (m_bTest)
-            m_pModelComp->Set_MaskAnimation(0, L"Megaman|anim_000_Megaman");
+        if (!m_bTest)
+            m_pModelComp->Set_Animation(1, true);
         else
-            m_pModelComp->Set_MaskAnimation(0, L"Megaman|anim_001_Megaman");
+            m_pModelComp->Set_Animation(2, true);
     }
     
-    m_pModelComp->Set_MaskTime(0, m_Gauge.fCur);
-    m_pModelComp->Apply_Pose();
-    m_pModelComp->Invalidate_BoneTransforms();*/
+    m_pModelComp->Add_AnimTime(fTimeDelta);
+    m_pModelComp->Invalidate_Animation();
+    m_pModelComp->Invalidate_BoneTransforms();
 }
 
-void CTestObject::Late_Tick(const _float& fTimeDelta)
+void CPlayer::Late_Tick(const _float& fTimeDelta)
 {
     SUPER::Late_Tick(fTimeDelta);
+
+    m_pModelComp->Late_Tick(fTimeDelta);
 }
 
-HRESULT CTestObject::Render()
+HRESULT CPlayer::Render()
 {
     SUPER::Render();
     
@@ -125,7 +134,7 @@ HRESULT CTestObject::Render()
     return S_OK;
 }
 
-CTestObject* CTestObject::Create()
+CPlayer* CPlayer::Create()
 {
     ThisClass* pInstance = new ThisClass();
 
@@ -138,7 +147,7 @@ CTestObject* CTestObject::Create()
     return pInstance;
 }
 
-CTestObject* CTestObject::Create(const _float3 vPos)
+CPlayer* CPlayer::Create(const _float3 vPos)
 {
     ThisClass* pInstance = new ThisClass();
 
@@ -151,7 +160,7 @@ CTestObject* CTestObject::Create(const _float3 vPos)
     return pInstance;
 }
 
-CGameObject* CTestObject::Clone(void* Arg)
+CGameObject* CPlayer::Clone(void* Arg)
 {
     ThisClass* pInstance = new ThisClass(*this);
 
@@ -164,14 +173,12 @@ CGameObject* CTestObject::Clone(void* Arg)
     return Cast<CGameObject*>(pInstance);
 }
 
-void CTestObject::Free()
+void CPlayer::Free()
 {
     SUPER::Free();
-
-    Safe_Release(m_pModelComp);
 }
 
-HRESULT CTestObject::Initialize_Component()
+HRESULT CPlayer::Initialize_Component()
 {
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);

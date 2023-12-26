@@ -21,14 +21,14 @@ BEGIN(Client)
 /// <summary>
 /// 테스트용 오브젝트
 /// </summary>
-class CTestObject final : public CGameObject
+class CPlayer final : public CGameObject
 {
-	DERIVED_CLASS(CGameObject, CTestObject)
+	DERIVED_CLASS(CGameObject, CPlayer)
 
 protected:
-	explicit CTestObject();
-	explicit CTestObject(const CTestObject& rhs);
-	virtual ~CTestObject() = default;
+	explicit CPlayer();
+	explicit CPlayer(const CPlayer& rhs);
+	virtual ~CPlayer() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -41,8 +41,8 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
-	static CTestObject* Create();
-	static CTestObject* Create(const _float3 vPos);
+	static CPlayer* Create();
+	static CPlayer* Create(const _float3 vPos);
 	CGameObject* Clone(void* Arg = nullptr);
 
 protected:

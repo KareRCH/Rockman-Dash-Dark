@@ -17,23 +17,25 @@ BEGIN(Engine)
 /// </summary>
 class ENGINE_DLL CCloudStation abstract : public CBase
 {
+    DERIVED_CLASS(CBase, CCloudStation)
+
 protected:
     explicit CCloudStation();
     explicit CCloudStation(const CCloudStation& rhs);
     virtual ~CCloudStation() = default;
 
+protected:
+    virtual HRESULT     Initialize() PURE;
+
 private:
     virtual void		Free() PURE;
 
-protected:
-    virtual HRESULT     Ready_BlackBoard() PURE;
-
 public:
     void    Set_Expired() { m_bExpired = true; }
-    _bool   IsExpired() { return m_bExpired; }
+    _bool   IsExpired() const { return m_bExpired; }
 
 private:
-    _bool   m_bExpired;             // 블랙보드 만료시 모든 참조포인터들이 연결을 끊을 수 있게 해준다.
+    _bool   m_bExpired = false;             // 클라우드 스테이션 만료시 모든 참조포인터들이 연결을 끊을 수 있게 해준다.
     
 };
 

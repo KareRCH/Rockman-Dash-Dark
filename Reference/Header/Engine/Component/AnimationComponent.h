@@ -35,6 +35,15 @@ struct FAnimMask
 	
 };
 
+struct TAnimData
+{
+	_uint		iAnimID;
+	_float		fDuration;
+	_float		fTickPerSeconds;
+	_float		fTrackPos;
+	_bool		bIsLoop;
+};
+
 
 /// <summary>
 /// 애니메이션에 대한 처리를 담당하는 컴포넌트
@@ -44,7 +53,7 @@ class ENGINE_DLL CAnimationComponent final : public CInternalComponent
 {
 	DERIVED_CLASS(CInternalComponent, CAnimationComponent)
 protected:
-	explicit CAnimationComponent() = default;
+	explicit CAnimationComponent();
 	explicit CAnimationComponent(const CAnimationComponent& rhs);
 	virtual ~CAnimationComponent() = default;
 
@@ -63,16 +72,6 @@ public:
 	HRESULT Bind_BoneGroup(CBoneGroup* pBoneGroup);
 	HRESULT Load_Animations(EModelGroupIndex eGroupIndex, const wstring& strModelFilePath);
 
-	// 마스크 생성
-	HRESULT Create_Mask(const wstring& strMaskName, const wstring& strSkeletalName, _bool bInitBoneActive);
-	FAnimMask* Get_Mask(_uint iIndex);
-
-	void Deactive_BoneMask(_uint iIndex, const wstring& strBoneName);
-	void Active_BoneMask(_uint iIndex, const wstring& strBoneName);
-
-	void Set_MaskAnimation(_uint iIndex, const wstring& strAnimName);
-	void Set_MaskTime(_uint iIndex, _float fTime);
-
 	// 해당 마스크에 현재 재생 프레임을 전달하여, 적용될 애니메이션 시간을 정한다.
 	void Apply_MaskTime(_uint iIndex, const wstring& strAnimName, _float fCurTime);
 	void Apply_MaskTime(const wstring& strMaskName, const wstring& strAnimName, _float fCurTime);
@@ -80,11 +79,26 @@ public:
 	// 마스크에 적용되어 있는 값에 따라 각 뼈에 대한 가중치를 계산해낸다.
 	void Apply_FinalMask();
 
+public:
+	CBoneGroup* const		Get_BoneGroup() const { return m_pBoneGroup; }
+	CBoneAnimGroup* const	Get_AnimGroup() const { return m_pAnimGroup; }
+
 private:
 	CBoneGroup*			m_pBoneGroup = { nullptr };
 	CBoneAnimGroup*		m_pAnimGroup = { nullptr };		// 단 하나의 뼈에 대한 애니메이션 정보를 가진다.
 														// 이 녀석이 설정되어 있어야 기능을 할 수 있다.
+
+public:
+	void Set_Animation(_uint iAnimIndex, _bool bIsLoop);
+	void Add_AnimTime(const _float& fTimeDelta);
+	void Invalidate_Animation();
+	void Invalidate_AnimationWithMask(class CAnimMaskComp* pAnimMaskComp);
 	
+private:
+	TAnimData			m_CurAnim = {};
+	TAnimData			m_PrevAnim = {};
+	_float				m_fTransitionSpeed;
+	_float				m_fTransitionGauge;
 	vector<FAnimMask>	m_vecAnimMask;					// 애니메이션이 적용되는 마스크, 기본적으로 0번 마스크에 적용되어 작동한다.
 };
 

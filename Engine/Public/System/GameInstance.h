@@ -238,12 +238,12 @@ public:		// 블랙보드 매니저
 public:		// 텍스처 매니저
 	HRESULT						Initialize_TextureMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
 	HRESULT						IsReady_TextureMgr();
-	HRESULT						Load_Texture(const wstring& strFileName, const _uint iNumTextures, const _bool bPermanent);
+	HRESULT						Load_Texture(const wstring& strFileName, const _uint iNumTextures, const _bool bPermanent, const _bool bUseMainPath = true);
 	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey, const _uint iIndex = 0);
 	const wstring				Get_TextureMainPath();
 
 private:
-	class CTextureMgr* Get_TextureMgr();
+	class CTextureMgr*			Get_TextureMgr();
 #pragma endregion
 
 

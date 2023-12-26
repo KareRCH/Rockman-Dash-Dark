@@ -77,7 +77,7 @@ HRESULT CTextureComponent::Get_ShaderResourceViews(ID3D11ShaderResourceView** Ar
 	return S_OK;
 }
 
-HRESULT CTextureComponent::Bind_Texture(const wstring& strFilePath, const _uint iNumTextures)
+HRESULT CTextureComponent::Bind_Texture(const wstring& strFilePath, const _uint iNumTextures, _bool bUseMainPath)
 {
 	if (iNumTextures == 0)
 	{
@@ -90,7 +90,7 @@ HRESULT CTextureComponent::Bind_Texture(const wstring& strFilePath, const _uint 
 		return E_FAIL;
 
 	// 실패시 이미 있다는 거니 찾는다.
-	if (FAILED(m_pTextureMgr->Load_Texture(strFilePath, iNumTextures, false)))
+	if (FAILED(m_pTextureMgr->Load_Texture(strFilePath, iNumTextures, false, bUseMainPath)))
 	{
 		// 로드 실패하면 그냥 밑으로 내려가서 찾는거다.
 	}

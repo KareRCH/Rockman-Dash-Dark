@@ -54,6 +54,8 @@ void CCommonModelComp::Late_Tick(const _float& fTimeDelta)
 {
 	SUPER::Late_Tick(fTimeDelta);
 
+	if (nullptr != m_pSkeletalComp)
+		m_pSkeletalComp->Invalidate_BoneTransforms();
 }
 
 HRESULT CCommonModelComp::Render()
@@ -211,6 +213,30 @@ void CCommonModelComp::Apply_Pos()
 		return;
 
 	m_pAnimationComp->Apply_FinalMask();
+}
+
+void CCommonModelComp::Set_Animation(_uint iAnimIndex, _bool bIsLoop)
+{
+	if (nullptr == m_pAnimationComp)
+		return;
+
+	m_pAnimationComp->Set_Animation(iAnimIndex, bIsLoop);
+}
+
+void CCommonModelComp::Add_AnimTime(const _float& fTimeDelta)
+{
+	if (nullptr == m_pAnimationComp)
+		return;
+
+	m_pAnimationComp->Add_AnimTime(fTimeDelta);
+}
+
+void CCommonModelComp::Invalidate_Animation()
+{
+	if (nullptr == m_pAnimationComp)
+		return;
+
+	m_pAnimationComp->Invalidate_Animation();
 }
 
 void CCommonModelComp::Invalidate_BoneTransforms()

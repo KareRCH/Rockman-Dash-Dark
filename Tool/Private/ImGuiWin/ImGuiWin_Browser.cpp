@@ -137,7 +137,7 @@ void CImGuiWin_Browser::Handle_PlacePicked(_float3 vPickedWorldPos)
 	switch (m_iSelected_Object)
 	{
 	case 0:
-		GI()->Add_GameObject(pAddedObject = CTestObject::Create(vPickedWorldPos));
+		GI()->Add_GameObject(pAddedObject = CPlayer::Create(vPickedWorldPos));
 		break;
 	}
 	

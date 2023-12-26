@@ -394,6 +394,7 @@ void CBoneAnimGroup::Add_BoneAnim(const wstring& strAnimKey, FBoneAnimData* pAni
 
 	mapAnimDatas.emplace(strAnimKey, pAnimData);
 	vecAnimDatas.push_back(pAnimData);
+	++iNumAnims;
 }
 
 FKeyFrame CBoneAnimGroup::Interpolated_Anim(const _uint iAnimIndex, const _uint iChannelIndex, const _float& fCurTrackPos) const

@@ -50,7 +50,7 @@ public:
 
 public:
 	// 텍스처를 바인드한다. 동시에 텍스처 매니저에 등록도 한다. [완]
-	HRESULT Bind_Texture(const wstring& strFilePath, const _uint iNumTextures = 1);
+	HRESULT Bind_Texture(const wstring& strFilePath, const _uint iNumTextures = 1, _bool bUseMainPath = true);
 	// 텍스처 정리하기 [완]
 	HRESULT Unbind_Texture();
 

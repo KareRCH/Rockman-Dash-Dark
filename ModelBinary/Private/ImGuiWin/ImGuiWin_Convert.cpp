@@ -679,7 +679,7 @@ HRESULT CImGuiWin_Convert::Save_Binary(const wstring& strPath, class CModelLoad*
             for (_uint j = 0; j < iNumTexures; j++)
             {
                 // 텍스처 이름
-                _uint iStrLength = Cast<_uint>(Mat.strTextures->length());
+                _uint iStrLength = Cast<_uint>(Mat.strTextures[j].length());
                 ofs.write(ReCast<const _char*>(&iStrLength), sizeof(_uint));
                 if (iStrLength > 0)
                     ofs.write(ReCast<const _char*>(Mat.strTextures[j].data()), sizeof(_tchar) * (iStrLength + 1));
