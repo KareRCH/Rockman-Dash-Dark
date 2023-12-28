@@ -16,13 +16,20 @@ BEGIN(Engine)
 class ENGINE_DLL CNavigationComponent final : public CPrimitiveComponent
 {
 	DERIVED_CLASS(CPrimitiveComponent, CNavigationComponent)
+
+public:
+	struct TCloneDesc
+	{
+		_uint iCurrentInex;
+	};
+
 protected:
-	explicit CNavigationComponent() = default;
+	explicit CNavigationComponent();
 	explicit CNavigationComponent(const CNavigationComponent& rhs);
 	virtual ~CNavigationComponent() = default;
 
 public:
-	virtual HRESULT	Initialize_Prototype(void* Arg) override { return S_OK; }
+	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT	Initialize_Prototype(const wstring& strNavigationFilePath);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
@@ -31,11 +38,18 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	static CNavigationComponent*	Create();
 	static CNavigationComponent*	Create(const wstring& strNavigationFilePath);
 	virtual CComponent*				Clone(void* Arg = nullptr) override;
 
 protected:
 	virtual void					Free() override;
+
+
+public:
+	HRESULT Load_NavigationFromFile(const wstring& strNavigationFilePath);
+	HRESULT Make_Neighbors();
+	_bool	IsMove(_fvector vPosition);
 
 
 private:
@@ -49,6 +63,7 @@ private:
 #ifdef _DEBUG
 private:
 	class CEffectComponent* m_pEffectComp = { nullptr };
+	class CPipelineComp* m_pPipelineComp = { nullptr };
 #endif // _DEBUG
 
 };

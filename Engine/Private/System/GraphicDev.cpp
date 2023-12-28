@@ -101,8 +101,6 @@ CGraphicDev* CGraphicDev::Create(const FDEVICE_INIT& tInit)
     {
         MSG_BOX("CGraphicDev Create Failed");
         Engine::Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -131,7 +129,6 @@ void CGraphicDev::Free()
     m_pDevice.Reset();
     m_pSwapChain.Reset();
     m_pDxgiDevice.Reset();
-
 
 
 #ifdef _DEBUG

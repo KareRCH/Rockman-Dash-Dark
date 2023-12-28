@@ -28,19 +28,36 @@ private:
     virtual void		            Free();
 
 
-private:    // 범용
+private:    // 현재 상태
     FGauge      m_fHP;
     FGauge      m_fSubWeapon_Main;
     FGauge      m_fSubWeapon_Usage;
 
-private:    // 인벤토리
-    vector<_uint>       m_vecKeyItems;
+    _int            m_iSubWeapon_Equipped = { -1 };
+    _int            m_iHeadPart_Equipped = { -1 };
+    _int            m_iBodyPart_Equipped = { -1 };
+    _int            m_iFootPart_Equipped = { -1 };
+    vector<_uint>   m_vecBusterPart_Equipped;
 
-    vector<_uint>       m_vecHeadParts;
-    vector<_uint>       m_vecBodyParts;
-    vector<_uint>       m_vecFootParts;
+private:    // 인벤토리
+    vector<_uint>       m_vecUseItems;      // 사용 아이템
+    vector<_uint>       m_vecSomeItems;     // 기타 아이템
+    vector<_uint>       m_vecKeyItems;      // 키 아이템
+
+    vector<_uint>       m_vecHeadParts;     // 헤드 파츠
+    vector<_uint>       m_vecBodyParts;     // 바디 파츠
+    vector<_uint>       m_vecFootParts;     // 풋 파츠
     
-    vector<_uint>       m_vecBusterParts;
+    vector<_uint>       m_vecBusterParts;   // 버스터 파츠
+
+private:    // 돈
+    _uint       m_iMoney = { 0 };
+
+private:    // 위치 정보
+    wstring       m_strWorld;
+    wstring       m_strLocation;
+
+
 };
 
 END

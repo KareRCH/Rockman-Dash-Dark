@@ -1,4 +1,4 @@
-#include "GameObject/ItemChest.h"
+#include "GameObject/ReaverBot_Horokko.h"
 
 #include "Component/TriBufferComp.h"
 #include "Component/ColorShaderComp.h"
@@ -7,17 +7,16 @@
 #include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
 
-
-CItemChest::CItemChest()
+CReaverBot_Horokko::CReaverBot_Horokko()
 {
 	Set_Name(TEXT("ItemChest"));
 }
 
-CItemChest::CItemChest(const CItemChest& rhs)
+CReaverBot_Horokko::CReaverBot_Horokko(const CReaverBot_Horokko& rhs)
 {
 }
 
-HRESULT CItemChest::Initialize_Prototype()
+HRESULT CReaverBot_Horokko::Initialize_Prototype()
 {
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
@@ -27,7 +26,7 @@ HRESULT CItemChest::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CItemChest::Initialize_Prototype(const _float3 vPos)
+HRESULT CReaverBot_Horokko::Initialize_Prototype(const _float3 vPos)
 {
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
@@ -40,32 +39,32 @@ HRESULT CItemChest::Initialize_Prototype(const _float3 vPos)
 	return S_OK;
 }
 
-HRESULT CItemChest::Initialize(void* Arg)
+HRESULT CReaverBot_Horokko::Initialize(void* Arg)
 {
 	return S_OK;
 }
 
-HRESULT CItemChest::Initialize(const _float3 vPos)
+HRESULT CReaverBot_Horokko::Initialize(const _float3 vPos)
 {
 	Transform().Set_Position(vPos);
 
 	return S_OK;
 }
 
-void CItemChest::Priority_Tick(const _float& fTimeDelta)
+void CReaverBot_Horokko::Priority_Tick(const _float& fTimeDelta)
 {
 	SUPER::Priority_Tick(fTimeDelta);
 
 }
 
-void CItemChest::Tick(const _float& fTimeDelta)
+void CReaverBot_Horokko::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
 
 	if (GI()->IsKey_Pressed(DIK_R))
 	{
 		++m_iTest;
-		if (m_iTest > 3)
+		if (m_iTest > 7)
 			m_iTest = 0;
 
 		m_pModelComp->Set_Animation(m_iTest, 1.f, true);
@@ -76,14 +75,14 @@ void CItemChest::Tick(const _float& fTimeDelta)
 	m_pModelComp->Invalidate_BoneTransforms();
 }
 
-void CItemChest::Late_Tick(const _float& fTimeDelta)
+void CReaverBot_Horokko::Late_Tick(const _float& fTimeDelta)
 {
 	SUPER::Late_Tick(fTimeDelta);
 
 	m_pModelComp->Late_Tick(fTimeDelta);
 }
 
-HRESULT CItemChest::Render()
+HRESULT CReaverBot_Horokko::Render()
 {
 	SUPER::Render();
 
@@ -92,7 +91,7 @@ HRESULT CItemChest::Render()
 	return S_OK;
 }
 
-CItemChest* CItemChest::Create()
+CReaverBot_Horokko* CReaverBot_Horokko::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -105,7 +104,7 @@ CItemChest* CItemChest::Create()
 	return pInstance;
 }
 
-CItemChest* CItemChest::Create(const _float3 vPos)
+CReaverBot_Horokko* CReaverBot_Horokko::Create(const _float3 vPos)
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -118,7 +117,7 @@ CItemChest* CItemChest::Create(const _float3 vPos)
 	return pInstance;
 }
 
-CGameObject* CItemChest::Clone(void* Arg)
+CGameObject* CReaverBot_Horokko::Clone(void* Arg)
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
@@ -131,18 +130,18 @@ CGameObject* CItemChest::Clone(void* Arg)
 	return Cast<CGameObject*>(pInstance);
 }
 
-void CItemChest::Free()
+void CReaverBot_Horokko::Free()
 {
 	SUPER::Free();
 }
 
-HRESULT CItemChest::Initialize_Component()
+HRESULT CReaverBot_Horokko::Initialize_Component()
 {
 	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
 
-	m_pModelComp->Transform().Set_Scale(_float3(0.3f, 0.3f, 0.3f));
+	m_pModelComp->Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
-	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Object/Chest/Chest.amodel");
+	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Horokko/Horokko.amodel");
 
 	return S_OK;
 }

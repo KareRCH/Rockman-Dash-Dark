@@ -65,12 +65,16 @@ void CObjectMgr::Free()
 	m_mapPrototypes.clear();
 }
 
-HRESULT CObjectMgr::Add_Prototype(const wstring& strPrototypeKey, CGameObject* pPrototype)
+HRESULT CObjectMgr::Add_Prototype(const wstring& strTag, const wstring& strPrototypeKey, CGameObject* pPrototype)
 {
 	if (nullptr == pPrototype ||
 		nullptr != Find_Prototype(strPrototypeKey))
+	{
+		Safe_Release(pPrototype);
 		return E_FAIL;
+	}
 
+	pPrototype->Add_Tag(EGObjTag::Level, strTag);
 	m_mapPrototypes.emplace(strPrototypeKey, pPrototype);
 
 	return S_OK;
@@ -160,11 +164,17 @@ CGameObject* CObjectMgr::Find_GameObjectByID(_uint iFindID)
 	if (iFindID > iMaxID)
 		return nullptr;
 
-	auto iter = lower_bound(m_vecGameObjects.begin(), m_vecGameObjects.end(), iFindID, 
-		[&iFindID](CGameObject* pObj, _uint iID) {
+	/*auto iter = find_if(m_vecGameObjects.begin(), m_vecGameObjects.end(),
+		[&iFindID](const CGameObject* pObj) {
 			if (pObj == nullptr)
 				return false;
-			return (pObj->Get_ID() == iID);
+			return (pObj->Get_ID() == iFindID);
+		});*/
+	auto iter = lower_bound(m_vecGameObjects.begin(), m_vecGameObjects.end(), iFindID, 
+		[](const CGameObject* pObj, _uint iID) {
+			if (pObj == nullptr)
+				return false;
+			return (pObj->Get_ID() < iID);
 		});
 	if (iter == m_vecGameObjects.end())
 		return nullptr;
@@ -178,6 +188,20 @@ CGameObject* CObjectMgr::Find_GameObjectByIndex(_uint iIndex)
 		return nullptr;
 
 	return m_vecGameObjects[iIndex];
+}
+
+CGameObject* CObjectMgr::Find_GameObjectByName(const wstring& strName)
+{
+	auto iter = find_if(m_vecGameObjects.begin(), m_vecGameObjects.end(),
+		[&strName](const CGameObject* pObj) {
+			if (pObj == nullptr)
+				return false;
+			return (pObj->Get_Name() == strName);
+		});
+	if (iter == m_vecGameObjects.end())
+		return nullptr;
+
+	return *iter;
 }
 
 void CObjectMgr::Clear_GameObject(const wstring& strLevelTag)

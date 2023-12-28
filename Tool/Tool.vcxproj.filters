@@ -149,9 +149,6 @@
     <ClCompile Include="Private\Level\Level_MapTool.cpp">
       <Filter>02. Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\Client\Private\GameObject\TestObject.cpp">
-      <Filter>98 Client</Filter>
-    </ClCompile>
     <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp">
       <Filter>98 Client</Filter>
     </ClCompile>
@@ -169,6 +166,15 @@
     </ClCompile>
     <ClCompile Include="Private\ImGuiWin\ImGuiMgr.cpp">
       <Filter>01. ImGuiWin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\ItemChest.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Player.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Horokko.cpp">
+      <Filter>98 Client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

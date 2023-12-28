@@ -122,8 +122,8 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
         return E_FAIL;
     if (FAILED(m_pTextureComps[TYPE_DIFFUSE]->Bind_SRVToEffect(m_pEffectComp, "g_DiffuseTexture", 0)))
         return E_FAIL;
-    if (FAILED(m_pTextureComps[TYPE_MASK]->Bind_SRVToEffect(m_pEffectComp, "g_MaskTexture", 0)))
-        return E_FAIL;
+    /*if (FAILED(m_pTextureComps[TYPE_MASK]->Bind_SRVToEffect(m_pEffectComp, "g_MaskTexture", 0)))
+        return E_FAIL;*/
     if (FAILED(m_pTextureComps[TYPE_BRUSH]->Bind_SRVToEffect(m_pEffectComp, "g_BrushTexture", 0)))
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_RawValue("g_vCamPosition", &(vTemp = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))

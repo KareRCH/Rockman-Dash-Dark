@@ -49,8 +49,8 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDevi
 	FAILED_CHECK_RETURN(Initialize_CloudStationMgr(), E_FAIL);
 
 	FAILED_CHECK_RETURN(Initialize_ComponentMgr(), E_FAIL);
-	Add_PrototypeComp(L"GraphicDevComp", CD3D11DeviceComp::Create());
-	Add_PrototypeComp(L"CamViewComp", CPipelineComp::Create());
+	Add_PrototypeComp(TEXT("System"), TEXT("GraphicDevComp"), CD3D11DeviceComp::Create());
+	Add_PrototypeComp(TEXT("System"), TEXT("CamViewComp"), CPipelineComp::Create());
 
 	FAILED_CHECK_RETURN(Initialize_ObjectMgr(), E_FAIL);
 	
@@ -880,12 +880,12 @@ void CGameInstance::Late_Tick_Object(const _float& fTimeDelta)
 	m_pObjectMgr->Late_Tick(fTimeDelta);
 }
 
-HRESULT CGameInstance::Add_PrototypeObject(const wstring& strPrototypeKey, CGameObject* pPrototype)
+HRESULT CGameInstance::Add_PrototypeObject(const wstring& strTag, const wstring& strPrototypeKey, CGameObject* pPrototype)
 {
 	if (nullptr == m_pObjectMgr)
 		return E_FAIL;
 
-	return m_pObjectMgr->Add_CloneObject(strPrototypeKey, pPrototype);
+	return m_pObjectMgr->Add_Prototype(strTag, strPrototypeKey, pPrototype);
 }
 
 HRESULT CGameInstance::Add_CloneObject(const wstring& strPrototypeKey, void* pArg)
@@ -942,6 +942,14 @@ CGameObject* CGameInstance::Find_GameObjectByIndex(_uint iIndex)
 		return nullptr;
 
 	return m_pObjectMgr->Find_GameObjectByIndex(iIndex);
+}
+
+CGameObject* CGameInstance::Find_GameObjectByName(const wstring& strName)
+{
+	if (nullptr == m_pObjectMgr)
+		return nullptr;
+
+	return m_pObjectMgr->Find_GameObjectByName(strName);
 }
 
 void CGameInstance::Clear_GameObject(const wstring& strLayerTag)
@@ -1045,12 +1053,12 @@ HRESULT CGameInstance::Initialize_ComponentMgr()
 	return S_OK;
 }
 
-HRESULT CGameInstance::Add_PrototypeComp(const wstring& strProtoKey, CComponent* pPrototype)
+HRESULT CGameInstance::Add_PrototypeComp(const wstring& strTag, const wstring& strProtoKey, CComponent* pPrototype)
 {
 	if (nullptr == m_pComponentMgr)
 		return E_FAIL;
 
-	return m_pComponentMgr->Add_Prototype(strProtoKey, pPrototype);
+	return m_pComponentMgr->Add_Prototype(strTag, strProtoKey, pPrototype);
 }
 
 CComponent* CGameInstance::Clone_PrototypeComp(const wstring& strProtoKey, void* pArg)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ModelComponent.h"
+#include "Component/AnimationComponent.h"
 
 BEGIN(Engine)
 
@@ -47,7 +48,7 @@ public:
 	HRESULT Bind_Model(TYPE eType, EModelGroupIndex eGroupIndex, const wstring& strModelFilePath);
 	void Add_MaskTime(_uint iIndex, _float fAddTrackPos);
 	void Apply_Pos();
-	void Set_Animation(_uint iAnimIndex, _bool bIsLoop);
+	void Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse = false);
 	void Add_AnimTime(const _float& fTimeDelta);
 	void Invalidate_Animation();
 	void Invalidate_BoneTransforms();
@@ -75,9 +76,11 @@ private:		// 뼈 관련
 	class CSkeletalComponent*			m_pSkeletalComp = { nullptr };
 
 
+public:
+	CAnimationComponent* AnimationComp() { return m_pAnimationComp; }
 
 private:		// 애니메이션 관련
-	class CAnimationComponent*			m_pAnimationComp = { nullptr };
+	CAnimationComponent*			m_pAnimationComp = { nullptr };
 
 
 #pragma region 뼈와 함께 셰이딩 되는 셰이더

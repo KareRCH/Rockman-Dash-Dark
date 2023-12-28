@@ -93,22 +93,23 @@ HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const _uint iNumTex
 		file.close();
 	}
 
+	HRESULT hr = S_OK;
+	hr = CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
+	if (FAILED(hr))
+	{
+		CoUninitialize();
+		return E_FAIL;
+	}
+
 	m_vecSRV.reserve(iNumTextures);
 	for (_uint i = 0; i < iNumTextures; i++)
 	{
 		// 텍스처 로드
 		ScratchImage image;
-		HRESULT hr = S_OK;
-		hr = CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
-		if (FAILED(hr))
-		{
-			CoUninitialize();
-			return E_FAIL;
-		}
+		TexMetadata Metadata = {};
 
 		size_t iSubstrPoint = vecStrFullPath[i].find_last_of(TEXT("."));
 		wstring strEXT = vecStrFullPath[i].substr(iSubstrPoint);
-		TexMetadata* pMetadata = { nullptr };
 
 		if (strEXT == TEXT(".dds"))
 		{
@@ -121,7 +122,7 @@ HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const _uint iNumTex
 		}
 		else if (strEXT.compare(TEXT(".png")) || strEXT.compare(TEXT(".bmp")))
 		{
-			hr = LoadFromWICFile((vecStrFullPath[i]).c_str(), WIC_FLAGS_NONE, pMetadata, image);
+ 			hr = LoadFromWICFile((vecStrFullPath[i]).c_str(), WIC_FLAGS_NONE, &Metadata, image);
 			if (FAILED(hr))
 			{
 				CoUninitialize();
@@ -130,7 +131,7 @@ HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const _uint iNumTex
 		}
 		else if (strEXT.compare(TEXT(".tga")))
 		{
-			hr = LoadFromTGAFile((vecStrFullPath[i]).c_str(), pMetadata, image);
+			hr = LoadFromTGAFile((vecStrFullPath[i]).c_str(), &Metadata, image);
 			if (FAILED(hr))
 			{
 				CoUninitialize();

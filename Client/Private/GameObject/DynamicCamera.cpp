@@ -15,12 +15,21 @@ HRESULT CDynamicCamera::Initialize_Prototype()
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 
+    m_pTarget = GI()->Find_GameObjectByName(TEXT("Player"));
+    Safe_AddRef(m_pTarget);
+
     Transform().Set_Position(_float3(6.f, 4.f, 6.f));
-    m_vAt = _float3(10.f, 0.f, 10.f);
+    XMStoreFloat3(&m_vAt, m_pTarget->Transform().Get_PositionVector() + XMVectorSet(0.f, 1.f, 0.f, 0.f));
     _matrix matTransform = XMMatrixInverse(nullptr, 
         XMMatrixLookAtLH(Transform().Get_PositionVector(), XMLoadFloat3(&m_vAt), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
     Transform().Set_Transform(matTransform);
     Apply_ViewProjMatrix();
+
+
+
+    GI()->Toggle_LockMouseCenter();
+
+    
 
     return S_OK;
 }
@@ -44,26 +53,40 @@ void CDynamicCamera::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
-    if (GI()->IsKey_Pressing(DIK_W))
-        Transform().MoveForward(5.f * fTimeDelta);
-    else if (GI()->IsKey_Pressing(DIK_S))
-        Transform().MoveForward(-5.f * fTimeDelta);
+    if (nullptr != m_pTarget)
+    {
+        //Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
+        //Transform().TurnUp(Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 0.1f * fTimeDelta);
 
-    if (GI()->IsKey_Pressing(DIK_D))
-        Transform().MoveRightward(5.f * fTimeDelta);
-    else if (GI()->IsKey_Pressing(DIK_A))
-        Transform().MoveRightward(-5.f * fTimeDelta);
+        m_fVerticalAngle += Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 2.f * fTimeDelta;
+        if (m_fVerticalAngle < -60.f)
+            m_fVerticalAngle = -60.f;
+        else if (m_fVerticalAngle > 60.f)
+            m_fVerticalAngle = 60.f;
 
-    if (GI()->IsKey_Pressing(DIK_E))
-        Transform().MoveUpward(5.f * fTimeDelta);
-    else if (GI()->IsKey_Pressing(DIK_Q))
-        Transform().MoveUpward(-5.f * fTimeDelta);
+        _vector vLook = m_pTarget->Transform().Get_PositionVector() - Transform().Get_PositionVector();
+        _vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+        _vector vRight = Transform().Get_RightVector();
+        // 거리는 각도에 따라 결정
+        _float  fLength = 2.f * (1.f + ((m_fVerticalAngle + 20.f) / 60.f));
+        
+        vLook = XMVector3Normalize(vLook);
+        vRight = XMVector3Normalize(vRight);
+
+        vLook = XMVector3Rotate(vLook, XMQuaternionRotationAxis(vRight, XMConvertToRadians(m_fVerticalAngle)));
+        //vLook = XMVector3Rotate(vLook, XMQuaternionRotationAxis(vUp, XMConvertToRadians(m_fVerticalAngle)));
+
+        vLook *= fLength;
+
+        Transform().Set_Position(m_pTarget->Transform().Get_PositionVector() - vLook + XMVectorSet(0.f, 1.f, 0.f, 0.f));
+        XMStoreFloat3(&m_vAt, m_pTarget->Transform().Get_PositionVector() + XMVectorSet(0.f, 1.f, 0.f, 0.f));
+        _matrix matTransform = XMMatrixInverse(nullptr,
+            XMMatrixLookAtLH(Transform().Get_PositionVector(), XMLoadFloat3(&m_vAt), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+        Transform().Set_Transform(matTransform);
+    }
 
     if (GI()->IsKey_Pressed(DIK_F3))
         GI()->Toggle_LockMouseCenter();
-
-    Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
-    Transform().TurnUp(Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 0.1f * fTimeDelta);
 
     // 현재 카메라의 상태를 통해 전역 카메라 행렬을 업데이트 한다.
     Apply_ViewProjMatrix();
@@ -89,8 +112,6 @@ CDynamicCamera* CDynamicCamera::Create()
     {
         MSG_BOX("DynamicCamera Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -104,8 +125,6 @@ CGameObject* CDynamicCamera::Clone(void* Arg)
     {
         MSG_BOX("DynamicCamera Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     /* Arg 처리 */
@@ -116,4 +135,6 @@ CGameObject* CDynamicCamera::Clone(void* Arg)
 void CDynamicCamera::Free()
 {
     SUPER::Free();
+
+    Safe_Release(m_pTarget);
 }

@@ -6,6 +6,7 @@
 #include "Component/ModelShaderComp.h"
 #include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
+#include "Component/NavigationComponent.h"
 
 #include "System/RenderMgr.h"
 
@@ -28,7 +29,7 @@ HRESULT CPlayer::Initialize_Prototype()
     TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
     TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
 
-    m_pModelComp->Set_Animation(0, true);
+    m_pModelComp->Set_Animation(0, 1.f, true);
 
     return S_OK;
 }
@@ -42,8 +43,19 @@ HRESULT CPlayer::Initialize_Prototype(const _float3 vPos)
     TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
 
     Transform().Set_Position(vPos);
+    m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, 10.f, 6.f };
+    m_vAcceleration = { 100.f, g_fGravity, 100.f };
 
-    m_pModelComp->Set_Animation(0, true);
+    m_pModelComp->Set_Animation(0, 1.f, true);
+
+    m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
+    m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
+    m_State_Act.Add_Func(EState_Act::Walk, &ThisClass::ActState_Walk);
+    m_State_Act.Add_Func(EState_Act::Ready_Jump, &ThisClass::ActState_Ready_Jump);
+    m_State_Act.Add_Func(EState_Act::Jump_Up, &ThisClass::ActState_Jump_Up);
+    m_State_Act.Add_Func(EState_Act::Jump_Down, &ThisClass::ActState_Jump_Down);
+    m_State_Act.Add_Func(EState_Act::Landing, &ThisClass::ActState_Landing);
+    m_State_Act.Add_Func(EState_Act::Buster, &ThisClass::ActState_Buster);
 
     return S_OK;
 }
@@ -53,7 +65,7 @@ HRESULT CPlayer::Initialize(void* Arg)
     FAILED_CHECK_RETURN(__super::Initialize(Arg), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 
-    m_pModelComp->Set_Animation(0, true);
+    m_pModelComp->Set_Animation(0, 1.f, true);
 
     return S_OK;
 }
@@ -63,8 +75,10 @@ HRESULT CPlayer::Initialize(const _float3 vPos)
     FAILED_CHECK_RETURN(Initialize(), E_FAIL);
 
     Transform().Set_Position(vPos);
-    //Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
-    m_pModelComp->Set_Animation(0, true);
+    m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, g_fGravity, 6.f };
+    m_vAcceleration = { 100.f, g_fGravity, 100.f };
+    
+    m_pModelComp->Set_Animation(0, 1.f, true);
 
     return S_OK;
 }
@@ -78,40 +92,8 @@ void CPlayer::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
-    if (GI()->IsKey_Pressing(DIK_UP))
-        Transform().MoveForward(5.f * fTimeDelta);
-    else if (GI()->IsKey_Pressing(DIK_DOWN))
-        Transform().MoveForward(-5.f * fTimeDelta);
+    m_State_Act.Get_StateFunc()(this, fTimeDelta);
 
-    if (GI()->IsKey_Pressing(DIK_RIGHT))
-        Transform().TurnRight(5.f * fTimeDelta);
-    else if (GI()->IsKey_Pressing(DIK_LEFT))
-        Transform().TurnRight(-5.f * fTimeDelta);
-
-    if (GI()->IsKey_Pressed(DIK_RETURN))
-        Toggle_State(EGObjectState::Render);
-    if (GI()->IsKey_Pressed(DIK_BACK))
-        Set_Dead();
-    
-    Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
-    
-    _float3 t = Transform().Get_RotationEulerFloat3();
-
-    if (m_Gauge.Increase(fTimeDelta))
-    {
-        
-        m_Gauge.Reset();
-    }
-
-    if (GI()->IsKey_Pressed(DIK_T))
-    {
-        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
-        m_bTest = !m_bTest;
-        if (!m_bTest)
-            m_pModelComp->Set_Animation(1, true);
-        else
-            m_pModelComp->Set_Animation(2, true);
-    }
     
     m_pModelComp->Add_AnimTime(fTimeDelta);
     m_pModelComp->Invalidate_Animation();
@@ -183,6 +165,8 @@ HRESULT CPlayer::Initialize_Component()
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
+    m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
+    m_pModelComp->Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
     m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
     m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Megaman/Megaman.amodel");
 
@@ -194,6 +178,299 @@ HRESULT CPlayer::Initialize_Component()
 
     m_pModelComp->Active_BoneMask(2, L"bone_000");*/
 
+    CNavigationComponent::TCloneDesc tDesc = { 0 };
+    FAILED_CHECK_RETURN(Add_Component(L"Navigation", 
+        m_pNaviComp = Cast<CNavigationComponent*>(GI()->Clone_PrototypeComp(TEXT("Prototype_Component_Navigation"), VPCast(&tDesc)))), E_FAIL);
+
 
     return S_OK;
+}
+
+void CPlayer::Move_Update(const _float& fTimeDelta)
+{
+    _float3 vfPos = Transform().Get_PositionFloat3();
+    _vector vPos = Transform().Get_PositionVector();
+
+
+    m_vVelocity.y -= m_vAcceleration.y * fTimeDelta;
+    vfPos.y += m_vVelocity.y * fTimeDelta;
+    if (vfPos.y <= 0.f)
+    {
+        vfPos.y = 0.f;
+        m_bIsOnGround = true;
+    }
+    else
+        m_bIsOnGround = false;
+
+    Transform().Set_PositionY(vfPos.y);
+
+    m_bIsMoving = false;
+    m_vLookDirection = {};
+    if (GI()->IsKey_Pressing(DIK_W))
+    {
+        m_vLookDirection.z = 1.f;
+        m_vVelocity.z += m_vAcceleration.z * fTimeDelta;
+        m_bIsMoving = true;
+    }
+    else if (GI()->IsKey_Pressing(DIK_S))
+    {
+        m_vLookDirection.z = -1.f;
+        m_vVelocity.z -= m_vAcceleration.z * fTimeDelta;
+        m_bIsMoving = true;
+    }
+    else
+    {
+        if (m_bIsOnGround)
+            m_vVelocity.z *= 0.5f;
+        else
+            m_vVelocity.z *= 0.998f;
+    }
+
+    if (GI()->IsKey_Pressing(DIK_D))
+    {
+        m_vLookDirection.x = 1.f;
+        m_vVelocity.x += m_vAcceleration.x * fTimeDelta;
+        m_bIsMoving = true;
+    }
+    else if (GI()->IsKey_Pressing(DIK_A))
+    {
+        m_vLookDirection.x = -1.f;
+        m_vVelocity.x -= m_vAcceleration.x * fTimeDelta;
+        m_bIsMoving = true;
+    }
+    else
+    {
+        if (m_bIsOnGround)
+            m_vVelocity.x *= 0.5f;
+        else
+            m_vVelocity.z *= 0.998f;
+    }
+
+    /*_vector vMoveDir = XMVector3Normalize(XMLoadFloat3(&m_vLookDirection));
+    _vector vCurMoveDir = XMVector3Normalize(XMLoadFloat3(&m_vLookDirection_Blend));
+    _float fObjAngle = XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), vMoveDir));
+    _float fCurAngle = XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), vCurMoveDir));
+    _vector vObjRotate = XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), fObjAngle);
+    _vector vCurRotate = XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), fCurAngle);
+    _vector vBlended_Rotate = XMQuaternionSlerp(vObjRotate, vCurRotate, 0.5f);
+    _float fFinalAngle = acosf(XMVectorGetX(XMVector4Dot(vCurRotate, vBlended_Rotate)));
+    vCurMoveDir = XMVector3Rotate(vCurMoveDir, XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), fFinalAngle));
+    XMStoreFloat3(&m_vLookDirection_Blend, vCurMoveDir);*/
+
+    Transform().TurnAxis(_float3(0.f, 1.f, 0.f), m_vLookDirection.x * 5.f * fTimeDelta);
+
+    if (m_bIsOnGround)
+    {
+        if (GI()->IsKey_Pressed(DIK_SPACE))
+        {
+            m_vVelocity.y = m_vMoveSpeed.y;
+            m_bIsOnGround = false;
+
+        }
+    }
+
+
+    if (m_vVelocity.x > m_vMoveSpeed.x)
+        m_vVelocity.x = m_vMoveSpeed.x;
+    else if (m_vVelocity.x < -m_vMoveSpeed.x)
+        m_vVelocity.x = -m_vMoveSpeed.x;
+
+    if (m_vVelocity.z > m_vMoveSpeed.z)
+        m_vVelocity.z = m_vMoveSpeed.z;
+    else if (m_vVelocity.z < -m_vMoveSpeed.z)
+        m_vVelocity.z = -m_vMoveSpeed.z;
+
+    cout << m_vVelocity.z << endl;
+
+    Transform().MoveForward(m_vVelocity.z * fTimeDelta);
+    Transform().MoveRightward(m_vVelocity.x * fTimeDelta);
+    if (!m_pNaviComp->IsMove(Transform().Get_PositionVector()))
+        Transform().Set_Position(vPos);
+
+    Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
+}
+
+void CPlayer::ActState_Idle(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(0, 1.f, true);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Move_Update(fTimeDelta);
+
+        if (!m_bIsOnGround)
+            m_State_Act.Set_State(EState_Act::Ready_Jump);
+        if (m_bIsMoving)
+            m_State_Act.Set_State(EState_Act::Run);
+        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_LB))
+            m_State_Act.Set_State(EState_Act::Buster);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Run(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(1, 1.f, true);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Move_Update(fTimeDelta);
+
+        if (m_fFootSound.Increase(fTimeDelta))
+        {
+            GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_run.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+            m_fFootSound.Reset();
+        }
+
+        if (!m_bIsOnGround)
+            m_State_Act.Set_State(EState_Act::Ready_Jump);
+        if (!m_bIsMoving)
+            m_State_Act.Set_State(EState_Act::Idle);
+        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_LB))
+            m_State_Act.Set_State(EState_Act::Buster);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Walk(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(2, 1.f, true);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Move_Update(fTimeDelta);
+
+        if (!m_bIsOnGround)
+            m_State_Act.Set_State(EState_Act::Ready_Jump);
+        if (!m_bIsMoving)
+            m_State_Act.Set_State(EState_Act::Idle);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Ready_Jump(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(5, 1.f, false);
+        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Move_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->Get_Animation_Finished())
+            m_State_Act.Set_State(EState_Act::Jump_Up);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Jump_Up(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(6, 1.f, false);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Move_Update(fTimeDelta);
+
+        if (m_vVelocity.y < 0)
+            m_State_Act.Set_State(EState_Act::Jump_Down);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Jump_Down(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(7, 1.f, false);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Move_Update(fTimeDelta);
+
+        if (m_bIsOnGround)
+            m_State_Act.Set_State(EState_Act::Landing);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Landing(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(8, 1.f, false);
+        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_landing.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Move_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->Get_Animation_Finished())
+            m_State_Act.Set_State(EState_Act::Idle);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Buster(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(17, 5.f, false);
+        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_buster.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        if (m_pModelComp->AnimationComp()->Get_Animation_Finished())
+            m_State_Act.Set_State(EState_Act::Idle);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
 }

@@ -30,7 +30,7 @@ void CComponentMgr::Free()
     m_mapPrototypes.clear();
 }
 
-HRESULT CComponentMgr::Add_Prototype(const wstring& strProtoKey, CComponent* pPrototype)
+HRESULT CComponentMgr::Add_Prototype(const wstring& strTag, const wstring& strProtoKey, CComponent* pPrototype)
 {
     if (nullptr == pPrototype)
         return E_FAIL;
@@ -45,6 +45,7 @@ HRESULT CComponentMgr::Add_Prototype(const wstring& strProtoKey, CComponent* pPr
         return E_FAIL;
     }
 
+    pPrototype->Add_LevelTag(strTag);
     m_mapPrototypes.emplace(strProtoKey, pPrototype);
 
     return S_OK;

@@ -252,7 +252,12 @@ void CAnimationComponent::Apply_FinalMask()
 	}
 }
 
-void CAnimationComponent::Set_Animation(_uint iAnimIndex, _bool bIsLoop)
+_bool CAnimationComponent::Get_Animation_Finished()
+{
+	return (m_CurAnim.fTrackPos >= m_CurAnim.fDuration);
+}
+
+void CAnimationComponent::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse)
 {
 	if (iAnimIndex < 0 || iAnimIndex >= m_pAnimGroup->Get_NumAnims())
 		return;
@@ -271,21 +276,39 @@ void CAnimationComponent::Set_Animation(_uint iAnimIndex, _bool bIsLoop)
 	m_CurAnim.iAnimID = iAnimIndex;
 	m_CurAnim.fDuration = pBoneAnimData->fDuration;
 	m_CurAnim.fTickPerSeconds = pBoneAnimData->fTickPerSecond;
-	m_CurAnim.bIsLoop = bIsLoop;
 	m_CurAnim.fTrackPos = 0.f;
+	m_CurAnim.fSpeedMultiply = fSpeedMultiply;
+	m_CurAnim.bIsLoop = bIsLoop;
+	m_CurAnim.bIsReverse = bReverse;
 }
 
 void CAnimationComponent::Add_AnimTime(const _float& fTimeDelta)
 {
-	m_CurAnim.fTrackPos += fTimeDelta * m_CurAnim.fTickPerSeconds;
-	if (m_CurAnim.fTrackPos > m_CurAnim.fDuration)
-		m_CurAnim.fTrackPos = (m_CurAnim.bIsLoop) ? (0.f) : (m_CurAnim.fDuration);
+	m_CurAnim.fTrackPos += m_CurAnim.fTickPerSeconds * m_CurAnim.fSpeedMultiply * fTimeDelta * (m_CurAnim.bIsReverse ? -1 : 1);
+	if (!m_CurAnim.bIsReverse)
+	{
+		if (m_CurAnim.fTrackPos > m_CurAnim.fDuration)
+			m_CurAnim.fTrackPos = (m_CurAnim.bIsLoop) ? (0.f) : (m_CurAnim.fDuration);
+	}
+	else
+	{
+		if (m_CurAnim.fTrackPos < 0.f)
+			m_CurAnim.fTrackPos = (m_CurAnim.bIsLoop) ? (m_CurAnim.fDuration) : (0.f);
+	}
 
 	if (m_fTransitionGauge < 1.f)
 	{
-		m_PrevAnim.fTrackPos += fTimeDelta * m_PrevAnim.fTickPerSeconds;
-		if (m_PrevAnim.fTrackPos > m_PrevAnim.fDuration)
-			m_PrevAnim.fTrackPos = (m_PrevAnim.bIsLoop) ? (0.f) : (m_PrevAnim.fDuration);
+		m_PrevAnim.fTrackPos += m_PrevAnim.fTickPerSeconds * m_PrevAnim.fSpeedMultiply * fTimeDelta * (m_PrevAnim.bIsReverse ? -1 : 1);
+		if (!m_PrevAnim.bIsReverse)
+		{
+			if (m_PrevAnim.fTrackPos > m_PrevAnim.fDuration)
+				m_PrevAnim.fTrackPos = (m_PrevAnim.bIsLoop) ? (0.f) : (m_PrevAnim.fDuration);
+		}
+		else
+		{
+			if (m_PrevAnim.fTrackPos < 0.f)
+				m_PrevAnim.fTrackPos = (m_PrevAnim.bIsLoop) ? (m_PrevAnim.fDuration) : (0.f);
+		}
 	}
 }
 

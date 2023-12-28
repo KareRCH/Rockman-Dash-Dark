@@ -67,8 +67,6 @@ void CCamera::Apply_ViewProjMatrix()
     m_matView = Transform().Get_TransformInverseFloat4x4();
     XMStoreFloat4x4(&m_matProj, matPersProj);
 
-
-
     PipelineComp().Set_CamMatrix(m_eCamType, ECamMatrix::View, m_eCamID, m_matView);
     PipelineComp().Set_CamMatrix(m_eCamType, ECamMatrix::Proj, m_eCamID, matPersProj);
 }

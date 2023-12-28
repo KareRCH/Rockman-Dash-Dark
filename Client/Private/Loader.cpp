@@ -1,6 +1,7 @@
 #include "Loader.h"
 
 #include "System/GameInstance.h"
+#include "Component/NavigationComponent.h"
 
 #include "process.h"
 
@@ -105,6 +106,13 @@ HRESULT CLoader::Loading_For_Logo_Level()
 HRESULT CLoader::Loading_For_GamePlay_Level()
 {
 	// 파싱형 게임 플레이 레벨 로드
+
+
+	// 원형 컴포넌트 로드
+	/* For.Prototype_Component_Navigation */
+	if (FAILED(GI()->Add_PrototypeComp(TEXT("GamePlay"), TEXT("Prototype_Component_Navigation"),
+		CNavigationComponent::Create(TEXT("Resource/Navigation.dat")))))
+		return E_FAIL;
 
 	m_bIsFinished = true;
 

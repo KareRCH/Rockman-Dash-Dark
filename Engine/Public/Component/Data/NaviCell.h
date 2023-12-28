@@ -26,7 +26,7 @@ public:
 
 
 #ifdef _DEBUG
-	HRESULT Render(class CEffectComponent* pEffectComp);
+	HRESULT Render(class CEffectComponent* pEffectComp, class CPipelineComp* pPipelineComp);
 #endif // _DEBUG
 
 public:
@@ -61,7 +61,7 @@ public:
 	}
 
 private:
-	_float3		m_vPoints[3] = {};
+	_float3		m_vPoints[POINT_END] = {};
 	_int		m_iNeighbors[LINE_END] = { -1, -1, -1 };
 	_float3		m_vNormals[LINE_END] = {};
 	_uint		m_iIndex = { 0 };

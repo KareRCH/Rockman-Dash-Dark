@@ -73,6 +73,7 @@ HRESULT CCommonModelComp::Render()
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
+		_vector vTemp = {};
 		//_float4x4 matMesh = m_pMultiMeshBufComp->Get_MeshTransform(i);
 		//XMStoreFloat4x4(&matTemp, XMLoadFloat4x4(&matTemp) * XMLoadFloat4x4(&matMesh));
 
@@ -86,6 +87,8 @@ HRESULT CCommonModelComp::Render()
 		m_pEffectComp->Bind_RawValue("g_colSpecular", VPCast(&lightBuffer.vSpecularColor), sizeof(_float4));
 		m_pEffectComp->Bind_RawValue("g_fSpecularPower", VPCast(&lightBuffer.fSpecularPower), sizeof(_float));
 		m_pEffectComp->Bind_RawValue("g_vLightDir", VPCast(&lightBuffer.vLightDirection), sizeof(_float3));
+
+		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(vTemp = PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One))), sizeof(_float4));
 
 		_uint iMatIndex = m_pMeshComps[i]->Get_MeshMaterialIndex();
 		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
@@ -215,12 +218,12 @@ void CCommonModelComp::Apply_Pos()
 	m_pAnimationComp->Apply_FinalMask();
 }
 
-void CCommonModelComp::Set_Animation(_uint iAnimIndex, _bool bIsLoop)
+void CCommonModelComp::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse)
 {
 	if (nullptr == m_pAnimationComp)
 		return;
 
-	m_pAnimationComp->Set_Animation(iAnimIndex, bIsLoop);
+	m_pAnimationComp->Set_Animation(iAnimIndex, fSpeedMultiply, bIsLoop, bReverse);
 }
 
 void CCommonModelComp::Add_AnimTime(const _float& fTimeDelta)

@@ -11,6 +11,7 @@ class CTriBufferComp;
 class CCommonModelComp;
 class CColorShaderComp;
 class CModelShaderComp;
+class CNavigationComponent;
 
 END
 
@@ -53,10 +54,42 @@ private:
 
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
+	CNavigationComponent* m_pNaviComp = { nullptr };
 
 private:
-	FGauge	m_Gauge = FGauge(2.f);
-	_bool	m_bTest = false;
+	void	Move_Update(const _float& fTimeDelta);
+
+private:
+	_bool		m_bIsOnGround = true;
+	_bool		m_bIsMoving = false;
+
+	_float3		m_vMaxMoveSpeed = {};					// 최대 움직임 속도
+	_float3		m_vMoveSpeed = {};						// 움직임 속도
+	_float3		m_vVelocity = {};						// 속도
+	_float3		m_vAcceleration = {};					// 가속도
+	_float3		m_vLookDirection = { 0.f, 0.f, 1.f};		// 캐릭터가 바라보는 방향
+	_float3		m_vLookDirection_Blend = { 0.f, 0.f, 1.f};	// 캐릭터가 바라보는 방향 블렌딩용
+	_float		m_fDirectionAngle = 0.f;				// 캐릭터가 바라보는 방향각도
+
+	FGauge		m_fFootSound = FGauge(0.25f);
+
+public:
+	enum class EState_Act { Idle, Run, Walk, Ready_Jump, Jump_Up, Jump_Down, Landing, Buster };
+
+private:		// 약식 상태머신
+	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
+	SState_Act		m_State_Act;
+
+private:
+	void ActState_Idle(const _float& fTimeDelta);
+	void ActState_Run(const _float& fTimeDelta);
+	void ActState_Walk(const _float& fTimeDelta);
+	void ActState_Ready_Jump(const _float& fTimeDelta);
+	void ActState_Jump_Up(const _float& fTimeDelta);
+	void ActState_Jump_Down(const _float& fTimeDelta);
+	void ActState_Landing(const _float& fTimeDelta);
+	void ActState_Buster(const _float& fTimeDelta);
+
 };
 
 END
