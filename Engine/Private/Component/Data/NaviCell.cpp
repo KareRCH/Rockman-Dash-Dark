@@ -3,6 +3,7 @@
 #include "System/GameInstance.h"
 #include "Component/EffectComponent.h"
 #include "Component/NaviCellBufferComp.h"
+#include "Component/PipelineComp.h"
 
 CNaviCell::CNaviCell()
 {
@@ -14,7 +15,7 @@ CNaviCell::CNaviCell(const CNaviCell& rhs)
 
 HRESULT CNaviCell::Initialize(const _float3* pPoints, _uint iIndex)
 {
-    memcpy(m_vPoints, pPoints, sizeof(_float3));
+    memcpy(m_vPoints, pPoints, sizeof(_float3) * POINT_END);
 
     m_iIndex = iIndex;
 
@@ -28,7 +29,7 @@ HRESULT CNaviCell::Initialize(const _float3* pPoints, _uint iIndex)
     XMStoreFloat3(&m_vNormals[LINE_CA], XMVectorSet(XMVectorGetZ(vLine) * -1.f, 0.f, XMVectorGetX(vLine), 0.f));
 
 #ifdef _DEBUG
-    //m_pVIBuffer = CNaviCellBufferComp::Create(pPoints);
+    m_pVIBuffer = CNaviCellBufferComp::Create(pPoints);
     if (nullptr == m_pVIBuffer)
         return E_FAIL;
 #endif
@@ -39,31 +40,23 @@ HRESULT CNaviCell::Initialize(const _float3* pPoints, _uint iIndex)
 
 
 #ifdef _DEBUG
-HRESULT CNaviCell::Render(CEffectComponent* pEffectComp)
+HRESULT CNaviCell::Render(CEffectComponent* pEffectComp, CPipelineComp* pPipelineComp)
 {
-
-    /*m_pVIBuffer->Bind_VIBuffers();
-
-    m_pVIBuffer->Render();*/
-
-
-
-    //_float4x4		WorldMatrix;
-
-    /*XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
+    _float4x4		WorldMatrix;
+    XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
 
     if (FAILED(pEffectComp->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
         return E_FAIL;
-    if (FAILED(pEffectComp->Bind_Matrix("g_ViewMatrix", &PipelineComp())))
+    if (FAILED(pEffectComp->Bind_Matrix("g_ViewMatrix", &(WorldMatrix = pPipelineComp->Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
         return E_FAIL;
-    if (FAILED(pEffectComp->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+    if (FAILED(pEffectComp->Bind_Matrix("g_ProjMatrix", &(WorldMatrix = pPipelineComp->Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
         return E_FAIL;
 
     pEffectComp->Begin(0);
 
-    m_pVIBuffer->Bind_VIBuffers();
+    m_pVIBuffer->Bind_Buffer();
 
-    m_pVIBuffer->Render();*/
+    m_pVIBuffer->Render_Buffer();
 
     return S_OK;
 }
@@ -76,7 +69,7 @@ CNaviCell* CNaviCell::Create(const _float3* pPoints, _uint iIndex)
 
     if (FAILED(pInstance->Initialize(pPoints, iIndex)))
     {
-        MSG_BOX("BoxBufferComp Create Failed");
+        MSG_BOX("CNaviCell Create Failed");
         Safe_Release(pInstance);
     }
 

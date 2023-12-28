@@ -100,7 +100,7 @@ VPS_INOUT VS_MAIN(VS_INPUT input)
     float4 worldPosition = mul(float4(input.vPosition.xyz, 1.f), g_matWorld);
     
     // Look ∫§≈Õ º≥¡§
-    output.vViewDirection = g_matView[3].xyz - worldPosition.xyz;
+    output.vViewDirection = g_vCamPosition.xyz - worldPosition.xyz;
     
     // ∫‰ πÊ«‚ ∫§≈Õ «•¡ÿ»≠
     output.vViewDirection = normalize(output.vViewDirection);

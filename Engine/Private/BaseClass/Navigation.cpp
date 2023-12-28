@@ -1,5 +1,8 @@
 #include "BaseClass/Navigation.h"
 
+#include "Component/NavigationComponent.h"
+#include "Component/EffectComponent.h"
+
 CNavigation::CNavigation()
 {
     Set_Name(L"Navigation");
@@ -76,6 +79,7 @@ HRESULT CNavigation::Render()
 {
     SUPER::Render();
 
+    m_pNaviComp->Render();
 
     return S_OK;
 }
@@ -86,7 +90,7 @@ CNavigation* CNavigation::Create()
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("CBoxModelComp Create Failed");
+        MSG_BOX("CNavigation Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -99,7 +103,7 @@ CNavigation* CNavigation::Create(const _float3 vPos)
 
     if (FAILED(pInstance->Initialize_Prototype(vPos)))
     {
-        MSG_BOX("CBoxModelComp Create Failed");
+        MSG_BOX("CNavigation Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -112,7 +116,7 @@ CGameObject* CNavigation::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        MSG_BOX("CBoxModelComp Create Failed");
+        MSG_BOX("CNavigation Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -126,7 +130,9 @@ void CNavigation::Free()
 
 HRESULT CNavigation::Initialize_Component()
 {
-
+    CNavigationComponent::TCloneDesc tDesc = { 0 };
+    FAILED_CHECK_RETURN(Add_Component(L"Navigation",
+        m_pNaviComp = Cast<CNavigationComponent*>(GI()->Clone_PrototypeComp(TEXT("Prototype_Component_Navigation"), VPCast(&tDesc)))), E_FAIL);
 
     return S_OK;
 }

@@ -9,6 +9,9 @@
 #include "GameObject/SkyBox.h"
 #include "Component/CylinderBufferComp.h"
 #include "GameObject/ItemChest.h"
+#include "GameObject/ReaverBot_Horokko.h"
+#include "BaseClass/Navigation.h"
+#include "Component/NavigationComponent.h"
 
 CLevel_GamePlay::CLevel_GamePlay()
 {
@@ -55,8 +58,41 @@ HRESULT CLevel_GamePlay::Ready_Objects()
 {
     m_pGI->Set_LevelTag(Get_Name());
 
-    GI()->Add_GameObject(CPlayer::Create(_float3(10.f, 0.f, 10.f)));
+	HANDLE		hFile = CreateFile(TEXT("Resource/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (0 == hFile)
+		return E_FAIL;
+
+	_ulong		dwByte = { 0 };
+
+	_float3		vPoints[3];
+
+	vPoints[0] = _float3(0.f, 0.0f, 100.f);
+	vPoints[1] = _float3(100.f, 0.0f, 0.0f);
+	vPoints[2] = _float3(0.0f, 0.0f, 0.0f);
+	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+	vPoints[0] = _float3(0.f, 0.0f, 100.f);
+	vPoints[1] = _float3(100.f, 0.0f, 100.f);
+	vPoints[2] = _float3(100.f, 0.0f, 0.0f);
+	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+	vPoints[0] = _float3(0.f, 0.0f, 200.f);
+	vPoints[1] = _float3(100.f, 0.0f, 100.f);
+	vPoints[2] = _float3(0.0f, 0.0f, 100.f);
+	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+	vPoints[0] = _float3(100.f, 0.0f, 100.f);
+	vPoints[1] = _float3(200.f, 0.0f, 0.f);
+	vPoints[2] = _float3(100.f, 0.0f, 0.0f);
+	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+	CloseHandle(hFile);
+
+
+
+    GI()->Add_GameObject(CPlayer::Create(_float3(5.f, 0.f, 5.f)));
     GI()->Add_GameObject(CItemChest::Create(_float3(15.f, 0.f, 10.f)));
+    GI()->Add_GameObject(CReaverBot_Horokko::Create(_float3(10.f, 0.f, 15.f)));
     //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
     GI()->Add_GameObject(CDynamicCamera::Create());
 
@@ -74,6 +110,10 @@ HRESULT CLevel_GamePlay::Ready_Objects()
     pModel->VIBufferComp()->Create_Buffer({ 10 });
     pModel->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/SkyBox/IceSea.dds"), 1);
     pModel->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxCube.hlsl"), SHADER_VTX_CUBETEX::Elements, SHADER_VTX_CUBETEX::iNumElements);
+
+
+	CNavigationComponent::TCloneDesc tDesc = { 0 };
+	GI()->Add_GameObject(CNavigation::Create());
 
 	return S_OK;
 }

@@ -201,7 +201,7 @@ public:		// 매니지먼트
 	_int				Tick_Object(const _float& fTimeDelta);
 	void				Late_Tick_Object(const _float& fTimeDelta);
 
-	HRESULT				Add_PrototypeObject(const wstring& strPrototypeKey, class CGameObject* pPrototype);
+	HRESULT				Add_PrototypeObject(const wstring& strTag, const wstring& strPrototypeKey, class CGameObject* pPrototype);
 	HRESULT				Add_CloneObject(const wstring& strPrototypeKey, void* pArg = nullptr);
 	class CGameObject*	Find_PrototypeObject(const wstring& strPrototypeKey);
 	void				Clear_PrototypeObejcts(const wstring& strContainTag);
@@ -210,6 +210,7 @@ public:		// 매니지먼트
 	HRESULT				Add_GameObject(class CGameObject* pObj);
 	class CGameObject*	Find_GameObjectByID(_uint iFindID);
 	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);
+	class CGameObject*	Find_GameObjectByName(const wstring& strName);
 	void				Clear_GameObject(const wstring& strLayerTag);
 #pragma endregion
 
@@ -218,7 +219,7 @@ public:		// 매니지먼트
 #pragma region 컴포넌트 매니저
 public:		// 컴포넌트 매니저
 	HRESULT				Initialize_ComponentMgr();
-	HRESULT				Add_PrototypeComp(const wstring& strProtoKey, class CComponent* pPrototype);
+	HRESULT				Add_PrototypeComp(const wstring& strTag, const wstring& strProtoKey, class CComponent* pPrototype);
 	class CComponent*	Clone_PrototypeComp(const wstring& strProtoKey, void* pArg = nullptr);
 	class CComponent*	Reference_PrototypeComp(const wstring& strProtoKey);
 	void				Clear_PrototypeComps(const wstring& strContainTag);

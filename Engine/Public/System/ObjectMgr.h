@@ -37,7 +37,7 @@ private:
 
 #pragma region 프로토타입 관리
 public:
-	HRESULT				Add_Prototype(const wstring& strPrototypeKey, class CGameObject* pPrototype);
+	HRESULT				Add_Prototype(const wstring& strTag, const wstring& strPrototypeKey, class CGameObject* pPrototype);
 	HRESULT				Add_CloneObject(const wstring& strPrototypeKey, void* pArg);
 	class CGameObject*	Find_Prototype(const wstring& strPrototypeKey);
 	void				Clear_Prototypes(const wstring& strContainTag);
@@ -61,6 +61,8 @@ public:
 	class CGameObject*	Find_GameObjectByID(_uint iFindID);
 	// 오브젝트의 단순 인덱스 기반 검색, 툴에서 쓰임
 	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);
+	// 이름 검색
+	class CGameObject* Find_GameObjectByName(const wstring& strName);
 	// 특정 레벨 태그를 가진 객체를 제거한다.
 	void				Clear_GameObject(const wstring& strLevelTag);
 

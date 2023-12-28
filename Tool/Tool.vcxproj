@@ -192,7 +192,9 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Client\Private\GameObject\DynamicCamera.cpp" />
-    <ClCompile Include="..\Client\Private\GameObject\TestObject.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\ItemChest.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\Player.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Horokko.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp" />
     <ClCompile Include="Include\Tool.cpp" />
     <ClCompile Include="Private\GameObject\ToolCamera.cpp" />

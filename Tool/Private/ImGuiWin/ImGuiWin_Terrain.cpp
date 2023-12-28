@@ -21,8 +21,8 @@ HRESULT CImGuiWin_Terrain::Initialize()
 
 	m_pDeviceComp = Cast<CD3D11DeviceComp*>(m_pGI->Reference_PrototypeComp(L"GraphicDevComp"));
 	m_pPipelineComp = Cast<CPipelineComp*>(m_pGI->Reference_PrototypeComp(L"CamViewComp"));
-	m_pGI->Load_Texture(TEXT("Textures/Tool/Brushes/RoundHeightBrush.png"), false);
-	m_pGI->Load_Texture(TEXT("Textures/Tool/Brushes/RectHeightBrush.png"), false);
+	
+	
 
 	return S_OK;
 }
@@ -200,8 +200,8 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 
 		// 텍스처를 바인딩
 		CTerrainModelComp* pTerrainModel = m_pPickedTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"));
-		pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_1.dds"));
-		pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_BRUSH, TEXT("Textures/Tool/Brushes/RoundHeightBrush.png"));
+		pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_1.dds"), 1);
+		pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_BRUSH, TEXT("Textures/Tool/Brushes/RoundHeightBrush.png"), 1);
 	}
 }
 
@@ -419,10 +419,15 @@ HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 	
 	/* 다시 파일로 저장하기위해서. */
 	// 텍스처가 범용적으로 저장되는 경로에 저장하도록 해준다.
-	wstring strPath = GI()->Get_TextureMainPath() + TEXT("TestHeight.png");
-	// 아무런 변형없이 값 그대로 저장한다.
-	if (FAILED(SaveToWICFile(image, WIC_FLAGS_NONE, GetWICCodec(WIC_CODEC_PNG), strPath.c_str())))
-		return E_FAIL;
+	if (SUCCEEDED(CoInitializeEx(nullptr, 0)))
+	{
+		wstring strPath = GI()->Get_TextureMainPath() + TEXT("TestHeight.png");
+		// 아무런 변형없이 값 그대로 저장한다.
+		if (FAILED(SaveToWICFile(image, WIC_FLAGS_NONE, GetWICCodec(WIC_CODEC_PNG), strPath.c_str())))
+		{
+		}
+		CoUninitialize();
+	}
 	
 	Safe_Delete_Array(pPixels);
 	Safe_Delete_Array(pVertices);
@@ -478,6 +483,7 @@ void CImGuiWin_Terrain::Handle_PickedObject(CGameObject* pGameObj)
 	if (nullptr != pTerrain)
 	{
 		m_pPickedTerrain = pTerrain;
+		Safe_AddRef(m_pPickedTerrain);
 	}
 }
 

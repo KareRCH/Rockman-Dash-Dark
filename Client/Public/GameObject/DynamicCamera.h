@@ -30,6 +30,13 @@ public:
 
 protected:
 	virtual void	Free() override;
+
+private:
+	CGameObject* m_pTarget = { nullptr };
+
+private:
+	_float		m_fHorizontalAngle = { 0.f };
+	_float		m_fVerticalAngle = { 0.f };
 };
 
 END

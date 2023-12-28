@@ -4,7 +4,9 @@
 #include "ImGuiWin/ImGuiWin_Viewer.h"
 #include "ImGuiWin/ImGuiWin_Terrain.h"
 
-#include "GameObject/TestObject.h"
+#include "GameObject/Player.h"
+#include "GameObject/ReaverBot_Horokko.h"
+#include "GameObject/ItemChest.h"
 
 HRESULT CImGuiWin_Browser::Initialize()
 {

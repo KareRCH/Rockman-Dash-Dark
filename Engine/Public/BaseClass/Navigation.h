@@ -41,6 +41,9 @@ protected:
 
 private:
 	HRESULT	Initialize_Component();
+
+private:
+	class CNavigationComponent* m_pNaviComp = { nullptr };
 };
 
 END

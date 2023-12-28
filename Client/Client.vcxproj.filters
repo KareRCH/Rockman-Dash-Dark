@@ -58,14 +58,20 @@
     <Filter Include="02. GameObject\05. Object">
       <UniqueIdentifier>{27674aba-c994-4bc5-8b70-7b94931fe323}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\04. Character">
-      <UniqueIdentifier>{c0f794d7-eefa-4a78-9665-80029cfb3054}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\06. UI">
       <UniqueIdentifier>{160bfc08-823f-4d61-9dff-50347acda5e6}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\05. Object\01. Chest">
       <UniqueIdentifier>{6a5c5299-cf61-4def-abc2-aef1e8a0d390}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. Characters">
+      <UniqueIdentifier>{c0f794d7-eefa-4a78-9665-80029cfb3054}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. Characters\02. ReaverBots">
+      <UniqueIdentifier>{7ec63ef5-0191-49c6-b715-26601ea35491}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. Characters\01. Player">
+      <UniqueIdentifier>{db0a91a1-8ff6-4844-b7c7-530727dc1e48}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -120,11 +126,14 @@
     <ClInclude Include="Public\GameObject\UI_Player.h">
       <Filter>02. GameObject\06. UI</Filter>
     </ClInclude>
-    <ClInclude Include="Public\GameObject\Player.h">
-      <Filter>02. GameObject\04. Character</Filter>
-    </ClInclude>
     <ClInclude Include="Public\GameObject\ItemChest.h">
       <Filter>02. GameObject\05. Object\01. Chest</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Player.h">
+      <Filter>02. GameObject\04. Characters\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\ReaverBot_Horokko.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,11 +176,14 @@
     <ClCompile Include="Private\GameObject\UI_Player.cpp">
       <Filter>02. GameObject\06. UI</Filter>
     </ClCompile>
-    <ClCompile Include="Private\GameObject\Player.cpp">
-      <Filter>02. GameObject\04. Character</Filter>
-    </ClCompile>
     <ClCompile Include="Private\GameObject\ItemChest.cpp">
       <Filter>02. GameObject\05. Object\01. Chest</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Player.cpp">
+      <Filter>02. GameObject\04. Characters\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\ReaverBot_Horokko.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

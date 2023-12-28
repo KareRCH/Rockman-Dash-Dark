@@ -37,7 +37,7 @@ private:
 
 public:
 	// 최초 프로토타입을 추가한다.
-	HRESULT						Add_Prototype(const wstring& strProtoKey, CComponent* pPrototype);
+	HRESULT						Add_Prototype(const wstring& strTag, const wstring& strProtoKey, CComponent* pPrototype);
 	// 프로토타입이될 인스턴스를 찾아 복사한 인스턴스를 반환한다.
 	CComponent*					Clone_Prototype(const wstring& strProtoKey, void* pArg);
 	// 프로토타입을 참조하는 형태로 사용할 경우 이 함수를 이용한다. 시스템 접근용 컴포넌트만 사용할 것.

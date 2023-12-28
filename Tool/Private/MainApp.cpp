@@ -71,8 +71,6 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGI->Create_Font(L"MonsterUI", L"ÇÔÃÊ·Õ¹ÙÅÁ", 14, 25, FW_THIN), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Initialize_TextureMgr(tDevice, L"../Client/Resource/"), E_FAIL);
-	m_pGI->Load_Texture(L"Model/Character/RockVolnutt/Body.png", true);
-	m_pGI->Load_Texture(L"Model/Character/RockVolnutt/Head.png", true);
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr(L"../Client/Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"../Client/Shader/"), E_FAIL);
 	m_pGI->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
