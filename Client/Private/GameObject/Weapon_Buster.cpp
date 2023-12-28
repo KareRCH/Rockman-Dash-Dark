@@ -1,4 +1,4 @@
-#include "GameObject/ReaverBot_Horokko.h"
+#include "GameObject/Weapon_Buster.h"
 
 #include "Component/TriBufferComp.h"
 #include "Component/ColorShaderComp.h"
@@ -7,16 +7,17 @@
 #include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
 
-CReaverBot_Horokko::CReaverBot_Horokko()
+
+CWeapon_Buster::CWeapon_Buster()
 {
-	Set_Name(TEXT("ItemChest"));
+	Set_Name(TEXT("Weapon_Buster"));
 }
 
-CReaverBot_Horokko::CReaverBot_Horokko(const CReaverBot_Horokko& rhs)
+CWeapon_Buster::CWeapon_Buster(const CWeapon_Buster& rhs)
 {
 }
 
-HRESULT CReaverBot_Horokko::Initialize_Prototype()
+HRESULT CWeapon_Buster::Initialize_Prototype()
 {
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
@@ -26,7 +27,7 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CReaverBot_Horokko::Initialize_Prototype(const _float3 vPos)
+HRESULT CWeapon_Buster::Initialize_Prototype(const _float3 vPos)
 {
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
@@ -34,55 +35,55 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype(const _float3 vPos)
 	TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
 
 	Transform().Set_Position(vPos);
-	m_pModelComp->Set_Animation(0, 1.f, true);
 
 	return S_OK;
 }
 
-HRESULT CReaverBot_Horokko::Initialize(void* Arg)
+HRESULT CWeapon_Buster::Initialize(void* Arg)
 {
 	return S_OK;
 }
 
-HRESULT CReaverBot_Horokko::Initialize(const _float3 vPos)
+HRESULT CWeapon_Buster::Initialize(const _float3 vPos)
 {
 	Transform().Set_Position(vPos);
 
 	return S_OK;
 }
 
-void CReaverBot_Horokko::Priority_Tick(const _float& fTimeDelta)
+void CWeapon_Buster::Priority_Tick(const _float& fTimeDelta)
 {
 	SUPER::Priority_Tick(fTimeDelta);
 
 }
 
-void CReaverBot_Horokko::Tick(const _float& fTimeDelta)
+void CWeapon_Buster::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
 
-	if (GI()->IsKey_Pressed(DIK_R))
+	if (m_fLifeTime.Increase(fTimeDelta))
 	{
-		++m_iTest;
-		if (m_iTest > 7)
-			m_iTest = 0;
-
-		m_pModelComp->Set_Animation(m_iTest, 1.f, true);
+		Set_Dead();
+		return;
 	}
 
-	m_pModelComp->Add_AnimTime(fTimeDelta);
-	m_pModelComp->Invalidate_Animation();
-	m_pModelComp->Invalidate_BoneTransforms();
+	Transform().MoveForward(m_fSpeed * fTimeDelta);
+
+	_vector vLook = XMVector3Normalize(Transform().Get_LookVector());
+	_float3 vfLook = {};
+	XMStoreFloat3(&vfLook, vLook);
+
+	Transform().TurnAxis(vfLook, XMConvertToRadians(90.f * fTimeDelta));
 }
 
-void CReaverBot_Horokko::Late_Tick(const _float& fTimeDelta)
+void CWeapon_Buster::Late_Tick(const _float& fTimeDelta)
 {
 	SUPER::Late_Tick(fTimeDelta);
 
 	m_pModelComp->Late_Tick(fTimeDelta);
 }
 
-HRESULT CReaverBot_Horokko::Render()
+HRESULT CWeapon_Buster::Render()
 {
 	SUPER::Render();
 
@@ -91,7 +92,7 @@ HRESULT CReaverBot_Horokko::Render()
 	return S_OK;
 }
 
-CReaverBot_Horokko* CReaverBot_Horokko::Create()
+CWeapon_Buster* CWeapon_Buster::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -104,7 +105,7 @@ CReaverBot_Horokko* CReaverBot_Horokko::Create()
 	return pInstance;
 }
 
-CReaverBot_Horokko* CReaverBot_Horokko::Create(const _float3 vPos)
+CWeapon_Buster* CWeapon_Buster::Create(const _float3 vPos)
 {
 	ThisClass* pInstance = new ThisClass();
 
@@ -117,7 +118,7 @@ CReaverBot_Horokko* CReaverBot_Horokko::Create(const _float3 vPos)
 	return pInstance;
 }
 
-CGameObject* CReaverBot_Horokko::Clone(void* Arg)
+CGameObject* CWeapon_Buster::Clone(void* Arg)
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
@@ -130,18 +131,19 @@ CGameObject* CReaverBot_Horokko::Clone(void* Arg)
 	return Cast<CGameObject*>(pInstance);
 }
 
-void CReaverBot_Horokko::Free()
+void CWeapon_Buster::Free()
 {
 	SUPER::Free();
 }
 
-HRESULT CReaverBot_Horokko::Initialize_Component()
+HRESULT CWeapon_Buster::Initialize_Component()
 {
 	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
 
-	m_pModelComp->Transform().Set_Scale(_float3(0.08f, 0.08f, 0.08f));
-	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
-	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Horokko/Horokko.amodel");
+	m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(90.f));
+	m_pModelComp->Transform().Set_Scale(_float3(0.3f, 0.3f, 0.3f));
+	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelNoAnim.hlsl", SHADER_VTX_MODEL::Elements, SHADER_VTX_MODEL::iNumElements);
+	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_NONANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Buster/Buster.amodel");
 
 	return S_OK;
 }

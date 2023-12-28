@@ -4,26 +4,28 @@
 // 행렬 변환
 cbuffer MatrixBuffer : register(b0)
 {
-    float4x4 g_matWorld;
-    float4x4 g_matView;
-    float4x4 g_matProj;
+    matrix g_matWorld;
+    matrix g_matView;
+    matrix g_matProj;
 };
 
 // 빛 정보를 저장하는 버퍼
 cbuffer LightBuffer : register(b1)
 {
-    float4  g_colDiffuse;
-    float4  g_colAmbient;
-    float4  g_colSpecular;
-    float   g_fSpecularPower;
-    float3  g_vLightDir;
+    vector g_vLightDir = vector(1.f, -1.f, 1.f, 0.f);
+    vector g_vLightDiffuse = vector(1.f, 1.f, 1.f, 1.f);
+    vector g_vLightAmbient = vector(1.f, 1.f, 1.f, 1.f);
+    vector g_vLightSpecular = vector(1.f, 1.f, 1.f, 1.f);
+    
+    vector g_vMtrlAmbient = vector(0.3f, 0.3f, 0.3f, 1.f);
+    vector g_vMtrlSpecular = vector(1.f, 1.f, 1.f, 1.f);
 };
 
 
 // 뼈 행렬들
 cbuffer BoneBuffer : register(b2)
 {
-    float4x4 g_matBones[128];
+    matrix g_matBones[128];
 };
 
 vector g_vCamPosition = vector(0.f, 0.f, 0.f, 0.f);
@@ -114,36 +116,21 @@ PS_OUTPUT PS_MAIN(VPS_INOUT input)
 {
     PS_OUTPUT output;
     
-    // 베이스 컬러 세팅
-    float4 textureColor = g_texDiffuse.Sample(DefaultSampler, input.vTexCoord);
+    vector vMtrlDiffuse = g_texDiffuse.Sample(DefaultSampler, input.vTexCoord);
+
+    if (vMtrlDiffuse.a < 0.3f)
+        discard;
+
+    float fShade = max(dot(normalize(g_vLightDir) * -1.f, normalize(vector(input.vNormal, 1.f))), 0.f);
+
+	/* 스펙큘러가 보여져야하는 영역에서는 1로, 아닌 영역에서는 0으로 정의되는 스펙큘러의 세기가 필요하다. */
+    vector vReflect = reflect(normalize(g_vLightDir), normalize(vector(input.vNormal, 1.f)));
+
+    float fSpecular = pow(max(dot(normalize(vector(input.vViewDirection, 1.f)) * -1.f, normalize(vReflect)), 0.f), 30.f);
+
+    output.vColor = g_vLightDiffuse * vMtrlDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
+		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
     
-    // 기본 값을 환경광으로 설정
-    float4 color = g_colAmbient;
-    
-    // 정반사 값을 초기화한다.
-    float4 specular = float4(0.f, 0.f, 0.f, 0.f);
-    
-    // 계산을 위해 빛 벡터 방향전환
-    float3 lightDir = -normalize(g_vLightDir);
-    
-    // 이 픽셀의 빛의 양을 계산합니다.
-    float lightIntensity = saturate(dot(input.vNormal, lightDir));
-    
-    // 빛이 노멀에 대해 비추고 있음을 이야기 하는 조건문임
-    if (lightIntensity > 0.f)
-    {
-        color += (g_colDiffuse * lightIntensity);
-        
-        color = saturate(color);
-        
-        float3 reflection = normalize(2 * lightIntensity * input.vNormal - lightDir);
-        
-        specular = pow(saturate(dot(reflection, input.vViewDirection)), g_fSpecularPower);
-    }
-    
-    color = color * textureColor;
-    
-    output.vColor = saturate(color + specular);
     output.vNormal = float4(input.vNormal, 1.f);
     
     return output;
@@ -164,36 +151,22 @@ PS_OUTPUT_TOOL PS_MAIN_TOOL(VPS_INOUT input)
 {
     PS_OUTPUT_TOOL output = (PS_OUTPUT_TOOL)0;
     
-    // 베이스 컬러 세팅
-    float4 textureColor = g_texDiffuse.Sample(DefaultSampler, input.vTexCoord);
+    vector vMtrlDiffuse = g_texDiffuse.Sample(DefaultSampler, input.vTexCoord);
+
+    if (vMtrlDiffuse.a < 0.3f)
+        discard;
+
+    float fShade = max(dot(normalize(g_vLightDir) * -1.f, normalize(vector(input.vNormal, 1.f))), 0.f);
+
+	/* 스펙큘러가 보여져야하는 영역에서는 1로, 아닌 영역에서는 0으로 정의되는 스펙큘러의 세기가 필요하다. */
+    vector vReflect = reflect(normalize(g_vLightDir), normalize(vector(input.vNormal, 1.f)));
+
+    float fSpecular = pow(max(dot(normalize(vector(input.vViewDirection, 1.f)) * -1.f, normalize(vReflect)), 0.f), 30.f);
+
+    output.vColor = g_vLightDiffuse * vMtrlDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
+		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
     
-    // 기본 값을 환경광으로 설정
-    float4 color = g_colAmbient;
-    
-    // 정반사 값을 초기화한다.
-    float4 specular = float4(0.f, 0.f, 0.f, 0.f);
-    
-    // 계산을 위해 빛 벡터 방향전환
-    float3 lightDir = -normalize(g_vLightDir);
-    
-    // 이 픽셀의 빛의 양을 계산합니다.
-    float lightIntensity = saturate(dot(input.vNormal, lightDir));
-    
-    // 빛이 노멀에 대해 비추고 있음을 이야기 하는 조건문임
-    if (lightIntensity > 0.f)
-    {
-        color += (g_colDiffuse * lightIntensity);
-        
-        color = saturate(color);
-        
-        float3 reflection = normalize(2 * lightIntensity * input.vNormal - lightDir);
-        
-        specular = pow(saturate(dot(reflection, input.vViewDirection)), g_fSpecularPower);
-    }
-    
-    color = color * textureColor;
-    
-    output.vColor = saturate(color + specular);
+    output.vNormal = float4(input.vNormal, 1.f);
     // 야매긴한데 툴 피킹은 오브젝트 ID를 렌더타겟에 저장한다. 위치값도 같이 전달한다.
     output.vPosAndID = float4(input.vPosition.xyz, float(g_iObjectID));
     

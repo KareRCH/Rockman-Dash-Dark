@@ -41,7 +41,9 @@ public:
 protected:
 	virtual void	Free() override;
 
-
+public:
+	HRESULT Render_AnimModel();
+	HRESULT Render_NoAnimModel();
 
 public:
 	HRESULT Link_ToModelMgr();

@@ -90,6 +90,9 @@ private:
 	void ActState_Landing(const _float& fTimeDelta);
 	void ActState_Buster(const _float& fTimeDelta);
 
+private:
+	void ShootBuster();
+
 };
 
 END

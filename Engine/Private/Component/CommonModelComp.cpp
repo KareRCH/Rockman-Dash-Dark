@@ -54,53 +54,26 @@ void CCommonModelComp::Late_Tick(const _float& fTimeDelta)
 {
 	SUPER::Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pSkeletalComp)
-		m_pSkeletalComp->Invalidate_BoneTransforms();
+	if (m_eModelType == TYPE_ANIM)
+	{
+		if (nullptr != m_pSkeletalComp)
+			m_pSkeletalComp->Invalidate_BoneTransforms();
+	}
 }
 
 HRESULT CCommonModelComp::Render()
 {
 	// 여기서 셰이더에 모든 정보를 넘겨주는 행위를 한다.
-
-	LIGHT_BUFFER_T lightBuffer = {
-		_float4(0.2f, 0.2f, 0.2f, 1.f),
-		_float4(0.2f, 0.2f, 0.2f, 1.f),
-		_float3(0.f, -0.2f, 1.f),
-		_float(50.f), _float4(1.f, 0.2f, 0.2f, 1.f)
-	};
-
-
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	switch (m_eModelType)
 	{
-		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
-		_vector vTemp = {};
-		//_float4x4 matMesh = m_pMultiMeshBufComp->Get_MeshTransform(i);
-		//XMStoreFloat4x4(&matTemp, XMLoadFloat4x4(&matTemp) * XMLoadFloat4x4(&matMesh));
-
-		m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
-		m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
-		m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
-		m_pMeshComps[i]->Bind_BoneMatricesToEffect(m_pEffectComp, "g_matBones", *m_pSkeletalComp->Get_BoneGroup());
-
-		m_pEffectComp->Bind_RawValue("g_colDiffuse", VPCast(&lightBuffer.vDiffuseColor), sizeof(_float4));
-		m_pEffectComp->Bind_RawValue("g_colAmbient", VPCast(&lightBuffer.vAmbientColor), sizeof(_float4));
-		m_pEffectComp->Bind_RawValue("g_colSpecular", VPCast(&lightBuffer.vSpecularColor), sizeof(_float4));
-		m_pEffectComp->Bind_RawValue("g_fSpecularPower", VPCast(&lightBuffer.fSpecularPower), sizeof(_float));
-		m_pEffectComp->Bind_RawValue("g_vLightDir", VPCast(&lightBuffer.vLightDirection), sizeof(_float3));
-
-		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(vTemp = PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One))), sizeof(_float4));
-
-		_uint iMatIndex = m_pMeshComps[i]->Get_MeshMaterialIndex();
-		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
-
-		// 그리기 시작
-		m_pEffectComp->Begin(0);
-
-		// 버퍼를 장치에 바인드
-		m_pMeshComps[i]->Bind_Buffer();
-
-		// 바인딩된 정점, 인덱스 그리기
-		m_pMeshComps[i]->Render_Buffer();
+	case TYPE_NONANIM:
+		if (FAILED(Render_NoAnimModel()))
+			return E_FAIL;
+		break;
+	case TYPE_ANIM:
+		if (FAILED(Render_AnimModel()))
+			return E_FAIL;
+		break;
 	}
 
     return S_OK;
@@ -147,6 +120,73 @@ void CCommonModelComp::Free()
 	Safe_Release(m_pEffectComp);
 }
 
+HRESULT CCommonModelComp::Render_AnimModel()
+{
+	LIGHT_BUFFER_T lightBuffer = {
+		_float4(0.2f, 0.2f, 0.2f, 1.f),
+		_float4(0.2f, 0.2f, 0.2f, 1.f),
+		_float3(0.f, -0.2f, 1.f),
+		_float(50.f), _float4(1.f, 0.2f, 0.2f, 1.f)
+	};
+
+
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
+		_vector vTemp = {};
+
+		m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
+		m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
+		m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
+		m_pMeshComps[i]->Bind_BoneMatricesToEffect(m_pEffectComp, "g_matBones", *m_pSkeletalComp->Get_BoneGroup());
+
+		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(vTemp = PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One))), sizeof(_float4));
+
+		_uint iMatIndex = m_pMeshComps[i]->Get_MeshMaterialIndex();
+		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
+
+		// 그리기 시작
+		m_pEffectComp->Begin(0);
+
+		// 버퍼를 장치에 바인드
+		m_pMeshComps[i]->Bind_Buffer();
+
+		// 바인딩된 정점, 인덱스 그리기
+		m_pMeshComps[i]->Render_Buffer();
+	}
+
+	return S_OK;
+}
+
+HRESULT CCommonModelComp::Render_NoAnimModel()
+{
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
+		_vector vTemp = {};
+
+		m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
+		m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
+		m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
+
+		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(vTemp = PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One))), sizeof(_float4));
+
+		_uint iMatIndex = m_pMeshComps[i]->Get_MeshMaterialIndex();
+		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
+
+		// 그리기 시작
+		m_pEffectComp->Begin(0);
+
+		// 버퍼를 장치에 바인드
+		m_pMeshComps[i]->Bind_Buffer();
+
+		// 바인딩된 정점, 인덱스 그리기
+		m_pMeshComps[i]->Render_Buffer();
+	}
+
+	return S_OK;
+}
+
 HRESULT CCommonModelComp::Link_ToModelMgr()
 {
 	if (nullptr == m_pGI)
@@ -165,6 +205,8 @@ HRESULT CCommonModelComp::Bind_Model(TYPE eType, EModelGroupIndex eGroupIndex, c
 	// 로드 모델은 이미 있던 로드 성공했던 S_OK를 반환. 실패하면 파일이 없는 것.
 	if (FAILED(m_pGI->Load_Model(eGroupIndex, strModelFilePath)))
 		return E_FAIL;
+
+	m_eModelType = eType;
 
 	const FModelData* pModelData = m_pGI->Find_ModelData(eGroupIndex, strModelFilePath);
 	// 로드 성공이면 무조건 찾지만, 혹시 모를 버그를 위해 안전 코드

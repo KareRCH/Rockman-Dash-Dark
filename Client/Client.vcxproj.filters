@@ -73,6 +73,9 @@
     <Filter Include="02. GameObject\04. Characters\01. Player">
       <UniqueIdentifier>{db0a91a1-8ff6-4844-b7c7-530727dc1e48}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. Characters\01. Player\01. Buster">
+      <UniqueIdentifier>{e63e19c6-b414-42ca-acfc-65428675b30c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -133,7 +136,10 @@
       <Filter>02. GameObject\04. Characters\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="Public\GameObject\ReaverBot_Horokko.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Weapon_Buster.h">
+      <Filter>02. GameObject\04. Characters\01. Player\01. Buster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -183,7 +189,10 @@
       <Filter>02. GameObject\04. Characters\01. Player</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\ReaverBot_Horokko.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Weapon_Buster.cpp">
+      <Filter>02. GameObject\04. Characters\01. Player\01. Buster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
