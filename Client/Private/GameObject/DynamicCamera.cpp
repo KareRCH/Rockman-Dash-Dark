@@ -18,7 +18,7 @@ HRESULT CDynamicCamera::Initialize_Prototype()
     m_pTarget = GI()->Find_GameObjectByName(TEXT("Player"));
     Safe_AddRef(m_pTarget);
 
-    Transform().Set_Position(_float3(6.f, 4.f, 6.f));
+    Transform().Set_Position(m_pTarget->Transform().Get_PositionVector() + XMVectorSet(0.f, 1.f, 0.f, 0.f) - m_pTarget->Transform().Get_LookVector());
     XMStoreFloat3(&m_vAt, m_pTarget->Transform().Get_PositionVector() + XMVectorSet(0.f, 1.f, 0.f, 0.f));
     _matrix matTransform = XMMatrixInverse(nullptr, 
         XMMatrixLookAtLH(Transform().Get_PositionVector(), XMLoadFloat3(&m_vAt), XMVectorSet(0.f, 1.f, 0.f, 0.f)));

@@ -7,6 +7,7 @@
 #include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
 #include "Component/NavigationComponent.h"
+#include "GameObject/Weapon_Buster.h"
 
 #include "System/RenderMgr.h"
 
@@ -461,6 +462,7 @@ void CPlayer::ActState_Buster(const _float& fTimeDelta)
     {
         m_pModelComp->Set_Animation(17, 5.f, false);
         GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_buster.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+        ShootBuster();
     }
 
     if (m_State_Act.Can_Update())
@@ -473,4 +475,19 @@ void CPlayer::ActState_Buster(const _float& fTimeDelta)
     {
 
     }
+}
+
+void CPlayer::ShootBuster()
+{
+    _vector vPos = Transform().Get_PositionVector() + XMVectorSet(0.f, 0.5f, 1.f, 0.f);
+    _float3 vfPos = {};
+    XMStoreFloat3(&vfPos, vPos);
+    auto pBuster = CWeapon_Buster::Create(vfPos);
+    if (pBuster == nullptr)
+        return;
+
+    GI()->Add_GameObject(pBuster);
+    pBuster->Set_LifeTime(3.f);
+    pBuster->Set_Speed(15.f);
+    pBuster->Set_LookDir(Transform().Get_LookFloat3());
 }
