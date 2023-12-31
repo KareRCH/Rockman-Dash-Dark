@@ -57,13 +57,17 @@ HRESULT CLevel_Logo::Ready_Objects()
 {
 	m_pGI->Set_LevelTag(Get_Name());
 
+	m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("01. Title Screen.mp3"), 1.f);
+
 	CLoadingScreen* pLoadingScreen = { nullptr };
 
 	if (FAILED(m_pGI->Add_GameObject(pLoadingScreen = CLoadingScreen::Create())))
 		return E_FAIL;
 
 	CPlaneModelComp* pModel = pLoadingScreen->Get_Component<CPlaneModelComp>(TEXT("LoadingScreen"));
-	pModel->Transform().Set_Scale(XMVectorSet(g_iWindowSizeX, g_iWindowSizeY, 1.f, 0.f));
+	_float fX = 1024.f * (g_iWindowSizeX / 660.f);
+	_float fY = 660.f * (g_iWindowSizeY / 512.f);
+	pModel->Transform().Set_Scale(XMVectorSet(fX, fY, 1.f, 0.f));
 	pModel->Transform().Set_Position(XMVectorSet(0.f, 0.f, 10.f, 1.f));
 
 	return S_OK;

@@ -58,6 +58,8 @@ HRESULT CLevel_GamePlay::Ready_Objects()
 {
     m_pGI->Set_LevelTag(Get_Name());
 
+	m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("07. Calinca - Tundra.mp3"), 1.f);
+
 	HANDLE		hFile = CreateFile(TEXT("Resource/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (0 == hFile)
 		return E_FAIL;
@@ -102,7 +104,7 @@ HRESULT CLevel_GamePlay::Ready_Objects()
     tInit.strHeightMapPath = TEXT("TestHeight.png");
     tInit.iMaxWidth = 100;
     pTerrain->Create_TerrainByHeightMap(tInit);
-    pTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"))->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_1.dds"), 1);
+    pTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"))->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/RockmanDash2/Terrain.png"), 1);
 
     CSkyBox* pSkyBox = { nullptr };
     GI()->Add_GameObject(pSkyBox = CSkyBox::Create());

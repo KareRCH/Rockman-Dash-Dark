@@ -2,6 +2,7 @@
 
 #include "BaseClass/Terrain.h"
 #include "GameObject/ToolCamera.h"
+#include "Component/NavigationComponent.h"
 
 HRESULT CLevel_MapTool::Initialize()
 {
@@ -13,6 +14,11 @@ HRESULT CLevel_MapTool::Initialize()
     //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
     //GI()->Add_GameObject(CToolCamera::Create());
     //GI()->Add_GameObject(CTerrain::Create());
+    GI()->Set_LevelTag(TEXT("MapTool"));
+
+    if (FAILED(GI()->Add_PrototypeComp(TEXT("MapTool"), TEXT("Prototype_Component_Navigation"),
+        CNavigationComponent::Create(TEXT("../Client/Resource/Navigation.dat")))))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -35,8 +41,6 @@ CLevel_MapTool* CLevel_MapTool::Create()
     {
         MSG_BOX("TestScene Create Failed");
         Engine::Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;

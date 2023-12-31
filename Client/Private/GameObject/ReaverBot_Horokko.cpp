@@ -34,6 +34,16 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype(const _float3 vPos)
 	TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
 
 	Transform().Set_Position(vPos);
+
+	m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
+	m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
+	m_State_Act.Add_Func(EState_Act::Ready_Charge, &ThisClass::ActState_Ready_Charge);
+	m_State_Act.Add_Func(EState_Act::Charge_Attack, &ThisClass::ActState_Charge_Attack);
+	m_State_Act.Add_Func(EState_Act::Ready_Shooting, &ThisClass::ActState_Ready_Shooting);
+	m_State_Act.Add_Func(EState_Act::Shooting, &ThisClass::ActState_Shooting);
+	m_State_Act.Add_Func(EState_Act::End_Shooting, &ThisClass::ActState_End_Shooting);
+	m_State_Act.Add_Func(EState_Act::Dead, &ThisClass::ActState_Dead);
+
 	m_pModelComp->Set_Animation(0, 1.f, true);
 
 	return S_OK;
@@ -61,13 +71,13 @@ void CReaverBot_Horokko::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
 
+	//m_State_AI.Get_StateFunc()(this, fTimeDelta);
+	m_State_Act.Get_StateFunc()(this, fTimeDelta);
+
 	if (GI()->IsKey_Pressed(DIK_R))
 	{
-		++m_iTest;
-		if (m_iTest > 7)
-			m_iTest = 0;
 
-		m_pModelComp->Set_Animation(m_iTest, 1.f, true);
+		//m_pModelComp->Set_Animation(m_iTest, 1.f, true);
 	}
 
 	m_pModelComp->Add_AnimTime(fTimeDelta);
@@ -144,4 +154,163 @@ HRESULT CReaverBot_Horokko::Initialize_Component()
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Horokko/Horokko.amodel");
 
 	return S_OK;
+}
+
+void CReaverBot_Horokko::Move_Update(const _float& fTimeDelta)
+{
+
+}
+
+void CReaverBot_Horokko::ActState_Idle(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(2, 1.f, true);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		if (GI()->IsKey_Pressed(DIK_RETURN))
+			m_State_Act.Set_State(EState_Act::Run);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::ActState_Run(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(7, 1.f, true);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		if (GI()->IsKey_Pressed(DIK_RETURN))
+			m_State_Act.Set_State(EState_Act::Ready_Charge);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+
+void CReaverBot_Horokko::ActState_Ready_Charge(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(3, 1.f, true);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		if (GI()->IsKey_Pressed(DIK_RETURN))
+			m_State_Act.Set_State(EState_Act::Charge_Attack);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::ActState_Charge_Attack(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(0, 1.f, true);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		if (GI()->IsKey_Pressed(DIK_RETURN))
+			m_State_Act.Set_State(EState_Act::Ready_Shooting);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+
+void CReaverBot_Horokko::ActState_Ready_Shooting(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(6, 1.f, false);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		if (GI()->IsKey_Pressed(DIK_RETURN))
+			m_State_Act.Set_State(EState_Act::Shooting);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::ActState_Shooting(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(5, 1.f, false);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		if (GI()->IsKey_Pressed(DIK_RETURN))
+			m_State_Act.Set_State(EState_Act::End_Shooting);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::ActState_End_Shooting(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(4, 1.f, false, true);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		if (GI()->IsKey_Pressed(DIK_RETURN))
+			m_State_Act.Set_State(EState_Act::Dead);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::ActState_Dead(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(1, 1.f, true);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		if (GI()->IsKey_Pressed(DIK_RETURN))
+			m_State_Act.Set_State(EState_Act::Idle);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
 }

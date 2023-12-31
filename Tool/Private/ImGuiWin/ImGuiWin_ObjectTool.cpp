@@ -29,8 +29,6 @@ CImGuiWin_ObjectTool* CImGuiWin_ObjectTool::Create()
 	{
 		MSG_BOX("ImGuiWin_ObjectTool Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;

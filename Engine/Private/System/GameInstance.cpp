@@ -1306,7 +1306,7 @@ const ComPtr<ID3DBlob> CGameInstance::Get_ShaderByte(const EShaderType eType, co
 
 
 HRESULT CGameInstance::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements
-	, D3D_SHADER_MACRO* pShaderMacro)
+	, const D3D_SHADER_MACRO** pShaderMacro)
 {
 	if (nullptr == m_pShaderMgr)
 		return E_FAIL;

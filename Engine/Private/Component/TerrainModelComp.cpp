@@ -191,7 +191,7 @@ const size_t CTerrainModelComp::Get_IndexCount() const
 }
 
 
-HRESULT CTerrainModelComp::Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro)
+HRESULT CTerrainModelComp::Bind_Effect(const wstring& strEffectKey, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO** pShaderMacro)
 {
     if (!m_pEffectComp)
         return E_FAIL;

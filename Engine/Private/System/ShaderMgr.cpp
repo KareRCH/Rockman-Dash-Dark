@@ -172,9 +172,56 @@ const ComPtr<ID3DBlob> CShaderMgr::Get_ShaderByte(const EShaderType eType, const
 
 
 
-HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro)
+HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO** pShaderMacro)
 {
-	auto iter = m_mapEffects.find(strFileName);
+	wstring strMacroDefine = TEXT("");
+	if (pShaderMacro != nullptr)
+	{
+		_uint iErrorIter = 0U;
+		_int i = 0;
+		_char	szMacroId[MAX_PATH] = {};
+		_int MacroIdIndex = 0;
+		while (true)
+		{
+			// 이름이 nullptr 이면 종료한다.
+			if ((pShaderMacro[i]) == nullptr)
+				break;
+
+			for (size_t j = 0; j < strlen((*pShaderMacro[i]).Name); j++)
+			{
+				szMacroId[MacroIdIndex++] = (*pShaderMacro[i]).Name[j];
+				// 오류 방지
+				if (++iErrorIter >= MAX_PATH)
+					return E_FAIL;
+			}
+
+			szMacroId[MacroIdIndex++] = '_';
+			// 오류 방지
+			if (++iErrorIter >= MAX_PATH)
+				return E_FAIL;
+			
+			for (size_t j = 0; j < strlen((*pShaderMacro[i]).Definition); j++)
+			{
+				szMacroId[MacroIdIndex++] = (*pShaderMacro[i]).Definition[j];
+				// 오류 방지
+				if (++iErrorIter >= MAX_PATH)
+					return E_FAIL;
+			}
+
+			szMacroId[MacroIdIndex++] = '_';
+
+			// 오류 방지
+			if (++iErrorIter >= MAX_PATH)
+				return E_FAIL;
+
+			++i;
+		}
+
+		strMacroDefine = Make_Wstring(szMacroId);
+	}
+
+	wstring strSaveKey = strFileName + strMacroDefine;
+	auto iter = m_mapEffects.find(strSaveKey);
 	if (iter != m_mapEffects.end())
 		return E_FAIL;
 
@@ -188,7 +235,7 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_EL
 #endif
 
 	ComPtr<ID3DX11Effect> pEffect;
-	if (FAILED(hr = D3DX11CompileEffectFromFile((m_strMainPath + strFileName).c_str(), pShaderMacro,
+	if (FAILED(hr = D3DX11CompileEffectFromFile((m_strMainPath + strFileName).c_str(), ((pShaderMacro == nullptr) ? (nullptr) : (*pShaderMacro)),
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice.Get(), pEffect.GetAddressOf(), nullptr)))
 		return E_FAIL;
 
@@ -218,7 +265,7 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_EL
 
 		pEffectData->pInputLayouts.push_back(pInputLayout);
 	}
-	m_mapEffects.emplace(strFileName, pEffectData);
+	m_mapEffects.emplace(strSaveKey, pEffectData);
 
 	return S_OK;
 }

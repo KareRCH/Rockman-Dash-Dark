@@ -176,6 +176,9 @@
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Horokko.cpp">
       <Filter>98 Client</Filter>
     </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Weapon_Buster.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Include\Tool.rc">

@@ -20,8 +20,6 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 	if (FAILED(Ready_Objects()))
 		return E_FAIL;
 
-	m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("04. Kitchen Fire.mp3"), 1.f);
-
 	m_eNextLevelID = eNextLevelID;
 
 	m_pLoader = CLoader::Create(eNextLevelID);
