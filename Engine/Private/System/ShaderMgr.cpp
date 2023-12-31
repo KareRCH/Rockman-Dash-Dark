@@ -172,7 +172,7 @@ const ComPtr<ID3DBlob> CShaderMgr::Get_ShaderByte(const EShaderType eType, const
 
 
 
-HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO** pShaderMacro)
+HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro)
 {
 	wstring strMacroDefine = TEXT("");
 	if (pShaderMacro != nullptr)
@@ -184,12 +184,17 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_EL
 		while (true)
 		{
 			// 이름이 nullptr 이면 종료한다.
-			if ((pShaderMacro[i]) == nullptr)
+			if ((pShaderMacro[i].Name) == nullptr)
 				break;
 
-			for (size_t j = 0; j < strlen((*pShaderMacro[i]).Name); j++)
+			szMacroId[MacroIdIndex++] = '_';
+			// 오류 방지
+			if (++iErrorIter >= MAX_PATH)
+				return E_FAIL;
+
+			for (size_t j = 0; j < strlen(pShaderMacro[i].Name); j++)
 			{
-				szMacroId[MacroIdIndex++] = (*pShaderMacro[i]).Name[j];
+				szMacroId[MacroIdIndex++] = pShaderMacro[i].Name[j];
 				// 오류 방지
 				if (++iErrorIter >= MAX_PATH)
 					return E_FAIL;
@@ -200,19 +205,13 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_EL
 			if (++iErrorIter >= MAX_PATH)
 				return E_FAIL;
 			
-			for (size_t j = 0; j < strlen((*pShaderMacro[i]).Definition); j++)
+			for (size_t j = 0; j < strlen(pShaderMacro[i].Definition); j++)
 			{
-				szMacroId[MacroIdIndex++] = (*pShaderMacro[i]).Definition[j];
+				szMacroId[MacroIdIndex++] = pShaderMacro[i].Definition[j];
 				// 오류 방지
 				if (++iErrorIter >= MAX_PATH)
 					return E_FAIL;
 			}
-
-			szMacroId[MacroIdIndex++] = '_';
-
-			// 오류 방지
-			if (++iErrorIter >= MAX_PATH)
-				return E_FAIL;
 
 			++i;
 		}
@@ -235,7 +234,7 @@ HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_EL
 #endif
 
 	ComPtr<ID3DX11Effect> pEffect;
-	if (FAILED(hr = D3DX11CompileEffectFromFile((m_strMainPath + strFileName).c_str(), ((pShaderMacro == nullptr) ? (nullptr) : (*pShaderMacro)),
+	if (FAILED(hr = D3DX11CompileEffectFromFile((m_strMainPath + strFileName).c_str(), pShaderMacro,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice.Get(), pEffect.GetAddressOf(), nullptr)))
 		return E_FAIL;
 

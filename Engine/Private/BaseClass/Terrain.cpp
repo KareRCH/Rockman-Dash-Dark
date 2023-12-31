@@ -127,7 +127,7 @@ HRESULT CTerrain::Initialize_Component(const FInitTerrain& tInit)
 {
     FAILED_CHECK_RETURN(Add_Component(L"TerrainModelComp", m_pTerrainModelComp = CTerrainModelComp::Create()), E_FAIL);
     // 셰이더 매크로 정의를 확인함.
-    m_pTerrainModelComp->Bind_Effect(TEXT("Runtime/FX_Terrain.hlsl"), SHADER_VTX_NORM::Elements, SHADER_VTX_NORM::iNumElements, ConCast<const D3D_SHADER_MACRO**>(&tInit.pShaderMacro));
+    m_pTerrainModelComp->Bind_Effect(TEXT("Runtime/FX_Terrain.hlsl"), SHADER_VTX_NORM::Elements, SHADER_VTX_NORM::iNumElements, tInit.pShaderMacro);
     
     // 헤이트맵 없이 초기화
     if (tInit.strHeightMapPath.empty())

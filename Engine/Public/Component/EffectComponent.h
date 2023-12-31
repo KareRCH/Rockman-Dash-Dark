@@ -51,7 +51,7 @@ private:
 	
 public:	// 외부용 함수
 	// 이펙트 불러오기
-	HRESULT Bind_Effect(const wstring& strEffectFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO** pShaderMacro = nullptr);
+	HRESULT Bind_Effect(const wstring& strEffectFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro = nullptr);
 	// 이펙트 풀기
 	HRESULT Unbind_Effect();
 	// 외부에서 
