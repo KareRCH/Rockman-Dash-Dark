@@ -84,8 +84,6 @@ CImGuiWin_MapTool* CImGuiWin_MapTool::Create()
 	{
 		MSG_BOX("ImGuiMgr Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;

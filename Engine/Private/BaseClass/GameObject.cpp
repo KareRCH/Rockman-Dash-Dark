@@ -7,6 +7,11 @@ CGameObject::CGameObject()
 	: m_pPipelineComp(Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp")))
 {
 	m_pTransformComp = CTransformComponent::Create();
+
+	TurnOn_State(EGObjectState::Priority_Tick);
+	TurnOn_State(EGObjectState::Tick);
+	TurnOn_State(EGObjectState::Late_Tick);
+	TurnOn_State(EGObjectState::Render);
 }
 
 CGameObject::CGameObject(const CGameObject& rhs)
@@ -114,6 +119,9 @@ void CGameObject::Delete_Tag(const EGObjTag eTagType, const wstring& strTag)
 
 HRESULT CGameObject::Add_Component(const wstring& strName, CGameObjectComp* pComponent)
 {
+	if (nullptr == pComponent)
+		return E_FAIL;
+
 	auto iter = find_if(m_vecComponent.begin(), m_vecComponent.end(), 
 		[&strName](CGameObjectComp* pComp) {
 			return pComp->Get_Name() == strName;

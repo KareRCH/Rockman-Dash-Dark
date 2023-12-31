@@ -12,8 +12,6 @@ HRESULT CImGuiWin_Browser::Initialize()
 {
 	m_bOpen = true;
 
-	GI()->Load_Model(EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Test.fbx");
-
 	return S_OK;
 }
 
@@ -142,6 +140,11 @@ void CImGuiWin_Browser::Handle_PlacePicked(_float3 vPickedWorldPos)
 		GI()->Add_GameObject(pAddedObject = CPlayer::Create(vPickedWorldPos));
 		break;
 	}
+
+	if (pAddedObject == nullptr)
+		return;
+
+	pAddedObject->TurnOff_State(EGObjectState::Tick);
 	
 	OnObjectPlaced.Broadcast(pAddedObject);
 }

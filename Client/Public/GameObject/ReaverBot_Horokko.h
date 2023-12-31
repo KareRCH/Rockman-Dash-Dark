@@ -49,8 +49,43 @@ private:
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
 
+
+public:
+	void Move_Update(const _float& fTimeDelta);
+
+public:
+	enum class EState_Act { Idle, Run, Ready_Charge, Charge_Attack, Ready_Shooting, Shooting, End_Shooting, Dead };
+
+private:		// 약식 상태머신
+	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
+	SState_Act		m_State_Act;
+
 private:
-	_int			m_iTest = 0;
+	void ActState_Idle(const _float& fTimeDelta);
+	void ActState_Run(const _float& fTimeDelta);
+	void ActState_Ready_Charge(const _float& fTimeDelta);
+	void ActState_Charge_Attack(const _float& fTimeDelta);
+	void ActState_Ready_Shooting(const _float& fTimeDelta);
+	void ActState_Shooting(const _float& fTimeDelta);
+	void ActState_End_Shooting(const _float& fTimeDelta);
+	void ActState_Dead(const _float& fTimeDelta);
+
+
+public:
+	enum class EState_AI { Idle, Chase, Charge, Charge_Attack, Prowl, Dead };
+
+private:		// 약식 상태머신
+	using SState_AI = STATE_SET<EState_AI, void(ThisClass*, const _float&)>;
+	SState_AI		m_State_AI;
+
+private:
+	void AIState_Idle(const _float& fTimeDelta);
+	void AIState_Chase(const _float& fTimeDelta);
+	void AIState_Charge(const _float& fTimeDelta);
+	void AIState_Charge_Attack(const _float& fTimeDelta);
+	void AIState_Prowl(const _float& fTimeDelta);
+	void AIState_Dead(const _float& fTimeDelta);
+
 };
 
 END

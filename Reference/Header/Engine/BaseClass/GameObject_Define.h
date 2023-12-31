@@ -25,8 +25,11 @@ enum class EGObjectState : _uint
 {
 	Dead = EBIT_FLAG32_0,
 	Pause = EBIT_FLAG32_1,
-	Render = EBIT_FLAG32_2,				// ·»´õ¸µ À¯¹«
-	RenderZBuffer = EBIT_FLAG32_3,		// ZBuffer·Î ·»´õ¸µÇÏ´Â ¿É¼Ç
+	Priority_Tick = EBIT_FLAG32_2,		// ¿ì¼± Æ½
+	Tick = EBIT_FLAG32_3,				// Æ½
+	Late_Tick = EBIT_FLAG32_4,			// ·¹ÀÌÆ® Æ½
+	Render = EBIT_FLAG32_5,				// ·»´õ¸µ À¯¹«
+	RenderZBuffer = EBIT_FLAG32_6,		// ZBuffer·Î ·»´õ¸µÇÏ´Â ¿É¼Ç
 };
 
 END

@@ -94,7 +94,7 @@ HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const _uint iNumTex
 	}
 
 	HRESULT hr = S_OK;
-	hr = CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
+	hr = CoInitialize(nullptr);
 	if (FAILED(hr))
 	{
 		CoUninitialize();

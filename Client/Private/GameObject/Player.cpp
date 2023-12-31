@@ -14,21 +14,35 @@
 CPlayer::CPlayer()
 {
     Set_Name(L"Player");
+
+    m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
+    m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
+    m_State_Act.Add_Func(EState_Act::Walk, &ThisClass::ActState_Walk);
+    m_State_Act.Add_Func(EState_Act::Ready_Jump, &ThisClass::ActState_Ready_Jump);
+    m_State_Act.Add_Func(EState_Act::Jump_Up, &ThisClass::ActState_Jump_Up);
+    m_State_Act.Add_Func(EState_Act::Jump_Down, &ThisClass::ActState_Jump_Down);
+    m_State_Act.Add_Func(EState_Act::Landing, &ThisClass::ActState_Landing);
+    m_State_Act.Add_Func(EState_Act::Buster, &ThisClass::ActState_Buster);
 }
 
 CPlayer::CPlayer(const CPlayer& rhs)
     : Base(rhs)
     , m_pModelComp(rhs.m_pModelComp)
 {
+    m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
+    m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
+    m_State_Act.Add_Func(EState_Act::Walk, &ThisClass::ActState_Walk);
+    m_State_Act.Add_Func(EState_Act::Ready_Jump, &ThisClass::ActState_Ready_Jump);
+    m_State_Act.Add_Func(EState_Act::Jump_Up, &ThisClass::ActState_Jump_Up);
+    m_State_Act.Add_Func(EState_Act::Jump_Down, &ThisClass::ActState_Jump_Down);
+    m_State_Act.Add_Func(EState_Act::Landing, &ThisClass::ActState_Landing);
+    m_State_Act.Add_Func(EState_Act::Buster, &ThisClass::ActState_Buster);
 }
 
 HRESULT CPlayer::Initialize_Prototype()
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
-
-    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
-    TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
 
     m_pModelComp->Set_Animation(0, 1.f, true);
 
@@ -40,23 +54,11 @@ HRESULT CPlayer::Initialize_Prototype(const _float3 vPos)
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 
-    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
-    TurnOn_State(EGObjectState::RenderZBuffer);     // ZBuffer 사용
-
     Transform().Set_Position(vPos);
     m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, 10.f, 6.f };
     m_vAcceleration = { 100.f, g_fGravity, 100.f };
 
     m_pModelComp->Set_Animation(0, 1.f, true);
-
-    m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
-    m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
-    m_State_Act.Add_Func(EState_Act::Walk, &ThisClass::ActState_Walk);
-    m_State_Act.Add_Func(EState_Act::Ready_Jump, &ThisClass::ActState_Ready_Jump);
-    m_State_Act.Add_Func(EState_Act::Jump_Up, &ThisClass::ActState_Jump_Up);
-    m_State_Act.Add_Func(EState_Act::Jump_Down, &ThisClass::ActState_Jump_Down);
-    m_State_Act.Add_Func(EState_Act::Landing, &ThisClass::ActState_Landing);
-    m_State_Act.Add_Func(EState_Act::Buster, &ThisClass::ActState_Buster);
 
     return S_OK;
 }
@@ -94,16 +96,15 @@ void CPlayer::Tick(const _float& fTimeDelta)
     SUPER::Tick(fTimeDelta);
 
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
-
-    
-    m_pModelComp->Add_AnimTime(fTimeDelta);
-    m_pModelComp->Invalidate_Animation();
-    m_pModelComp->Invalidate_BoneTransforms();
 }
 
 void CPlayer::Late_Tick(const _float& fTimeDelta)
 {
     SUPER::Late_Tick(fTimeDelta);
+
+    m_pModelComp->Add_AnimTime(fTimeDelta);
+    m_pModelComp->Invalidate_Animation();
+    m_pModelComp->Invalidate_BoneTransforms();
 
     m_pModelComp->Late_Tick(fTimeDelta);
 }

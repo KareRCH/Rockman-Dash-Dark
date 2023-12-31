@@ -65,7 +65,7 @@ void CEffectComponent::Free()
     Safe_Release(m_pShaderMgr);
 }
 
-HRESULT CEffectComponent::Bind_Effect(const wstring& strEffectFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro)
+HRESULT CEffectComponent::Bind_Effect(const wstring& strEffectFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO** pShaderMacro)
 {
     // 셰이더 매니저에 의존성이 있음, 항상 전역적으로 다룸
     if (FAILED(Link_ShaderMgr()))

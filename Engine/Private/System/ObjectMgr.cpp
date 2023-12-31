@@ -17,7 +17,8 @@ void CObjectMgr::Priority_Tick(const _float& fTimeDelta)
 
 	for (auto pObj : m_listTickObjects)
 	{
-		pObj->Priority_Tick(fTimeDelta);
+		if (pObj->IsState(EGObjectState::Priority_Tick))
+			pObj->Priority_Tick(fTimeDelta);
 	}
 }
 
@@ -25,7 +26,8 @@ _int CObjectMgr::Tick(const _float& fTimeDelta)
 {
 	for (auto pObj : m_listTickObjects)
 	{
-		pObj->Tick(fTimeDelta);
+		if (pObj->IsState(EGObjectState::Tick))
+			pObj->Tick(fTimeDelta);
 	}
 
 	return 0;
@@ -35,7 +37,8 @@ void CObjectMgr::Late_Tick(const _float& fTimeDelta)
 {
 	for (auto pObj : m_listTickObjects)
 	{
-		pObj->Late_Tick(fTimeDelta);
+		if (pObj->IsState(EGObjectState::Late_Tick))
+			pObj->Late_Tick(fTimeDelta);
 	}
 }
 
@@ -269,8 +272,11 @@ void CObjectMgr::RegistToTick_GameObjects()
 	if (bChanged)
 		Straighten_GameObjects();
 
-	// 리스트에 저장
-	copy(m_vecGameObjects.begin(), m_vecGameObjects.end(), back_inserter(m_listTickObjects));
+	// 리스트에 저장, Pause가 아닌 객체만 Tick을 작동시킴
+	copy_if(m_vecGameObjects.begin(), m_vecGameObjects.end(), back_inserter(m_listTickObjects),
+		[](const CGameObject* pObj) {
+			return (!pObj->IsState(EGObjectState::Pause));
+		});
 
 	// Tick 우선도 기반 정렬
 	_uint iIndex = ECast(EGObjTickPriority::Tick);

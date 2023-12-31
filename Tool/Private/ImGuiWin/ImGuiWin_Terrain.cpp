@@ -428,6 +428,7 @@ HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 		}
 		CoUninitialize();
 	}
+	CoUninitialize();
 	
 	Safe_Delete_Array(pPixels);
 	Safe_Delete_Array(pVertices);
