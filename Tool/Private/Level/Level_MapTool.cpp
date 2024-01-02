@@ -48,4 +48,5 @@ CLevel_MapTool* CLevel_MapTool::Create()
 
 void CLevel_MapTool::Free()
 {
+    SUPER::Free();
 }

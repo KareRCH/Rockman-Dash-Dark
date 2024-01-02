@@ -22,7 +22,7 @@ class ENGINE_DLL CEffectComponent final : public CInternalComponent, public ID3D
 	DERIVED_CLASS(CInternalComponent, CEffectComponent)
 
 protected:
-	explicit CEffectComponent() = default;
+	explicit CEffectComponent();
 	explicit CEffectComponent(const CEffectComponent& rhs);
 	virtual ~CEffectComponent() = default;
 

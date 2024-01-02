@@ -182,6 +182,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Docking.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Hierarchi.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_MapTool.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_Navigation.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_ObjectTool.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Property.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Terrain.h" />
@@ -205,6 +206,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Docking.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Hierarchi.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_MapTool.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_Navigation.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_ObjectTool.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Property.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Terrain.cpp" />

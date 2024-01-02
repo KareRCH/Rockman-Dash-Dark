@@ -62,11 +62,15 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_HeightMap tInit)
         m_pIB.Reset();
     }
 
+    if (FAILED(CoInitialize(nullptr)))
+        return E_FAIL;
+
     wstring strMainPath = GI()->Get_TextureMainPath();
     TexMetadata tMetaData = {};
     ScratchImage imageScratch = {};
     if (FAILED(LoadFromWICFile((strMainPath + tInit.strHeightMapFilePath).c_str(), WIC_FLAGS_NONE, &tMetaData, imageScratch)))
         return E_FAIL;
+    CoUninitialize();
 
     /*_ulong dwByte = 0;
     HANDLE		hFile = CreateFile((strMainPath + tInit.strHeightMapFilePath).c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);

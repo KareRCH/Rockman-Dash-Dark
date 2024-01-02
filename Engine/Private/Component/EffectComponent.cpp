@@ -2,6 +2,12 @@
 
 #include "System/GameInstance.h"
 
+CEffectComponent::CEffectComponent()
+{
+    // 디바이스 참조 연결, 내부 자동 레퍼카운트 증가
+    NULL_CHECK(m_pDeviceComp = DynCast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp")));
+}
+
 CEffectComponent::CEffectComponent(const CEffectComponent& rhs)
     : Base(rhs)
     , m_pDeviceComp(rhs.m_pDeviceComp)
@@ -15,9 +21,6 @@ CEffectComponent::CEffectComponent(const CEffectComponent& rhs)
 
 HRESULT CEffectComponent::Initialize_Prototype(void* Arg)
 {
-    // 디바이스 참조 연결, 내부 자동 레퍼카운트 증가
-    m_pDeviceComp = Cast<CD3D11DeviceComp*>(GI()->Reference_PrototypeComp(L"GraphicDevComp"));
-
 	return S_OK;
 }
 
@@ -34,8 +37,6 @@ CEffectComponent* CEffectComponent::Create()
     {
         MSG_BOX("EffectComponent Copy Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -49,8 +50,6 @@ CComponent* CEffectComponent::Clone(void* Arg)
     {
         MSG_BOX("EffectComponent Copy Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return Cast<CComponent*>(pInstance);
@@ -75,7 +74,7 @@ HRESULT CEffectComponent::Bind_Effect(const wstring& strEffectFileName, const D3
     Unbind_Effect();
 
     // 있던거면 파일 이름으로 검색해서 찾는다.
-    FEffectData* pEffectData = m_pShaderMgr->Find_EffectData(strEffectFileName);
+    FEffectData* pEffectData = m_pShaderMgr->Find_EffectData(strEffectFileName, pShaderMacro);
     if (!pEffectData)
     {
         // 없으면 로드 시키고, 그래도 실패하면 파일 못 찾는거임.
@@ -83,7 +82,7 @@ HRESULT CEffectComponent::Bind_Effect(const wstring& strEffectFileName, const D3
             return E_FAIL;
 
         // 로드성공시 다시 찾아온다.
-        pEffectData = m_pShaderMgr->Find_EffectData(strEffectFileName);
+        pEffectData = m_pShaderMgr->Find_EffectData(strEffectFileName, pShaderMacro);
     }
 
     m_pEffectData = pEffectData;

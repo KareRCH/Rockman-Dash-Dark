@@ -87,8 +87,6 @@ CToolCamera* CToolCamera::Create()
     {
         MSG_BOX("DynamicCamera Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     return pInstance;
@@ -102,8 +100,6 @@ CGameObject* CToolCamera::Clone(void* Arg)
     {
         MSG_BOX("DynamicCamera Create Failed");
         Safe_Release(pInstance);
-
-        return nullptr;
     }
 
     /* Arg Ã³¸® */

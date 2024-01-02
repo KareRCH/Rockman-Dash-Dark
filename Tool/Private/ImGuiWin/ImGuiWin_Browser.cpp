@@ -79,7 +79,8 @@ void CImGuiWin_Browser::Layout_Object(const _float& fTimeDelta)
 			m_iSelected_Object = 0;
 		}
 
-	}	ImGui::EndListBox();
+		ImGui::EndListBox();
+	}	
 }
 
 void CImGuiWin_Browser::Link_ToMapTool()

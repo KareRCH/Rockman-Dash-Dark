@@ -9,10 +9,11 @@
 
 
 CImGuiWin_Viewer::CImGuiWin_Viewer()
-    : m_pGI(GI())
-    , m_pPipelineComp(Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(TEXT("CamViewComp"))))
 {
+    NULL_CHECK(m_pGI = GI());
     Safe_AddRef(m_pGI);
+
+    NULL_CHECK(m_pPipelineComp = Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(TEXT("CamViewComp"))));
 }
 
 HRESULT CImGuiWin_Viewer::Initialize()

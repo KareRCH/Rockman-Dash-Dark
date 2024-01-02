@@ -61,6 +61,9 @@
     <Filter Include="01. ImGuiWin\02. MapTool\01. Terrain">
       <UniqueIdentifier>{cba799f0-e718-4e97-9761-17d0f80504c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. ImGuiWin\02. MapTool\02. Navigation">
+      <UniqueIdentifier>{73432e3d-3e8b-4254-a993-38087f3e40d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\framework.h">
@@ -116,6 +119,9 @@
     </ClInclude>
     <ClInclude Include="Public\ImGuiWin\ImGuiMgr.h">
       <Filter>01. ImGuiWin</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_Navigation.h">
+      <Filter>01. ImGuiWin\02. MapTool\02. Navigation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="..\Client\Private\GameObject\Weapon_Buster.cpp">
       <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_Navigation.cpp">
+      <Filter>01. ImGuiWin\02. MapTool\02. Navigation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

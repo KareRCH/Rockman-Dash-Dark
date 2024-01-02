@@ -15,6 +15,7 @@
 #include "ImGuiWin/ImGuiWin_Browser.h"
 #include "ImGuiWin/ImGuiWin_ObjectTool.h"
 #include "ImGuiWin/ImGuiWin_Terrain.h"
+#include "ImGuiWin/ImGuiWin_Navigation.h"
 #include "ImGuiWin/ImGuiMgr.h"
 #include "Level/Level_MapTool.h"
 
@@ -36,8 +37,6 @@ CMainApp* CMainApp::Create()
 	{
 		MSG_BOX("MainApp Create Failed");
 		Engine::Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -91,6 +90,7 @@ HRESULT CMainApp::Initialize()
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Property"), CImGuiWin_Property::Create());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Browser"), CImGuiWin_Browser::Create());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Terrain"), CImGuiWin_Terrain::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Navigation"), CImGuiWin_Navigation::Create());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("DockingSpace"), TEXT("ObjectTool"), CImGuiWin_ObjectTool::Create());
 
 	m_pGI->Open_Level(0, CLevel_MapTool::Create());
@@ -143,6 +143,7 @@ void CMainApp::Render()
 void CMainApp::Free()
 {
 	// dll ½Ì±ÛÅæ Á¦°Å
+	m_pGI->Release_Managers();
 	Safe_Release(m_pGI);
 	CImGuiMgr::GetInstance()->DestroyInstance();
 }

@@ -103,8 +103,6 @@ CImGuiWin_Docking* CImGuiWin_Docking::Create()
 	{
 		MSG_BOX("ImGuiMgr Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;

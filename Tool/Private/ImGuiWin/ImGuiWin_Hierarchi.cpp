@@ -67,7 +67,8 @@ void CImGuiWin_Hierarchi::Layout_ObjectList(const _float& fTimeDelta)
 			}
 		}
 
-	}	ImGui::EndListBox();
+		ImGui::EndListBox();
+	}	
 }
 
 void CImGuiWin_Hierarchi::Handle_ObjectPlaced(CGameObject* pObj)

@@ -13,16 +13,14 @@ CImGuiWin_Terrain::CImGuiWin_Terrain()
 	: m_pGI(GI())
 {
 	Safe_AddRef(m_pGI);
+
+	NULL_CHECK(m_pDeviceComp = Cast<CD3D11DeviceComp*>(m_pGI->Reference_PrototypeComp(L"GraphicDevComp")));
+	NULL_CHECK(m_pPipelineComp = Cast<CPipelineComp*>(m_pGI->Reference_PrototypeComp(L"CamViewComp")));
 }
 
 HRESULT CImGuiWin_Terrain::Initialize()
 {
 	m_bOpen = true;
-
-	m_pDeviceComp = Cast<CD3D11DeviceComp*>(m_pGI->Reference_PrototypeComp(L"GraphicDevComp"));
-	m_pPipelineComp = Cast<CPipelineComp*>(m_pGI->Reference_PrototypeComp(L"CamViewComp"));
-	
-	
 
 	return S_OK;
 }
@@ -66,7 +64,9 @@ void CImGuiWin_Terrain::Tick(const _float& fTimeDelta)
 
 			ImGui::EndTabItem();
 		}
-	}ImGui::EndTabBar();
+
+		ImGui::EndTabBar();
+	}
 
 	switch (m_eEditMode)
 	{
@@ -105,8 +105,6 @@ CImGuiWin_Terrain* CImGuiWin_Terrain::Create()
 	{
 		MSG_BOX("ImGuiMgr Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -364,7 +362,7 @@ HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 	TextureDesc.Height = m_ivTerrainVertex_CountZ;
 	TextureDesc.MipLevels = 1;
 	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
@@ -419,7 +417,7 @@ HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 	
 	/* 다시 파일로 저장하기위해서. */
 	// 텍스처가 범용적으로 저장되는 경로에 저장하도록 해준다.
-	if (SUCCEEDED(CoInitializeEx(nullptr, 0)))
+	if (SUCCEEDED(CoInitialize(nullptr)))
 	{
 		wstring strPath = GI()->Get_TextureMainPath() + TEXT("TestHeight.png");
 		// 아무런 변형없이 값 그대로 저장한다.

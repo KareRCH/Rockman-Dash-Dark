@@ -31,7 +31,6 @@ void CImGuiWin_MapTool::Tick(const _float& fTimeDelta)
         if (m_bFirstLoop)
         {
             m_bFirstLoop = false;
-
             ImGui::DockBuilderRemoveNode(dockspace_id);
             ImGui::DockBuilderAddNode(dockspace_id, DockSpace_Flags | ImGuiDockNodeFlags_DockSpace);
             ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetWindowSize());
@@ -39,13 +38,12 @@ void CImGuiWin_MapTool::Tick(const _float& fTimeDelta)
 
             ImGuiID dock_hierarchi_id = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 250.f / vDockSize.x, NULL, &dockspace_id);
             ImGuiID dock_property_id = ImGui::DockBuilderSplitNode(dock_hierarchi_id, ImGuiDir_Down, 0.5f, NULL, &dock_hierarchi_id);
-            ImGuiID dock_terrain_id = ImGui::DockBuilderSplitNode(dock_hierarchi_id, ImGuiDir_Down, 0.5f, &dock_property_id, &dock_hierarchi_id);
             
-
             ImGui::DockBuilderDockWindow(u8"뷰어", dockspace_id);
             ImGui::DockBuilderDockWindow(u8"계층", dock_hierarchi_id);
             ImGui::DockBuilderDockWindow(u8"속성", dock_property_id);
-            ImGui::DockBuilderDockWindow(u8"터레인", dock_terrain_id);
+            ImGui::DockBuilderDockWindow(u8"터레인", dock_property_id);
+            ImGui::DockBuilderDockWindow(u8"네비게이션", dock_property_id);
 
             ImGuiID dock_browser_scene = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 200.f / vDockSize.y, NULL, &dockspace_id);
 
