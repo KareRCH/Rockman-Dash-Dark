@@ -153,7 +153,9 @@ private:
 public:
 	HRESULT Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro = nullptr);
 	ID3DX11Effect* Find_Effect(const wstring& strKey) const;
-	FEffectData* Find_EffectData(const wstring& strKey) const;
+	FEffectData* Find_EffectData(const wstring& strKey, const D3D_SHADER_MACRO* pShaderMacro) const;
+
+	wstring Make_MacroToWstring(const D3D_SHADER_MACRO* pShaderMacro) const;
 
 
 private:

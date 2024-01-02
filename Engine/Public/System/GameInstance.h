@@ -294,7 +294,7 @@ public:		// 셰이더 매니저
 	inline ComPtr<ShaderType<Type>> Get_ShaderBuffer(const wstring& strKey);
 	HRESULT							Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro = nullptr);
 	ID3DX11Effect*					Find_Effect(const wstring& strEffectFileName) const;
-	class FEffectData*				Find_EffectData(const wstring& strEffectFileName) const;
+	class FEffectData*				Find_EffectData(const wstring& strEffectFileName, const D3D_SHADER_MACRO* pShaderMacro = nullptr) const;
 
 private:	// 셰이더 매니저 귀속형 객체 전용
 	class CShaderMgr*				Get_ShaderMgr();

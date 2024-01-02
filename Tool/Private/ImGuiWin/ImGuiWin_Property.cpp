@@ -2,11 +2,16 @@
 
 HRESULT CImGuiWin_Property::Initialize()
 {
+	m_bOpen = true;
+
 	return S_OK;
 }
 
 void CImGuiWin_Property::Tick(const _float& fTimeDelta)
 {
+	if (!m_bOpen)
+		return;
+
 	ImGui::Begin(u8"¼Ó¼º");
 
 	SUPER::Tick(fTimeDelta);

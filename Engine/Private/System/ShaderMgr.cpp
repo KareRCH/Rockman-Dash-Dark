@@ -174,50 +174,7 @@ const ComPtr<ID3DBlob> CShaderMgr::Get_ShaderByte(const EShaderType eType, const
 
 HRESULT CShaderMgr::Load_Effect(const wstring& strFileName, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const D3D_SHADER_MACRO* pShaderMacro)
 {
-	wstring strMacroDefine = TEXT("");
-	if (pShaderMacro != nullptr)
-	{
-		_uint iErrorIter = 0U;
-		_int i = 0;
-		_char	szMacroId[MAX_PATH] = {};
-		_int MacroIdIndex = 0;
-		while (true)
-		{
-			// 이름이 nullptr 이면 종료한다.
-			if ((pShaderMacro[i].Name) == nullptr)
-				break;
-
-			szMacroId[MacroIdIndex++] = '_';
-			// 오류 방지
-			if (++iErrorIter >= MAX_PATH)
-				return E_FAIL;
-
-			for (size_t j = 0; j < strlen(pShaderMacro[i].Name); j++)
-			{
-				szMacroId[MacroIdIndex++] = pShaderMacro[i].Name[j];
-				// 오류 방지
-				if (++iErrorIter >= MAX_PATH)
-					return E_FAIL;
-			}
-
-			szMacroId[MacroIdIndex++] = '_';
-			// 오류 방지
-			if (++iErrorIter >= MAX_PATH)
-				return E_FAIL;
-			
-			for (size_t j = 0; j < strlen(pShaderMacro[i].Definition); j++)
-			{
-				szMacroId[MacroIdIndex++] = pShaderMacro[i].Definition[j];
-				// 오류 방지
-				if (++iErrorIter >= MAX_PATH)
-					return E_FAIL;
-			}
-
-			++i;
-		}
-
-		strMacroDefine = Make_Wstring(szMacroId);
-	}
+	wstring strMacroDefine = Make_MacroToWstring(pShaderMacro);
 
 	wstring strSaveKey = strFileName + strMacroDefine;
 	auto iter = m_mapEffects.find(strSaveKey);
@@ -278,9 +235,61 @@ ID3DX11Effect* CShaderMgr::Find_Effect(const wstring& strKey) const
 	return (*iter).second->pEffect.Get();
 }
 
-FEffectData* CShaderMgr::Find_EffectData(const wstring& strKey) const
+wstring CShaderMgr::Make_MacroToWstring(const D3D_SHADER_MACRO* pShaderMacro) const
 {
-	auto iter = m_mapEffects.find(strKey);
+	wstring strMacroDefine = TEXT("");
+	if (pShaderMacro != nullptr)
+	{
+		_uint iErrorIter = 0U;
+		_int i = 0;
+		_char	szMacroId[MAX_PATH] = {};
+		_int MacroIdIndex = 0;
+		while (true)
+		{
+			// 이름이 nullptr 이면 종료한다.
+			if ((pShaderMacro[i].Name) == nullptr)
+				break;
+
+			szMacroId[MacroIdIndex++] = '_';
+			// 오류 방지
+			if (++iErrorIter >= MAX_PATH)
+				return wstring();
+
+			for (size_t j = 0; j < strlen(pShaderMacro[i].Name); j++)
+			{
+				szMacroId[MacroIdIndex++] = pShaderMacro[i].Name[j];
+				// 오류 방지
+				if (++iErrorIter >= MAX_PATH)
+					return wstring();
+			}
+
+			szMacroId[MacroIdIndex++] = '_';
+			// 오류 방지
+			if (++iErrorIter >= MAX_PATH)
+				return wstring();
+
+			for (size_t j = 0; j < strlen(pShaderMacro[i].Definition); j++)
+			{
+				szMacroId[MacroIdIndex++] = pShaderMacro[i].Definition[j];
+				// 오류 방지
+				if (++iErrorIter >= MAX_PATH)
+					return wstring();
+			}
+
+			++i;
+		}
+
+		strMacroDefine = Make_Wstring(szMacroId);
+	}
+
+	return strMacroDefine;
+}
+
+FEffectData* CShaderMgr::Find_EffectData(const wstring& strKey, const D3D_SHADER_MACRO* pShaderMacro) const
+{
+	wstring strMacroDefine = Make_MacroToWstring(pShaderMacro);
+
+	auto iter = m_mapEffects.find(strKey + strMacroDefine);
 	if (iter == m_mapEffects.end())
 		return nullptr;
 

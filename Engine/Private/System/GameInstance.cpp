@@ -1322,12 +1322,12 @@ ID3DX11Effect* CGameInstance::Find_Effect(const wstring& strEffectFileName) cons
 	return m_pShaderMgr->Find_Effect(strEffectFileName);
 }
 
-FEffectData* CGameInstance::Find_EffectData(const wstring& strEffectFileName) const
+FEffectData* CGameInstance::Find_EffectData(const wstring& strEffectFileName, const D3D_SHADER_MACRO* pShaderMacro) const
 {
 	if (nullptr == m_pShaderMgr)
 		return nullptr;
 
-	return m_pShaderMgr->Find_EffectData(strEffectFileName);
+	return m_pShaderMgr->Find_EffectData(strEffectFileName, pShaderMacro);
 }
 
 CShaderMgr* CGameInstance::Get_ShaderMgr()
