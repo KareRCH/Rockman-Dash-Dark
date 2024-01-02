@@ -19,6 +19,8 @@
 #include "ImGuiWin/ImGuiMgr.h"
 #include "Level/Level_MapTool.h"
 
+#include "DirectXColors.h"
+
 //#include "GameObject/DynamicCamera.h"
 
 IMPLEMENT_SINGLETON(CMainApp)
@@ -64,10 +66,8 @@ HRESULT CMainApp::Initialize()
 
 	DX11DEVICE_T tDevice = { m_pGI->Get_GraphicDev(), m_pGI->Get_GraphicContext() };
 
-	FAILED_CHECK_RETURN(m_pGI->Create_Font(L"Font_Default", L"¹ÙÅÁ", 15, 20, FW_HEAVY), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Create_Font(L"Font_Jinji", L"±Ã¼­", 30, 30, FW_THIN), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Create_Font(L"Font_Thin_Jinji", L"±Ã¼­", 18, 30, FW_THIN), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Create_Font(L"MonsterUI", L"ÇÔÃÊ·Õ¹ÙÅÁ", 14, 25, FW_THIN), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGI->Initialize_FontMgr(tDevice, TEXT("../Client/Resource/Fonts/")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGI->Add_Font(TEXT("Default"), TEXT("DungGeunMo-30.spritefont")), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Initialize_TextureMgr(tDevice, L"../Client/Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr(L"../Client/Resource/"), E_FAIL);
@@ -134,7 +134,7 @@ void CMainApp::Render()
 	CImGuiMgr::GetInstance()->Render();
 
 #ifdef _DEBUG
-	//Render_FrameRate();
+	Render_FrameRate();
 #endif
 
 	m_pGI->Present();
@@ -158,14 +158,14 @@ void CMainApp::Render_FrameRate()
 	ss << fResultFrameRate;
 	wstring str = ss.str();
 	_float2 vFontPos = { 0.f, 0.f };
-	D3DCOLOR colorFont;
+	_vector vColorFont;
 
 	if (fResultFrameRate >= fFrameRate * 0.9f)
-		colorFont = DXCOLOR_GREEN;
+		vColorFont = Colors::Green;
 	else if (fResultFrameRate >= fFrameRate * 0.5f)
-		colorFont = DXCOLOR_ORANGE;
+		vColorFont = Colors::Orange;
 	else
-		colorFont = DXCOLOR_RED;
+		vColorFont = Colors::Red;
 
-	m_pGI->Render_Font(L"Font_Jinji", str.c_str(), &vFontPos, colorFont);
+	m_pGI->Render_Font(L"Font_Jinji", str.c_str(), _float2(0.f, 0.f), vColorFont);
 }

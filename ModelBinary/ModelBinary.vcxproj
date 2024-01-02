@@ -30,6 +30,11 @@
     <ClInclude Include="Public\ModelBinary_Define.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\GraphEditor.cpp" />
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImGradient.cpp" />
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImGuizmo.cpp" />
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImSequencer.cpp" />
     <ClCompile Include="Default\ModelBinary.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiMgr.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin.cpp" />

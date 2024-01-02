@@ -2,7 +2,7 @@
 
 #include "Base.h"
 
-#include "System/MyFont.h"
+#include "System/CustomFont.h"
 
 BEGIN(Engine)
 
@@ -14,39 +14,35 @@ class ENGINE_DLL_DBG CFontMgr final : public CBase
 	DERIVED_CLASS(CBase, CFontMgr)
 private:
 	explicit CFontMgr(const DX11DEVICE_T tDevice);
+	explicit CFontMgr(const CFontMgr& rhs) = delete;
 	virtual ~CFontMgr() = default;
 
 public:
-	HRESULT				Initialize();
+	HRESULT				Initialize(const wstring& strMainPath);
 
 public:
-	static CFontMgr*	Create(const DX11DEVICE_T tDevice);
+	static CFontMgr*	Create(const DX11DEVICE_T tDevice, const wstring& strMainPath);
 
 private:
 	virtual void		Free();
 
 
+public:
+	HRESULT			Add_Font(const wstring& strFontTag, const wstring& strFontFilePath);
+	HRESULT			Render_Font(const wstring& strFontTag, const wstring& strText, const _float2& vPosition, 
+								_fvector vColor, _float fScale, _float2 vOrigin, _float fRotation);
+private:
+	CCustomFont*	Find_Font(const wstring& strFontName);
+
+
 private:
 	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
-	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
+	ComPtr<ID3D11DeviceContext>		m_pContext = { nullptr };
 
-public:
-	HRESULT		Create_Font(const _tchar* pFontTag,
-							const _tchar* pFontType,
-							const _uint& iWidth,
-							const _uint& iHeight,
-							const _uint& iWeight);
-
-	void		Render_Font(const _tchar* pFontTag,
-							const _tchar* pString,
-							const _float2* pPos,
-							D3DCOLOR Color);
 
 private:
-	CMyFont*	Find_Font(const _tchar* pFontTag);
-
-private:
-	_unmap<const _tchar*, CMyFont*>			m_mapFont;
+	wstring							m_strMainPath = TEXT("");
+	_unmap<wstring, CCustomFont*>	m_mapFonts;
 
 };
 

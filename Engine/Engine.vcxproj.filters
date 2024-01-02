@@ -453,7 +453,7 @@
     <ClInclude Include="Public\System\FontMgr.h">
       <Filter>01. System\01. Manager\01. Resource\03. Font</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System\MyFont.h">
+    <ClInclude Include="Public\System\CustomFont.h">
       <Filter>01. System\01. Manager\01. Resource\03. Font</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Frame.h">
@@ -767,7 +767,7 @@
     <ClCompile Include="Private\System\FontMgr.cpp">
       <Filter>01. System\01. Manager\01. Resource\03. Font</Filter>
     </ClCompile>
-    <ClCompile Include="Private\System\MyFont.cpp">
+    <ClCompile Include="Private\System\CustomFont.cpp">
       <Filter>01. System\01. Manager\01. Resource\03. Font</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Frame.cpp">
@@ -949,9 +949,6 @@
     <FxCompile Include="Shader\Compiled\PS_Deferred_GBuffer.hlsl">
       <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\Runtime\FX_VtxCube.hlsl">
-      <Filter>03. Shader\03. Effect</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Runtime\FX_ModelNoAnim.hlsl">
@@ -970,6 +967,9 @@
       <Filter>03. Shader\03. Effect</Filter>
     </None>
     <None Include="Shader\Runtime\FX_VtxPosTex.hlsl">
+      <Filter>03. Shader\03. Effect</Filter>
+    </None>
+    <None Include="Shader\Runtime\FX_VtxCube.hlsl">
       <Filter>03. Shader\03. Effect</Filter>
     </None>
   </ItemGroup>

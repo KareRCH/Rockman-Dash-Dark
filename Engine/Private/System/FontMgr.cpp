@@ -1,27 +1,25 @@
 #include "System/FontMgr.h"
 
 CFontMgr::CFontMgr(const DX11DEVICE_T tDevice)
-	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext)
+	: m_pDevice(tDevice.pDevice), m_pContext(tDevice.pDeviceContext)
 {
-	Safe_AddRef(m_pDevice);
-	Safe_AddRef(m_pDeviceContext);
 }
 
-HRESULT CFontMgr::Initialize()
+HRESULT CFontMgr::Initialize(const wstring& strMainPath)
 {
+	m_strMainPath = strMainPath;
+
 	return S_OK;
 }
 
-CFontMgr* CFontMgr::Create(const DX11DEVICE_T tDevice)
+CFontMgr* CFontMgr::Create(const DX11DEVICE_T tDevice, const wstring& strMainPath)
 {
 	ThisClass* pInstance = new ThisClass(tDevice);
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize(strMainPath)))
 	{
 		MSG_BOX("FontMgr Create Failed");
 		Engine::Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -29,47 +27,39 @@ CFontMgr* CFontMgr::Create(const DX11DEVICE_T tDevice)
 
 void CFontMgr::Free()
 {
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pDeviceContext);
-
-	for (auto iter = m_mapFont.begin(); iter != m_mapFont.end(); ++iter)
-	{
-		Safe_Release((*iter).second);
-	}
-	m_mapFont.clear();
+	for (auto& FontPair : m_mapFonts)
+		Safe_Release(FontPair.second);
+	m_mapFonts.clear();
 }
 
-HRESULT CFontMgr::Create_Font(const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
+HRESULT CFontMgr::Add_Font(const wstring& strFontTag, const wstring& strFontFilePath)
 {
-	CMyFont* pMyFont = nullptr;
-
-	pMyFont = Find_Font(pFontTag);
-
-	if (nullptr != pMyFont)
+	auto iter = m_mapFonts.find(strFontTag);
+	if (iter != m_mapFonts.end())
 		return E_FAIL;
 
-	// 폰트 객체 생성하고 관리를 위해 map에 넣는다.
-	pMyFont = CMyFont::Create({m_pDevice, m_pDeviceContext}, pFontType, iWidth, iHeight, iWeight);
-	NULL_CHECK_RETURN(pMyFont, E_FAIL);
+	CCustomFont* pFont = CCustomFont::Create({ m_pDevice, m_pContext }, m_strMainPath + strFontFilePath);
+	if (nullptr == pFont)
+		return E_FAIL;
 
-	m_mapFont.emplace(pFontTag, pMyFont);
+	m_mapFonts.emplace(strFontTag, pFont);
 
 	return S_OK;
 }
 
-void CFontMgr::Render_Font(const _tchar* pFontTag, const _tchar* pString, const _float2* pPos, D3DCOLOR Color)
+HRESULT CFontMgr::Render_Font(const wstring& strFontTag, const wstring& strText, const _float2& vPosition, _fvector vColor, _float fScale, _float2 vOrigin, _float fRotation)
 {
-	CMyFont* pMyFont = Find_Font(pFontTag);
-	NULL_CHECK(pMyFont);
+	CCustomFont* pFont = Find_Font(strFontTag);
+	if (nullptr == pFont)
+		return E_FAIL;
 
-	//pMyFont->Render_Font(pString, pPos, Color);
+	return pFont->Render(strText, vPosition, vColor, fScale, vOrigin, fRotation);
 }
 
-CMyFont* CFontMgr::Find_Font(const _tchar* pFontTag)
+CCustomFont* CFontMgr::Find_Font(const wstring& strFontName)
 {
-	auto iter = m_mapFont.find(pFontTag);
-
-	if (iter == m_mapFont.end())
+	auto iter = m_mapFonts.find(strFontName);
+	if (iter == m_mapFonts.end())
 		return nullptr;
 
 	return iter->second;

@@ -45,7 +45,6 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDevi
 	FAILED_CHECK_RETURN(Initialize_KeyMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_FrameMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_TimerMgr(), E_FAIL);
-	FAILED_CHECK_RETURN(Initialize_FontMgr(tDevice), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_CloudStationMgr(), E_FAIL);
 
 	FAILED_CHECK_RETURN(Initialize_ComponentMgr(), E_FAIL);
@@ -652,32 +651,31 @@ void CGameInstance::Set_ChannelVolume(CHANNELID eID, _float fVolume)
 
 #pragma region 폰트 매니저
 
-HRESULT CGameInstance::Initialize_FontMgr(const DX11DEVICE_T tDevice)
+HRESULT CGameInstance::Initialize_FontMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)
 {
 	if (nullptr != m_pFontMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pFontMgr = CFontMgr::Create(tDevice), E_FAIL);
+	NULL_CHECK_RETURN(m_pFontMgr = CFontMgr::Create(tDevice, strMainPath), E_FAIL);
 
 	return S_OK;
 }
 
-HRESULT CGameInstance::Create_Font(const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight)
+HRESULT CGameInstance::Add_Font(const wstring& strFontTag, const wstring& strFontFilePath)
 {
 	if (nullptr == m_pFontMgr)
 		return E_FAIL;
 
-	FAILED_CHECK_RETURN(m_pFontMgr->Create_Font(pFontTag, pFontType, iWidth, iHeight, iWeight), E_FAIL);
-
-	return S_OK;
+	return m_pFontMgr->Add_Font(strFontTag, strFontFilePath);
 }
 
-void CGameInstance::Render_Font(const _tchar* pFontTag, const _tchar* pString, const _float2* pPos, D3DCOLOR Color)
+HRESULT CGameInstance::Render_Font(const wstring& strFontTag, const wstring& strText, const _float2& vPosition,
+								_fvector vColor, _float fScale, _float2 vOrigin, _float fRotation)
 {
 	if (nullptr == m_pFontMgr)
-		return;
+		return E_FAIL;
 
-	m_pFontMgr->Render_Font(pFontTag, pString, pPos, Color);
+	return m_pFontMgr->Render_Font(strFontTag, strText, vPosition, vColor, fScale, vOrigin, fRotation);
 }
 
 #pragma endregion

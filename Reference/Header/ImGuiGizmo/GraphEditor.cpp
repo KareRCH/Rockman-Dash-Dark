@@ -31,9 +31,12 @@
 #include <vector>
 #include <float.h>
 #include <array>
+#include <utility>
 #include "GraphEditor.h"
 
 namespace GraphEditor {
+
+    template <typename T> T Min(T x, T y) { return (x < y) ? x : y; }
 
 static inline float Distance(const ImVec2& a, const ImVec2& b)
 {
@@ -636,7 +639,7 @@ static bool DrawNode(ImDrawList* drawList,
 
     ImVec2 imgPos = nodeRectangleMin + ImVec2(14, 25);
     ImVec2 imgSize = nodeRectangleMax + ImVec2(-5, -5) - imgPos;
-    float imgSizeComp = std::min(imgSize.x, imgSize.y);
+    float imgSizeComp = Min(imgSize.x, imgSize.y);
 
     drawList->AddRectFilled(nodeRectangleMin, nodeRectangleMax, node_bg_color, options.mRounding);
     /*float progress = delegate->NodeProgress(nodeIndex);
