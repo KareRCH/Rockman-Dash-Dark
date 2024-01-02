@@ -135,7 +135,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -198,6 +198,11 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Horokko.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_Buster.cpp" />
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\GraphEditor.cpp" />
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImGradient.cpp" />
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImGuizmo.cpp" />
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImSequencer.cpp" />
     <ClCompile Include="Include\Tool.cpp" />
     <ClCompile Include="Private\GameObject\ToolCamera.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiMgr.cpp" />

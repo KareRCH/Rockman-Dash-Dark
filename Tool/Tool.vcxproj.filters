@@ -64,6 +64,9 @@
     <Filter Include="01. ImGuiWin\02. MapTool\02. Navigation">
       <UniqueIdentifier>{73432e3d-3e8b-4254-a993-38087f3e40d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. ImGuiGizmo">
+      <UniqueIdentifier>{f8163e16-0017-49cd-b90a-82f3d5951832}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\framework.h">
@@ -187,6 +190,21 @@
     </ClCompile>
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Navigation.cpp">
       <Filter>01. ImGuiWin\02. MapTool\02. Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\GraphEditor.cpp">
+      <Filter>97. ImGuiGizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImCurveEdit.cpp">
+      <Filter>97. ImGuiGizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImGradient.cpp">
+      <Filter>97. ImGuiGizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImGuizmo.cpp">
+      <Filter>97. ImGuiGizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImSequencer.cpp">
+      <Filter>97. ImGuiGizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
