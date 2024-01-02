@@ -37,6 +37,8 @@ void CImGuiWin_Viewer::Tick(const _float& fTimeDelta)
     Link_ToBrowser();
 
 	ImGui::Begin(u8"ºä¾î");
+
+    //ImGuizmo::DecomposeMatrixToComponents(matrix.m16)
     
     Layout_TopBar(fTimeDelta);
     Layout_View(fTimeDelta);
