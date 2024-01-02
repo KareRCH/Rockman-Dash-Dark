@@ -60,6 +60,7 @@ void CImGuiMgr::Tick(const _float fTimeDelta)
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 
 	for (_uint i = 0; i < m_vecRootWins.size(); i++)
 	{

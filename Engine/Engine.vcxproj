@@ -327,7 +327,7 @@
     <ClInclude Include="Public\System\ObjectMgr.h" />
     <ClInclude Include="Public\System\ModelMgr.h" />
     <ClInclude Include="Public\System\MultiStateTexture.h" />
-    <ClInclude Include="Public\System\MyFont.h" />
+    <ClInclude Include="Public\System\CustomFont.h" />
     <ClInclude Include="Public\System\ParticleMgr.h" />
     <ClInclude Include="Public\System\PhysicsMgr.h" />
     <ClInclude Include="Public\Physics\PhysicsPrecision.h" />
@@ -418,7 +418,7 @@
     <ClCompile Include="Private\System\ObjectMgr.cpp" />
     <ClCompile Include="Private\System\ModelMgr.cpp" />
     <ClCompile Include="Private\System\MultiStateTexture.cpp" />
-    <ClCompile Include="Private\System\MyFont.cpp" />
+    <ClCompile Include="Private\System\CustomFont.cpp" />
     <ClCompile Include="Private\System\ParticleMgr.cpp" />
     <ClCompile Include="Private\System\PhysicsMgr.cpp" />
     <ClCompile Include="Private\Physics\PhysicsWorld3D.cpp" />
@@ -498,10 +498,11 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <FileType>Document</FileType>
     </None>
-    <FxCompile Include="Shader\Runtime\FX_VtxCube.hlsl">
+    <None Include="Shader\Runtime\FX_VtxCube.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS_MAIN</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS_MAIN</EntryPointName>
-    </FxCompile>
+      <FileType>Document</FileType>
+    </None>
     <None Include="Shader\Runtime\FX_ModelNoAnim.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>

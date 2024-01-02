@@ -13,10 +13,12 @@ HRESULT CNaviRegion::Initialize(const BoundingBox& AABB, _uint& iIndex)
     return S_OK;
 }
 
+#ifdef _DEBUG
 HRESULT CNaviRegion::Render(CEffectComponent* pEffectComp)
 {
     return S_OK;
 }
+#endif
 
 CNaviRegion* CNaviRegion::Create(const BoundingBox AABB, _uint iIndex)
 {

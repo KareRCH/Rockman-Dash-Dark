@@ -2,6 +2,11 @@
 
 
 
+#include "imgui.h"
+#include "imgui_internal.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+
 
 
 
@@ -9,19 +14,7 @@
 #include "Base.h"
 #include "Tool_Define.h"
 
-#include "imgui.h"
-#include "imgui_internal.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
 
-#include "ImGuizmo.h"
-#include "ImSequencer.h"
-#include "ImZoomSlider.h"
-#include "ImCurveEdit.h"
-#include "GraphEditor.h"
-#include <math.h>
-#include <vector>
-#include <algorithm>
 
 
 

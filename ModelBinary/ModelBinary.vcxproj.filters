@@ -25,6 +25,9 @@
     <Filter Include="03. Model">
       <UniqueIdentifier>{1a80766a-723e-462a-bc60-0379b55b40ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="99. ImGuizmo">
+      <UniqueIdentifier>{d2cadfc6-1485-447b-9a59-3a4e2a0f69f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\framework.h">
@@ -70,6 +73,21 @@
     </ClCompile>
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Convert.cpp">
       <Filter>02. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\GraphEditor.cpp">
+      <Filter>99. ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImCurveEdit.cpp">
+      <Filter>99. ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImGradient.cpp">
+      <Filter>99. ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImGuizmo.cpp">
+      <Filter>99. ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImSequencer.cpp">
+      <Filter>99. ImGuizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

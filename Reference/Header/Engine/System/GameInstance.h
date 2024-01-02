@@ -143,9 +143,11 @@ public:		// 사운드 매니저
 
 #pragma region 폰트 매니저
 public:		// 폰트 매니저
-	HRESULT Initialize_FontMgr(const DX11DEVICE_T tDevice);
-	HRESULT Create_Font(const _tchar* pFontTag, const _tchar* pFontType, const _uint& iWidth, const _uint& iHeight, const _uint& iWeight);
-	void	Render_Font(const _tchar* pFontTag, const _tchar* pString, const _float2* pPos, D3DCOLOR Color);
+	HRESULT Initialize_FontMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath);
+	HRESULT Add_Font(const wstring& strFontTag, const wstring& strFontFilePath);
+	HRESULT Render_Font(const wstring& strFontTag, const wstring& strText, const _float2& vPosition, 
+						_fvector vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f), _float fScale = 1.f, 
+						_float2 vOrigin = _float2(0.f, 0.f), _float fRotation = 0.f);
 #pragma endregion
 
 
