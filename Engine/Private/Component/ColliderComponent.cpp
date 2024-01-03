@@ -16,49 +16,49 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     switch (rhs.m_pCollisionShape->Get_Type())
     {
     default:
-    case ECOLLISION::SPHERE:
+    case ECollisionType::Sphere:
     {
         FCollisionSphere* pShape = DynCast<FCollisionSphere*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionSphere(*pShape);
         break;
     }
-    case ECOLLISION::BOX:
+    case ECollisionType::Box:
     {
         FCollisionBox* pShape = DynCast<FCollisionBox*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionBox(*pShape);
         break;
     }
-    case ECOLLISION::CAPSULE:
+    case ECollisionType::Capsule:
     {
         FCollisionCapsule* pShape = DynCast<FCollisionCapsule*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionCapsule(*pShape);
         break;
     }
-    case ECOLLISION::PLANE:
+    case ECollisionType::Plane:
     {
         FCollisionPlane* pShape = DynCast<FCollisionPlane*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionPlane(*pShape);
         break;
     }
-    case ECOLLISION::LINE:
+    case ECollisionType::Line:
     {
         FCollisionLine* pShape = DynCast<FCollisionLine*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionLine(*pShape);
         break;
     }
-    case ECOLLISION::RAY:
+    case ECollisionType::Ray:
     {
         FCollisionRay* pShape = DynCast<FCollisionRay*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionRay(*pShape);
         break;
     }
-    case ECOLLISION::TRIANGLE:
+    case ECollisionType::Triangle:
     {
         FCollisionTriangle* pShape = DynCast<FCollisionTriangle*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionTriangle(*pShape);
         break;
     }
-    case ECOLLISION::OBB:
+    case ECollisionType::OBB:
     {
         FCollisionOBB* pShape = DynCast<FCollisionOBB*>(rhs.m_pCollisionShape);
         m_pCollisionShape = new FCollisionOBB(*pShape);
@@ -72,13 +72,26 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     m_pCollisionShape->Set_CollisionEvent(MakeDelegate(this, &ThisClass::OnCollision));
 }
 
-CColliderComponent* CColliderComponent::Create(ECOLLISION eType)
+CColliderComponent* CColliderComponent::Create()
 {
     ThisClass* pInstance = new ThisClass();
 
-    if (FAILED(pInstance->Initialize(eType)))
+    if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Player Create Failed");
+        MSG_BOX("ColliderComponent Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
+CColliderComponent* CColliderComponent::Create(ECollisionType eType)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize_Prototype(eType)))
+    {
+        MSG_BOX("ColliderComponent Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -107,32 +120,38 @@ void CColliderComponent::Free()
     Safe_Delete(m_pCollisionShape);
 }
 
-HRESULT CColliderComponent::Initialize_Prototype(ECOLLISION eType)
+HRESULT CColliderComponent::Bind_Collision(ECollisionType eType)
 {
+    if (nullptr != m_pCollisionShape)
+    {
+        ExitFromPhysics(m_iPhysics3dWorld_Index);
+        Safe_Delete(m_pCollisionShape);
+    }
+
     switch (eType)
     {
-    case ECOLLISION::SPHERE:
+    case ECollisionType::Sphere:
         m_pCollisionShape = new FCollisionSphere();
         break;
-    case ECOLLISION::BOX:
+    case ECollisionType::Box:
         m_pCollisionShape = new FCollisionBox();
         break;
-    case ECOLLISION::CAPSULE:
+    case ECollisionType::Capsule:
         m_pCollisionShape = new FCollisionCapsule();
         break;
-    case ECOLLISION::PLANE:
+    case ECollisionType::Plane:
         m_pCollisionShape = new FCollisionPlane();
         break;
-    case ECOLLISION::LINE:
+    case ECollisionType::Line:
         m_pCollisionShape = new FCollisionLine();
         break;
-    case ECOLLISION::RAY:
+    case ECollisionType::Ray:
         m_pCollisionShape = new FCollisionRay();
         break;
-    case ECOLLISION::TRIANGLE:
+    case ECollisionType::Triangle:
         m_pCollisionShape = new FCollisionTriangle();
         break;
-    case ECOLLISION::OBB:
+    case ECollisionType::OBB:
         m_pCollisionShape = new FCollisionOBB();
         break;
     }
@@ -146,7 +165,46 @@ HRESULT CColliderComponent::Initialize_Prototype(ECOLLISION eType)
     return S_OK;
 }
 
-HRESULT CColliderComponent::Initialize(ECOLLISION eType)
+HRESULT CColliderComponent::Initialize_Prototype(ECollisionType eType)
+{
+    switch (eType)
+    {
+    case ECollisionType::Sphere:
+        m_pCollisionShape = new FCollisionSphere();
+        break;
+    case ECollisionType::Box:
+        m_pCollisionShape = new FCollisionBox();
+        break;
+    case ECollisionType::Capsule:
+        m_pCollisionShape = new FCollisionCapsule();
+        break;
+    case ECollisionType::Plane:
+        m_pCollisionShape = new FCollisionPlane();
+        break;
+    case ECollisionType::Line:
+        m_pCollisionShape = new FCollisionLine();
+        break;
+    case ECollisionType::Ray:
+        m_pCollisionShape = new FCollisionRay();
+        break;
+    case ECollisionType::Triangle:
+        m_pCollisionShape = new FCollisionTriangle();
+        break;
+    case ECollisionType::OBB:
+        m_pCollisionShape = new FCollisionOBB();
+        break;
+    }
+
+    // 충돌체에 오너 설정
+    m_pCollisionShape->Set_Owner(this);
+
+    // 충돌체에 충돌 이벤트 추가하기
+    m_pCollisionShape->Set_CollisionEvent(MakeDelegate(this, &ThisClass::OnCollision));
+
+    return S_OK;
+}
+
+HRESULT CColliderComponent::Initialize(ECollisionType eType)
 {
     if (nullptr == m_pCollisionShape)
         return E_FAIL;
@@ -175,6 +233,8 @@ void CColliderComponent::Tick(const _float& fTimeDelta)
     // Exited 초기화
     for (auto iter = m_listColliderObject.begin(); iter != m_listColliderObject.end(); ++iter)
         iter->second = false;
+
+    Update_Physics();
 }
 
 void CColliderComponent::Late_Tick(const _float& fTimeDelta)
@@ -191,19 +251,22 @@ HRESULT CColliderComponent::Render()
 
 void CColliderComponent::EnterToPhysics(_uint iIndex)
 {
-    //Engine::Add_ColliderToPhysicsWorld(iIndex, m_pCollisionShape);
+    m_iPhysics3dWorld_Index = iIndex;
+    m_pGI->Add_ColliderToPhysicsWorld(iIndex, m_pCollisionShape);
 }
 
 void CColliderComponent::ExitFromPhysics(_uint iIndex)
 {
-    //Engine::Delete_ColliderToPhysicsWorld(iIndex, m_pCollisionShape);
+    m_pGI->Delete_ColliderToPhysicsWorld(iIndex, m_pCollisionShape);
 }
 
-void CColliderComponent::Update_Physics(_matrix& matWorld)
+void CColliderComponent::Update_Physics()
 {
-    //Transform().Calculate_TransformFromParent(matWorld);
+    _matrix vMatrix = Transform().Get_TransformMatrix() * Get_OwnerObject()->Transform().Get_TransformMatrix();
+    _float4x4 vfMatrix = {};
+    XMStoreFloat4x4(&vfMatrix, vMatrix);
 
-    //m_pCollisionShape->matOffset.RecieveDXArray(reinterpret_cast<float*>(Transform().Get_TransformMatrix() * matWorld));
+    m_pCollisionShape->matOffset.RecieveDXArray(reinterpret_cast<float*>(&vfMatrix));
 }
 
 void CColliderComponent::OnCollision(void* pDst, const FContact* const pContact)

@@ -9,12 +9,10 @@
 
 BEGIN(Engine)
 
-enum class ECOLLISION_TYPE
+enum class ECollisionType
 {
-	SPHERE, BOX, CAPSULE, PLANE, LINE, RAY, TRIANGLE, OBB
+	Sphere, Box, Capsule, Plane, Line, Ray, Triangle, OBB
 };
-using ECOLLISION = ECOLLISION_TYPE;
-
 
 /// <summary>
 /// 충돌체
@@ -134,10 +132,10 @@ protected:
 	_ulong				m_dwCollisionMask_Flag;				// 콜리전 마스크, 충돌체가 충돌하고 싶어하는 층
 
 public:
-	GETSET_2(ECOLLISION, eType, Type, GET_C_REF, GET_REF)
+	GETSET_2(ECollisionType, eType, Type, GET_C_REF, GET_REF)
 
 protected:
-	ECOLLISION	eType;				// 타입
+	ECollisionType	eType;				// 타입
 
 public:
 	typedef FastDelegate2<void*, const FContact*>	CollisionDelegate;
@@ -160,7 +158,7 @@ public:
 	FCollisionSphere()
 		: fRadius(0.5f)
 	{
-		eType = ECOLLISION::SPHERE;
+		eType = ECollisionType::Sphere;
 	}
 	FCollisionSphere(const FCollisionSphere& rhs)
 		: Base(rhs)
@@ -190,7 +188,7 @@ public:
 	FCollisionBox()
 		: vHalfSize(0.5f, 0.5f, 0.5f)
 	{
-		eType = ECOLLISION::BOX;
+		eType = ECollisionType::Box;
 	}
 	FCollisionBox(const FCollisionBox& rhs)
 		: Base(rhs)
@@ -220,7 +218,7 @@ public:
 	FCollisionCapsule()
 		: vDirHalfSize(0.f, 1.f, 0.f), fRadius(0.5f)
 	{
-		eType = ECOLLISION::CAPSULE;
+		eType = ECollisionType::Capsule;
 	}
 	FCollisionCapsule(const FCollisionCapsule& rhs)
 		: Base(rhs)
@@ -253,7 +251,7 @@ public:
 	FCollisionPlane()
 		: vDirection(0.f, 1.f, 0.f), fOffset(1.f)
 	{
-		eType = ECOLLISION::PLANE;
+		eType = ECollisionType::Plane;
 	}
 	FCollisionPlane(const FCollisionPlane& rhs)
 		: Base(rhs)
@@ -284,7 +282,7 @@ public:
 	FCollisionLine()
 		: vStart(0.f, 0.f, 0.f), vEnd(0.f, 1.f, 0.f)
 	{
-		eType = ECOLLISION::LINE;
+		eType = ECollisionType::Line;
 	}
 	FCollisionLine(const FCollisionLine& rhs)
 		: Base(rhs)
@@ -314,7 +312,7 @@ public:
 	FCollisionRay()
 		: vOrigin(0.f, 0.f, 0.f), vDir(0.f, 1.f, 0.f)
 	{
-		eType = ECOLLISION::RAY;
+		eType = ECollisionType::Ray;
 	}
 	FCollisionRay(const FCollisionRay& rhs)
 		: Base(rhs)
@@ -344,7 +342,7 @@ public:
 	FCollisionTriangle()
 		: vA(-0.5f, 0.f, -0.5f), vB(-0.5f, 0.f, 0.5f), vC(0.5f, 0.f, 0.5f)
 	{
-		eType = ECOLLISION::TRIANGLE;
+		eType = ECollisionType::Triangle;
 	}
 	FCollisionTriangle(const FCollisionTriangle& rhs)
 		: Base(rhs)
@@ -373,7 +371,7 @@ public:
 	FCollisionOBB()
 		: vHalfSize(0.5f, 0.5f, 0.5f)
 	{
-		eType = ECOLLISION::OBB;
+		eType = ECollisionType::OBB;
 	}
 	FCollisionOBB(const FCollisionOBB& rhs)
 		: Base(rhs)

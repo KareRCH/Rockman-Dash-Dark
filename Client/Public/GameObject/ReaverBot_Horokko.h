@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Define.h"
-#include "BaseClass/GameObject.h"
+#include "BaseClass/CollisionObject.h"
 
 
 BEGIN(Engine)
@@ -16,9 +16,9 @@ BEGIN(Client)
 /// <summary>
 /// 가장 기본이 되는 몬스터 리버봇, 호로꼬
 /// </summary>
-class CReaverBot_Horokko : public CGameObject
+class CReaverBot_Horokko : public CCollisionObject
 {
-	DERIVED_CLASS(CGameObject, CReaverBot_Horokko)
+	DERIVED_CLASS(CCollisionObject, CReaverBot_Horokko)
 
 protected:
 	explicit CReaverBot_Horokko();
@@ -45,6 +45,11 @@ protected:
 
 private:
 	HRESULT	Initialize_Component();
+
+public:		// 충돌 이벤트
+	virtual void OnCollision(CGameObject* pDst, const FContact* pContact);
+	virtual void OnCollisionEntered(CGameObject* pDst, const FContact* pContact);
+	virtual void OnCollisionExited(CGameObject* pDst);
 
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };

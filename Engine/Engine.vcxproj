@@ -232,6 +232,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Public\BaseClass\CollisionObject.h" />
     <ClInclude Include="Public\BaseClass\Navigation.h" />
     <ClInclude Include="Public\Component\AnimMaskComp.h" />
     <ClInclude Include="Public\Component\BoxModelComp.h" />
@@ -353,6 +354,7 @@
   <ItemGroup>
     <ClCompile Include="Private\BaseClass\CloudStation.cpp" />
     <ClCompile Include="Private\BaseClass\Camera.cpp" />
+    <ClCompile Include="Private\BaseClass\CollisionObject.cpp" />
     <ClCompile Include="Private\BaseClass\Layer.cpp" />
     <ClCompile Include="Private\BaseClass\Level.cpp" />
     <ClCompile Include="Private\BaseClass\Navigation.cpp" />

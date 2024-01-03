@@ -112,8 +112,8 @@ private:	// 컴포넌트 속성
 	vector<CGameObjectComp*>			m_vecComponent;				// 컴포넌트 관리 컨테이너
 	_unmap<wstring, CGameObjectComp*>	m_mapPrimComp;				// 오브젝트 전용 컴포넌트 관리 컨테이너
 
-	using list_comp =						list<CGameObjectComp*>;
-	list_comp								m_listUpdateComp[ECast(ECompTickType::Size)];	// 컴포넌트 업데이트 관리 리소스
+	using list_comp = list<CGameObjectComp*>;
+	list_comp		  m_listUpdateComp[ECast(ECompTickType::Size)];	// 컴포넌트 업데이트 관리 리소스
 #pragma endregion
 
 

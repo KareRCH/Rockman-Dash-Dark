@@ -159,9 +159,25 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 				FCollisionPrimitive* pColSrc = static_cast<FCollisionPrimitive*>((*iter).pBody->Get_Owner());
 				FCollisionPrimitive* pColDst = static_cast<FCollisionPrimitive*>((*iterCalc).pBody->Get_Owner());
 
+				// 마스크로 충돌되는지 확인
 				if (pColSrc->Get_CollisionMask() & pColDst->Get_CollisionLayer()
 					|| pColDst->Get_CollisionMask() & pColSrc->Get_CollisionLayer())
-					listPairCollide.push_back({ (*iter).pBody, (*iterCalc).pBody });
+				{
+
+					FVector3 vSrcPos = pColSrc->Get_Position();
+					FVector3 vDstPos = pColDst->Get_Position();
+					_float	fSrcLength = (_float)pColSrc->Get_Scale().Magnitude();
+					_float	fDstLength = (_float)pColDst->Get_Scale().Magnitude();
+					FVector3 vSrcScale = { fSrcLength, fSrcLength, fSrcLength };
+					FVector3 vDstScale = { fDstLength, fDstLength, fDstLength };
+
+					// 바운딩 박스로 충돌되는지 확인
+					if (vSrcPos + vSrcScale >= vDstPos - vDstScale
+						&& vDstPos + vDstScale >= vSrcPos - vSrcScale)
+					{
+						listPairCollide.push_back({ (*iter).pBody, (*iterCalc).pBody });
+					}
+				}
 			}
 			listEndPoint_Calc.push_back((*iter));
 		}
@@ -261,10 +277,10 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 	ss << iDebugCount;
 	str = L"Physics CheckCount : " + ss.str() + L"\n";
 	OutputDebugString(str.c_str());*/
-	//cout << "검사 카운트 : " << iDebugCount << endl;
+	cout << "검사 카운트 : " << iDebugCount << endl;
 	/*cout << "Src 카운트 : " << iDebug_BodySrc << endl;
 	cout << "Dst 카운트 : " << ((iDebug_BodySrc) ? (iDebugCount / iDebug_BodySrc) : 0) << endl;*/
-	//cout << "Body 카운트 : " << m_listBody.size() << endl;
+	cout << "Body 카운트 : " << m_listBody.size() << endl;
 
 	// 사용된 접촉 수를 반환
 	return m_iMaxContacts - iLimit;

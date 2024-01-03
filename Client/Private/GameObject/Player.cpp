@@ -8,6 +8,7 @@
 #include "Component/CommonModelComp.h"
 #include "Component/NavigationComponent.h"
 #include "GameObject/Weapon_Buster.h"
+#include "Component/ColliderComponent.h"
 
 #include "System/RenderMgr.h"
 
@@ -96,6 +97,8 @@ void CPlayer::Tick(const _float& fTimeDelta)
     SUPER::Tick(fTimeDelta);
 
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
+
+    m_pColliderComp->Tick(fTimeDelta);
 }
 
 void CPlayer::Late_Tick(const _float& fTimeDelta)
@@ -181,12 +184,36 @@ HRESULT CPlayer::Initialize_Component()
     m_pModelComp->Active_BoneMask(2, L"bone_000");*/
 
     CNavigationComponent::TCloneDesc tDesc = { 0 };
-    FAILED_CHECK_RETURN(Add_Component(L"Navigation", 
+    FAILED_CHECK_RETURN(Add_Component(L"Navigation",
         m_pNaviComp = Cast<CNavigationComponent*>(GI()->Clone_PrototypeComp(TEXT("Prototype_Component_Navigation"), VPCast(&tDesc)))), E_FAIL);
 
+    if (nullptr == m_pColliderComp)
+        return E_FAIL;
+    m_pColliderComp->Bind_Collision(ECollisionType::Box);
+    m_pColliderComp->EnterToPhysics(0);
+    m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
+    m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
+        | COLLAYER_ITEM | COLLAYER_OBJECT);
 
     return S_OK;
 }
+
+void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
+{
+    cout << "충돌함" << endl;
+}
+
+void CPlayer::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
+{
+    cout << "충돌 진입" << endl;
+}
+
+void CPlayer::OnCollisionExited(CGameObject* pDst)
+{
+    cout << "충돌 나감" << endl;
+}
+
+
 
 void CPlayer::Move_Update(const _float& fTimeDelta)
 {
@@ -492,3 +519,5 @@ void CPlayer::ShootBuster()
     pBuster->Set_Speed(15.f);
     pBuster->Set_LookDir(Transform().Get_LookFloat3());
 }
+
+

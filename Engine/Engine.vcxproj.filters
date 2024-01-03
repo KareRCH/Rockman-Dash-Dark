@@ -660,6 +660,9 @@
     <ClInclude Include="Public\Component\InstancingBufferComp.h">
       <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing</Filter>
     </ClInclude>
+    <ClInclude Include="Public\BaseClass\CollisionObject.h">
+      <Filter>02. Utility\01. BaseClass\01. GameObject\02. CCollisionObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -940,6 +943,9 @@
     </ClCompile>
     <ClCompile Include="Private\Component\InstancingBufferComp.cpp">
       <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BaseClass\CollisionObject.cpp">
+      <Filter>02. Utility\01. BaseClass\01. GameObject\02. CCollisionObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

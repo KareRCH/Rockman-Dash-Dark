@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseClass/GameObject.h"
+#include "BaseClass/CollisionObject.h"
 #include "Client_Define.h"
 
 #include "Utility/LogicDeviceBasic.h"
@@ -22,9 +22,9 @@ BEGIN(Client)
 /// <summary>
 /// 테스트용 오브젝트
 /// </summary>
-class CPlayer final : public CGameObject
+class CPlayer final : public CCollisionObject
 {
-	DERIVED_CLASS(CGameObject, CPlayer)
+	DERIVED_CLASS(CCollisionObject, CPlayer)
 
 protected:
 	explicit CPlayer();
@@ -51,6 +51,12 @@ protected:
 
 private:
 	HRESULT	Initialize_Component();
+
+public:		// 충돌 이벤트
+	virtual void OnCollision(CGameObject* pDst, const FContact* pContact);
+	virtual void OnCollisionEntered(CGameObject* pDst, const FContact* pContact);
+	virtual void OnCollisionExited(CGameObject* pDst);
+
 
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
@@ -92,6 +98,9 @@ private:
 
 private:
 	void ShootBuster();
+
+
+	
 
 };
 

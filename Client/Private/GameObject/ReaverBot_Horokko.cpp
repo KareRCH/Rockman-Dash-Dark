@@ -6,10 +6,11 @@
 #include "Component/ModelShaderComp.h"
 #include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
+#include "Component/ColliderComponent.h"
 
 CReaverBot_Horokko::CReaverBot_Horokko()
 {
-	Set_Name(TEXT("ItemChest"));
+	Set_Name(TEXT("ReaverBot_Horokko"));
 }
 
 CReaverBot_Horokko::CReaverBot_Horokko(const CReaverBot_Horokko& rhs)
@@ -74,20 +75,16 @@ void CReaverBot_Horokko::Tick(const _float& fTimeDelta)
 	//m_State_AI.Get_StateFunc()(this, fTimeDelta);
 	m_State_Act.Get_StateFunc()(this, fTimeDelta);
 
-	if (GI()->IsKey_Pressed(DIK_R))
-	{
-
-		//m_pModelComp->Set_Animation(m_iTest, 1.f, true);
-	}
-
-	m_pModelComp->Add_AnimTime(fTimeDelta);
-	m_pModelComp->Invalidate_Animation();
-	m_pModelComp->Invalidate_BoneTransforms();
+	m_pColliderComp->Tick(fTimeDelta);
 }
 
 void CReaverBot_Horokko::Late_Tick(const _float& fTimeDelta)
 {
 	SUPER::Late_Tick(fTimeDelta);
+
+	m_pModelComp->Add_AnimTime(fTimeDelta);
+	m_pModelComp->Invalidate_Animation();
+	m_pModelComp->Invalidate_BoneTransforms();
 
 	m_pModelComp->Late_Tick(fTimeDelta);
 }
@@ -153,7 +150,30 @@ HRESULT CReaverBot_Horokko::Initialize_Component()
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Horokko/Horokko.amodel");
 
+	if (nullptr == m_pColliderComp)
+		return E_FAIL;
+	m_pColliderComp->Bind_Collision(ECollisionType::Box);
+	m_pColliderComp->EnterToPhysics(0);
+	m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
+	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
+										| COLLAYER_OBJECT);
+
 	return S_OK;
+}
+
+void CReaverBot_Horokko::OnCollision(CGameObject* pDst, const FContact* pContact)
+{
+	cout << "몬스터 충돌함" << endl;
+}
+
+void CReaverBot_Horokko::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
+{
+	cout << "몬스터 충돌진입" << endl;
+}
+
+void CReaverBot_Horokko::OnCollisionExited(CGameObject* pDst)
+{
+	cout << "몬스터 충돌나감" << endl;
 }
 
 void CReaverBot_Horokko::Move_Update(const _float& fTimeDelta)
