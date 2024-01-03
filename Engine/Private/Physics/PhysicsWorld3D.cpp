@@ -66,8 +66,6 @@ _int CPhysicsWorld3D::Update_Physics(const Real& fTimeDelta)
 		pCol->Calculate_Transform();
 		pCol->Set_Position(pCol->Get_Position());
 		pCol->Calculate_Shape();
-
-		
 	}
 
 	// 접촉 발생기
@@ -163,17 +161,9 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 				if (pColSrc->Get_CollisionMask() & pColDst->Get_CollisionLayer()
 					|| pColDst->Get_CollisionMask() & pColSrc->Get_CollisionLayer())
 				{
-
-					FVector3 vSrcPos = pColSrc->Get_Position();
-					FVector3 vDstPos = pColDst->Get_Position();
-					_float	fSrcLength = (_float)pColSrc->Get_Scale().Magnitude();
-					_float	fDstLength = (_float)pColDst->Get_Scale().Magnitude();
-					FVector3 vSrcScale = { fSrcLength, fSrcLength, fSrcLength };
-					FVector3 vDstScale = { fDstLength, fDstLength, fDstLength };
-
 					// 바운딩 박스로 충돌되는지 확인
-					if (vSrcPos + vSrcScale >= vDstPos - vDstScale
-						&& vDstPos + vDstScale >= vSrcPos - vSrcScale)
+					if (pColSrc->BoundingBox.vMax >= pColDst->BoundingBox.vMin
+						&& pColDst->BoundingBox.vMax >= pColSrc->BoundingBox.vMin)
 					{
 						listPairCollide.push_back({ (*iter).pBody, (*iterCalc).pBody });
 					}
