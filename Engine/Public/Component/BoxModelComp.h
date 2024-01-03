@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneComponent.h"
+#include "Component/ModelComponent.h"
 
 
 
@@ -17,9 +17,9 @@ class CTextureComponent;
 /// 박스의 모델에 대한 정보가 담긴 컴포넌트.
 /// 버퍼, 이펙트, 텍스처 정보를 가지고 있다.
 /// </summary>
-class ENGINE_DLL CBoxModelComp final : public CSceneComponent
+class ENGINE_DLL CBoxModelComp final : public CModelComponent
 {
-	DERIVED_CLASS(CSceneComponent, CBoxModelComp)
+	DERIVED_CLASS(CModelComponent, CBoxModelComp)
 
 protected:
 	explicit CBoxModelComp();
@@ -71,10 +71,6 @@ private:
 
 public:
 	HRESULT Bind_ShaderResources();
-
-private:
-	_uint		m_iPass = { 0 };		// 셰이더 패스
-
 
 };
 

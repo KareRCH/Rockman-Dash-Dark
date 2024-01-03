@@ -87,11 +87,6 @@ private:
 	
 #pragma endregion
 
-
-
-
-private:
-	_uint m_iPass = { 0 };
 };
 
 

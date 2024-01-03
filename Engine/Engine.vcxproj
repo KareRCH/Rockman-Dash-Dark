@@ -246,6 +246,8 @@
     <ClInclude Include="Public\Component\PlaneModelComp.h" />
     <ClInclude Include="Public\Component\TerrainBufferComp.h" />
     <ClInclude Include="Public\Component\TerrainModelComp.h" />
+    <ClInclude Include="Public\Component\InstancingBufferComp.h" />
+    <ClInclude Include="Public\Component\ParticleRectBufferComp.h" />
     <ClInclude Include="Public\ModelLoad.h" />
     <ClInclude Include="Public\System\Data\MaterialData.h" />
     <ClInclude Include="Public\System\Data\ModelData.h" />
@@ -393,6 +395,7 @@
     <ClCompile Include="Private\Component\TransformComponent.cpp" />
     <ClCompile Include="Private\Component\TriBufferComp.cpp" />
     <ClCompile Include="Private\Component\VIBufferComp.cpp" />
+    <ClCompile Include="Private\Component\InstancingBufferComp.cpp" />
     <ClCompile Include="Private\ModelLoad.cpp" />
     <ClCompile Include="Private\Physics\Collide.cpp" />
     <ClCompile Include="Private\Physics\CollisionPrimitive.cpp" />
@@ -435,6 +438,7 @@
     <ClCompile Include="Private\System\Timer.cpp" />
     <ClCompile Include="Private\System\TimerMgr.cpp" />
     <ClCompile Include="Private\Utility\RapidJsonSerial.cpp" />
+    <ClCompile Include="Private\ParticleRectBufferComp.cpp" />
     <ClCompile Include="Public\Base.inl" />
     <ClCompile Include="Private\BaseClass\GameObject.cpp" />
     <ClCompile Include="Private\Component\PrimitiveComponent.cpp" />

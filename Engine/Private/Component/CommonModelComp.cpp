@@ -146,7 +146,7 @@ HRESULT CCommonModelComp::Render_AnimModel()
 		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
 
 		// 그리기 시작
-		m_pEffectComp->Begin(0);
+		m_pEffectComp->Begin(m_vecActivePasses[0]);
 
 		// 버퍼를 장치에 바인드
 		m_pMeshComps[i]->Bind_Buffer();
@@ -174,14 +174,17 @@ HRESULT CCommonModelComp::Render_NoAnimModel()
 		_uint iMatIndex = m_pMeshComps[i]->Get_MeshMaterialIndex();
 		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
 
-		// 그리기 시작
-		m_pEffectComp->Begin(0);
+		for (_uint j = 0; j < m_iNumActivePasses; j++)
+		{
+			// 그리기 시작
+			m_pEffectComp->Begin(m_vecActivePasses[j]);
 
-		// 버퍼를 장치에 바인드
-		m_pMeshComps[i]->Bind_Buffer();
+			// 버퍼를 장치에 바인드
+			m_pMeshComps[i]->Bind_Buffer();
 
-		// 바인딩된 정점, 인덱스 그리기
-		m_pMeshComps[i]->Render_Buffer();
+			// 바인딩된 정점, 인덱스 그리기
+			m_pMeshComps[i]->Render_Buffer();
+		}
 	}
 
 	return S_OK;
