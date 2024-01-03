@@ -307,6 +307,9 @@
     <Filter Include="02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing\01. Particle_Rect">
       <UniqueIdentifier>{437132ed-22ac-4a8d-a442-f84bb1584329}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\08. DebugDraw">
+      <UniqueIdentifier>{01ccb778-d8db-4a86-82d8-b2bcd8410564}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -663,6 +666,9 @@
     <ClInclude Include="Public\BaseClass\CollisionObject.h">
       <Filter>02. Utility\01. BaseClass\01. GameObject\02. CCollisionObject</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Utility\DebugDraw.h">
+      <Filter>02. Utility\08. DebugDraw</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -946,6 +952,9 @@
     </ClCompile>
     <ClCompile Include="Private\BaseClass\CollisionObject.cpp">
       <Filter>02. Utility\01. BaseClass\01. GameObject\02. CCollisionObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Utility\DebugDraw.cpp">
+      <Filter>02. Utility\08. DebugDraw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Define.h"
-#include "BaseClass/GameObject.h"
+#include "BaseClass/CollisionObject.h"
 #include "Utility/LogicDeviceBasic.h"
 
 BEGIN(Engine)
@@ -15,9 +15,9 @@ BEGIN(Client)
 /// <summary>
 /// 록맨의 버스터
 /// </summary>
-class CWeapon_Buster : public CGameObject
+class CWeapon_Buster : public CCollisionObject
 {
-	DERIVED_CLASS(CGameObject, CWeapon_Buster)
+	DERIVED_CLASS(CCollisionObject, CWeapon_Buster)
 
 protected:
 	explicit CWeapon_Buster();
@@ -44,6 +44,11 @@ protected:
 
 private:
 	HRESULT	Initialize_Component();
+
+public:		// 충돌 이벤트
+	virtual void OnCollision(CGameObject* pDst, const FContact* pContact);
+	virtual void OnCollisionEntered(CGameObject* pDst, const FContact* pContact);
+	virtual void OnCollisionExited(CGameObject* pDst);
 
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };

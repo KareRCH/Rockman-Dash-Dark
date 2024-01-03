@@ -1,10 +1,6 @@
 #pragma once
 
 #include "Engine_Define.h"
-#include "Physics/PhysicsCore.h"
-
-#include <memory.h>
-#include <assert.h>
 
 BEGIN(Engine)
 
@@ -35,13 +31,15 @@ class ENGINE_DLL FRigidBody
 public:
     FRigidBody()
         : eBodyType(ERIGID_BODY_TYPE::STATIC), iID()
-        , fInverseMass(Real()), matInverseInertiaTensor()
-        , fLinearDamping(Real()), fAngularDamping(Real())
+        , fInverseMass(_float()), matInverseInertiaTensor()
+        , fLinearDamping(_float()), fAngularDamping(_float())
         , vForceAccum(), vTorqueAccum(), vAcceleration(), vLastFrameAcceleration()
         , vPosition(), vVelocity(), vRotation(), qtOrientation()
         , matTransform(), matInverseInertiaTensorWorld()
-        , fMotion(Real()), bIsAwake(false), bCanSleep(false)
-    {}
+        , fMotion(_float()), bIsAwake(false), bCanSleep(false)
+    {
+        XMStoreFloat3x4(&matTransform, XMMatrixIdentity());
+    }
     FRigidBody(const FRigidBody& rhs)
         : eBodyType(rhs.eBodyType), iID(rhs.iID)
         , fInverseMass(rhs.fInverseMass), matInverseInertiaTensor(rhs.matInverseInertiaTensor)
@@ -53,120 +51,25 @@ public:
     {}
     ~FRigidBody() {}
 
-
-private: // internal static
-    static inline void _CheckInverseInertiaTensor(const FMatrix3& iitWorld)
-    {
-        // TODO: Perform a validity check in an assert.
-    }
-
-    static inline void _TransformInertiaTensor(FMatrix3& iitWorld,
-        const FQuaternion& q, const FMatrix3& iitBody, const FMatrix3x4& rotmat)
-    {
-        Real t4 = rotmat.data[0] * iitBody.data[0] +
-            rotmat.data[1] * iitBody.data[3] +
-            rotmat.data[2] * iitBody.data[6];
-        Real t9 = rotmat.data[0] * iitBody.data[1] +
-            rotmat.data[1] * iitBody.data[4] +
-            rotmat.data[2] * iitBody.data[7];
-        Real t14 = rotmat.data[0] * iitBody.data[2] +
-            rotmat.data[1] * iitBody.data[5] +
-            rotmat.data[2] * iitBody.data[8];
-        Real t28 = rotmat.data[4] * iitBody.data[0] +
-            rotmat.data[5] * iitBody.data[3] +
-            rotmat.data[6] * iitBody.data[6];
-        Real t33 = rotmat.data[4] * iitBody.data[1] +
-            rotmat.data[5] * iitBody.data[4] +
-            rotmat.data[6] * iitBody.data[7];
-        Real t38 = rotmat.data[4] * iitBody.data[2] +
-            rotmat.data[5] * iitBody.data[5] +
-            rotmat.data[6] * iitBody.data[8];
-        Real t52 = rotmat.data[8] * iitBody.data[0] +
-            rotmat.data[9] * iitBody.data[3] +
-            rotmat.data[10] * iitBody.data[6];
-        Real t57 = rotmat.data[8] * iitBody.data[1] +
-            rotmat.data[9] * iitBody.data[4] +
-            rotmat.data[10] * iitBody.data[7];
-        Real t62 = rotmat.data[8] * iitBody.data[2] +
-            rotmat.data[9] * iitBody.data[5] +
-            rotmat.data[10] * iitBody.data[8];
-
-        iitWorld.data[0] = t4 * rotmat.data[0] +
-            t9 * rotmat.data[1] +
-            t14 * rotmat.data[2];
-        iitWorld.data[1] = t4 * rotmat.data[4] +
-            t9 * rotmat.data[5] +
-            t14 * rotmat.data[6];
-        iitWorld.data[2] = t4 * rotmat.data[8] +
-            t9 * rotmat.data[9] +
-            t14 * rotmat.data[10];
-        iitWorld.data[3] = t28 * rotmat.data[0] +
-            t33 * rotmat.data[1] +
-            t38 * rotmat.data[2];
-        iitWorld.data[4] = t28 * rotmat.data[4] +
-            t33 * rotmat.data[5] +
-            t38 * rotmat.data[6];
-        iitWorld.data[5] = t28 * rotmat.data[8] +
-            t33 * rotmat.data[9] +
-            t38 * rotmat.data[10];
-        iitWorld.data[6] = t52 * rotmat.data[0] +
-            t57 * rotmat.data[1] +
-            t62 * rotmat.data[2];
-        iitWorld.data[7] = t52 * rotmat.data[4] +
-            t57 * rotmat.data[5] +
-            t62 * rotmat.data[6];
-        iitWorld.data[8] = t52 * rotmat.data[8] +
-            t57 * rotmat.data[9] +
-            t62 * rotmat.data[10];
-    }
-
-    static inline void _CalculateTransformMatrix(FMatrix3x4& transformMatrix,
-        const FVector3& position, const FQuaternion& orientation)
-    {
-        transformMatrix.data[0] = 1 - 2 * orientation.j * orientation.j -
-            2 * orientation.k * orientation.k;
-        transformMatrix.data[1] = 2 * orientation.i * orientation.j -
-            2 * orientation.r * orientation.k;
-        transformMatrix.data[2] = 2 * orientation.i * orientation.k +
-            2 * orientation.r * orientation.j;
-        transformMatrix.data[3] = position.x;
-
-        transformMatrix.data[4] = 2 * orientation.i * orientation.j +
-            2 * orientation.r * orientation.k;
-        transformMatrix.data[5] = 1 - 2 * orientation.i * orientation.i -
-            2 * orientation.k * orientation.k;
-        transformMatrix.data[6] = 2 * orientation.j * orientation.k -
-            2 * orientation.r * orientation.i;
-        transformMatrix.data[7] = position.y;
-
-        transformMatrix.data[8] = 2 * orientation.i * orientation.k -
-            2 * orientation.r * orientation.j;
-        transformMatrix.data[9] = 2 * orientation.j * orientation.k +
-            2 * orientation.r * orientation.i;
-        transformMatrix.data[10] = 1 - 2 * orientation.i * orientation.i -
-            2 * orientation.j * orientation.j;
-        transformMatrix.data[11] = position.z;
-    }
-
 public:
     // 적분기
     void CalculateDerivedData();
-    void Integrate(const Real& fDuration);
+    void Integrate(const _float& fDuration);
 
 public:
     // 질량 함수
-    inline void Set_Mass(const Real fMass)
+    inline void Set_Mass(const _float fMass)
     {
         assert(fMass != 0);
-        fInverseMass = ((Real)1.0) / fMass;
+        fInverseMass = ((_float)1.0) / fMass;
     }
-    inline Real Get_Mass() const
+    inline _float Get_Mass() const
     {
         if (fInverseMass == 0) {
-            return REAL_MAX;
+            return FLT_MAX;
         }
         else {
-            return ((Real)1.0) / fInverseMass;
+            return ((_float)1.0) / fInverseMass;
         }
     }
     inline bool HasFiniteMass() const
@@ -174,63 +77,80 @@ public:
         return fInverseMass >= 0.0f;
     }
     // 역질량 함수
-    GETSET_2(Real, fInverseMass, InversMass, SET_C, GET)
+    GETSET_2(_float, fInverseMass, InversMass, SET_C, GET)
 
     // 관성 함수
-    inline void Set_InertiaTensor(const FMatrix3& matInertiaTensor)
+    inline void Set_InertiaTensor(const _fmatrix& matSimInertiaTensor)
     {
-        matInverseInertiaTensor.Set_Inverse(matInertiaTensor);
-        _CheckInverseInertiaTensor(matInverseInertiaTensor);
+        _matrix matSimInverseInertiaTensor = XMLoadFloat3x3(&matInverseInertiaTensor);
+        _vector vDeterminant = XMMatrixDeterminant(matSimInertiaTensor);
+        matSimInverseInertiaTensor = XMMatrixInverse(&vDeterminant, matSimInverseInertiaTensor);
+        XMStoreFloat3x3(& matInverseInertiaTensor, matSimInverseInertiaTensor);
+        //_CheckInverseInertiaTensor(matInverseInertiaTensor);
     }
-    inline void Get_InertiaTensor(FMatrix3* matInertiaTensor) const
+    inline void Get_InertiaTensor(_float3x3* matInertiaTensor) const
     {
-        matInertiaTensor->Set_Inverse(matInverseInertiaTensor);
+        if (nullptr == matInertiaTensor)
+            return;
+
+        _matrix matSimInverseInertiaTensor = XMLoadFloat3x3(&matInverseInertiaTensor);
+        _vector vDeterminant = XMMatrixDeterminant(matSimInverseInertiaTensor);
+        matSimInverseInertiaTensor = XMMatrixInverse(&vDeterminant, matSimInverseInertiaTensor);
+
+        XMStoreFloat3x3(matInertiaTensor, matSimInverseInertiaTensor);
     }
-    inline FMatrix3 Get_InertiaTensor() const
+    inline _float3x3 Get_InertiaTensor() const
     {
-        FMatrix3 it;
+        _float3x3 it;
         Get_InertiaTensor(&it);
         return it;
     }
-    inline void Get_InertiaTensorWorld(FMatrix3* matInertiaTensor) const
+    inline void Get_InertiaTensorWorld(_float3x3* matInertiaTensor) const
     {
-        matInertiaTensor->Set_Inverse(matInverseInertiaTensor);
+        if (nullptr == matInertiaTensor)
+            return;
+
+        _matrix matSimInverseInertiaTensor = XMLoadFloat3x3(&matInverseInertiaTensor);
+        _vector vDeterminant = XMMatrixDeterminant(matSimInverseInertiaTensor);
+        matSimInverseInertiaTensor = XMMatrixInverse(&vDeterminant, matSimInverseInertiaTensor);
+
+        XMStoreFloat3x3(matInertiaTensor, matSimInverseInertiaTensor);
     }
-    inline FMatrix3 Get_InertiaTensorWorld() const
+    inline _float3x3 Get_InertiaTensorWorld() const
     {
         return matInverseInertiaTensorWorld;
     }
     
     
     // 역관성 함수
-    inline void Set_InverseInertiaTensor(const FMatrix3& matInverseInertiaTensor)
+    inline void Set_InverseInertiaTensor(const _float3x3& matInverseInertiaTensor)
     {
-        _CheckInverseInertiaTensor(matInverseInertiaTensor);
+        //_CheckInverseInertiaTensor(matInverseInertiaTensor);
         this->matInverseInertiaTensor = matInverseInertiaTensor;
     }
-    inline void Get_InverseInertiaTensor(FMatrix3* matInverseInertiaTensor) const
+    inline void Get_InverseInertiaTensor(_float3x3* matInverseInertiaTensor) const
     {
         *matInverseInertiaTensor = this->matInverseInertiaTensor;
     }
-    inline FMatrix3 Get_InverseInertiaTensor() const
+    inline _float3x3 Get_InverseInertiaTensor() const
     {
         return matInverseInertiaTensor;
     }
     // 역관성 월드 행렬 함수
-    inline void Get_InverseInertiaTensorWorld(FMatrix3* matInverseInertiaTensor) const
+    inline void Get_InverseInertiaTensorWorld(_float3x3* matInverseInertiaTensor) const
     {
         *matInverseInertiaTensor = matInverseInertiaTensorWorld;
     }
-    inline FMatrix3 Get_InverseInertiaTensorWorld() const
+    inline _float3x3 Get_InverseInertiaTensorWorld() const
     {
         return matInverseInertiaTensorWorld;
     }
 
 
     // 감쇄 함수
-    GETSET_2(Real, fLinearDamping, LinearDamping, SET_C, GET)
-    GETSET_2(Real, fAngularDamping, AngularDamping, SET_C, GET)
-    inline void Set_Damping(const Real _fLinearDamping, const Real _fAngularDamping)
+    GETSET_2(_float, fLinearDamping, LinearDamping, SET_C, GET)
+    GETSET_2(_float, fAngularDamping, AngularDamping, SET_C, GET)
+    inline void Set_Damping(const _float _fLinearDamping, const _float _fAngularDamping)
     {
         fLinearDamping = _fLinearDamping;
         fAngularDamping = _fAngularDamping;
@@ -238,157 +158,172 @@ public:
     
 
     // 위치 함수
-    GETSET_2(FVector3, vPosition, Position, SET_C_REF, GET)
-    inline void Set_Position(const Real x, const Real y, const Real z)
+    GETSET_2(_float3, vPosition, Position, SET_C_REF, GET)
+    inline void Set_Position(const _float x, const _float y, const _float z)
     {
         vPosition.x = x;
         vPosition.y = y;
         vPosition.z = z;
     }
-    inline void Get_Position(FVector3* _vPosition) const
+    inline void Get_Position(_float3* _vPosition) const
     {
         *_vPosition = vPosition;
     }
 
 
     // 정위 함수
-    GETSET_1(FQuaternion, qtOrientation, Orientation, GET)
-    inline void Set_Orientation(const FQuaternion& orientation)
+    GETSET_1(_float4, qtOrientation, Orientation, GET)
+    inline void Set_Orientation(const _float4& orientation)
     {
-        qtOrientation = orientation;
-        qtOrientation.Normalise();          // 정규화 필수
+        _vector vSimOrientation = XMLoadFloat4(&orientation);
+        vSimOrientation = XMQuaternionNormalize(vSimOrientation);
+        XMStoreFloat4(&qtOrientation, vSimOrientation);
     }
-    inline void Set_Orientation(const Real r, const Real i, const Real j, const Real k)
+    inline void Set_Orientation(const _float r, const _float i, const _float j, const _float k)
     {
-        qtOrientation.r = r;
-        qtOrientation.i = i;
-        qtOrientation.j = j;
-        qtOrientation.k = k;
-        qtOrientation.Normalise();          // 정규화 필수
+        _vector vSimOrientation = XMVectorSet(r, i, j, k);
+        vSimOrientation = XMQuaternionNormalize(vSimOrientation);
+        XMStoreFloat4(&qtOrientation, vSimOrientation);
     }
-    inline void Get_Orientation(FQuaternion* orientation) const
+    inline void Get_Orientation(_float4* orientation) const
     {
         *orientation = qtOrientation;
     }
-    inline void Get_Orientation(FMatrix3* matrix) const
+    inline void Get_Orientation(_float3x3* matrix) const
     {
-        Get_Orientation(matrix->data);  // 아래함수에서 처리
+        Get_Orientation(matrix->m[0]);  // 아래함수에서 처리
     }
-    inline void Get_Orientation(Real matrix[9]) const
+    inline void Get_Orientation(_float matrix[9]) const
     {
         // 3x4 -> 3x3
-        matrix[0] = matTransform.data[0];
-        matrix[1] = matTransform.data[1];
-        matrix[2] = matTransform.data[2];
-
-        matrix[3] = matTransform.data[4];
-        matrix[4] = matTransform.data[5];
-        matrix[5] = matTransform.data[6];
-
-        matrix[6] = matTransform.data[8];
-        matrix[7] = matTransform.data[9];
-        matrix[8] = matTransform.data[10];
+        memcpy(&matrix[0], &matTransform.f[0], sizeof(_float3));
+        memcpy(&matrix[3], &matTransform.f[4], sizeof(_float3));
+        memcpy(&matrix[6], &matTransform.f[8], sizeof(_float3));
     }
 
     // 트랜스폼 함수
-    GETSET_1(FMatrix3x4, matTransform, Transform, GET)
-    inline void Get_Transform(FMatrix3x4* transform) const
+    _float3x4 Get_TransformFloat3x4()
     {
-        memcpy(transform, &matTransform.data, sizeof(FMatrix3x4));
+        return matTransform;
     }
-    inline void Get_Transform(Real matrix[16]) const
+    _matrix Get_TransformMatrix()
+    {
+        return XMLoadFloat3x4(&matTransform);
+    }
+    inline void Get_Transform(_float3x4* transform) const
+    {
+        memcpy(transform, &matTransform, sizeof(_float3x4));
+    }
+    inline void Get_Transform(_float matrix[16]) const
     {
         // 3x4 -> 4x4
-        memcpy(matrix, matTransform.data, sizeof(Real) * 12);
+        memcpy(matrix, &matTransform, sizeof(_float) * 12);
         matrix[12] = matrix[13] = matrix[14] = 0;
         matrix[15] = 1;
     }
     inline void Get_GLTransform(_float matrix[16]) const
     {
-        matrix[0] = (float)matTransform.data[0];
-        matrix[1] = (float)matTransform.data[4];
-        matrix[2] = (float)matTransform.data[8];
+        matrix[0] = (float)matTransform.f[0];
+        matrix[1] = (float)matTransform.f[4];
+        matrix[2] = (float)matTransform.f[8];
         matrix[3] = 0;
 
-        matrix[4] = (float)matTransform.data[1];
-        matrix[5] = (float)matTransform.data[5];
-        matrix[6] = (float)matTransform.data[9];
+        matrix[4] = (float)matTransform.f[1];
+        matrix[5] = (float)matTransform.f[5];
+        matrix[6] = (float)matTransform.f[9];
         matrix[7] = 0;
 
-        matrix[8] = (float)matTransform.data[2];
-        matrix[9] = (float)matTransform.data[6];
-        matrix[10] = (float)matTransform.data[10];
+        matrix[8] = (float)matTransform.f[2];
+        matrix[9] = (float)matTransform.f[6];
+        matrix[10] = (float)matTransform.f[10];
         matrix[11] = 0;
 
-        matrix[12] = (float)matTransform.data[3];
-        matrix[13] = (float)matTransform.data[7];
-        matrix[14] = (float)matTransform.data[11];
+        matrix[12] = (float)matTransform.f[3];
+        matrix[13] = (float)matTransform.f[7];
+        matrix[14] = (float)matTransform.f[11];
         matrix[15] = 1;
     }
     inline void Get_DXTransform(_float matrix[16]) const
     {
-        matrix[0] = (float)matTransform.data[0];
-        matrix[1] = (float)matTransform.data[1];
-        matrix[2] = (float)matTransform.data[2];
+        matrix[0] = (float)matTransform.f[0];
+        matrix[1] = (float)matTransform.f[1];
+        matrix[2] = (float)matTransform.f[2];
         matrix[3] = 0;
 
-        matrix[4] = (float)matTransform.data[4];
-        matrix[5] = (float)matTransform.data[5];
-        matrix[6] = (float)matTransform.data[6];
+        matrix[4] = (float)matTransform.f[4];
+        matrix[5] = (float)matTransform.f[5];
+        matrix[6] = (float)matTransform.f[6];
         matrix[7] = 0;
 
-        matrix[8] = (float)matTransform.data[8];
-        matrix[9] = (float)matTransform.data[9];
-        matrix[10] = (float)matTransform.data[10];
+        matrix[8] = (float)matTransform.f[8];
+        matrix[9] = (float)matTransform.f[9];
+        matrix[10] = (float)matTransform.f[10];
         matrix[11] = 0;
 
-        matrix[12] = (float)matTransform.data[3];
-        matrix[13] = (float)matTransform.data[7];
-        matrix[14] = (float)matTransform.data[11];
+        matrix[12] = (float)matTransform.f[3];
+        matrix[13] = (float)matTransform.f[7];
+        matrix[14] = (float)matTransform.f[11];
         matrix[15] = 1;
     }
     // 벡터에 대한 변환 함수
-    FVector3 Get_PointInLocalSpace(const FVector3& vPoint) const
+    _float3 Get_PointInLocalSpace(const _float3& vPoint) const
     {
-        return matTransform.TransformInverse(vPoint);
+        _matrix matSimTransform = XMLoadFloat3x4(&matTransform);
+        _vector vResult = {};
+        _float3 vReturn = {};
+
+        matSimTransform = XMMatrixInverse(nullptr, matSimTransform);
+        XMVector3TransformCoord(vResult, matSimTransform);
+        XMStoreFloat3(&vReturn, vResult);
+
+        return vReturn;
     }
-    FVector3 Get_PointInWorldSpace(const FVector3& vPoint) const
+    _float3 Get_PointInWorldSpace(const _float3& vPoint) const
     {
-        return matTransform.Transform(vPoint);
+        _vector vSimPoint = XMLoadFloat3(&vPoint);
+        _float3 vReturn = {};
+
+        return vReturn;
     }
-    FVector3 Get_DirectionInLocalSpace(const FVector3& vDirection) const
+    _float3 Get_DirectionInLocalSpace(const _float3& vDirection) const
     {
-        return matTransform.TransformInverseDirection(vDirection);
+        return _float3();//matTransform.TransformInverseDirection(vDirection);
     }
-    FVector3 Get_DirectionInWorldSpace(const FVector3& vDirection) const
+    _float3 Get_DirectionInWorldSpace(const _float3& vDirection) const
     {
-        return matTransform.TransformDirection(vDirection);
+        return _float3();// matTransform.TransformDirection(vDirection);
     }
 
     // 속도 함수
-    GETSET_2(FVector3, vVelocity, Velocity, SET_C_REF, GET)
-    inline void Set_Velocity(const Real x, const Real y, const Real z)
+    GETSET_2(_float3, vVelocity, Velocity, SET_C_REF, GET)
+    inline void Set_Velocity(const _float x, const _float y, const _float z)
     {
         vVelocity.x = x; vVelocity.y = y; vVelocity.z = z;
     }
-    inline void Get_Velocity(FVector3* velocity) const
+    inline void Get_Velocity(_float3* velocity) const
     {
         *velocity = vVelocity;
     }
-    inline void Add_Velocity(const FVector3& vDeltaVelocity)
+    inline void Add_Velocity(const _float3& vDeltaVelocity)
     {
-        vVelocity += vDeltaVelocity;
+        vVelocity.x += vDeltaVelocity.x;
+        vVelocity.y += vDeltaVelocity.y;
+        vVelocity.z += vDeltaVelocity.z;
     }
 
 
     // 회전 함수
-    GETSET_2(FVector3, vRotation, Rotation, SET_C_REF, GET)
-    inline void Set_Rotation(const Real x, const Real y, const Real z) 
+    GETSET_2(_float3, vRotation, Rotation, SET_C_REF, GET)
+    inline void Set_Rotation(const _float x, const _float y, const _float z) 
     { vRotation.x = x; vRotation.y = y; vRotation.z = z; }
-    inline void Get_Rotation(FVector3* rotation) const 
+    inline void Get_Rotation(_float3* rotation) const 
     { *rotation = vRotation; }
-    inline void Add_Rotation(const FVector3& vDeltaRotation) 
-    { vRotation += vDeltaRotation; }
+    inline void Add_Rotation(const _float3& vDeltaRotation) 
+    { 
+        vRotation.x += vDeltaRotation.x; 
+        vRotation.y += vDeltaRotation.y;
+        vRotation.z += vDeltaRotation.z;
+    }
 
 
     // 동면 함수
@@ -403,8 +338,8 @@ public:
         }
         else {
             bIsAwake = false;
-            vVelocity.Clear();
-            vRotation.Clear();
+            vVelocity = {};
+            vRotation = {};
         }
     }
     inline bool Get_CanSleep() const { return bCanSleep; }
@@ -419,53 +354,64 @@ public:
     // 힘 함수
     inline void Clear_Accumulators()
     {
-        vForceAccum.Clear();
-        vTorqueAccum.Clear();
+        vForceAccum = _float3();
+        vTorqueAccum = _float3();
     }
-    inline void Add_Force(const FVector3& vForce)
+    inline void Add_Force(const _float3& vForce)
     {
-        vForceAccum += vForce;
+        vForceAccum.x += vForce.x;
+        vForceAccum.y += vForce.y;
+        vForceAccum.z += vForce.z;
         bIsAwake = true;
     }
-    inline void Add_ForceAtPoint(const FVector3& vForce, const FVector3& vPoint)
+    inline void Add_ForceAtPoint(const _float3& vForce, const _float3& vPoint)
     {
-        FVector3 vPT = vPoint;
-        vPT -= vPosition;
+        _vector vSimPT = XMLoadFloat3(&vPoint);
+        _vector vSimPosition = XMLoadFloat3(&vPosition);
+        _vector vSimForce = XMLoadFloat3(&vForce);
+        _vector vSimForceAccum = XMLoadFloat3(&vForceAccum);
+        _vector vSimTorqueAccum = XMLoadFloat3(&vTorqueAccum);
 
-        vForceAccum += vForce;
-        vTorqueAccum += vPT % vForce;   // 외적
+        vSimPT -= vSimPosition;
+        vSimForceAccum += vSimForce;
+        vSimTorqueAccum += XMVector3Cross(vSimPT, vSimForce);   // 외적
+
+        XMStoreFloat3(&vForceAccum, vSimForceAccum);
+        XMStoreFloat3(&vTorqueAccum, vSimTorqueAccum);
 
         bIsAwake = true;
     }
-    inline void Add_ForceAtBodyPoint(const FVector3& vForce, const FVector3& vPoint)
+    inline void Add_ForceAtBodyPoint(const _float3& vForce, const _float3& vPoint)
     {
         // 월드 좌표의 점을 얻어 힘 합산기에 적용한다.
-        FVector3 vPT = Get_PointInWorldSpace(vPoint);
+        _float3 vPT = Get_PointInWorldSpace(vPoint);
         Add_ForceAtPoint(vForce, vPT);
     }
-    inline void Add_Torque(const FVector3& vTorque)
+    inline void Add_Torque(const _float3& vTorque)
     {
-        vTorqueAccum += vTorque;
+        vTorqueAccum.x += vTorque.x;
+        vTorqueAccum.y += vTorque.y;
+        vTorqueAccum.z += vTorque.z;
         bIsAwake = true;
     }
 
 
     // 가속 함수
-    GETSET_2(FVector3, vAcceleration, Acceleration, SET_C_REF, GET)
-    inline void Set_Acceleration(const Real x, const Real y, const Real z)
+    GETSET_2(_float3, vAcceleration, Acceleration, SET_C_REF, GET)
+    inline void Set_Acceleration(const _float x, const _float y, const _float z)
     {
         vAcceleration.x = x; vAcceleration.y = y; vAcceleration.z = z;
     }
-    inline void Get_Acceleration(FVector3* pvAcceleration) const
+    inline void Get_Acceleration(_float3* pvAcceleration) const
     {
         *pvAcceleration = vAcceleration;
     }
     // 이전 프레임 가속값 얻기
-    inline void Get_LastFrameAcceleration(FVector3* linearAcceleration) const
+    inline void Get_LastFrameAcceleration(_float3* linearAcceleration) const
     {
         *linearAcceleration = vLastFrameAcceleration;
     }
-    inline FVector3 Get_LastFrameAcceleration() const
+    inline _float3 Get_LastFrameAcceleration() const
     {
         return vLastFrameAcceleration;
     }
@@ -477,26 +423,27 @@ protected:
     unsigned long long              iID;
 
 protected:
-    Real                            fInverseMass;				    // 역질량
-	FMatrix3                        matInverseInertiaTensor;		// 역관성텐서
+    _float                          fInverseMass;				    // 역질량
+	_float3x3                       matInverseInertiaTensor;		// 역관성텐서
 
-    Real                            fLinearDamping;                 // 등속이동 감쇄
-    Real                            fAngularDamping;                // 각속도 감쇄
-    FVector3                        vForceAccum;                    // 속도힘 합
-    FVector3                        vTorqueAccum;                   // 회전힘 합
-    FVector3                        vAcceleration;                  // 가속도
-    FVector3                        vLastFrameAcceleration;         // 이전 프레임 가속도
+    _float                          fLinearDamping;                 // 등속이동 감쇄
+    _float                          fAngularDamping;                // 각속도 감쇄
+    _float3                         vForceAccum;                    // 속도힘 합
+    _float3                         vTorqueAccum;                   // 회전힘 합
+    _float3                         vAcceleration;                  // 가속도
+    _float3                         vLastFrameAcceleration;         // 이전 프레임 가속도
     
-    FVector3                        vPosition;                      // 위치
-    FVector3                        vVelocity;                      // 속도
-    FVector3                        vRotation;                      // 회전 속도
-    FQuaternion                     qtOrientation;                  // 정위, 나중에 쿼터니온으로 바꿀 것
+    _float3                         vPosition;                      // 위치
+    _float3                         vVelocity;                      // 속도
+    _float3                         vRotation;                      // 회전 속도
+    _float4                         qtOrientation;                  // 정위, 나중에 쿼터니온으로 바꿀 것
+    _float3                         vScale;                         // 크기
     
 
-    FMatrix3                        matInverseInertiaTensorWorld;   // 3차원 행렬
-    FMatrix3x4                      matTransform;                   // 4차원 행렬, 트랜스폼
+    _float3x3                       matInverseInertiaTensorWorld;   // 3차원 행렬
+    _float3x4                       matTransform;                   // 4차원 행렬, 트랜스폼
     
-    Real                            fMotion;                        // 모션
+    _float                          fMotion;                        // 모션
     _bool                           bIsAwake;                       // 힘 작용 업데이트 가능 여부
     _bool                           bCanSleep;                      // 앱실론 자동 연산 제외 기능
 

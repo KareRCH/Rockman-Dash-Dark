@@ -541,7 +541,7 @@ inline void CGameInstance::StartFrame_PhysicsMgr()
 	m_pPhysicsMgr->StartFrame();
 }
 
-inline _int CGameInstance::Tick_PhysicsMgr(const Real& fTimeDelta)
+inline _int CGameInstance::Tick_PhysicsMgr(const _float& fTimeDelta)
 {
 	if (nullptr == m_pPhysicsMgr)
 		return 0;

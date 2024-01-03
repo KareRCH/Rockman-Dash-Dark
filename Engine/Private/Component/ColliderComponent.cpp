@@ -266,7 +266,7 @@ void CColliderComponent::Update_Physics()
     _float4x4 vfMatrix = {};
     XMStoreFloat4x4(&vfMatrix, vMatrix);
 
-    m_pCollisionShape->matOffset.RecieveDXArray(reinterpret_cast<float*>(&vfMatrix));
+    XMStoreFloat3x4(&m_pCollisionShape->matOffset, vMatrix);
 }
 
 void CColliderComponent::OnCollision(void* pDst, const FContact* const pContact)

@@ -31,7 +31,7 @@ private:
 public:
 	HRESULT						Ready_Physics(_uint iMaxContacts, _uint iIterations);
 	void						StartFrame_Physics();
-	_int						Update_Physics(const Real& fTimeDelta);
+	_int						Update_Physics(const _float& fTimeDelta);
 	_uint						Generate_Contacts();
 
 	// 단순 물리 충돌 테스트

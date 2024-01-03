@@ -25,7 +25,7 @@ public:
 	HRESULT			Initialize(const _uint iMaxPhysicsWorld3D);
 	void			StartFrame();
 	// 물리 정확도를 위해 Precision의 실수 타입을 사용한다.
-	_int			Tick(const Real& fTimeDelta);
+	_int			Tick(const _float& fTimeDelta);
 
 public:
 	static CPhysicsMgr* Create(const _uint iMaxPhysicsWorld3D);

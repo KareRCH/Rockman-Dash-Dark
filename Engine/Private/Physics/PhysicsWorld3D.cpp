@@ -18,10 +18,8 @@ CPhysicsWorld3D* CPhysicsWorld3D::Create(_uint iMaxContacts, _uint iIterations)
 
 	if (FAILED(pInstance->Ready_Physics(iMaxContacts, iIterations)))
 	{
-		Safe_Release(pInstance);
-
 		MSG_BOX("PhysicsWorld3D Create Failed");
-		return nullptr;
+		Safe_Release(pInstance);
 	}
 
 	return pInstance;
@@ -52,7 +50,7 @@ void CPhysicsWorld3D::StartFrame_Physics()
 	}*/
 }
 
-_int CPhysicsWorld3D::Update_Physics(const Real& fTimeDelta)
+_int CPhysicsWorld3D::Update_Physics(const _float& fTimeDelta)
 {
 	if (m_bIsPaused)
 		return 0;
@@ -64,7 +62,7 @@ _int CPhysicsWorld3D::Update_Physics(const Real& fTimeDelta)
 
 		FCollisionPrimitive* pCol = static_cast<FCollisionPrimitive*>((*iter)->Get_Owner());
 		pCol->Calculate_Transform();
-		pCol->Set_Position(pCol->Get_Position());
+		pCol->Set_Position(pCol->Get_PositionFloat3());
 		pCol->Calculate_Shape();
 	}
 
@@ -128,7 +126,12 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 	// 거리 만들기, Square 거리로 계산한다.
 	// O(n)
 	for (auto iter = m_listBody.begin(); iter != m_listBody.end(); ++iter)
-		listDistance.push_back({ (*iter), ((*iter)->Get_Position() - FVector3(-100.f, -100.f, -100.f)).Magnitude() });
+	{
+		_float3 vPos = (*iter)->Get_Position();
+		_vector vSimPos = XMLoadFloat3(&vPos);
+		_float fLength = XMVectorGetX(XMVector3Length(vSimPos - XMVectorSet(0.f, 0.f, 0.f, 0.f)));
+		listDistance.push_back({ (*iter), fLength });
+	}
 	// 정렬 O(log(n))
 	listDistance.sort();
 
@@ -137,7 +140,7 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 	for (auto iter = listDistance.begin(); iter != listDistance.end(); ++iter)
 	{
 		FCollisionPrimitive* pShape = static_cast<FCollisionPrimitive*>((*iter).pBody->Get_Owner());
-		Real fHalfScale = (pShape->Get_Scale() * 0.5f).Magnitude();
+		_float fHalfScale = XMVectorGetX(XMVector3Length(pShape->Get_ScaleVector() * 0.5f));
 		listEndPoint.push_back({ (*iter).pBody, (*iter).fDist - fHalfScale, true });
 		listEndPoint.push_back({ (*iter).pBody, (*iter).fDist + fHalfScale, false });
 	}
@@ -161,9 +164,17 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 				if (pColSrc->Get_CollisionMask() & pColDst->Get_CollisionLayer()
 					|| pColDst->Get_CollisionMask() & pColSrc->Get_CollisionLayer())
 				{
+					_vector vSrc_Min = XMLoadFloat3(&pColSrc->BoundingBox.vMin);
+					_vector vSrc_Max = XMLoadFloat3(&pColSrc->BoundingBox.vMax);
+					_vector vDst_Min = XMLoadFloat3(&pColDst->BoundingBox.vMin);
+					_vector vDst_Max = XMLoadFloat3(&pColDst->BoundingBox.vMax);
+
+					_vector vBool1 = XMVectorGreaterOrEqual(vSrc_Max, vDst_Min);
+					_vector vBool2 = XMVectorGreaterOrEqual(vDst_Max, vSrc_Min);
+
 					// 바운딩 박스로 충돌되는지 확인
-					if (pColSrc->BoundingBox.vMax >= pColDst->BoundingBox.vMin
-						&& pColDst->BoundingBox.vMax >= pColSrc->BoundingBox.vMin)
+					if (XMVectorGetX(vBool1) && XMVectorGetY(vBool1) && XMVectorGetZ(vBool1)
+						&& XMVectorGetX(vBool2) && XMVectorGetY(vBool2) && XMVectorGetZ(vBool2))
 					{
 						listPairCollide.push_back({ (*iter).pBody, (*iterCalc).pBody });
 					}
@@ -222,46 +233,6 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 		++iDebugCount;
 	}
 
-
-	// O(MxN)의 굉장히 느린 알고리즘, 폐기
-	//for (auto iterSrc = m_listBody.begin(); iterSrc != m_listBody.end(); ++iterSrc)
-	//{
-	//	// 재연산 방지, 현재 반복자로부터 다음 것을 가져다가 쓴다.
-	//	for (auto iterDst = (++iterSrc)--; iterDst != m_listBody.end(); ++iterDst)
-	//	{
-	//		bool bCollide = false;
-	//		if ((*iterSrc) == (*iterDst))
-	//			continue;
-
-	//		// 도중에 연결 정지 신호들어오면 종료
-	//		if (m_bIsPaused)
-	//			return 0;
-
-	//		FCollisionPrimitive* pColSrc = static_cast<FCollisionPrimitive*>((*iterSrc)->Get_Owner());
-	//		FCollisionPrimitive* pColDst = static_cast<FCollisionPrimitive*>((*iterDst)->Get_Owner());
-
-	//		FCollisionData tColData;
-	//		tColData.iContactsLeft = 1;	// 작동 시킬라면 넣어야함.
-
-	//		// 하나라도 충돌을 체크를 하는 경우에만 계산한다.
-	//		if (pColSrc->Get_CollisionMask() & pColDst->Get_CollisionLayer()
-	//			|| pColDst->Get_CollisionMask() & pColSrc->Get_CollisionLayer())
-	//			bCollide = FCollisionDetector::CollsionPrimitive(pColSrc, pColDst, &tColData);
-	//		else
-	//			bCollide = false;
-
-	//		if (bCollide)
-	//		{
-	//			if (pColSrc->Get_CollisionMask() & pColDst->Get_CollisionLayer())
-	//				pColSrc->Handle_CollsionEvent(pColDst->Get_Owner(), &tColData.tContacts);
-	//			tColData.tContacts.Reverse_BodyData();
-	//			if (pColDst->Get_CollisionMask() & pColSrc->Get_CollisionLayer())
-	//				pColDst->Handle_CollsionEvent(pColSrc->Get_Owner(), &tColData.tContacts);
-	//		}
-	//		++iDebugCount;
-	//	}
-	//	++iDebug_BodySrc;
-	//}
 	/*wstringstream ss;
 	wstring str;
 	ss << iDebugCount;

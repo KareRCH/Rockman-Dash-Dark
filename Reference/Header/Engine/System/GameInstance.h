@@ -120,7 +120,7 @@ public:					// 키 매니저
 public:		// 피직스 매니저
 	HRESULT				Initialize_PhysicsMgr(_uint iPhysicsWorldCount = 1);
 	inline void			StartFrame_PhysicsMgr();
-	inline _int			Tick_PhysicsMgr(const Real& fTimeDelta);
+	inline _int			Tick_PhysicsMgr(const _float& fTimeDelta);
 	inline void			Pause_PhysicsSimulation(const _uint iWorldID);
 	inline void			Play_PhysicsSimulation(const _uint iWorldID);
 	inline void			Add_ColliderToPhysicsWorld(const _uint iWorldID, FCollisionPrimitive* pCollider);
