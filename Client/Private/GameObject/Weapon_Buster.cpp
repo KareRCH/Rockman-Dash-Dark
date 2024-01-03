@@ -6,6 +6,9 @@
 #include "Component/ModelShaderComp.h"
 #include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
+#include "Component/ColliderComponent.h"
+
+#include "GameObject/ReaverBot_Horokko.h"
 
 
 CWeapon_Buster::CWeapon_Buster()
@@ -19,6 +22,7 @@ CWeapon_Buster::CWeapon_Buster(const CWeapon_Buster& rhs)
 
 HRESULT CWeapon_Buster::Initialize_Prototype()
 {
+	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
 
@@ -29,6 +33,7 @@ HRESULT CWeapon_Buster::Initialize_Prototype()
 
 HRESULT CWeapon_Buster::Initialize_Prototype(const _float3 vPos)
 {
+	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
 
@@ -41,11 +46,15 @@ HRESULT CWeapon_Buster::Initialize_Prototype(const _float3 vPos)
 
 HRESULT CWeapon_Buster::Initialize(void* Arg)
 {
+	FAILED_CHECK_RETURN(__super::Initialize(Arg), E_FAIL);
+
 	return S_OK;
 }
 
 HRESULT CWeapon_Buster::Initialize(const _float3 vPos)
 {
+	FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
+
 	Transform().Set_Position(vPos);
 
 	return S_OK;
@@ -74,6 +83,8 @@ void CWeapon_Buster::Tick(const _float& fTimeDelta)
 	XMStoreFloat3(&vfLook, vLook);
 
 	Transform().TurnAxis(vfLook, XMConvertToRadians(90.f * fTimeDelta));
+
+	m_pColliderComp->Tick(fTimeDelta);
 }
 
 void CWeapon_Buster::Late_Tick(const _float& fTimeDelta)
@@ -145,5 +156,34 @@ HRESULT CWeapon_Buster::Initialize_Component()
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelNoAnim.hlsl", SHADER_VTX_MODEL::Elements, SHADER_VTX_MODEL::iNumElements);
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_NONANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Buster/Buster.amodel");
 
+	if (nullptr == m_pColliderComp)
+		return E_FAIL;
+	m_pColliderComp->Bind_Collision(ECollisionType::Box);
+	m_pColliderComp->EnterToPhysics(0);
+	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);
+	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR | COLLAYER_OBJECT);
+
 	return S_OK;
+}
+
+void CWeapon_Buster::OnCollision(CGameObject* pDst, const FContact* pContact)
+{
+	cout << "충돌함" << endl;
+	
+}
+
+void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
+{
+	cout << "충돌 진입" << endl;
+	CReaverBot_Horokko* pEnemy = DynCast<CReaverBot_Horokko*>(pDst);
+	if (pEnemy)
+	{
+		Set_Dead();
+	}
+}
+
+
+void CWeapon_Buster::OnCollisionExited(CGameObject* pDst)
+{
+	cout << "충돌 나감" << endl;
 }

@@ -3,48 +3,66 @@
 #include "Physics/CollisionPrimitive.h"
 
 
+
 void FRigidBody::CalculateDerivedData()
 {
+	_vector vSimPosition = XMLoadFloat3(&vPosition);
+	_vector vSimOrientation = XMLoadFloat4(&qtOrientation);
+	_vector vSimScale = XMLoadFloat3(&vScale);
+	_matrix matSimTransform = XMLoadFloat3x4(&matTransform);
 	// 회전 쿼터니언 정규화
-	qtOrientation.Normalise();
+	XMStoreFloat4(&qtOrientation, XMQuaternionNormalize(vSimOrientation));
 
 	// 몸체에 대한 트랜스폼 계산
-	_CalculateTransformMatrix(matTransform, vPosition, qtOrientation);
+	matSimTransform = XMMatrixAffineTransformation(vSimScale, XMQuaternionIdentity(), vSimOrientation, vSimPosition);
+	XMStoreFloat3x4(&matTransform, matSimTransform);
 
 	// 월드 스페이스에서 관성 텐서를 계산
-	_TransformInertiaTensor(matInverseInertiaTensorWorld, qtOrientation,
-								matInverseInertiaTensor, matTransform);
+	/*_TransformInertiaTensor(matInverseInertiaTensorWorld, qtOrientation,
+								matInverseInertiaTensor, matTransform);*/
 }
 
-void FRigidBody::Integrate(const Real& fDuration)
+void FRigidBody::Integrate(const _float& fDuration)
 {
 	if (eBodyType == ERIGID_BODY_TYPE::STATIC) return;					// STATIC이면 힘을 부과하지 않는다.
 	if (eBodyType == ERIGID_BODY_TYPE::DYNAMIC && !bIsAwake) return;	// DYNAMIC에 대해서만 재운다.
 
 	// 선형 가속 합을 가속에 더하기
 	vLastFrameAcceleration = vAcceleration;
-	vLastFrameAcceleration.Add_ScaledVector(vForceAccum, fInverseMass);
+	_vector vSimLastFramAcceleration = XMLoadFloat3(&vLastFrameAcceleration);
+	vSimLastFramAcceleration += XMLoadFloat3(&vForceAccum) * fInverseMass;
+	XMStoreFloat3(&vLastFrameAcceleration, vSimLastFramAcceleration);
 
 	// 각 가속도를 계산
-	FVector3 vAngularAcceleration = matInverseInertiaTensorWorld.Transform(vTorqueAccum);
+	_matrix matSimInverseInertiaTensorWorld = XMLoadFloat3x3(&matInverseInertiaTensorWorld);
+	_vector vSimTorqueAccum = XMLoadFloat3(&vTorqueAccum);
+	_vector vAngularAcceleration = XMVector3TransformCoord(vSimTorqueAccum, matSimInverseInertiaTensorWorld);
 
 	// 속도 조절
 	// 선형 속도를 가속도와 충격으로부터 업데이트 한다.
-	vVelocity.Add_ScaledVector(vLastFrameAcceleration, fDuration);
-
+	_vector vSimVelocity = XMLoadFloat3(&vVelocity);
+	vSimVelocity += vSimLastFramAcceleration * fDuration;
+	
 	// 각 속도를 가속도와 충격으로부터 업데이트 한다.
-	vRotation.Add_ScaledVector(vAngularAcceleration, fDuration);
-
+	_vector vSimRotation = XMLoadFloat3(&vRotation);
+	vSimRotation += vAngularAcceleration * fDuration;
+	
 	// 드래그 값을 부과한다.
-	vVelocity *= real_pow(fLinearDamping, fDuration);
-	vRotation *= real_pow(fAngularDamping, fDuration);
+	vSimVelocity *= pow(fLinearDamping, fDuration);
+	vSimRotation *= pow(fAngularDamping, fDuration);
+
+	XMStoreFloat3(&vVelocity, vSimVelocity);
+	XMStoreFloat3(&vRotation, vSimRotation);
 
 	// 위치를 조절한다.
 	// 선형 위치를 업데이트 한다.
-	vPosition.Add_ScaledVector(vVelocity, fDuration);
+	_vector vSimPosition = XMLoadFloat3(&vPosition);
+	vSimPosition += vSimVelocity * fDuration;
+	XMStoreFloat3(&vPosition, vSimPosition);
 
 	// 각 위치를 업데이트 한다.
-	qtOrientation.Add_ScaledVector(vRotation, fDuration);
+	_vector vSimOrientation = XMLoadFloat4(&qtOrientation);
+	vSimOrientation = XMQuaternionRotationRollPitchYawFromVector(vSimRotation) * fDuration;
 
 	// 정위를 정규화, 새로운 행렬을 업데이트한다.
 	// 위치, 정위
@@ -57,10 +75,10 @@ void FRigidBody::Integrate(const Real& fDuration)
 	if (eBodyType == ERIGID_BODY_TYPE::DYNAMIC && bCanSleep)
 	{
 		// 각 벡터들을 제곱한 값
-		Real fCurrentMotion = vVelocity.DotProduct(vVelocity) + vRotation.DotProduct(vRotation);
+		_float fCurrentMotion = XMVectorGetX(XMVector3Dot(vSimVelocity, vSimVelocity) + XMVector3Dot(vSimRotation, vSimRotation));
 
 		// 움직이고 있는지에 대한 평가치를 계산
-		Real fBias = real_pow(0.5, fDuration);
+		_float fBias = pow(0.5f, fDuration);
 		fMotion = (fBias * fMotion) + ((1 - fBias) * fCurrentMotion);
 
 		// 오차와 계산해서 깨울지 재울지 결정

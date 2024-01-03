@@ -104,6 +104,16 @@
 #define DIRECTINPUT_VERSION	0x0800
 #include <dinput.h>
 
+#include "d3dx11effect.h"
+#include "DirectXCollision.h"
+#include "DDSTextureLoader.h"
+#include "WICTextureLoader.h"
+#include "ScreenGrab.h"
+#include "VertexTypes.h"
+#include "PrimitiveBatch.h"
+#include "Effects.h"
+#include "SpriteBatch.h"
+#include "SpriteFont.h"
 
 
 // ImGui관련 new 디버그 코드 비활성화

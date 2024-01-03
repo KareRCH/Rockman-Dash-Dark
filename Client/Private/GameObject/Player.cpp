@@ -193,7 +193,7 @@ HRESULT CPlayer::Initialize_Component()
     m_pColliderComp->EnterToPhysics(0);
     m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
     m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
-        | COLLAYER_ITEM | COLLAYER_OBJECT);
+                                        | COLLAYER_ITEM | COLLAYER_OBJECT);
 
     return S_OK;
 }

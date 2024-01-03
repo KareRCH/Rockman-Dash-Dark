@@ -39,12 +39,12 @@ public:
 class ENGINE_DLL FLineTests
 {
 public:
-	inline static FVector3 ClosestPointOnLineSegment(const FVector3& vA, const FVector3& vB, const FVector3& vPoint);
+	inline static _vector ClosestPointOnLineSegment(const _fvector& vA, const _fvector& vB, const _fvector& vPoint);
 };
 
-inline FVector3 FLineTests::ClosestPointOnLineSegment(const FVector3& vA, const FVector3& vB, const FVector3& vPoint)
+inline _vector FLineTests::ClosestPointOnLineSegment(const _fvector& vA, const _fvector& vB, const _fvector& vPoint)
 {
-	FVector3 vAB = vB - vA;
+	_vector vAB = vB - vA;
 	//Real fSaturate = in(max(0.f, (vPoint - vA).DotProduct(vAB) / vAB.DotProduct(vAB)), 1.f);
 
 	return vA + vAB;// *fSaturate;
@@ -62,9 +62,9 @@ public:
     _int		iContactsLeft;		// 충돌 남은 개수
     _uint		iContactCount;		// 충돌 개수
 
-    Real		fFriction;			// 마찰
-	Real		fRestitution;		// 반발 계수
-	Real		fTolerance;			// 용인 범위
+    _float		fFriction;			// 마찰
+	_float		fRestitution;		// 반발 계수
+	_float		fTolerance;			// 용인 범위
 
 
     bool HasMoreContacts()

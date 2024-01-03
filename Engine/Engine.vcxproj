@@ -253,6 +253,7 @@
     <ClInclude Include="Public\System\Data\MaterialData.h" />
     <ClInclude Include="Public\System\Data\ModelData.h" />
     <ClInclude Include="Public\System\Define\RenderMgr_Define.h" />
+    <ClInclude Include="Public\Utility\DebugDraw.h" />
     <ClInclude Include="Public\Utility\DelegateTemplate.h" />
     <ClInclude Include="Public\Utility\LogicDeviceBasic.h" />
     <ClInclude Include="Public\Base.h" />
@@ -439,6 +440,7 @@
     <ClCompile Include="Private\System\TextureMgr.cpp" />
     <ClCompile Include="Private\System\Timer.cpp" />
     <ClCompile Include="Private\System\TimerMgr.cpp" />
+    <ClCompile Include="Private\Utility\DebugDraw.cpp" />
     <ClCompile Include="Private\Utility\RapidJsonSerial.cpp" />
     <ClCompile Include="Private\ParticleRectBufferComp.cpp" />
     <ClCompile Include="Public\Base.inl" />

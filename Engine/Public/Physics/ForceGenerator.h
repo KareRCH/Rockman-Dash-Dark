@@ -26,7 +26,7 @@ public:
     void Add(FRigidBody* pBody, FForceGenerator* pFGen);
     void Remove(FRigidBody* pBody, FForceGenerator* pFGen);
     void Clear();
-    void Update_Forces(const Real fDuration);
+    void Update_Forces(const _float fDuration);
 };
 
 
@@ -38,7 +38,7 @@ class ENGINE_DLL FForceGenerator abstract
 	THIS_CLASS(FForceGenerator)
 
 public:
-	virtual void Update_Force(FRigidBody* pBody, const Real& fDuration) PURE;
+	virtual void Update_Force(FRigidBody* pBody, const _float& fDuration) PURE;
 
 };
 
@@ -51,12 +51,12 @@ class ENGINE_DLL FForce_Gravity
 	THIS_CLASS(FForce_Gravity)
 
 private:
-	FVector3 vGravity;
+	_float3 vGravity;
 
 public:
-	FForce_Gravity(const FVector3& gravity);
+	FForce_Gravity(const _float3& gravity);
 
-	virtual void Update_Force(FRigidBody* pBody, const Real& fDuration);
+	virtual void Update_Force(FRigidBody* pBody, const _float& fDuration);
 };
 
 
@@ -68,19 +68,19 @@ class ENGINE_DLL FForce_Spring
 	THIS_CLASS(FForce_Spring)
 
 private:
-	FVector3 vConnectionPoint;		// 연결 포인트
-	FVector3 vOtherConnectionPoint;	// 다른 객체 연결 포인트
+	_float3 vConnectionPoint;		// 연결 포인트
+	_float3 vOtherConnectionPoint;	// 다른 객체 연결 포인트
 
 	FRigidBody* pOther;				// 다른 객체
 
-	Real		fSpringConstant;	// 스프링 상수
-	Real		fRestLength;		// 유휴 길이, 원본 길이
+	_float		fSpringConstant;	// 스프링 상수
+	_float		fRestLength;		// 유휴 길이, 원본 길이
 
 public:
-	FForce_Spring(const FVector3& localConnectionPt, FRigidBody* other, const FVector3& otherConnectionPt,
-						Real springConstant, Real restLength);
+	FForce_Spring(const _float3& localConnectionPt, FRigidBody* other, const _float3& otherConnectionPt,
+						_float springConstant, _float restLength);
 
-	virtual void Update_Force(FRigidBody* pBody, const Real& fDuration);
+	virtual void Update_Force(FRigidBody* pBody, const _float& fDuration);
 };
 
 END

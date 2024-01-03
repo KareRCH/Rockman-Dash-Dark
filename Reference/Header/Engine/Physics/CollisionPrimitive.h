@@ -16,8 +16,8 @@ enum class ECollisionType
 
 struct FBoundingBox
 {
-	FVector3 vMin;
-	FVector3 vMax;
+	_float3 vMin;
+	_float3 vMax;
 };
 
 /// <summary>
@@ -78,7 +78,7 @@ private:
 public:
 	mutable FRigidBody* pBody;		// 강체 정보
 	
-	FMatrix3x4		matOffset;		// 오프셋 행렬
+	_float3x4		matOffset;		// 오프셋 행렬
 	FBoundingBox	BoundingBox;	// 브로드 페이즈 용 바운딩 박스
 
 public:
@@ -87,46 +87,70 @@ public:
 public:
 	void Calculate_Transform()
 	{
-		matTransform = pBody->Get_Transform() * matOffset;
+		XMStoreFloat3x4(&matTransform, pBody->Get_TransformMatrix() * XMLoadFloat3x4(&matOffset));
 	}
 
 public:
-	GETSET_2(FMatrix3x4, matTransform, Transform, GET_C_REF, GET_REF)
+	GETSET_2(_float3x4, matTransform, Transform, GET_C_REF, GET_REF)
 	// 축 정보를 트랜스폼에서 얻어옴
-	FVector3 Get_Axis(_uint iIndex) const
+	_float3 Get_Axis(_uint iIndex) const
 	{
-		return matTransform.Get_AxisVector(iIndex);
+		return _float3(matTransform.m[iIndex][0], matTransform.m[iIndex][1], matTransform.m[iIndex][2]);
 	}
 
-	const FVector3 Get_Position() const
+	const _float3 Get_PositionFloat3() const
 	{
-		return matTransform.Get_PosVector();
+		return _float3(matTransform.m[0][3], matTransform.m[1][3], matTransform.m[2][3]);
 	}
-	void Set_Position(const FVector3 vPos)
+	_vector Get_PositionVector() const
+	{
+		_float3 vReturn(matTransform.m[0][3], matTransform.m[1][3], matTransform.m[2][3]);
+		return XMLoadFloat3(&vReturn);
+	}
+	void Set_Position(const _float3 vPos)
 	{
 		CheckAnd_CreateBody();
 		pBody->Set_Position(vPos);
 	}
 
-	const FVector3 Get_Rotation() const
+	const _float3 Get_Rotation() const
 	{
 		CheckAnd_CreateBody();
 		return pBody->Get_Rotation();
 	}
-	void Set_Rotation(const FVector3 vRot)
+	void Set_Rotation(const _float3 vRot)
 	{
 		CheckAnd_CreateBody();
 		pBody->Set_Rotation(vRot);
 	}
 
 	
-	FVector3 Get_Scale() const
+	_float3 Get_ScaleFloat3() const
 	{
-		return matTransform.Get_ScaleVector();
+		_float3 vReturn = {};
+		_matrix matCalc = XMLoadFloat3x4(&matTransform);
+		_vector vCalc[3] = { matCalc.r[0], matCalc.r[1], matCalc.r[2] };
+		vReturn.x = XMVectorGetX(XMVector3Length(vCalc[0]));
+		vReturn.y = XMVectorGetX(XMVector3Length(vCalc[1]));
+		vReturn.z = XMVectorGetX(XMVector3Length(vCalc[2]));
+
+		return vReturn;
+	}
+
+	_vector Get_ScaleVector() const
+	{
+		_vector vSimReturn = {};
+		_matrix matCalc = XMLoadFloat3x4(&matTransform);
+		_vector vCalc[3] = { matCalc.r[0], matCalc.r[1], matCalc.r[2] };
+		vSimReturn = XMVectorSet(XMVectorGetX(XMVector3Length(vCalc[0]))
+					, XMVectorGetX(XMVector3Length(vCalc[1]))
+					, XMVectorGetX(XMVector3Length(vCalc[2])), 0.f);
+
+		return vSimReturn;
 	}
 
 protected:
-	FMatrix3x4	matTransform;		// 트랜스 폼 행렬
+	_float3x4	matTransform;		// 트랜스 폼 행렬
 
 public:
 	GETSET_2(_ulong, m_dwCollisionLayer_Flag, CollisionLayer, GET_C_REF, SET_C)
@@ -175,13 +199,15 @@ public:
 public:
 	virtual void Calculate_Shape() override
 	{
-		fRadius = max(max(Get_Scale().x, Get_Scale().y), Get_Scale().z) * 0.5f;
-		BoundingBox.vMin = Get_Position() - FVector3(fRadius, fRadius, fRadius);
-		BoundingBox.vMax = Get_Position() + FVector3(fRadius, fRadius, fRadius);
+		_float3 vScale = Get_ScaleFloat3();
+		fRadius = max(max(vScale.x, vScale.y), vScale.z) * 0.5f;
+		_vector vSimLength = XMVectorSet(fRadius, fRadius, fRadius, fRadius);
+		XMStoreFloat3(&BoundingBox.vMin,(Get_PositionVector() - vSimLength));
+		XMStoreFloat3(&BoundingBox.vMax,(Get_PositionVector() + vSimLength));
 	}
 
 public:
-	Real		fRadius;
+	_float		fRadius;
 };
 
 
@@ -207,13 +233,16 @@ public:
 public:
 	virtual void Calculate_Shape() override
 	{
-		vHalfSize = Get_Scale() * 0.5f;
-		BoundingBox.vMin = Get_Position() - vHalfSize;
-		BoundingBox.vMax = Get_Position() + vHalfSize;
+		_vector vSimHalfSize = XMLoadFloat3(&vHalfSize);
+		vSimHalfSize = Get_ScaleVector() * 0.5f;
+		XMStoreFloat3(&vHalfSize, vSimHalfSize);
+
+		XMStoreFloat3(&BoundingBox.vMin, Get_PositionVector() - vSimHalfSize);
+		XMStoreFloat3(&BoundingBox.vMax, Get_PositionVector() + vSimHalfSize);
 	}
 
 public:
-	FVector3	vHalfSize;
+	_float3	vHalfSize;
 };
 
 
@@ -239,15 +268,17 @@ public:
 public:
 	virtual void Calculate_Shape() override
 	{
-		vDirHalfSize = FVector3(0.f, Get_Scale().y * 0.5f, 0.f);
-		fRadius = max(Get_Scale().x, Get_Scale().z) * 0.5f;
-		BoundingBox.vMin = Get_Position() - FVector3(fRadius, vDirHalfSize.y + fRadius, fRadius);
-		BoundingBox.vMax = Get_Position() + FVector3(fRadius, vDirHalfSize.y + fRadius, fRadius);
+		vDirHalfSize = _float3(0.f, Get_ScaleFloat3().y * 0.5f, 0.f);
+		fRadius = max(Get_ScaleFloat3().x, Get_ScaleFloat3().z) * 0.5f;
+		_vector vLength = XMVectorSet(fRadius, vDirHalfSize.y + fRadius, fRadius, 0.f);
+
+		XMStoreFloat3(&BoundingBox.vMin, Get_PositionVector() - vLength);
+		XMStoreFloat3(&BoundingBox.vMax, Get_PositionVector() + vLength);
 	}
 
 public:
-	FVector3	vDirHalfSize;
-	Real		fRadius;
+	_float3	vDirHalfSize;
+	_float		fRadius;
 };
 
 
@@ -278,8 +309,8 @@ public:
 	}
 
 public:
-	FVector3	vDirection;
-	Real		fOffset;
+	_float3	vDirection;
+	_float		fOffset;
 };
 
 
@@ -309,8 +340,8 @@ public:
 	}
 
 public:
-	FVector3	vStart;
-	FVector3	vEnd;
+	_float3	vStart;
+	_float3	vEnd;
 };
 
 /// <summary>
@@ -339,8 +370,8 @@ public:
 	}
 
 public:
-	FVector3	vOrigin;
-	FVector3	vDir;
+	_float3	vOrigin;
+	_float3	vDir;
 };
 
 /// <summary>
@@ -369,7 +400,7 @@ public:
 	}
 
 public:
-	FVector3	vA, vB, vC;
+	_float3	vA, vB, vC;
 };
 
 /// <summary>
@@ -394,14 +425,20 @@ public:
 public:
 	virtual void Calculate_Shape() override
 	{
-		vHalfSize = Get_Scale() * 0.5f;
-		_float fLength = vHalfSize.Magnitude();
-		BoundingBox.vMin = Get_Position() - FVector3(fLength, fLength, fLength);
-		BoundingBox.vMax = Get_Position() + FVector3(fLength, fLength, fLength);
+		_vector vSimHalfSize = XMLoadFloat3(&vHalfSize);
+		vSimHalfSize = Get_ScaleVector() * 0.5f;
+		XMStoreFloat3(&vHalfSize, vSimHalfSize);
+
+		XMStoreFloat3(&BoundingBox.vMin, Get_PositionVector() - vSimHalfSize);
+		XMStoreFloat3(&BoundingBox.vMax, Get_PositionVector() + vSimHalfSize);
+
+		_vector vSize = XMVector3Length(vSimHalfSize);
+		XMStoreFloat3(&BoundingBox.vMax, Get_PositionVector() + vSize);
+		XMStoreFloat3(&BoundingBox.vMin, Get_PositionVector() - vSize);
 	}
 
 public:
-	FVector3	vHalfSize;
+	_float3	vHalfSize;
 };
 
 END

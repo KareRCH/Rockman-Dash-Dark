@@ -32,7 +32,7 @@ void CPhysicsMgr::StartFrame()
 	}
 }
 
-_int CPhysicsMgr::Tick(const Real& fTimeDelta)
+_int CPhysicsMgr::Tick(const _float& fTimeDelta)
 {
 	for (auto iter = m_vecWorld3D.begin(); iter != m_vecWorld3D.end(); ++iter)
 	{
@@ -84,7 +84,9 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_GetGameObject(con
 list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Collider_GetGameObject(const _uint iWorldID, const _float3 vPos, CColliderComponent* pSrc, _ulong iMask)
 {
 	FCollisionPrimitive* pShape = static_cast<FCollisionPrimitive*>(pSrc->Get_Shape());
-	pShape->Set_Position(pShape->Get_Position() + FVector3(vPos.x, vPos.y, vPos.z));
+	_float3 vSetPos = {};
+	XMStoreFloat3(&vSetPos, pShape->Get_PositionVector() + XMLoadFloat3(&vPos));
+	pShape->Set_Position(vSetPos);
 	pShape->Set_CollisionMask(iMask);
 
 	return IntersectTests_GetGameObject(iWorldID, pShape);
@@ -93,7 +95,7 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Collider_GetGameO
 list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Sphere_GetGameObject(const _uint iWorldID, _float3 vPos, _float fRadius, _ulong iMask)
 {
 	FCollisionSphere pShape;
-	pShape.Set_Position(FVector3(vPos.x, vPos.y, vPos.z));
+	pShape.Set_Position(_float3(vPos.x, vPos.y, vPos.z));
 	pShape.fRadius = fRadius;
 	pShape.Set_CollisionMask(iMask);
 
@@ -103,8 +105,8 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Sphere_GetGameObj
 list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Box_GetGameObject(const _uint iWorldID, _float3 vPos, _float3 vHalfSize, _ulong iMask)
 {
 	FCollisionBox pShape;
-	pShape.Set_Position(FVector3(vPos.x, vPos.y, vPos.z));
-	pShape.vHalfSize = FVector3(vHalfSize.x, vHalfSize.y, vHalfSize.z);
+	pShape.Set_Position(_float3(vPos.x, vPos.y, vPos.z));
+	pShape.vHalfSize = _float3(vHalfSize.x, vHalfSize.y, vHalfSize.z);
 	pShape.Set_CollisionMask(iMask);
 
 	return IntersectTests_GetGameObject(iWorldID, static_cast<FCollisionPrimitive*>(&pShape));
@@ -113,8 +115,8 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Box_GetGameObject
 list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Capsule_GetGameObject(const _uint iWorldID, _float3 vPos, _float3 vNormal, _float fRadius, _ulong iMask)
 {
 	FCollisionCapsule pShape;
-	pShape.Set_Position(FVector3(vPos.x, vPos.y, vPos.z));
-	pShape.vDirHalfSize = FVector3(vNormal.x, vNormal.y, vNormal.z);
+	pShape.Set_Position(_float3(vPos.x, vPos.y, vPos.z));
+	pShape.vDirHalfSize = _float3(vNormal.x, vNormal.y, vNormal.z);
 	pShape.fRadius = fRadius;
 	pShape.Set_CollisionMask(iMask);
 
@@ -125,8 +127,8 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Line_GetGameObjec
 {
 	FCollisionLine pShape;
 	//pShape.Set_Position(FVector3(vPos.x, vPos.y, vPos.z));
-	pShape.vStart = FVector3(vStart.x, vStart.y, vStart.z);
-	pShape.vEnd = FVector3(vEnd.x, vEnd.y, vEnd.z);
+	pShape.vStart = _float3(vStart.x, vStart.y, vStart.z);
+	pShape.vEnd = _float3(vEnd.x, vEnd.y, vEnd.z);
 	pShape.Set_CollisionMask(iMask);
 
 	return IntersectTests_GetGameObject(iWorldID, static_cast<FCollisionPrimitive*>(&pShape));
@@ -135,8 +137,8 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Line_GetGameObjec
 list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Ray_GetGameObject(const _uint iWorldID, const _float3 vPos, const _float3 vNormal, _ulong iMask)
 {
 	FCollisionRay pShape;
-	pShape.vOrigin = (FVector3(vPos.x, vPos.y, vPos.z));
-	pShape.vDir = FVector3(vNormal.x, vNormal.y, vNormal.z).Unit();
+	pShape.vOrigin = (_float3(vPos.x, vPos.y, vPos.z));
+	XMStoreFloat3(&pShape.vDir, XMVector3Normalize(XMLoadFloat3(&vNormal)));
 	pShape.Set_CollisionMask(iMask);
 
 	return IntersectTests_GetGameObject(iWorldID, static_cast<FCollisionPrimitive*>(&pShape));
