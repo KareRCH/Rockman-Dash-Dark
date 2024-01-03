@@ -6,60 +6,60 @@ bool FCollisionDetector::CollsionPrimitive(const FCollisionPrimitive* srcShape, 
 	bool bCollide = false;
 	switch (srcShape->Get_Type())
 	{
-	case ECOLLISION::SPHERE:
+	case ECollisionType::Sphere:
 	{
 		switch (dstShape->Get_Type())
 		{
-		case ECOLLISION::SPHERE:
+		case ECollisionType::Sphere:
 		{
 			const FCollisionSphere* pShapeSrc = static_cast<const FCollisionSphere*>(srcShape);
 			const FCollisionSphere* pShapeDst = static_cast<const FCollisionSphere*>(dstShape);
 			bCollide = FCollisionDetector::SphereAndSphere(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::BOX:
+		case ECollisionType::Box:
 		{
 			const FCollisionSphere* pShapeSrc = static_cast<const FCollisionSphere*>(srcShape);
 			const FCollisionBox* pShapeDst = static_cast<const FCollisionBox*>(dstShape);
 			bCollide = FCollisionDetector::SphereAndBox(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::CAPSULE:
+		case ECollisionType::Capsule:
 		{
 			const FCollisionSphere* pShapeSrc = static_cast<const FCollisionSphere*>(srcShape);
 			const FCollisionCapsule* pShapeDst = static_cast<const FCollisionCapsule*>(dstShape);
 			bCollide = FCollisionDetector::SphereAndCapsule(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::PLANE:
+		case ECollisionType::Plane:
 		{
 			const FCollisionSphere* pShapeSrc = static_cast<const FCollisionSphere*>(srcShape);
 			const FCollisionPlane* pShapeDst = static_cast<const FCollisionPlane*>(dstShape);
 			bCollide = FCollisionDetector::SphereAndPlane(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::LINE:
+		case ECollisionType::Line:
 		{
 			const FCollisionSphere* pShapeSrc = static_cast<const FCollisionSphere*>(srcShape);
 			const FCollisionLine* pShapeDst = static_cast<const FCollisionLine*>(dstShape);
 			bCollide = FCollisionDetector::SphereAndLine(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::RAY:
+		case ECollisionType::Ray:
 		{
 			const FCollisionSphere* pShapeSrc = static_cast<const FCollisionSphere*>(srcShape);
 			const FCollisionRay* pShapeDst = static_cast<const FCollisionRay*>(dstShape);
 			bCollide = FCollisionDetector::SphereAndRay(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::TRIANGLE:
+		case ECollisionType::Triangle:
 		{
 			const FCollisionSphere* pShapeSrc = static_cast<const FCollisionSphere*>(srcShape);
 			const FCollisionTriangle* pShapeDst = static_cast<const FCollisionTriangle*>(dstShape);
 			bCollide = FCollisionDetector::SphereAndTriangle(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::OBB:
+		case ECollisionType::OBB:
 		{
 			const FCollisionSphere* pShapeSrc = static_cast<const FCollisionSphere*>(srcShape);
 			const FCollisionOBB* pShapeDst = static_cast<const FCollisionOBB*>(dstShape);
@@ -69,60 +69,60 @@ bool FCollisionDetector::CollsionPrimitive(const FCollisionPrimitive* srcShape, 
 		}
 		break;
 	}
-	case ECOLLISION::BOX:
+	case ECollisionType::Box:
 	{
 		switch (dstShape->Get_Type())
 		{
-		case ECOLLISION::SPHERE:
+		case ECollisionType::Sphere:
 		{
 			const FCollisionBox* pShapeSrc = static_cast<const FCollisionBox*>(srcShape);
 			const FCollisionSphere* pShapeDst = static_cast<const FCollisionSphere*>(dstShape);
 			bCollide = FCollisionDetector::BoxAndSphere(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::BOX:
+		case ECollisionType::Box:
 		{
 			const FCollisionBox* pShapeSrc = static_cast<const FCollisionBox*>(srcShape);
 			const FCollisionBox* pShapeDst = static_cast<const FCollisionBox*>(dstShape);
 			bCollide = FCollisionDetector::BoxAndBox(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::CAPSULE:
+		case ECollisionType::Capsule:
 		{
 			const FCollisionBox* pShapeSrc = static_cast<const FCollisionBox*>(srcShape);
 			const FCollisionCapsule* pShapeDst = static_cast<const FCollisionCapsule*>(dstShape);
 			bCollide = FCollisionDetector::BoxAndCapsule(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::PLANE:
+		case ECollisionType::Plane:
 		{
 			const FCollisionBox* pShapeSrc = static_cast<const FCollisionBox*>(srcShape);
 			const FCollisionPlane* pShapeDst = static_cast<const FCollisionPlane*>(dstShape);
 			bCollide = FCollisionDetector::BoxAndPlane(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::LINE:
+		case ECollisionType::Line:
 		{
 			const FCollisionBox* pShapeSrc = static_cast<const FCollisionBox*>(srcShape);
 			const FCollisionLine* pShapeDst = static_cast<const FCollisionLine*>(dstShape);
 			bCollide = FCollisionDetector::BoxAndLine(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::RAY:
+		case ECollisionType::Ray:
 		{
 			const FCollisionBox* pShapeSrc = static_cast<const FCollisionBox*>(srcShape);
 			const FCollisionRay* pShapeDst = static_cast<const FCollisionRay*>(dstShape);
 			bCollide = FCollisionDetector::BoxAndRay(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::TRIANGLE:
+		case ECollisionType::Triangle:
 		{
 			const FCollisionBox* pShapeSrc = static_cast<const FCollisionBox*>(srcShape);
 			const FCollisionTriangle* pShapeDst = static_cast<const FCollisionTriangle*>(dstShape);
 			bCollide = FCollisionDetector::BoxAndTriangle(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::OBB:
+		case ECollisionType::OBB:
 		{
 			const FCollisionBox* pShapeSrc = static_cast<const FCollisionBox*>(srcShape);
 			const FCollisionOBB* pShapeDst = static_cast<const FCollisionOBB*>(dstShape);
@@ -132,60 +132,60 @@ bool FCollisionDetector::CollsionPrimitive(const FCollisionPrimitive* srcShape, 
 		}
 		break;
 	}
-	case ECOLLISION::CAPSULE:
+	case ECollisionType::Capsule:
 	{
 		switch (dstShape->Get_Type())
 		{
-		case ECOLLISION::SPHERE:
+		case ECollisionType::Sphere:
 		{
 			const FCollisionCapsule* pShapeSrc = static_cast<const FCollisionCapsule*>(srcShape);
 			const FCollisionSphere* pShapeDst = static_cast<const FCollisionSphere*>(dstShape);
 			bCollide = FCollisionDetector::CapsuleAndSphere(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::BOX:
+		case ECollisionType::Box:
 		{
 			const FCollisionCapsule* pShapeSrc = static_cast<const FCollisionCapsule*>(srcShape);
 			const FCollisionBox* pShapeDst = static_cast<const FCollisionBox*>(dstShape);
 			bCollide = FCollisionDetector::CapsuleAndBox(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::CAPSULE:
+		case ECollisionType::Capsule:
 		{
 			const FCollisionCapsule* pShapeSrc = static_cast<const FCollisionCapsule*>(srcShape);
 			const FCollisionCapsule* pShapeDst = static_cast<const FCollisionCapsule*>(dstShape);
 			bCollide = FCollisionDetector::CapsuleAndCapsule(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::PLANE:
+		case ECollisionType::Plane:
 		{
 			const FCollisionCapsule* pShapeSrc = static_cast<const FCollisionCapsule*>(srcShape);
 			const FCollisionPlane* pShapeDst = static_cast<const FCollisionPlane*>(dstShape);
 			bCollide = FCollisionDetector::CapsuleAndPlane(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::LINE:
+		case ECollisionType::Line:
 		{
 			const FCollisionCapsule* pShapeSrc = static_cast<const FCollisionCapsule*>(srcShape);
 			const FCollisionLine* pShapeDst = static_cast<const FCollisionLine*>(dstShape);
 			bCollide = FCollisionDetector::CapsuleAndLine(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::RAY:
+		case ECollisionType::Ray:
 		{
 			const FCollisionCapsule* pShapeSrc = static_cast<const FCollisionCapsule*>(srcShape);
 			const FCollisionRay* pShapeDst = static_cast<const FCollisionRay*>(dstShape);
 			bCollide = FCollisionDetector::CapsuleAndRay(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::TRIANGLE:
+		case ECollisionType::Triangle:
 		{
 			const FCollisionCapsule* pShapeSrc = static_cast<const FCollisionCapsule*>(srcShape);
 			const FCollisionTriangle* pShapeDst = static_cast<const FCollisionTriangle*>(dstShape);
 			bCollide = FCollisionDetector::CapsuleAndTriangle(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::OBB:
+		case ECollisionType::OBB:
 		{
 			const FCollisionCapsule* pShapeSrc = static_cast<const FCollisionCapsule*>(srcShape);
 			const FCollisionOBB* pShapeDst = static_cast<const FCollisionOBB*>(dstShape);
@@ -195,60 +195,60 @@ bool FCollisionDetector::CollsionPrimitive(const FCollisionPrimitive* srcShape, 
 		}
 		break;
 	}
-	case ECOLLISION::OBB:
+	case ECollisionType::OBB:
 	{
 		switch (dstShape->Get_Type())
 		{
-		case ECOLLISION::SPHERE:
+		case ECollisionType::Sphere:
 		{
 			const FCollisionOBB* pShapeSrc = static_cast<const FCollisionOBB*>(srcShape);
 			const FCollisionSphere* pShapeDst = static_cast<const FCollisionSphere*>(dstShape);
 			bCollide = FCollisionDetector::OBBAndSphere(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::BOX:
+		case ECollisionType::Box:
 		{
 			const FCollisionOBB* pShapeSrc = static_cast<const FCollisionOBB*>(srcShape);
 			const FCollisionBox* pShapeDst = static_cast<const FCollisionBox*>(dstShape);
 			bCollide = FCollisionDetector::OBBAndBox(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::CAPSULE:
+		case ECollisionType::Capsule:
 		{
 			const FCollisionOBB* pShapeSrc = static_cast<const FCollisionOBB*>(srcShape);
 			const FCollisionCapsule* pShapeDst = static_cast<const FCollisionCapsule*>(dstShape);
 			bCollide = FCollisionDetector::OBBAndCapsule(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::PLANE:
+		case ECollisionType::Plane:
 		{
 			const FCollisionOBB* pShapeSrc = static_cast<const FCollisionOBB*>(srcShape);
 			const FCollisionPlane* pShapeDst = static_cast<const FCollisionPlane*>(dstShape);
 			bCollide = FCollisionDetector::OBBAndPlane(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::LINE:
+		case ECollisionType::Line:
 		{
 			const FCollisionOBB* pShapeSrc = static_cast<const FCollisionOBB*>(srcShape);
 			const FCollisionLine* pShapeDst = static_cast<const FCollisionLine*>(dstShape);
 			bCollide = FCollisionDetector::OBBAndLine(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::RAY:
+		case ECollisionType::Ray:
 		{
 			const FCollisionOBB* pShapeSrc = static_cast<const FCollisionOBB*>(srcShape);
 			const FCollisionRay* pShapeDst = static_cast<const FCollisionRay*>(dstShape);
 			bCollide = FCollisionDetector::OBBAndRay(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::TRIANGLE:
+		case ECollisionType::Triangle:
 		{
 			const FCollisionOBB* pShapeSrc = static_cast<const FCollisionOBB*>(srcShape);
 			const FCollisionTriangle* pShapeDst = static_cast<const FCollisionTriangle*>(dstShape);
 			bCollide = FCollisionDetector::OBBAndTriangle(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::OBB:
+		case ECollisionType::OBB:
 		{
 			const FCollisionOBB* pShapeSrc = static_cast<const FCollisionOBB*>(srcShape);
 			const FCollisionOBB* pShapeDst = static_cast<const FCollisionOBB*>(dstShape);
@@ -258,60 +258,60 @@ bool FCollisionDetector::CollsionPrimitive(const FCollisionPrimitive* srcShape, 
 		}
 		break;
 	}
-	case ECOLLISION::LINE:
+	case ECollisionType::Line:
 	{
 		switch (dstShape->Get_Type())
 		{
-		case ECOLLISION::SPHERE:
+		case ECollisionType::Sphere:
 		{
 			const FCollisionLine* pShapeSrc = static_cast<const FCollisionLine*>(srcShape);
 			const FCollisionSphere* pShapeDst = static_cast<const FCollisionSphere*>(dstShape);
 			bCollide = FCollisionDetector::LineAndSphere(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::BOX:
+		case ECollisionType::Box:
 		{
 			const FCollisionLine* pShapeSrc = static_cast<const FCollisionLine*>(srcShape);
 			const FCollisionBox* pShapeDst = static_cast<const FCollisionBox*>(dstShape);
 			bCollide = FCollisionDetector::LineAndBox(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::CAPSULE:
+		case ECollisionType::Capsule:
 		{
 			const FCollisionLine* pShapeSrc = static_cast<const FCollisionLine*>(srcShape);
 			const FCollisionCapsule* pShapeDst = static_cast<const FCollisionCapsule*>(dstShape);
 			bCollide = FCollisionDetector::LineAndCapsule(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::PLANE:
+		case ECollisionType::Plane:
 		{
 			const FCollisionLine* pShapeSrc = static_cast<const FCollisionLine*>(srcShape);
 			const FCollisionPlane* pShapeDst = static_cast<const FCollisionPlane*>(dstShape);
 			bCollide = FCollisionDetector::LineAndPlane(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::LINE:
+		case ECollisionType::Line:
 		{
 			const FCollisionLine* pShapeSrc = static_cast<const FCollisionLine*>(srcShape);
 			const FCollisionLine* pShapeDst = static_cast<const FCollisionLine*>(dstShape);
 			bCollide = FCollisionDetector::LineAndLine(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::RAY:
+		case ECollisionType::Ray:
 		{
 			const FCollisionLine* pShapeSrc = static_cast<const FCollisionLine*>(srcShape);
 			const FCollisionRay* pShapeDst = static_cast<const FCollisionRay*>(dstShape);
 			bCollide = FCollisionDetector::LineAndRay(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::TRIANGLE:
+		case ECollisionType::Triangle:
 		{
 			const FCollisionLine* pShapeSrc = static_cast<const FCollisionLine*>(srcShape);
 			const FCollisionTriangle* pShapeDst = static_cast<const FCollisionTriangle*>(dstShape);
 			bCollide = FCollisionDetector::LineAndTriangle(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::OBB:
+		case ECollisionType::OBB:
 		{
 			const FCollisionLine* pShapeSrc = static_cast<const FCollisionLine*>(srcShape);
 			const FCollisionOBB* pShapeDst = static_cast<const FCollisionOBB*>(dstShape);
@@ -321,60 +321,60 @@ bool FCollisionDetector::CollsionPrimitive(const FCollisionPrimitive* srcShape, 
 		}
 		break;
 	}
-	case ECOLLISION::RAY:
+	case ECollisionType::Ray:
 	{
 		switch (dstShape->Get_Type())
 		{
-		case ECOLLISION::SPHERE:
+		case ECollisionType::Sphere:
 		{
 			const FCollisionRay* pShapeSrc = static_cast<const FCollisionRay*>(srcShape);
 			const FCollisionSphere* pShapeDst = static_cast<const FCollisionSphere*>(dstShape);
 			bCollide = FCollisionDetector::RayAndSphere(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::BOX:
+		case ECollisionType::Box:
 		{
 			const FCollisionRay* pShapeSrc = static_cast<const FCollisionRay*>(srcShape);
 			const FCollisionBox* pShapeDst = static_cast<const FCollisionBox*>(dstShape);
 			bCollide = FCollisionDetector::RayAndBox(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::CAPSULE:
+		case ECollisionType::Capsule:
 		{
 			const FCollisionRay* pShapeSrc = static_cast<const FCollisionRay*>(srcShape);
 			const FCollisionCapsule* pShapeDst = static_cast<const FCollisionCapsule*>(dstShape);
 			bCollide = FCollisionDetector::RayAndCapsule(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::PLANE:
+		case ECollisionType::Plane:
 		{
 			const FCollisionRay* pShapeSrc = static_cast<const FCollisionRay*>(srcShape);
 			const FCollisionPlane* pShapeDst = static_cast<const FCollisionPlane*>(dstShape);
 			bCollide = FCollisionDetector::RayAndPlane(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::LINE:
+		case ECollisionType::Line:
 		{
 			const FCollisionRay* pShapeSrc = static_cast<const FCollisionRay*>(srcShape);
 			const FCollisionLine* pShapeDst = static_cast<const FCollisionLine*>(dstShape);
 			bCollide = FCollisionDetector::RayAndLine(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::RAY:
+		case ECollisionType::Ray:
 		{
 			const FCollisionRay* pShapeSrc = static_cast<const FCollisionRay*>(srcShape);
 			const FCollisionRay* pShapeDst = static_cast<const FCollisionRay*>(dstShape);
 			bCollide = FCollisionDetector::RayAndRay(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::TRIANGLE:
+		case ECollisionType::Triangle:
 		{
 			const FCollisionRay* pShapeSrc = static_cast<const FCollisionRay*>(srcShape);
 			const FCollisionTriangle* pShapeDst = static_cast<const FCollisionTriangle*>(dstShape);
 			bCollide = FCollisionDetector::RayAndTriangle(*pShapeSrc, *pShapeDst, pColData);
 			break;
 		}
-		case ECOLLISION::OBB:
+		case ECollisionType::OBB:
 		{
 			const FCollisionRay* pShapeSrc = static_cast<const FCollisionRay*>(srcShape);
 			const FCollisionOBB* pShapeDst = static_cast<const FCollisionOBB*>(dstShape);

@@ -29,28 +29,30 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override { return S_OK; }
-	virtual HRESULT Initialize_Prototype(ECOLLISION eType);
+	virtual HRESULT Initialize_Prototype(ECollisionType eType);
 	PRIVATE virtual HRESULT Initialize(void* Arg = nullptr) { return S_OK; }
-	PUBLIC	virtual HRESULT Initialize(ECOLLISION eType);
+	PUBLIC	virtual HRESULT Initialize(ECollisionType eType);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
 	virtual HRESULT	Render();
 
 public:
-	static	CColliderComponent*	Create(ECOLLISION eType);
+	static	CColliderComponent* Create();
+	static	CColliderComponent*	Create(ECollisionType eType);
 	virtual CComponent*			Clone(void* Arg = nullptr) override;
 
 protected:
 	virtual void				Free();
 
-
+public:
+	HRESULT Bind_Collision(ECollisionType eType);
 
 public:
 	virtual void	EnterToPhysics(_uint iIndex);
 	virtual void	ExitFromPhysics(_uint iIndex);
 	// 일반 업데이트가 끝난 다음에 불러오는 물리 업데이트 함수
-	virtual void	Update_Physics(_matrix& matWorld);
+	virtual void	Update_Physics();
 
 protected:
 	_uint		m_iPhysics3dWorld_Index = { 0 };
