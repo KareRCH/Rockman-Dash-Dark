@@ -14,6 +14,12 @@ enum class ECollisionType
 	Sphere, Box, Capsule, Plane, Line, Ray, Triangle, OBB
 };
 
+struct FBoundingBox
+{
+	FVector3 vMin;
+	FVector3 vMax;
+};
+
 /// <summary>
 /// 충돌체
 /// 기하학적인 모양을 가지는 클래스
@@ -70,11 +76,10 @@ private:
 	}
 
 public:
-	mutable FRigidBody* pBody;				// 강체 정보
+	mutable FRigidBody* pBody;		// 강체 정보
 	
-	FMatrix3x4	matOffset;					// 오프셋 행렬
-
-
+	FMatrix3x4		matOffset;		// 오프셋 행렬
+	FBoundingBox	BoundingBox;	// 브로드 페이즈 용 바운딩 박스
 
 public:
 	virtual void Calculate_Shape() PURE;
@@ -171,6 +176,8 @@ public:
 	virtual void Calculate_Shape() override
 	{
 		fRadius = max(max(Get_Scale().x, Get_Scale().y), Get_Scale().z) * 0.5f;
+		BoundingBox.vMin = Get_Position() - FVector3(fRadius, fRadius, fRadius);
+		BoundingBox.vMax = Get_Position() + FVector3(fRadius, fRadius, fRadius);
 	}
 
 public:
@@ -201,6 +208,8 @@ public:
 	virtual void Calculate_Shape() override
 	{
 		vHalfSize = Get_Scale() * 0.5f;
+		BoundingBox.vMin = Get_Position() - vHalfSize;
+		BoundingBox.vMax = Get_Position() + vHalfSize;
 	}
 
 public:
@@ -232,6 +241,8 @@ public:
 	{
 		vDirHalfSize = FVector3(0.f, Get_Scale().y * 0.5f, 0.f);
 		fRadius = max(Get_Scale().x, Get_Scale().z) * 0.5f;
+		BoundingBox.vMin = Get_Position() - FVector3(fRadius, vDirHalfSize.y + fRadius, fRadius);
+		BoundingBox.vMax = Get_Position() + FVector3(fRadius, vDirHalfSize.y + fRadius, fRadius);
 	}
 
 public:
@@ -362,7 +373,7 @@ public:
 };
 
 /// <summary>
-/// 삼각형
+/// Oriented Bounding Box
 /// </summary>
 class ENGINE_DLL FCollisionOBB : public FCollisionPrimitive
 {
@@ -384,6 +395,9 @@ public:
 	virtual void Calculate_Shape() override
 	{
 		vHalfSize = Get_Scale() * 0.5f;
+		Real fLength = vHalfSize.Magnitude();
+		BoundingBox.vMin = Get_Position() - FVector3(fLength, fLength, fLength);
+		BoundingBox.vMax = Get_Position() + FVector3(fLength, fLength, fLength);
 	}
 
 public:
