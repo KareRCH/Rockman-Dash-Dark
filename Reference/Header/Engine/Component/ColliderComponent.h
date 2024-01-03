@@ -6,9 +6,14 @@
 #include "Physics/PhysicsWorld3D.h"
 #include "Physics/Contact.h"
 
+#include "Utility/DelegateTemplate.h"
+
 BEGIN(Engine)
 
 class FCollisionPrimitive;
+
+typedef FastDelegate2<CGameObject*, const FContact*>	CollisionEnterDelegate;
+typedef FastDelegate1<CGameObject*>						CollisionExitDelegate;
 
 /// <summary>
 /// 콜라이더 컴포넌트는 충돌체 정보와 트랜스폼 정보를 저장하는 클래스입니다.
@@ -23,20 +28,23 @@ protected:
 	virtual ~CColliderComponent() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override { return S_OK; }
+	virtual HRESULT Initialize_Prototype(ECOLLISION eType);
 	PRIVATE virtual HRESULT Initialize(void* Arg = nullptr) { return S_OK; }
 	PUBLIC	virtual HRESULT Initialize(ECOLLISION eType);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
-	virtual void	Late_Tick(const _float& fTimeDelta) {}
-	virtual HRESULT	Render() { return S_OK; }
+	virtual void	Late_Tick(const _float& fTimeDelta);
+	virtual HRESULT	Render();
 
 public:
-	static	CColliderComponent*		Create(ECOLLISION eType);
-	virtual CComponent*				Clone(void* Arg = nullptr) override;
+	static	CColliderComponent*	Create(ECOLLISION eType);
+	virtual CComponent*			Clone(void* Arg = nullptr) override;
 
 protected:
 	virtual void				Free();
+
+
 
 public:
 	virtual void	EnterToPhysics(_uint iIndex);
@@ -44,35 +52,38 @@ public:
 	// 일반 업데이트가 끝난 다음에 불러오는 물리 업데이트 함수
 	virtual void	Update_Physics(_matrix& matWorld);
 
+protected:
+	_uint		m_iPhysics3dWorld_Index = { 0 };
+
+
+
 public:		// 충돌체 저장용 포인터
 	GETSET_2(FCollisionPrimitive*, m_pCollisionShape, Shape, GET, SET)
 	
 protected:
-	FCollisionPrimitive* m_pCollisionShape = nullptr;			// 충돌체 저장 포인터
+	FCollisionPrimitive* m_pCollisionShape = { nullptr };	// 충돌체 저장 포인터
 
-public:			// 이벤트 함수
-	template <typename Class>
-	HRESULT	Set_Collision_Event(Class* pOwner, function<void(Class*, CGameObject*, const FContact* const)> fn);
 
-	template <typename Class>
-	HRESULT	Set_CollisionEntered_Event(Class* pOwner, function<void(Class*, CGameObject*, const FContact* const)> fn);
 
-	template <typename Class>
-	HRESULT	Set_CollisionExited_Event(Class* pOwner, function<void(Class*, CGameObject*)> fn);
+public:		// 이벤트 함수
+	void	Set_Collision_Event(CollisionEnterDelegate Event) { m_Collision_Event = Event; }
+	void	Set_CollisionEntered_Event(CollisionEnterDelegate Event) { m_CollisionEntered_Event = Event; }
+	void	Set_CollisionExited_Event(CollisionExitDelegate Event) { m_CollisionExited_Event = Event; }
 
-protected:
-	function<void(CGameObject*, const FContact* const)>		m_fnCollision;
-	function<void(CGameObject*, const FContact* const)>		m_fnCollisionEntered;
-	function<void(CGameObject*)>							m_fnCollisionExited;
-
-protected:
-	// 충돌이 발생할 때 불러오는 함수. 충돌이 발생하면 연결된 함수로 다시 신호를 보내줍니다.
+protected:		// 충돌이 발생할 때 불러오는 함수. 충돌이 발생하면 연결된 함수로 다시 신호를 보내줍니다.
 	// 충돌중
-	virtual void OnCollision(CColliderComponent* pDst, const FContact* const pContact);
+	virtual void OnCollision(void* pDst, const FContact* const pContact);
 	// 충돌 진입, Collide와 함께 발동
-	virtual void OnCollisionEntered(CColliderComponent* pDst, const FContact* const pContact);
+	virtual void OnCollisionEntered(void* pDst, const FContact* const pContact);
 	// 충돌 끝남, 모든 충돌 체크가 끝나는 시점에 발동
 	virtual void OnCollisionExited();
+
+protected:
+	CollisionEnterDelegate		m_Collision_Event;
+	CollisionEnterDelegate		m_CollisionEntered_Event;
+	CollisionExitDelegate		m_CollisionExited_Event;
+
+
 
 protected:
 	using pair_collider = pair<CColliderComponent*, _bool>;
@@ -96,34 +107,9 @@ public:
 	}
 
 protected:
-	_uint				m_iCollisionLayer_Flag;			// 콜리전 레이어, 충돌체가 존재하는 층
-	_uint				m_iCollisionMask_Flag;
-	// 콜리전 마스크, 충돌체가 충돌하고 싶어하는 층
+	_uint	m_iCollisionLayer_Flag = { 0 };		// 콜리전 레이어, 충돌체가 존재하는 층
+	_uint	m_iCollisionMask_Flag = { 0 };		// 콜리전 마스크, 충돌체가 충돌하고 싶어하는 층
+	
 };
 
 END
-
-
-template <typename Class>
-inline HRESULT	CColliderComponent::Set_Collision_Event(Class* pOwner, function<void(Class*, CGameObject*, const FContact* const)> fn)
-{
-	m_fnCollision = [pOwner, fn](CGameObject* pDst, const FContact* const pContact) { fn(pOwner, pDst, pContact); };
-
-	return S_OK;
-}
-
-template <typename Class>
-inline HRESULT CColliderComponent::Set_CollisionEntered_Event(Class* pOwner, function<void(Class*, CGameObject*, const FContact* const)> fn)
-{
-	m_fnCollisionEntered = [pOwner, fn](CGameObject* pDst, const FContact* const pContact) { fn(pOwner, pDst, pContact); };
-
-	return S_OK;
-}
-
-template <typename Class>
-inline HRESULT CColliderComponent::Set_CollisionExited_Event(Class* pOwner, function<void(Class*, CGameObject*)> fn)
-{
-	m_fnCollisionExited = [pOwner, fn](CGameObject* pDst) { fn(pOwner, pDst); };
-
-	return S_OK;
-}

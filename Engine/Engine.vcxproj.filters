@@ -301,6 +301,12 @@
     <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\05. AnimMaskComp">
       <UniqueIdentifier>{b34b6046-00fd-4724-b232-a89431eeaf31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing">
+      <UniqueIdentifier>{33a2731d-da24-41a6-99fd-9b29c5c1c31b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing\01. Particle_Rect">
+      <UniqueIdentifier>{437132ed-22ac-4a8d-a442-f84bb1584329}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -648,6 +654,12 @@
     <ClInclude Include="Public\Component\AnimMaskComp.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\05. AnimMaskComp</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\ParticleRectBufferComp.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing\01. Particle_Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\InstancingBufferComp.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -922,6 +934,12 @@
     </ClCompile>
     <ClCompile Include="Private\Component\AnimMaskComp.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\00. CommonModelComp\05. AnimMaskComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ParticleRectBufferComp.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing\01. Particle_Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\InstancingBufferComp.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

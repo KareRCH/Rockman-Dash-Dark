@@ -12,12 +12,12 @@ BEGIN(Engine)
 /// 일반 모델 컴포넌트는 단순히 모델을 표시하기 위한 버퍼와, 재질 정도를 가집니다.
 /// 뼈, 애니메이션을 포함하는 객체를 만드려면 이 객체를 상속받아 정의 하십시오.
 /// </summary>
-class ENGINE_DLL CModelComponent : public CSceneComponent, public IMaterialComponent
+class ENGINE_DLL CModelComponent : public CSceneComponent
 {
 	DERIVED_CLASS(CSceneComponent, CModelComponent)
 
 protected:
-	explicit CModelComponent() = default;
+	explicit CModelComponent();
 	explicit CModelComponent(const CModelComponent& rhs);
 	virtual ~CModelComponent() = default;
 
@@ -36,14 +36,15 @@ protected:
 	virtual void	Free() override;
 
 
-#pragma region 머터리얼 컴포넌트
 public:
-	virtual CMaterialComponent* MaterialComp() override { return m_pMaterialComp; }
+	// 원하는 패스를 그릴 수 있도록 추가한 함수
+	void Set_ActivePass(_uint iPass);
+	// 필요없어진 패스를 지울 수 있도록 설정하는 함수
+	void UnSet_ActivePass(_uint iPass);
 
-private:
-	CMaterialComponent* m_pMaterialComp = { nullptr };
-#pragma endregion
-
+protected:
+	_uint				m_iNumActivePasses = { 0 };
+	vector<_uint>		m_vecActivePasses;
 	
 };
 

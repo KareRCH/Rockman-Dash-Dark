@@ -19,7 +19,7 @@ CSceneComponent::CSceneComponent(const CSceneComponent& rhs)
 
 HRESULT CSceneComponent::Initialize_Prototype(void* Arg)
 {
-	if (S_OK != SUPER::Initialize_Prototype())
+	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
 	return S_OK;

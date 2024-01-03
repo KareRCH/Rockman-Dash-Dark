@@ -1,5 +1,11 @@
 #include "Component/ModelComponent.h"
 
+CModelComponent::CModelComponent()
+{
+	// 기본 0번 패스는 활성화 시켜 놓는다.
+	Set_ActivePass(0);
+}
+
 CModelComponent::CModelComponent(const CModelComponent& rhs)
 	: Base(rhs)
 {
@@ -41,6 +47,39 @@ void CModelComponent::Free()
 	SUPER::Free();
 
 
+}
+
+void CModelComponent::Set_ActivePass(_uint iPass)
+{
+	if (iPass < 0 || iPass >= UINT_MAX)
+		return;
+
+	// 동일한 패스는 못 그리게 막아 놓는다.
+	auto iter = find_if(m_vecActivePasses.begin(), m_vecActivePasses.end(),
+		[&iPass](const _uint& iMemPass) {
+			return (iPass == iMemPass);
+		});
+	if (iter != m_vecActivePasses.end())
+		return;
+
+	m_vecActivePasses.reserve(++m_iNumActivePasses);
+	m_vecActivePasses.push_back(iPass);
+}
+
+void CModelComponent::UnSet_ActivePass(_uint iPass)
+{
+	if (iPass < 0 || iPass >= UINT_MAX)
+		return;
+
+	auto iter = find_if(m_vecActivePasses.begin(), m_vecActivePasses.end(),
+		[&iPass](const _uint& iMemPass) {
+			return (iPass == iMemPass);
+		});
+	if (iter == m_vecActivePasses.end())
+		return;
+
+	m_vecActivePasses.erase(iter);
+	--m_iNumActivePasses;
 }
 
 

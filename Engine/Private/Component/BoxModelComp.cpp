@@ -60,7 +60,7 @@ HRESULT CBoxModelComp::Render()
 {
     Bind_ShaderResources();
 
-    m_pEffectComp->Begin(m_iPass);
+    m_pEffectComp->Begin(m_vecActivePasses[0]);
 
     m_pVIBufferComp->Bind_Buffer();
 

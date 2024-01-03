@@ -5,6 +5,8 @@
 #include "Physics/RigidBody.h"
 #include "Physics/Contact.h"
 
+#include "Utility/DelegateTemplate.h"
+
 BEGIN(Engine)
 
 enum class ECOLLISION_TYPE
@@ -138,11 +140,12 @@ protected:
 	ECOLLISION	eType;				// е╦ют
 
 public:
-	void Add_CollisionEvent(const function<void(void*, const FContact* const)>& fn) { fnEventHandler = fn; }
-	void Handle_CollsionEvent(void* pDst, const FContact* const pContact) { if (fnEventHandler) fnEventHandler(pDst, pContact); }
+	typedef FastDelegate2<void*, const FContact*>	CollisionDelegate;
+	void Set_CollisionEvent(CollisionDelegate Event) { EventHandler = Event; }
+	void Handle_CollsionEvent(void* pDst, const FContact* pContact) { if (!EventHandler.empty()) EventHandler(pDst, pContact); }
 
 protected:
-	function<void(void*, const FContact* const)>	fnEventHandler;
+	CollisionDelegate EventHandler;
 };
 
 

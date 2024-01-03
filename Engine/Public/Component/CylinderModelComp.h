@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneComponent.h"
+#include "Component/ModelComponent.h"
 
 BEGIN(Engine)
 
@@ -8,9 +8,9 @@ class CCylinderBufferComp;
 class CEffectComponent;
 class CTextureComponent;
 
-class ENGINE_DLL CCylinderModelComp : public CSceneComponent
+class ENGINE_DLL CCylinderModelComp : public CModelComponent
 {
-	DERIVED_CLASS(CSceneComponent, CCylinderModelComp)
+	DERIVED_CLASS(CModelComponent, CCylinderModelComp)
 
 protected:
 	explicit CCylinderModelComp();
@@ -63,8 +63,6 @@ private:
 public:
 	HRESULT Bind_ShaderResources();
 
-private:
-	_uint		m_iPass = { 0 };		// ºŒ¿Ã¥ı ∆–Ω∫
 };
 
 END
