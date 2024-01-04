@@ -574,9 +574,11 @@ HRESULT CImGuiWin_Convert::Load_Materials(const aiScene* pScene, CModelLoad* pMo
 
             _tchar		szFullPath[MAX_PATH] = TEXT("");
 
-            MultiByteToWideChar(CP_ACP, 0, szTmp, strlen(szTmp), szFullPath, MAX_PATH);
+            //MultiByteToWideChar(CP_ACP, 0, szTmp, strlen(szTmp), szFullPath, MAX_PATH);
+            string strFullPath = szFileName;
+            strFullPath += szEXT;
 
-            MatrialData.strTextures[j] = szFullPath;
+            MatrialData.strTextures[j] = Make_Wstring(strFullPath);
         }
     }
 

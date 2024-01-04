@@ -206,6 +206,21 @@
     <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImSequencer.cpp">
       <Filter>97. ImGuiGizmo</Filter>
     </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Character.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Character_Common.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\LoadingScreen.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\SkyBox.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\UI_Player.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Include\Tool.rc">

@@ -192,11 +192,16 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\Tool_Define.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Client\Private\GameObject\Character.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\Character_Common.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\DynamicCamera.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ItemChest.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\LoadingScreen.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Horokko.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\SkyBox.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\UI_Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_Buster.cpp" />
     <ClCompile Include="..\Reference\Header\ImGuiGizmo\GraphEditor.cpp" />
     <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImCurveEdit.cpp" />

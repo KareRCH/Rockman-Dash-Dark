@@ -76,12 +76,20 @@ void CWeapon_Buster::Tick(const _float& fTimeDelta)
 		return;
 	}
 
-	Transform().MoveForward(m_fSpeed * fTimeDelta);
+	
+
+	_vector vRight = {};
+	_vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	_vector vFlyingDir = XMLoadFloat3(&m_vLookDir);
+	vFlyingDir = XMVector3Normalize(vFlyingDir);
+	vRight = XMVector3Cross(vFlyingDir, vUp);
+	vUp = XMVector3Cross(vRight, vFlyingDir);
 
 	_vector vLook = XMVector3Normalize(Transform().Get_LookVector());
 	_float3 vfLook = {};
 	XMStoreFloat3(&vfLook, vLook);
 
+	Transform().MoveForward(m_fSpeed * fTimeDelta);
 	Transform().TurnAxis(vfLook, XMConvertToRadians(90.f * fTimeDelta));
 
 	m_pColliderComp->Tick(fTimeDelta);
@@ -99,6 +107,10 @@ HRESULT CWeapon_Buster::Render()
 	SUPER::Render();
 
 	m_pModelComp->Render();
+
+#ifdef _DEBUG
+	m_pColliderComp->Render();
+#endif
 
 	return S_OK;
 }
@@ -158,7 +170,7 @@ HRESULT CWeapon_Buster::Initialize_Component()
 
 	if (nullptr == m_pColliderComp)
 		return E_FAIL;
-	m_pColliderComp->Bind_Collision(ECollisionType::Box);
+	m_pColliderComp->Bind_Collision(ECollisionType::Sphere);
 	m_pColliderComp->EnterToPhysics(0);
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR | COLLAYER_OBJECT);
@@ -168,22 +180,30 @@ HRESULT CWeapon_Buster::Initialize_Component()
 
 void CWeapon_Buster::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
+	SUPER::OnCollision(pDst, pContact);
+
 	cout << "충돌함" << endl;
 	
 }
 
 void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
 {
+	SUPER::OnCollisionEntered(pDst, pContact);
+
 	cout << "충돌 진입" << endl;
-	CReaverBot_Horokko* pEnemy = DynCast<CReaverBot_Horokko*>(pDst);
+	CCharacter_Common* pEnemy = DynCast<CCharacter_Common*>(pDst);
 	if (pEnemy)
 	{
-		Set_Dead();
+		if (CTeamAgentComp::ERelation::Hostile == 
+			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
+			Set_Dead();
 	}
 }
 
 
 void CWeapon_Buster::OnCollisionExited(CGameObject* pDst)
 {
+	SUPER::OnCollisionExited(pDst);
+
 	cout << "충돌 나감" << endl;
 }

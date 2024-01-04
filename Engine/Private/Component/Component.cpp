@@ -2,14 +2,14 @@
 
 
 CComponent::CComponent()
-	: m_bClone(true)
+	: m_bIsCloned(false)
 {
 	NULL_CHECK(m_pGI = GI());
 	Safe_AddRef(m_pGI);
 }
 
 CComponent::CComponent(const CComponent& rhs)
-	: m_bClone(false)
+	: m_bIsCloned(true)
 {
 }
 

@@ -6,6 +6,7 @@
 #include "Physics/Contact.h"
 
 #include "Utility/DelegateTemplate.h"
+#include "Utility/DebugDraw.h"
 
 BEGIN(Engine)
 
@@ -173,6 +174,12 @@ public:
 
 protected:
 	CollisionDelegate EventHandler;
+
+#ifdef _DEBUG
+public:
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) PURE;
+#endif
+
 };
 
 
@@ -206,6 +213,19 @@ public:
 		XMStoreFloat3(&BoundingBox.vMax,(Get_PositionVector() + vSimLength));
 	}
 
+#ifdef _DEBUG
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
+	{
+		if (nullptr == pBatch ||
+			nullptr == pBody)
+			return E_FAIL;
+
+		DX::Draw(pBatch, *this, vColor);
+
+		return S_OK;
+	}
+#endif
+
 public:
 	_float		fRadius;
 };
@@ -233,13 +253,22 @@ public:
 public:
 	virtual void Calculate_Shape() override
 	{
-		_vector vSimHalfSize = XMLoadFloat3(&vHalfSize);
+		_vector vSimHalfSize = {};
 		vSimHalfSize = Get_ScaleVector() * 0.5f;
 		XMStoreFloat3(&vHalfSize, vSimHalfSize);
 
 		XMStoreFloat3(&BoundingBox.vMin, Get_PositionVector() - vSimHalfSize);
 		XMStoreFloat3(&BoundingBox.vMax, Get_PositionVector() + vSimHalfSize);
 	}
+
+#ifdef _DEBUG
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
+	{
+		DX::Draw(pBatch, *this, vColor);
+
+		return S_OK;
+	}
+#endif
 
 public:
 	_float3	vHalfSize;
@@ -276,6 +305,15 @@ public:
 		XMStoreFloat3(&BoundingBox.vMax, Get_PositionVector() + vLength);
 	}
 
+#ifdef _DEBUG
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
+	{
+
+
+		return S_OK;
+	}
+#endif
+
 public:
 	_float3	vDirHalfSize;
 	_float		fRadius;
@@ -308,6 +346,15 @@ public:
 		//vHalfSize = matOffset.Get_ScaleVector() * 0.5f;
 	}
 
+#ifdef _DEBUG
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
+	{
+
+
+		return S_OK;
+	}
+#endif
+
 public:
 	_float3	vDirection;
 	_float		fOffset;
@@ -339,6 +386,15 @@ public:
 		//vHalfSize = matOffset.Get_ScaleVector() * 0.5f;
 	}
 
+#ifdef _DEBUG
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
+	{
+
+
+		return S_OK;
+	}
+#endif
+
 public:
 	_float3	vStart;
 	_float3	vEnd;
@@ -368,6 +424,15 @@ public:
 	{
 		//vHalfSize = matOffset.Get_ScaleVector() * 0.5f;
 	}
+
+#ifdef _DEBUG
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
+	{
+
+
+		return S_OK;
+	}
+#endif
 
 public:
 	_float3	vOrigin;
@@ -399,6 +464,15 @@ public:
 		//vHalfSize = matOffset.Get_ScaleVector() * 0.5f;
 	}
 
+#ifdef _DEBUG
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
+	{
+
+
+		return S_OK;
+	}
+#endif
+
 public:
 	_float3	vA, vB, vC;
 };
@@ -425,17 +499,23 @@ public:
 public:
 	virtual void Calculate_Shape() override
 	{
-		_vector vSimHalfSize = XMLoadFloat3(&vHalfSize);
+		_vector vSimHalfSize = {};
 		vSimHalfSize = Get_ScaleVector() * 0.5f;
 		XMStoreFloat3(&vHalfSize, vSimHalfSize);
 
-		XMStoreFloat3(&BoundingBox.vMin, Get_PositionVector() - vSimHalfSize);
-		XMStoreFloat3(&BoundingBox.vMax, Get_PositionVector() + vSimHalfSize);
-
 		_vector vSize = XMVector3Length(vSimHalfSize);
-		XMStoreFloat3(&BoundingBox.vMax, Get_PositionVector() + vSize);
 		XMStoreFloat3(&BoundingBox.vMin, Get_PositionVector() - vSize);
+		XMStoreFloat3(&BoundingBox.vMax, Get_PositionVector() + vSize);
 	}
+
+#ifdef _DEBUG
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
+	{
+		DX::Draw(pBatch, *this, vColor);
+
+		return S_OK;
+	}
+#endif
 
 public:
 	_float3	vHalfSize;

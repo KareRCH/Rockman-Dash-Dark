@@ -141,6 +141,12 @@
     <ClInclude Include="Public\GameObject\Weapon_Buster.h">
       <Filter>02. GameObject\04. Characters\01. Player\01. Buster</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\Character.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Character_Common.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -193,6 +199,12 @@
     </ClCompile>
     <ClCompile Include="Private\GameObject\Weapon_Buster.cpp">
       <Filter>02. GameObject\04. Characters\01. Player\01. Buster</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Character.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Character_Common.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

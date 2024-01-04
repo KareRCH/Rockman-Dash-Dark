@@ -49,7 +49,9 @@ public:
 	HRESULT Bind_Collision(ECollisionType eType);
 
 public:
+	// 물리세계에 Body 추가
 	virtual void	EnterToPhysics(_uint iIndex);
+	// 물리세계에서 Body 제거
 	virtual void	ExitFromPhysics(_uint iIndex);
 	// 일반 업데이트가 끝난 다음에 불러오는 물리 업데이트 함수
 	virtual void	Update_Physics();
@@ -57,6 +59,14 @@ public:
 protected:
 	_uint		m_iPhysics3dWorld_Index = { 0 };
 
+
+	#ifdef _DEBUG
+private:
+	_bool										m_bIsCollision = { false };
+	PrimitiveBatch<VertexPositionColor>*		m_pBatch = { nullptr };
+	BasicEffect*								m_pEffect = { nullptr };
+	ComPtr<ID3D11InputLayout>					m_pInputLayout = { nullptr };
+#endif
 
 
 public:		// 충돌체 저장용 포인터
@@ -74,9 +84,9 @@ public:		// 이벤트 함수
 
 protected:		// 충돌이 발생할 때 불러오는 함수. 충돌이 발생하면 연결된 함수로 다시 신호를 보내줍니다.
 	// 충돌중
-	virtual void OnCollision(void* pDst, const FContact* const pContact);
+	virtual void OnCollision(void* pDst, const FContact* pContact);
 	// 충돌 진입, Collide와 함께 발동
-	virtual void OnCollisionEntered(void* pDst, const FContact* const pContact);
+	virtual void OnCollisionEntered(void* pDst, const FContact* pContact);
 	// 충돌 끝남, 모든 충돌 체크가 끝나는 시점에 발동
 	virtual void OnCollisionExited();
 

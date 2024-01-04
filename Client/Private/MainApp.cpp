@@ -7,6 +7,7 @@
 #include "System/GraphicDev.h"
 #include "System/ShaderMgr_Enum.h"
 #include "Level/Level_Loading.h"
+#include "Component/TeamAgentComp.h"
 
 #include "DirectXColors.h"
 
@@ -64,6 +65,9 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_Immediate"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_FPS"), E_FAIL);
+
+	CTeamAgentComp::Add_TeamRelation(ETEAM_PLAYER, ETEAM_ENEMY, ETeamRelation::Hostile);
+	CTeamAgentComp::Add_TeamRelation(ETEAM_ENEMY, ETEAM_PLAYER, ETeamRelation::Hostile);
 
 	FAILED_CHECK_RETURN(Open_Level(LEVEL_LOGO), E_FAIL);
 	

@@ -7,6 +7,7 @@
 
 
 #include "Utility/DebugDraw.h"
+#include "Physics/CollisionPrimitive.h"
 
 using namespace DirectX;
 
@@ -74,6 +75,23 @@ void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     DrawRing(batch, origin, yaxis, zaxis, color);
 }
 
+void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
+    const FCollisionSphere& sphere,
+    FXMVECTOR color)
+{
+    XMVECTOR origin = sphere.Get_PositionVector();
+
+    const float radius = sphere.fRadius;
+
+    XMVECTOR xaxis = g_XMIdentityR0 * radius;
+    XMVECTOR yaxis = g_XMIdentityR1 * radius;
+    XMVECTOR zaxis = g_XMIdentityR2 * radius;
+
+    DrawRing(batch, origin, xaxis, zaxis, color);
+    DrawRing(batch, origin, xaxis, yaxis, color);
+    DrawRing(batch, origin, yaxis, zaxis, color);
+}
+
 
 void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     const BoundingBox& box,
@@ -86,6 +104,17 @@ void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     DrawCube(batch, matWorld, color);
 }
 
+
+void XM_CALLCONV DX::Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch, 
+    const FCollisionBox& box, 
+    DirectX::FXMVECTOR color)
+{
+    XMMATRIX matWorld = XMMatrixScaling(box.vHalfSize.x, box.vHalfSize.y, box.vHalfSize.z);
+    XMVECTOR position = box.Get_PositionVector();
+    matWorld.r[3] = XMVectorSelect(matWorld.r[3], position, g_XMSelect1110);
+
+    DrawCube(batch, matWorld, color);
+}
 
 void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     const BoundingOrientedBox& obb,
@@ -100,6 +129,22 @@ void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     DrawCube(batch, matWorld, color);
 }
 
+
+void XM_CALLCONV DX::Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch, 
+    const FCollisionOBB& obb, 
+    DirectX::FXMVECTOR color)
+{
+    _float3 vRotation = obb.Get_Rotation();
+    _vector vOrientation = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&vRotation));
+
+    XMMATRIX matWorld = XMMatrixRotationQuaternion(vOrientation);
+    XMMATRIX matScale = XMMatrixScaling(obb.vHalfSize.x, obb.vHalfSize.y, obb.vHalfSize.z);
+    matWorld = XMMatrixMultiply(matScale, matWorld);
+    XMVECTOR position = obb.Get_PositionVector();
+    matWorld.r[3] = XMVectorSelect(matWorld.r[3], position, g_XMSelect1110);
+
+    DrawCube(batch, matWorld, color);
+}
 
 void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     const BoundingFrustum& frustum,

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseClass/CollisionObject.h"
+#include "GameObject/Character_Common.h"
 #include "Client_Define.h"
 
 #include "Utility/LogicDeviceBasic.h"
@@ -22,9 +22,9 @@ BEGIN(Client)
 /// <summary>
 /// 테스트용 오브젝트
 /// </summary>
-class CPlayer final : public CCollisionObject
+class CPlayer final : public CCharacter_Common
 {
-	DERIVED_CLASS(CCollisionObject, CPlayer)
+	DERIVED_CLASS(CCharacter_Common, CPlayer)
 
 protected:
 	explicit CPlayer();
@@ -44,7 +44,7 @@ public:
 public:
 	static CPlayer* Create();
 	static CPlayer* Create(const _float3 vPos);
-	CGameObject* Clone(void* Arg = nullptr);
+	virtual CGameObject* Clone(void* Arg = nullptr);
 
 protected:
 	virtual void	Free() override;
