@@ -239,7 +239,7 @@ HRESULT CModelMgr::Load_Model(const EModelGroupIndex eGroupIndex, const wstring&
 
 	Load_Bones(pModelData, pModel);
 
-	Load_Materials(pModelData, pModel);
+	Load_Materials(pModelData, pModel, m_strMainDir + strFileName);
 
 	Load_Meshes(pModelData, pModel);
 
@@ -264,7 +264,7 @@ void CModelMgr::Load_Meshes(FModelData* pModelData, CModelLoad* pModel)
     }
 }
 
-void CModelMgr::Load_Materials(FModelData* pModelData, CModelLoad* pModel)
+void CModelMgr::Load_Materials(FModelData* pModelData, CModelLoad* pModel, const wstring& strPath)
 {
     auto pMaterialGroup = pModelData->pMaterialGroup;
 
@@ -276,7 +276,32 @@ void CModelMgr::Load_Materials(FModelData* pModelData, CModelLoad* pModel)
 
         for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
         {
-            pMaterialData->strTexture[j] = Material.strTextures[j];
+            if (Material.strTextures[j].empty())
+                continue;
+
+            _tchar		szDrive[MAX_PATH] = L"";
+            _tchar		szDirectory[MAX_PATH] = L"";
+
+            _wsplitpath_s(strPath.c_str(), szDrive, MAX_PATH, szDirectory, MAX_PATH, nullptr, 0, nullptr, 0);
+
+            _tchar		szFileName[MAX_PATH] = L"";
+            _tchar		szEXT[MAX_PATH] = L"";
+
+            _wsplitpath_s(Material.strTextures[j].c_str(), nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szEXT, MAX_PATH);
+
+            _tchar		szTmp[MAX_PATH] = L"";
+            wcscpy_s(szTmp, szDrive);
+            wcscpy_s(szTmp, szDirectory);
+            wcscpy_s(szTmp, szFileName);
+            wcscpy_s(szTmp, szEXT);
+
+            _tchar		szFullPath[MAX_PATH] = TEXT("");
+            wcscpy_s(szFullPath, szDrive);
+            wcscat_s(szFullPath, szDirectory);
+            wcscat_s(szFullPath, szFileName);
+            wcscat_s(szFullPath, szEXT);
+
+            pMaterialData->strTexture[j] = szFullPath;
         }
     }
 }

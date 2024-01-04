@@ -39,7 +39,8 @@ public:
 private:
 	wstring				m_strName;						// 컴포넌트 이름
 	set<wstring>		m_setLevelTag;					// 분류태그, 레벨에 따라 로드된 분류에 따라 원본을 정리하는데 사용된다.
-	_bool				m_bClone;						// 원형인지 아닌지
+protected:
+	_bool				m_bIsCloned = { false };		// 원형인지 아닌지
 
 public:
 	// 기본형 컴포넌트임. 게임 오브젝트에 추가된 것들은 PrimiveComponent를 상속받은 객체를 사용할 것.

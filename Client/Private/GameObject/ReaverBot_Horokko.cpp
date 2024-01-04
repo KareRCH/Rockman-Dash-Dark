@@ -19,6 +19,8 @@ CReaverBot_Horokko::CReaverBot_Horokko(const CReaverBot_Horokko& rhs)
 
 HRESULT CReaverBot_Horokko::Initialize_Prototype()
 {
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
 
@@ -29,6 +31,8 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype()
 
 HRESULT CReaverBot_Horokko::Initialize_Prototype(const _float3 vPos)
 {
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
 
@@ -52,11 +56,17 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype(const _float3 vPos)
 
 HRESULT CReaverBot_Horokko::Initialize(void* Arg)
 {
+	if (FAILED(__super::Initialize()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CReaverBot_Horokko::Initialize(const _float3 vPos)
 {
+	if (FAILED(__super::Initialize()))
+		return E_FAIL;
+
 	Transform().Set_Position(vPos);
 
 	return S_OK;
@@ -94,6 +104,10 @@ HRESULT CReaverBot_Horokko::Render()
 	SUPER::Render();
 
 	m_pModelComp->Render();
+
+#ifdef _DEBUG
+	m_pColliderComp->Render();
+#endif
 
 	return S_OK;
 }
@@ -152,27 +166,35 @@ HRESULT CReaverBot_Horokko::Initialize_Component()
 
 	if (nullptr == m_pColliderComp)
 		return E_FAIL;
-	m_pColliderComp->Bind_Collision(ECollisionType::Box);
+	m_pColliderComp->Bind_Collision(ECollisionType::OBB);
 	m_pColliderComp->EnterToPhysics(0);
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
-										| COLLAYER_OBJECT);
+										| COLLAYER_ATTACKER | COLLAYER_OBJECT);
+
+	TeamAgentComp().Set_TeamID(ETEAM_ENEMY);
 
 	return S_OK;
 }
 
 void CReaverBot_Horokko::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
+	SUPER::OnCollision(pDst, pContact);
+
 	cout << "몬스터 충돌함" << endl;
 }
 
 void CReaverBot_Horokko::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
 {
+	SUPER::OnCollisionEntered(pDst, pContact);
+
 	cout << "몬스터 충돌진입" << endl;
 }
 
 void CReaverBot_Horokko::OnCollisionExited(CGameObject* pDst)
 {
+	SUPER::OnCollisionExited(pDst);
+
 	cout << "몬스터 충돌나감" << endl;
 }
 

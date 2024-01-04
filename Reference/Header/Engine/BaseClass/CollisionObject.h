@@ -30,10 +30,13 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
-	CGameObject*	Clone(void* Arg = nullptr) PURE;
+	virtual CGameObject*	Clone(void* Arg = nullptr) PURE;
 
 protected:
-	virtual void	Free() override;
+	virtual void			Free() override;
+
+protected:
+	HRESULT Initialize_Component();
 
 
 protected: // Ãæµ¹

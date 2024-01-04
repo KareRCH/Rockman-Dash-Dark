@@ -118,6 +118,14 @@ void CColliderComponent::Free()
     // + 물리 세계에서 제거 요청 코드 필요
     ExitFromPhysics(m_iPhysics3dWorld_Index);
     Safe_Delete(m_pCollisionShape);
+
+#ifdef _DEBUG
+    if (!m_bIsCloned)
+    {
+        Safe_Delete(m_pBatch);
+        Safe_Delete(m_pEffect);
+    }
+#endif
 }
 
 HRESULT CColliderComponent::Bind_Collision(ECollisionType eType)
@@ -161,6 +169,22 @@ HRESULT CColliderComponent::Bind_Collision(ECollisionType eType)
 
     // 충돌체에 충돌 이벤트 추가하기
     m_pCollisionShape->Set_CollisionEvent(MakeDelegate(this, &ThisClass::OnCollision));
+
+    // 디버그용 콜리전 시각 표시
+#ifdef _DEBUG
+    m_pBatch = new PrimitiveBatch<VertexPositionColor>(D3D11Context());
+    m_pEffect = new BasicEffect(D3D11Device());
+    m_pEffect->SetVertexColorEnabled(true);
+
+    const void* pShaderByteCode = { nullptr };
+    size_t	iShaderCodeLength = { 0 };
+
+    m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderCodeLength);
+
+    if (FAILED(D3D11Device()->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount, pShaderByteCode, iShaderCodeLength, m_pInputLayout.GetAddressOf())))
+        return E_FAIL;
+
+#endif
 
     return S_OK;
 }
@@ -245,6 +269,25 @@ void CColliderComponent::Late_Tick(const _float& fTimeDelta)
 
 HRESULT CColliderComponent::Render()
 {
+#ifdef _DEBUG
+    if (nullptr == m_pCollisionShape)
+        return E_FAIL;
+
+    m_pBatch->Begin();
+
+    m_pEffect->SetWorld(XMMatrixIdentity());
+    m_pEffect->SetView(PipelineComp().Get_CamMatrix(ECamType::Persp, ECamMatrix::View, ECamNum::One));
+    m_pEffect->SetProjection(PipelineComp().Get_CamMatrix(ECamType::Persp, ECamMatrix::Proj, ECamNum::One));
+
+    D3D11Context()->IASetInputLayout(m_pInputLayout.Get());
+
+    m_pEffect->Apply(D3D11Context());
+
+    m_pCollisionShape->Render(m_pBatch, m_bIsCollision == true ? XMVectorSet(1.f, 0.f, 0.f, 1.f) : XMVectorSet(0.f, 1.f, 0.f, 1.f));
+
+    m_pBatch->End();
+#endif
+
 
     return S_OK;
 }
@@ -269,7 +312,7 @@ void CColliderComponent::Update_Physics()
     XMStoreFloat3x4(&m_pCollisionShape->matOffset, vMatrix);
 }
 
-void CColliderComponent::OnCollision(void* pDst, const FContact* const pContact)
+void CColliderComponent::OnCollision(void* pDst, const FContact* pContact)
 {
     // 충돌체가 충돌을 진행해야하는 객체인지 확인
     CColliderComponent* pDstCollider = ReCast<CColliderComponent*>(pDst);
@@ -304,7 +347,7 @@ void CColliderComponent::OnCollision(void* pDst, const FContact* const pContact)
         
 }
 
-void CColliderComponent::OnCollisionEntered(void* pDst, const FContact* const pContact)
+void CColliderComponent::OnCollisionEntered(void* pDst, const FContact* pContact)
 {
     // 충돌체가 충돌을 진행해야하는 객체인지 확인
     CColliderComponent* pDstCollider = ReCast<CColliderComponent*>(pDst);

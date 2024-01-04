@@ -34,6 +34,8 @@ protected:
 public:
 	GETSET_1(ID3D11Device*, m_pDevice.Get(), Device, GET__C)
 	GETSET_1(ID3D11DeviceContext*, m_pContext.Get(), Context, GET__C)
+	GETSET_1(ComPtr<ID3D11Device>, m_pDevice, DeviceRef, GET_C_REF)
+	GETSET_1(ComPtr<ID3D11DeviceContext>, m_pContext, ContextRef, GET_C_REF)
 
 private:
 	ComPtr<ID3D11Device>			m_pDevice = { nullptr };		// ·»´õ ÀåÄ¡

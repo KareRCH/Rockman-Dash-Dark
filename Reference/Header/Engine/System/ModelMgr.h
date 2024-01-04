@@ -46,7 +46,7 @@ public:
 	HRESULT Load_Binary(const wstring& strFileName, class CModelLoad* pModel);
 	HRESULT Load_Model(const EModelGroupIndex eGroupIndex, const wstring& strFileName);
 	void Load_Meshes(FModelData* pModelData, class CModelLoad* pModel);
-	void Load_Materials(FModelData* pModelData, class CModelLoad* pModel);
+	void Load_Materials(FModelData* pModelData, class CModelLoad* pModel, const wstring& strPath);
 	void Load_Animations(FModelData* pModelData, class CModelLoad* pModel);
 	void Load_Bones(FModelData* pModelData, class CModelLoad* pModel);
 

@@ -15,18 +15,16 @@ CCollisionObject::CCollisionObject(const CCollisionObject& rhs)
 
 HRESULT CCollisionObject::Initialize_Prototype()
 {
-	m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
-	m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
-	m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+	if (FAILED(Initialize_Component()))
+		return E_FAIL;
 
 	return S_OK;
 }
 
 HRESULT CCollisionObject::Initialize(void* Arg)
 {
-	m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
-	m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
-	m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+	if (FAILED(Initialize_Component()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -58,4 +56,16 @@ HRESULT CCollisionObject::Render()
 void CCollisionObject::Free()
 {
 	SUPER::Free();
+}
+
+HRESULT CCollisionObject::Initialize_Component()
+{
+	if (nullptr == m_pColliderComp)
+		return E_FAIL;
+
+	m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
+	m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
+	m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+
+	return S_OK;
 }

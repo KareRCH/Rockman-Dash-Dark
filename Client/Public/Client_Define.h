@@ -21,10 +21,11 @@ namespace Client
 	// 팀 설정 전용, 충돌 처리 후 충돌체에 대한 관계에 기반을 두고 설정하기 위함.
 	enum ETEAM
 	{
-		ETEAM_PLAYER = EBIT_FLAG32_0,
-		ETEAM_ENEMY = EBIT_FLAG32_1,
-		ETEAM_NPC = EBIT_FLAG32_2,
-		ETEAM_ATTACKABLE_NPC = EBIT_FLAG32_3,
+		ETEAM_NUTRAL = EBIT_FLAG32_0,
+		ETEAM_PLAYER = EBIT_FLAG32_1,
+		ETEAM_ENEMY = EBIT_FLAG32_2,
+		ETEAM_NPC = EBIT_FLAG32_3,
+		ETEAM_ATTACKABLE_NPC = EBIT_FLAG32_4,
 	};
 }
 using namespace Client;

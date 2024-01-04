@@ -14,9 +14,9 @@ BEGIN(Engine)
 /// </summary>
 class ENGINE_DLL CTeamAgentComp final : public CGameObjectComp
 {
-	DERIVED_CLASS(CInternalComponent, CTeamAgentComp)
+	DERIVED_CLASS(CGameObjectComp, CTeamAgentComp)
 protected:
-	explicit CTeamAgentComp() = default;
+	explicit CTeamAgentComp();
 	explicit CTeamAgentComp(const CTeamAgentComp& rhs);
 	virtual ~CTeamAgentComp() = default;
 
@@ -35,9 +35,89 @@ public:
 protected:
 	virtual void	Free();
 
+public:
+	static const _ubyte TEAM_END = (_ubyte)255U;
+
+	enum class ERelation
+	{
+		None,
+		Hostile,
+		Nuetral,
+		Friend
+	};
+
+public:
+	void UniqueID() { m_iPrivID = InitID(); }
+
 private:
-	_uint	m_iTeamID;		// 팀 ID
-	_uint	m_iPrivID;		// 개별 ID, 팀 에이전트 용
+	static _uint_64 InitID() { return iID_Count++; }
+
+public:
+	using SRelationMap = map<_ubyte, ERelation>;
+
+	static void Add_TeamRelation(_uint iSrcTeam, _uint iDstTeam, ERelation eRelation)
+	{
+		auto iter = m_mapTeamRelation.find(Cast<_ubyte>(iSrcTeam));
+		if (iter != m_mapTeamRelation.end())
+		{
+			m_mapTeamRelation[Cast<_ubyte>(iSrcTeam)].emplace(Cast<_ubyte>(iDstTeam), eRelation);
+		}
+		else
+		{
+			SRelationMap mapTeamRelation = SRelationMap();
+			mapTeamRelation.emplace(Cast<_ubyte>(iDstTeam), eRelation);
+			m_mapTeamRelation.emplace(Cast<_ubyte>(iSrcTeam), mapTeamRelation);
+		}
+	}
+
+	// Dst에 대한 팀의 우호도를 체크한다.
+	static ERelation Check_TeamRelation(CTeamAgentComp* pDst, CTeamAgentComp* pSrc)
+	{
+		ERelation tRelation = m_mapTeamRelation[pSrc->m_iTeamID][pDst->m_iTeamID];
+		if (tRelation == ERelation::None)
+			return ERelation::Nuetral;
+		return tRelation;
+	}
+
+	// Src의 관계도를 통해 Dst에 대한 우호도를 체크한다.
+	static ERelation Check_PrivRelation(CTeamAgentComp* pDst, CTeamAgentComp* pSrc)
+	{
+		ERelation tRelation = pSrc->m_mapPrivRelation[pDst->m_iPrivID];
+
+		if (tRelation == ERelation::None)
+			return ERelation::Nuetral;
+
+		return tRelation;
+	}
+
+	// 개인, 팀 순으로 우호도를 조사한다.
+	static ERelation Check_Relation(CTeamAgentComp* pDst, CTeamAgentComp* pSrc)
+	{
+		ERelation tRelation = pSrc->m_mapPrivRelation[pDst->m_iPrivID];
+
+		if (tRelation == ERelation::None)
+			return Check_TeamRelation(pDst, pSrc);
+
+		return tRelation;
+	}
+
+private:
+	static _uint_64						iID_Count;
+	static map<_ubyte, SRelationMap>	m_mapTeamRelation;
+
+public:
+	const _uint Get_TeamID() const { return Cast<_uint>(m_iTeamID); }
+	void		Set_TeamID(const _uint iValue) { m_iTeamID = Cast<_ubyte>(iValue); }
+
+private:
+	_ubyte						m_iTeamID = { 0 };	// 팀 ID
+	_uint_64					m_iPrivID = { 0 };	// 개별 ID, 팀 에이전트 용
+	map<_uint_64, ERelation>	m_mapPrivRelation;	// 개별 관계 맵
+
+
+
 };
+
+using ETeamRelation = CTeamAgentComp::ERelation;
 
 END

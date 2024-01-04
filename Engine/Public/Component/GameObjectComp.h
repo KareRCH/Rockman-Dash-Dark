@@ -50,6 +50,7 @@ protected:
 protected:
 	virtual ID3D11Device* const D3D11Device() const { return m_pDeviceComp->Get_Device(); }
 	virtual ID3D11DeviceContext* const D3D11Context() const { return m_pDeviceComp->Get_Context(); }
+	CD3D11DeviceComp& DeviceComp() const { return *m_pDeviceComp; }
 
 private:
 	class CD3D11DeviceComp* m_pDeviceComp = { nullptr };

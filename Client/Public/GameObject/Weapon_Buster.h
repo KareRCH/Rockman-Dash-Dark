@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Define.h"
-#include "BaseClass/CollisionObject.h"
+#include "GameObject/Character_Common.h"
 #include "Utility/LogicDeviceBasic.h"
 
 BEGIN(Engine)
@@ -15,9 +15,9 @@ BEGIN(Client)
 /// <summary>
 /// 록맨의 버스터
 /// </summary>
-class CWeapon_Buster : public CCollisionObject
+class CWeapon_Buster : public CCharacter_Common
 {
-	DERIVED_CLASS(CCollisionObject, CWeapon_Buster)
+	DERIVED_CLASS(CCharacter_Common, CWeapon_Buster)
 
 protected:
 	explicit CWeapon_Buster();

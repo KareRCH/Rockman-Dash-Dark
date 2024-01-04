@@ -118,6 +118,10 @@ HRESULT CPlayer::Render()
     
     m_pModelComp->Render();
 
+#ifdef _DEBUG
+    m_pColliderComp->Render();
+#endif
+
     return S_OK;
 }
 
@@ -189,27 +193,35 @@ HRESULT CPlayer::Initialize_Component()
 
     if (nullptr == m_pColliderComp)
         return E_FAIL;
-    m_pColliderComp->Bind_Collision(ECollisionType::Box);
+    m_pColliderComp->Bind_Collision(ECollisionType::Sphere);
     m_pColliderComp->EnterToPhysics(0);
     m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
     m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
                                         | COLLAYER_ITEM | COLLAYER_OBJECT);
+
+    TeamAgentComp().Set_TeamID(ETEAM_PLAYER);
 
     return S_OK;
 }
 
 void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
+    SUPER::OnCollision(pDst, pContact);
+
     cout << "충돌함" << endl;
 }
 
 void CPlayer::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
 {
+    SUPER::OnCollisionEntered(pDst, pContact);
+
     cout << "충돌 진입" << endl;
 }
 
 void CPlayer::OnCollisionExited(CGameObject* pDst)
 {
+    SUPER::OnCollisionExited(pDst);
+
     cout << "충돌 나감" << endl;
 }
 
@@ -515,9 +527,10 @@ void CPlayer::ShootBuster()
         return;
 
     GI()->Add_GameObject(pBuster);
-    pBuster->Set_LifeTime(3.f);
-    pBuster->Set_Speed(15.f);
+    pBuster->Set_LifeTime(1.f);
+    pBuster->Set_Speed(20.f);
     pBuster->Set_LookDir(Transform().Get_LookFloat3());
+    pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 }
 
 

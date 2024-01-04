@@ -10,6 +10,13 @@
 #pragma once
 
 #include "Engine_Define.h"
+//#include "Physics/CollisionPrimitive.h"
+
+BEGIN(Engine)
+class FCollisionSphere;
+class FCollisionBox;
+class FCollisionOBB;
+END
 
 namespace DX
 {
@@ -17,12 +24,27 @@ namespace DX
         const DirectX::BoundingSphere& sphere,
         DirectX::FXMVECTOR color = DirectX::Colors::White);
 
+    // CollisionPrimitive 전용
+    void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
+        const FCollisionSphere& sphere,
+        DirectX::FXMVECTOR color = DirectX::Colors::White);
+
     void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
         const DirectX::BoundingBox& box,
         DirectX::FXMVECTOR color = DirectX::Colors::White);
 
+    // CollisionPrimitive 전용
+    void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
+        const FCollisionBox& box,
+        DirectX::FXMVECTOR color = DirectX::Colors::White);
+
     void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
         const DirectX::BoundingOrientedBox& obb,
+        DirectX::FXMVECTOR color = DirectX::Colors::White);
+
+    // CollisionPrimitive 전용
+    void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
+        const FCollisionOBB& obb,
         DirectX::FXMVECTOR color = DirectX::Colors::White);
 
     void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
