@@ -85,6 +85,17 @@ public:
 	{
 		return _float3(m_matTransform._11, m_matTransform._12, m_matTransform._13);
 	}
+	inline const _vector Get_RightNormalizedVector()
+	{
+		return XMVector3Normalize(XMVectorSet(m_matTransform._11, m_matTransform._12, m_matTransform._13, m_matTransform._14));
+	}
+	inline const _float3 Get_RightNormalizedFloat3()
+	{
+		_float3 vReturn = {};
+		_vector vRight = XMVectorSet(m_matTransform._11, m_matTransform._12, m_matTransform._13, m_matTransform._14);
+		XMStoreFloat3(&vReturn, XMVector3Normalize(vRight));
+		return vReturn;
+	}
 
 	inline void Set_Up(_fvector vUp)
 	{
@@ -101,6 +112,17 @@ public:
 	{
 		return _float3(m_matTransform._21, m_matTransform._22, m_matTransform._23);
 	}
+	inline const _vector Get_UpNormalizedVector()
+	{
+		return XMVector3Normalize(XMVectorSet(m_matTransform._21, m_matTransform._22, m_matTransform._23, m_matTransform._24));
+	}
+	inline const _float3 Get_UpNormalizedFloat3()
+	{
+		_float3 vReturn = {};
+		_vector vUp = XMVectorSet(m_matTransform._21, m_matTransform._22, m_matTransform._23, m_matTransform._24);
+		XMStoreFloat3(&vReturn, XMVector3Normalize(vUp));
+		return vReturn;
+	}
 
 	inline void Set_Look(_fvector vLook)
 	{
@@ -116,6 +138,17 @@ public:
 	inline const _float3 Get_LookFloat3()
 	{
 		return _float3(m_matTransform._31, m_matTransform._32, m_matTransform._33);
+	}
+	inline const _vector Get_LookNormalizedVector()
+	{
+		return XMVector3Normalize(XMVectorSet(m_matTransform._31, m_matTransform._32, m_matTransform._33, m_matTransform._34));
+	}
+	inline const _float3 Get_LookNormalizedFloat3()
+	{
+		_float3 vReturn = {};
+		_vector vLook = XMVectorSet(m_matTransform._31, m_matTransform._32, m_matTransform._33, m_matTransform._34);
+		XMStoreFloat3(&vReturn, XMVector3Normalize(vLook));
+		return vReturn;
 	}
 #pragma endregion
 

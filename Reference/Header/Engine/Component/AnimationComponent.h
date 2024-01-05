@@ -91,7 +91,7 @@ private:
 														// 이 녀석이 설정되어 있어야 기능을 할 수 있다.
 
 public:
-	_bool	Get_Animation_Finished();
+	_bool	IsAnimation_Finished();
 	void Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse = false);
 	void Add_AnimTime(const _float& fTimeDelta);
 	void Invalidate_Animation();

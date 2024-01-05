@@ -568,7 +568,7 @@ namespace Engine
 			return false;
 		}
 
-		bool IsOnAct()
+		bool IsAct()
 		{
 			return bAction;
 		}
@@ -606,7 +606,17 @@ namespace Engine
 			return mapAction[tKey];
 		}
 
-		void Update()
+		void Act(Key&& tKey)
+		{
+			mapAction[tKey].Act();
+		}
+
+		_bool IsAct(Key&& tKey)
+		{
+			return mapAction[tKey].IsAct();
+		}
+
+		void Reset()
 		{
 			for_each(mapAction.begin(), mapAction.end(), CMapAction_Updator<Key>());
 		}

@@ -57,7 +57,7 @@ void CImGuiWin_MapTool::Tick(const _float& fTimeDelta)
         //ShowDockingDisabledMessage();
     }
 
-    m_Actions.Update();
+    m_Actions.Reset();
     Shortcut_Manage();
     DoMove_PickedObjects(fTimeDelta);
 
