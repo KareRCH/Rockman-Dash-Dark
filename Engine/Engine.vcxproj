@@ -450,6 +450,9 @@
     <ClCompile Include="Private\Component\TerrainBufferComp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\Runtime\FX_VtxPosTexAlpha.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="Shader\Compiled\PS_Test1.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Pixel</ShaderType>

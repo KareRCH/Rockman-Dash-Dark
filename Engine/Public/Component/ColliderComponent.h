@@ -60,7 +60,7 @@ protected:
 	_uint		m_iPhysics3dWorld_Index = { 0 };
 
 
-	#ifdef _DEBUG
+#ifdef _DEBUG
 private:
 	_bool										m_bIsCollision = { false };
 	PrimitiveBatch<VertexPositionColor>*		m_pBatch = { nullptr };

@@ -28,15 +28,23 @@ CPlaneModelComp::CPlaneModelComp(const CPlaneModelComp& rhs)
     NULL_CHECK(m_pTextureComp = Cast<CTextureComponent*>(rhs.m_pTextureComp->Clone()));
 }
 
-HRESULT CPlaneModelComp::Initialize_Prototype(void* Arg)
+HRESULT CPlaneModelComp::Initialize_Prototype(void* pArg)
 {
-    __super::Initialize_Prototype(Arg);
+    if (FAILED(__super::Initialize_Prototype(pArg)))
+        return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CPlaneModelComp::Initialize(void* Arg)
+HRESULT CPlaneModelComp::Initialize(void* pArg)
 {
+    TPlaneModelCloneDesc tDesc = {};
+    if (nullptr == pArg)
+        return E_FAIL;
+    tDesc = *ReCast<TPlaneModelCloneDesc*>(pArg);
+
+    m_eMode = tDesc.eMode;
+
 	return S_OK;
 }
 
@@ -63,7 +71,7 @@ HRESULT CPlaneModelComp::Render()
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
 
-    m_pEffectComp->Begin(0);
+    m_pEffectComp->Begin(m_vecActivePasses[0]);
 
     m_pVIBufferComp->Bind_Buffer();
 
@@ -85,11 +93,11 @@ CPlaneModelComp* CPlaneModelComp::Create()
     return pInstance;
 }
 
-CComponent* CPlaneModelComp::Clone(void* Arg)
+CComponent* CPlaneModelComp::Clone(void* pArg)
 {
     ThisClass* pInstance = new ThisClass(*this);
 
-    if (FAILED(pInstance->Initialize(Arg)))
+    if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("PlaneModelComp Create Failed");
         Safe_Release(pInstance);
@@ -97,6 +105,7 @@ CComponent* CPlaneModelComp::Clone(void* Arg)
 
     return Cast<CComponent*>(pInstance);
 }
+
 
 void CPlaneModelComp::Free()
 {
@@ -110,14 +119,29 @@ void CPlaneModelComp::Free()
 HRESULT CPlaneModelComp::Bind_ShaderResources()
 {
     _float4x4 matTemp = {};
-
-    if (FAILED(Transform().Bind_TransformToEffect(m_pEffectComp, "g_WorldMatrix")))
-        return E_FAIL;
-    if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Ortho, ECamMatrix::View, ECamNum::One)))))
-        return E_FAIL;
-    if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Ortho, ECamMatrix::Proj, ECamNum::One)))))
-        return E_FAIL;
-    if (FAILED(m_pTextureComp->Bind_SRVToEffect(m_pEffectComp, "g_Texture", 0)))
+    
+    if (m_eMode == ORTHO)
+    {
+        if (FAILED(Transform().Bind_TransformToEffect(m_pEffectComp, "g_WorldMatrix")))
+            return E_FAIL;
+        if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Ortho, ECamMatrix::View, ECamNum::One)))))
+            return E_FAIL;
+        if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Ortho, ECamMatrix::Proj, ECamNum::One)))))
+            return E_FAIL;
+    }
+    else if (m_eMode == PERSP)
+    {
+        matTemp = Calculate_TransformFloat4x4FromParent();
+        if (FAILED(m_pEffectComp->Bind_Matrix("g_WorldMatrix", &matTemp)))
+            return E_FAIL;
+        if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
+            return E_FAIL;
+        if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
+            return E_FAIL;
+        if (FAILED(m_pEffectComp->Bind_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
+            return E_FAIL;
+    }
+    if (FAILED(m_pTextureComp->Bind_SRVToEffect(m_pEffectComp, "g_Texture", m_iCurrentTextureIndex)))
         return E_FAIL;
 
     return S_OK;

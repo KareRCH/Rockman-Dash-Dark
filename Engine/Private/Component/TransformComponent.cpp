@@ -120,4 +120,37 @@ void CTransformComponent::TurnAxis(_float3 vAxis, _float fRadian)
 	Set_Look(XMVector3TransformNormal(vLook, matRotation));
 }
 
+void CTransformComponent::Look_At(_fvector vTargetPos)
+{
+	_float3		vScale = Get_ScaleFloat3();
+
+	_vector		vPosition = Get_PositionVector();
+
+	_vector		vLook = XMVector3Normalize(vTargetPos - vPosition) * vScale.z;
+	_vector		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
+	_vector		vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScale.y;
+
+	Set_Right(vRight);
+	Set_Up(vUp);
+	Set_Look(vLook);
+}
+
+void CTransformComponent::Look_At_OnLand(_fvector vTargetPos)
+{
+	_float3		vScale = Get_ScaleFloat3();
+
+	_vector		vPosition = Get_PositionVector();
+	_vector		vLook = vTargetPos - vPosition;
+
+	_vector		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
+
+	vLook = XMVector3Normalize(XMVector3Cross(vRight, XMVectorSet(0.f, 1.f, 0.f, 0.f))) * vScale.z;
+
+	_vector		vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
+
+	Set_Right(vRight);
+	Set_Up(vUp);
+	Set_Look(vLook);
+}
+
 

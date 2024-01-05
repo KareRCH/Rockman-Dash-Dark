@@ -76,6 +76,9 @@
     <Filter Include="02. GameObject\04. Characters\01. Player\01. Buster">
       <UniqueIdentifier>{e63e19c6-b414-42ca-acfc-65428675b30c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. Characters\00. Effects">
+      <UniqueIdentifier>{d1272671-581b-4978-8fbf-54708fcb35aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -147,6 +150,9 @@
     <ClInclude Include="Public\GameObject\Character_Common.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\Effect_Common.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -204,6 +210,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\Character_Common.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Effect_Common.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,6 +4,8 @@
 #include "GameObject/Character.h"
 #include "Component/TeamAgentComp.h"
 
+#include "Utility/LogicDeviceBasic.h"
+
 BEGIN(Client)
 
 /// <summary>
@@ -49,6 +51,10 @@ private:
 	CTeamAgentComp* m_pTeamAgentComp = { nullptr };
 #pragma endregion
 
+
+protected:
+	FGauge	m_fHP = FGauge(100.f);
+	//FGauge
 
 };
 

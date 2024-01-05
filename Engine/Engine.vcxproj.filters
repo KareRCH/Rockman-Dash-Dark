@@ -1005,6 +1005,9 @@
     <None Include="Shader\Runtime\FX_VtxCube.hlsl">
       <Filter>03. Shader\03. Effect</Filter>
     </None>
+    <None Include="Shader\Runtime\FX_VtxPosTexAlpha.hlsl">
+      <Filter>03. Shader\03. Effect</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\RDD-Snipets\CPP.xml">
