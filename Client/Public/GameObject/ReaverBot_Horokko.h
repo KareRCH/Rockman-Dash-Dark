@@ -59,6 +59,10 @@ public:
 	void Move_Update(const _float& fTimeDelta);
 
 public:
+	enum class EActionKey { MoveForward, TurnRight, TurnLeft, Charge,  };
+	ACTION_SET<EActionKey>	m_ActionKey;
+
+public:
 	enum class EState_Act { Idle, Run, Ready_Charge, Charge_Attack, Ready_Shooting, Shooting, End_Shooting, Dead };
 
 private:		// 약식 상태머신

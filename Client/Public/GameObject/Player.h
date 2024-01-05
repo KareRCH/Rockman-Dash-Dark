@@ -78,6 +78,8 @@ private:
 	_float		m_fDirectionAngle = 0.f;				// 캐릭터가 바라보는 방향각도
 
 	FGauge		m_fFootSound = FGauge(0.25f);
+	FGauge		m_fDamageKnockback = FGauge(0.5f);		// 넉백 시간
+	FGauge		m_fStrongKnockback = FGauge(1.f);		// 강하게 넉백
 
 public:
 	enum class EState_Act { Idle, Run, Walk, Ready_Jump, Jump_Up, Jump_Down, Landing, Buster };

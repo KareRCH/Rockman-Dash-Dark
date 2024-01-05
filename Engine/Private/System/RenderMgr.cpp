@@ -108,7 +108,7 @@ void CRenderMgr::Render_NonAlpha()
 {
 	GameInstance()->TurnOn_ZBuffer();
 
-	for (auto& iter : m_RenderGroup[ECast(ERenderGroup::NonAlpha)])
+	for (auto& iter : m_RenderGroup[ECast(ERenderGroup::Blend)])
 		iter->Render();
 }
 

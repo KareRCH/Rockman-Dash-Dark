@@ -8,7 +8,8 @@
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 
-#include "GameObject/ReaverBot_Horokko.h"
+#include "GameObject/Effect_Common.h"
+#include "GameObject/LoadingScreen.h"
 
 
 CWeapon_Buster::CWeapon_Buster()
@@ -26,8 +27,6 @@ HRESULT CWeapon_Buster::Initialize_Prototype()
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
 
-	TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
-
 	return S_OK;
 }
 
@@ -36,8 +35,6 @@ HRESULT CWeapon_Buster::Initialize_Prototype(const _float3 vPos)
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
-
-	TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
 
 	Transform().Set_Position(vPos);
 
@@ -196,7 +193,10 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 	{
 		if (CTeamAgentComp::ERelation::Hostile == 
 			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
+		{
+			Create_Effect();
 			Set_Dead();
+		}
 	}
 }
 
@@ -206,4 +206,17 @@ void CWeapon_Buster::OnCollisionExited(CGameObject* pDst)
 	SUPER::OnCollisionExited(pDst);
 
 	cout << "충돌 나감" << endl;
+}
+
+void CWeapon_Buster::Create_Effect()
+{
+	CEffect_Common* pEffect = CEffect_Common::Create();
+	if (FAILED(GI()->Add_GameObject(pEffect)))
+		return;
+
+	if (nullptr == pEffect)
+		return;
+
+	//CPlaneModelComp* pModel = pEffect->Get_Component<CPlaneModelComp>(TEXT("PlaneComp"));
+	pEffect->Transform().Set_Position(Transform().Get_PositionFloat3());
 }

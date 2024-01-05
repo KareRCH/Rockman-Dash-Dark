@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Component/SceneComponent.h"
+#include "Component/ModelComponent.h"
 
 BEGIN(Engine)
 
@@ -15,9 +15,18 @@ class CTextureComponent;
 /// [기본 컴포넌트]
 /// 트랜스폼, 파이프라인, 디바이스
 /// </summary>
-class ENGINE_DLL CPlaneModelComp final : public CSceneComponent
+class ENGINE_DLL CPlaneModelComp final : public CModelComponent
 {
-	DERIVED_CLASS(CSceneComponent, CPlaneModelComp)
+	DERIVED_CLASS(CModelComponent, CPlaneModelComp)
+
+public:
+	enum MODE { ORTHO, PERSP, MODE_END };
+
+public:
+	struct TPlaneModelCloneDesc
+	{
+		MODE eMode;
+	};
 
 protected:
 	explicit CPlaneModelComp();
@@ -25,8 +34,8 @@ protected:
 	virtual ~CPlaneModelComp() = default;
 
 public:
-	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
-	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual HRESULT	Initialize_Prototype(void* pArg = nullptr) override;
+	virtual HRESULT Initialize(void* pArg = nullptr) override;
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
@@ -34,7 +43,7 @@ public:
 
 public:
 	static CPlaneModelComp* Create();
-	virtual CComponent*		Clone(void* Arg = nullptr);
+	virtual CComponent*		Clone(void* pArg = nullptr);
 
 protected:
 	virtual void			Free() override;
@@ -72,7 +81,15 @@ private:
 public:
 	HRESULT Bind_ShaderResources();
 	
+public:
+	void Set_Mode(MODE eMode) { m_eMode = eMode; }
+	void Set_CurrentTextureIndex(_uint iIndex) { m_iCurrentTextureIndex = iIndex; }
+	void Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; }
 
+private:
+	MODE	m_eMode = { MODE_END };
+	_uint	m_iCurrentTextureIndex = { 0 };
+	_float	m_fAlpha = 1.f;
 
 };
 

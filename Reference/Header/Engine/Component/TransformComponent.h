@@ -365,6 +365,11 @@ public:
 	void TurnUp(_float fRadian);
 	// 원하는 축으로 회전하게 하기
 	void TurnAxis(_float3 vAxis, _float fRadian);
+
+	// 특정 위치를 바라보게 만드는 함수
+	void Look_At(_fvector vTargetPos);
+	// 특정 위치에 대해 Right벡터를 고정하고 보도록하는 함수
+	void Look_At_OnLand(_fvector vTargetPos);
 	
 
 private:

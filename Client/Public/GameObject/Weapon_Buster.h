@@ -62,6 +62,10 @@ private:
 	FGauge		m_fLifeTime = FGauge(3.f);
 	_float		m_fSpeed = 5.f;
 	_float3		m_vLookDir = {};
+
+public:
+	void Create_Effect();
+
 };
 
 END

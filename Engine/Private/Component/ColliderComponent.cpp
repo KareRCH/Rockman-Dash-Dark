@@ -258,6 +258,7 @@ void CColliderComponent::Tick(const _float& fTimeDelta)
     for (auto iter = m_listColliderObject.begin(); iter != m_listColliderObject.end(); ++iter)
         iter->second = false;
 
+    m_bIsCollision = false;
     Update_Physics();
 }
 
@@ -341,6 +342,7 @@ void CColliderComponent::OnCollision(void* pDst, const FContact* pContact)
         // 오너 객체가 있어야 해당 객체를 주인에게 넘겨준다.
         if (CGameObject* pObj = pDstCollider->Get_OwnerObject())
         {
+            m_bIsCollision = true;
             m_Collision_Event(pObj, pContact);
         }
     }

@@ -94,17 +94,17 @@ HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _uint iNumTe
 		{
 			pTexture = CTexture::Create({ m_pDevice, m_pDeviceContext });
 			m_mapTextures.emplace(strFilePath, pTexture);
+
+			if (bUseMainPath)
+				hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, iNumTextures, bPermanent);
+			else
+				hr = pTexture->Insert_Texture(strFilePath, iNumTextures, bPermanent);
 		}
 		// 텍스처가 있으니 기존에 것에 추가한다.
 		else
 		{
 			pTexture = iter->second;
 		}
-
-		if (bUseMainPath)
-			hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, iNumTextures, bPermanent);
-		else
-			hr = pTexture->Insert_Texture(strFilePath, iNumTextures, bPermanent);
 	}
 
 	return hr;

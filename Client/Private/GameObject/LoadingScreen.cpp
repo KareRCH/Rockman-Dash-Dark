@@ -18,7 +18,6 @@ HRESULT CLoadingScreen::Initialize_Prototype()
 {
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 
-    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의
     Set_RenderGroup(ERenderGroup::UI);              // UI 그룹에서 렌더링, 나중에 그려지며 깊이 버퍼를 쓰지 않음
 
     return S_OK;
@@ -48,6 +47,7 @@ void CLoadingScreen::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
+    
 }
 
 void CLoadingScreen::Late_Tick(const _float& fTimeDelta)
@@ -85,7 +85,7 @@ CGameObject* CLoadingScreen::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        MSG_BOX("TestObject Create Failed");
+        MSG_BOX("LoadingScreen Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -106,6 +106,8 @@ HRESULT CLoadingScreen::Initialize_Component()
         return E_FAIL;
 
     HRESULT hr = 0;
+    m_pPlaneModelComp->Set_CurrentTextureIndex(0);
+    m_pPlaneModelComp->Set_Mode(CPlaneModelComp::ORTHO);
     hr = m_pPlaneModelComp->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/Images/Splash.png"));
     hr = m_pPlaneModelComp->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTex.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
 
