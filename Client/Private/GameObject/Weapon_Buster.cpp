@@ -73,18 +73,8 @@ void CWeapon_Buster::Tick(const _float& fTimeDelta)
 		return;
 	}
 
-	
-
-	_vector vRight = {};
-	_vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
-	_vector vFlyingDir = XMLoadFloat3(&m_vLookDir);
-	vFlyingDir = XMVector3Normalize(vFlyingDir);
-	vRight = XMVector3Cross(vFlyingDir, vUp);
-	vUp = XMVector3Cross(vRight, vFlyingDir);
-
-	_vector vLook = XMVector3Normalize(Transform().Get_LookVector());
 	_float3 vfLook = {};
-	XMStoreFloat3(&vfLook, vLook);
+	XMStoreFloat3(&vfLook, Transform().Get_LookNormalizedVector());
 
 	Transform().MoveForward(m_fSpeed * fTimeDelta);
 	Transform().TurnAxis(vfLook, XMConvertToRadians(90.f * fTimeDelta));

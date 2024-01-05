@@ -101,9 +101,6 @@ private:
 private:
 	void ShootBuster();
 
-
-	
-
 };
 
 END

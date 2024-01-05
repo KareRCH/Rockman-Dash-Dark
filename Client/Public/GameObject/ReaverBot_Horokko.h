@@ -55,15 +55,29 @@ private:
 	CCommonModelComp* m_pModelComp = { nullptr };
 
 
-public:
-	void Move_Update(const _float& fTimeDelta);
+
 
 public:
-	enum class EActionKey { MoveForward, TurnRight, TurnLeft, Charge,  };
+	void Input_ActionKey();
+	void Move_Update(const _float& fTimeDelta);
+
+private:
+	_float m_fMoveSpeed = { 5.f };
+
+
+
+
+public:
+	enum class EActionKey : _uint { MoveForward, MoveBackward, TurnRight, TurnLeft, Charge, ReadyBomb, ShootBomb, Size };
+	
+private:
 	ACTION_SET<EActionKey>	m_ActionKey;
+	_bool					m_bCanControl = { true };
 
 public:
 	enum class EState_Act { Idle, Run, Ready_Charge, Charge_Attack, Ready_Shooting, Shooting, End_Shooting, Dead };
+
+	void Register_State();
 
 private:		// 약식 상태머신
 	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;

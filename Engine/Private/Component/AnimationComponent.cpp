@@ -252,9 +252,9 @@ void CAnimationComponent::Apply_FinalMask()
 	}
 }
 
-_bool CAnimationComponent::Get_Animation_Finished()
+_bool CAnimationComponent::IsAnimation_Finished()
 {
-	return (m_CurAnim.fTrackPos >= m_CurAnim.fDuration);
+	return (m_CurAnim.bIsReverse) ? (m_CurAnim.fTrackPos <= 0) : (m_CurAnim.fTrackPos >= m_CurAnim.fDuration);
 }
 
 void CAnimationComponent::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse)
@@ -276,10 +276,10 @@ void CAnimationComponent::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply,
 	m_CurAnim.iAnimID = iAnimIndex;
 	m_CurAnim.fDuration = pBoneAnimData->fDuration;
 	m_CurAnim.fTickPerSeconds = pBoneAnimData->fTickPerSecond;
-	m_CurAnim.fTrackPos = 0.f;
 	m_CurAnim.fSpeedMultiply = fSpeedMultiply;
 	m_CurAnim.bIsLoop = bIsLoop;
 	m_CurAnim.bIsReverse = bReverse;
+	m_CurAnim.fTrackPos = (!bReverse) ? 0.f : m_CurAnim.fDuration;
 }
 
 void CAnimationComponent::Add_AnimTime(const _float& fTimeDelta)

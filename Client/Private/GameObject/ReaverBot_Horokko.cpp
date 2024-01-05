@@ -39,15 +39,8 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype(const _float3 vPos)
 	TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
 
 	Transform().Set_Position(vPos);
-
-	m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
-	m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
-	m_State_Act.Add_Func(EState_Act::Ready_Charge, &ThisClass::ActState_Ready_Charge);
-	m_State_Act.Add_Func(EState_Act::Charge_Attack, &ThisClass::ActState_Charge_Attack);
-	m_State_Act.Add_Func(EState_Act::Ready_Shooting, &ThisClass::ActState_Ready_Shooting);
-	m_State_Act.Add_Func(EState_Act::Shooting, &ThisClass::ActState_Shooting);
-	m_State_Act.Add_Func(EState_Act::End_Shooting, &ThisClass::ActState_End_Shooting);
-	m_State_Act.Add_Func(EState_Act::Dead, &ThisClass::ActState_Dead);
+	
+	Register_State();
 
 	m_pModelComp->Set_Animation(0, 1.f, true);
 
@@ -82,8 +75,10 @@ void CReaverBot_Horokko::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
 
+	Input_ActionKey();
 	//m_State_AI.Get_StateFunc()(this, fTimeDelta);
 	m_State_Act.Get_StateFunc()(this, fTimeDelta);
+	m_ActionKey.Reset();
 
 	m_pColliderComp->Tick(fTimeDelta);
 }
@@ -160,6 +155,7 @@ HRESULT CReaverBot_Horokko::Initialize_Component()
 {
 	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
 
+	m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
 	m_pModelComp->Transform().Set_Scale(_float3(0.08f, 0.08f, 0.08f));
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Horokko/Horokko.amodel");
@@ -198,21 +194,93 @@ void CReaverBot_Horokko::OnCollisionExited(CGameObject* pDst)
 	cout << "몬스터 충돌나감" << endl;
 }
 
+void CReaverBot_Horokko::Input_ActionKey()
+{
+	if (!m_bCanControl)
+		return;
+
+	if (GI()->IsKey_Pressing(DIK_UPARROW))
+		m_ActionKey.Act(EActionKey::MoveForward);
+	if (GI()->IsKey_Pressing(DIK_DOWNARROW))
+		m_ActionKey.Act(EActionKey::MoveBackward);
+	if (GI()->IsKey_Pressing(DIK_RIGHTARROW))
+		m_ActionKey.Act(EActionKey::TurnRight);
+	if (GI()->IsKey_Pressing(DIK_LEFTARROW))
+		m_ActionKey.Act(EActionKey::TurnLeft);
+
+	if (!m_State_Act.IsOnState(EState_Act::Ready_Shooting)
+		&& !m_State_Act.IsOnState(EState_Act::Shooting)
+		&& !m_State_Act.IsOnState(EState_Act::End_Shooting))
+	{
+		if (m_State_Act.IsOnState(EState_Act::Ready_Charge))
+		{
+			if (GI()->IsKey_Pressing(DIK_J))
+				m_ActionKey.Act(EActionKey::Charge);
+		}
+		else
+		{
+			if (GI()->IsKey_Pressed(DIK_J))
+				m_ActionKey.Act(EActionKey::Charge);
+		}
+	}
+	else
+	{
+		if (GI()->IsKey_Pressed(DIK_J))
+			m_ActionKey.Act(EActionKey::ShootBomb);
+	}
+	if (GI()->IsKey_Pressed(DIK_K))
+		m_ActionKey.Act(EActionKey::ReadyBomb);
+}
+
 void CReaverBot_Horokko::Move_Update(const _float& fTimeDelta)
 {
+	if (m_ActionKey.IsAct(EActionKey::MoveForward))
+		Transform().MoveForward(m_fMoveSpeed * fTimeDelta);
+	else if (m_ActionKey.IsAct(EActionKey::MoveBackward))
+		Transform().MoveForward(-m_fMoveSpeed * fTimeDelta);
 
+	if (m_ActionKey.IsAct(EActionKey::TurnRight))
+		Transform().TurnRight(m_fMoveSpeed * fTimeDelta);
+	else if (m_ActionKey.IsAct(EActionKey::TurnLeft))
+		Transform().TurnRight(-m_fMoveSpeed * fTimeDelta);
+}
+
+void CReaverBot_Horokko::Register_State()
+{
+	for (_uint i = 0; i < ECast(EActionKey::Size); i++)
+		m_ActionKey.Add_Action(Cast<EActionKey>(i));
+
+	m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
+	m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
+	m_State_Act.Add_Func(EState_Act::Ready_Charge, &ThisClass::ActState_Ready_Charge);
+	m_State_Act.Add_Func(EState_Act::Charge_Attack, &ThisClass::ActState_Charge_Attack);
+	m_State_Act.Add_Func(EState_Act::Ready_Shooting, &ThisClass::ActState_Ready_Shooting);
+	m_State_Act.Add_Func(EState_Act::Shooting, &ThisClass::ActState_Shooting);
+	m_State_Act.Add_Func(EState_Act::End_Shooting, &ThisClass::ActState_End_Shooting);
+	m_State_Act.Add_Func(EState_Act::Dead, &ThisClass::ActState_Dead);
+	m_State_Act.Set_State(EState_Act::Idle);
 }
 
 void CReaverBot_Horokko::ActState_Idle(const _float& fTimeDelta)
 {
 	if (m_State_Act.IsState_Entered())
 	{
+		m_fMoveSpeed = 2.5f;
 		m_pModelComp->Set_Animation(2, 1.f, true);
 	}
 
 	if (m_State_Act.Can_Update())
 	{
-		if (GI()->IsKey_Pressed(DIK_RETURN))
+
+		// 돌진
+		if (m_ActionKey.IsAct(EActionKey::Charge))
+			m_State_Act.Set_State(EState_Act::Ready_Charge);
+		// 슈팅
+		if (m_ActionKey.IsAct(EActionKey::ReadyBomb))
+			m_State_Act.Set_State(EState_Act::Ready_Shooting);
+		// 움직임
+		if (m_ActionKey.IsAct(EActionKey::MoveForward) || m_ActionKey.IsAct(EActionKey::MoveBackward)
+			|| m_ActionKey.IsAct(EActionKey::TurnRight) || m_ActionKey.IsAct(EActionKey::TurnLeft))
 			m_State_Act.Set_State(EState_Act::Run);
 	}
 
@@ -226,13 +294,23 @@ void CReaverBot_Horokko::ActState_Run(const _float& fTimeDelta)
 {
 	if (m_State_Act.IsState_Entered())
 	{
-		m_pModelComp->Set_Animation(7, 1.f, true);
+		m_pModelComp->Set_Animation(7, 1.5f, true);
 	}
 
 	if (m_State_Act.Can_Update())
 	{
-		if (GI()->IsKey_Pressed(DIK_RETURN))
+		Move_Update(fTimeDelta);
+
+		// 돌진
+		if (m_ActionKey.IsAct(EActionKey::Charge))
 			m_State_Act.Set_State(EState_Act::Ready_Charge);
+		// 슈팅
+		if (m_ActionKey.IsAct(EActionKey::ReadyBomb))
+			m_State_Act.Set_State(EState_Act::Ready_Shooting);
+		// 움직임
+		if (!m_ActionKey.IsAct(EActionKey::MoveForward) && !m_ActionKey.IsAct(EActionKey::MoveBackward)
+			&& !m_ActionKey.IsAct(EActionKey::TurnRight) && !m_ActionKey.IsAct(EActionKey::TurnLeft))
+			m_State_Act.Set_State(EState_Act::Idle);
 	}
 
 	if (m_State_Act.IsState_Exit())
@@ -246,12 +324,15 @@ void CReaverBot_Horokko::ActState_Ready_Charge(const _float& fTimeDelta)
 {
 	if (m_State_Act.IsState_Entered())
 	{
+		m_fMoveSpeed = 5.f;
 		m_pModelComp->Set_Animation(3, 1.f, true);
 	}
 
 	if (m_State_Act.Can_Update())
 	{
-		if (GI()->IsKey_Pressed(DIK_RETURN))
+
+		// 떼면 돌진
+		if (!m_ActionKey.IsAct(EActionKey::Charge))
 			m_State_Act.Set_State(EState_Act::Charge_Attack);
 	}
 
@@ -270,8 +351,11 @@ void CReaverBot_Horokko::ActState_Charge_Attack(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		if (GI()->IsKey_Pressed(DIK_RETURN))
-			m_State_Act.Set_State(EState_Act::Ready_Shooting);
+		Move_Update(fTimeDelta);
+
+		// 떼면 돌진, 다시 Charge를 누르면 Idle로
+		if (m_ActionKey.IsAct(EActionKey::Charge))
+			m_State_Act.Set_State(EState_Act::Idle);
 	}
 
 	if (m_State_Act.IsState_Exit())
@@ -290,8 +374,14 @@ void CReaverBot_Horokko::ActState_Ready_Shooting(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		if (GI()->IsKey_Pressed(DIK_RETURN))
-			m_State_Act.Set_State(EState_Act::Shooting);
+
+		if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+		{
+			if (m_ActionKey.IsAct(EActionKey::ReadyBomb))
+				m_State_Act.Set_State(EState_Act::End_Shooting);
+			if (m_ActionKey.IsAct(EActionKey::ShootBomb))
+				m_State_Act.Set_State(EState_Act::Shooting);
+		}
 	}
 
 	if (m_State_Act.IsState_Exit())
@@ -309,8 +399,14 @@ void CReaverBot_Horokko::ActState_Shooting(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		if (GI()->IsKey_Pressed(DIK_RETURN))
-			m_State_Act.Set_State(EState_Act::End_Shooting);
+
+		if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+		{
+			if (m_ActionKey.IsAct(EActionKey::ReadyBomb))
+				m_State_Act.Set_State(EState_Act::End_Shooting);
+			if (m_ActionKey.IsAct(EActionKey::ShootBomb))
+				m_State_Act.Set_State(EState_Act::Shooting);
+		}
 	}
 
 	if (m_State_Act.IsState_Exit())
@@ -328,8 +424,8 @@ void CReaverBot_Horokko::ActState_End_Shooting(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		if (GI()->IsKey_Pressed(DIK_RETURN))
-			m_State_Act.Set_State(EState_Act::Dead);
+		if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+			m_State_Act.Set_State(EState_Act::Idle);
 	}
 
 	if (m_State_Act.IsState_Exit())
@@ -347,8 +443,8 @@ void CReaverBot_Horokko::ActState_Dead(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		if (GI()->IsKey_Pressed(DIK_RETURN))
-			m_State_Act.Set_State(EState_Act::Idle);
+		if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+			Set_Dead();
 	}
 
 	if (m_State_Act.IsState_Exit())

@@ -422,7 +422,7 @@ void CPlayer::ActState_Ready_Jump(const _float& fTimeDelta)
     {
         Move_Update(fTimeDelta);
 
-        if (m_pModelComp->AnimationComp()->Get_Animation_Finished())
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
             m_State_Act.Set_State(EState_Act::Jump_Up);
     }
 
@@ -486,7 +486,7 @@ void CPlayer::ActState_Landing(const _float& fTimeDelta)
     {
         Move_Update(fTimeDelta);
 
-        if (m_pModelComp->AnimationComp()->Get_Animation_Finished())
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
             m_State_Act.Set_State(EState_Act::Idle);
     }
 
@@ -507,7 +507,7 @@ void CPlayer::ActState_Buster(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
-        if (m_pModelComp->AnimationComp()->Get_Animation_Finished())
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
             m_State_Act.Set_State(EState_Act::Idle);
     }
 
@@ -519,7 +519,7 @@ void CPlayer::ActState_Buster(const _float& fTimeDelta)
 
 void CPlayer::ShootBuster()
 {
-    _vector vPos = Transform().Get_PositionVector() + XMVectorSet(0.f, 0.5f, 1.f, 0.f);
+    _vector vPos = Transform().Get_PositionVector() + XMVectorSet(0.f, 0.5f, 0.f, 0.f);
     _float3 vfPos = {};
     XMStoreFloat3(&vfPos, vPos);
     auto pBuster = CWeapon_Buster::Create(vfPos);
@@ -529,7 +529,7 @@ void CPlayer::ShootBuster()
     GI()->Add_GameObject(pBuster);
     pBuster->Set_LifeTime(1.f);
     pBuster->Set_Speed(20.f);
-    pBuster->Set_LookDir(Transform().Get_LookFloat3());
+    pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
     pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 }
 
