@@ -326,6 +326,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\GameObject\DynamicCamera.h" />
     <ClInclude Include="Public\GameObject\Effect_Common.h" />
     <ClInclude Include="Public\GameObject\ItemChest.h" />
+    <ClInclude Include="Public\GameObject\Item_Deflector.h" />
     <ClInclude Include="Public\GameObject\LoadingScreen.h" />
     <ClInclude Include="Public\GameObject\ReaverBot_Balfura.h" />
     <ClInclude Include="Public\GameObject\ReaverBot_Horokko.h" />
@@ -349,6 +350,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\GameObject\DynamicCamera.cpp" />
     <ClCompile Include="Private\GameObject\Effect_Common.cpp" />
     <ClCompile Include="Private\GameObject\ItemChest.cpp" />
+    <ClCompile Include="Private\GameObject\Item_Deflector.cpp" />
     <ClCompile Include="Private\GameObject\LoadingScreen.cpp" />
     <ClCompile Include="Private\GameObject\ReaverBot_Balfura.cpp" />
     <ClCompile Include="Private\GameObject\ReaverBot_Horokko.cpp" />
