@@ -153,6 +153,9 @@
     <ClInclude Include="Public\GameObject\Effect_Common.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\ReaverBot_Balfura.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -213,6 +216,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\Effect_Common.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\ReaverBot_Balfura.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -469,8 +469,8 @@ HRESULT CImGuiWin_Convert::Load_Meshes(const aiScene* pScene, CModelLoad* pModel
             memcpy(&MeshData.vecVertices[j].vTangent, &pMesh->mTangents[j], sizeof(_float3));
             memcpy(&MeshData.vecVertices[j].vBiTangent, &pMesh->mBitangents[j], sizeof(_float3));
 
-            MeshData.vecVertices[j].vecBoneID.reserve(AI_TEXTURE_TYPE_MAX);
-            MeshData.vecVertices[j].vecWeights.reserve(AI_TEXTURE_TYPE_MAX);
+            MeshData.vecVertices[j].vecBoneID.reserve(AI_LMW_MAX_WEIGHTS);
+            MeshData.vecVertices[j].vecWeights.reserve(AI_LMW_MAX_WEIGHTS);
         }
 
         MeshData.vecIndices.resize(pMesh->mNumFaces * 3);
@@ -633,12 +633,12 @@ HRESULT CImGuiWin_Convert::Save_Binary(const wstring& strPath, class CModelLoad*
             {
                 TMeshVertex& Vertex = Mesh.vecVertices[j];
                 
-                ofs.write(ReCast<const _char*>(&Vertex), 4 * sizeof(_float3) + sizeof(_float2));
-                /*ofs.write(ReCast<const _char*>(&Vertex.vPosition), sizeof(_float3));
+                //ofs.write(ReCast<const _char*>(&Vertex), 4 * sizeof(_float3) + sizeof(_float2));
+                ofs.write(ReCast<const _char*>(&Vertex.vPosition), sizeof(_float3));
                 ofs.write(ReCast<const _char*>(&Vertex.vTexCoord), sizeof(_float2));
                 ofs.write(ReCast<const _char*>(&Vertex.vNormal), sizeof(_float3));
                 ofs.write(ReCast<const _char*>(&Vertex.vTangent), sizeof(_float3));
-                ofs.write(ReCast<const _char*>(&Vertex.vBiTangent), sizeof(_float3));*/
+                ofs.write(ReCast<const _char*>(&Vertex.vBiTangent), sizeof(_float3));
 
                 _uint iNumWeights = Cast<_uint>(Vertex.vecBoneID.size());
                 ofs.write(ReCast<const _char*>(&iNumWeights), sizeof(_uint));

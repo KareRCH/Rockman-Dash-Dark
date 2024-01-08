@@ -263,12 +263,12 @@ void CCommonModelComp::Apply_Pos()
 	m_pAnimationComp->Apply_FinalMask();
 }
 
-void CCommonModelComp::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse)
+void CCommonModelComp::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse, _float fTransitionSpeed)
 {
 	if (nullptr == m_pAnimationComp)
 		return;
 
-	m_pAnimationComp->Set_Animation(iAnimIndex, fSpeedMultiply, bIsLoop, bReverse);
+	m_pAnimationComp->Set_Animation(iAnimIndex, fSpeedMultiply, bIsLoop, bReverse, fTransitionSpeed);
 }
 
 void CCommonModelComp::Add_AnimTime(const _float& fTimeDelta)

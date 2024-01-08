@@ -11,10 +11,13 @@
 CReaverBot_Horokko::CReaverBot_Horokko()
 {
 	Set_Name(TEXT("ReaverBot_Horokko"));
+	Set_RenderGroup(ERenderGroup::Alpha);
 }
 
 CReaverBot_Horokko::CReaverBot_Horokko(const CReaverBot_Horokko& rhs)
+	: Base(rhs)
 {
+	NULL_CHECK(m_pModelComp = DynCast<CCommonModelComp*>(rhs.m_pModelComp->Clone()));
 }
 
 HRESULT CReaverBot_Horokko::Initialize_Prototype()
@@ -23,8 +26,6 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
-
-	TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
 
 	return S_OK;
 }
@@ -35,8 +36,6 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype(const _float3 vPos)
 		return E_FAIL;
 	if (FAILED(Initialize_Component()))
 		return E_FAIL;
-
-	TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
 
 	Transform().Set_Position(vPos);
 	
@@ -176,22 +175,16 @@ HRESULT CReaverBot_Horokko::Initialize_Component()
 void CReaverBot_Horokko::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
 	SUPER::OnCollision(pDst, pContact);
-
-	cout << "몬스터 충돌함" << endl;
 }
 
 void CReaverBot_Horokko::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
 {
 	SUPER::OnCollisionEntered(pDst, pContact);
-
-	cout << "몬스터 충돌진입" << endl;
 }
 
 void CReaverBot_Horokko::OnCollisionExited(CGameObject* pDst)
 {
 	SUPER::OnCollisionExited(pDst);
-
-	cout << "몬스터 충돌나감" << endl;
 }
 
 void CReaverBot_Horokko::Input_ActionKey()
