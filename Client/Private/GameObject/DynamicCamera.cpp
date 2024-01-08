@@ -1,5 +1,6 @@
 #include "GameObject/DynamicCamera.h"
 
+#include "GameObject/Player.h"
 
 CDynamicCamera::CDynamicCamera()
 {
@@ -24,8 +25,6 @@ HRESULT CDynamicCamera::Initialize_Prototype()
         XMMatrixLookAtLH(Transform().Get_PositionVector(), XMLoadFloat3(&m_vAt), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
     Transform().Set_Transform(matTransform);
     Apply_ViewProjMatrix();
-
-
 
     GI()->Toggle_LockMouseCenter();
 
@@ -53,36 +52,46 @@ void CDynamicCamera::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
+    //Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
+    //Transform().TurnUp(Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 0.1f * fTimeDelta);
+
     if (nullptr != m_pTarget)
     {
-        //Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
-        //Transform().TurnUp(Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 0.1f * fTimeDelta);
+        CPlayer* pPlayer = DynCast<CPlayer*>(m_pTarget);
+        if (nullptr != pPlayer && nullptr == m_pPivotComp)
+        {
+            m_pPivotComp = pPlayer->Get_Component<CPivotComponent>(TEXT("CameraPivot"));
+        }
 
-        m_fVerticalAngle += Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 2.f * fTimeDelta;
-        if (m_fVerticalAngle < -60.f)
-            m_fVerticalAngle = -60.f;
-        else if (m_fVerticalAngle > 60.f)
-            m_fVerticalAngle = 60.f;
+        if (nullptr != m_pPivotComp)
+        {
+            //Transform().Set_Position(m_pPivotComp->Transform().Get_PositionVector() - Transform().Get_LookNormalizedVector() * m_fSpringLength);
 
-        _vector vLook = m_pTarget->Transform().Get_PositionVector() - Transform().Get_PositionVector();
-        _vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
-        _vector vRight = Transform().Get_RightVector();
-        // 거리는 각도에 따라 결정
-        _float  fLength = 2.f * (1.f + ((m_fVerticalAngle + 20.f) / 60.f));
-        
-        vLook = XMVector3Normalize(vLook);
-        vRight = XMVector3Normalize(vRight);
+            m_fVerticalAngle += Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 2.f * fTimeDelta;
+            if (m_fVerticalAngle < -60.f)
+                m_fVerticalAngle = -60.f;
+            else if (m_fVerticalAngle > 60.f)
+                m_fVerticalAngle = 60.f;
 
-        vLook = XMVector3Rotate(vLook, XMQuaternionRotationAxis(vRight, XMConvertToRadians(m_fVerticalAngle)));
-        //vLook = XMVector3Rotate(vLook, XMQuaternionRotationAxis(vUp, XMConvertToRadians(m_fVerticalAngle)));
+            _vector vLook = m_pPivotComp->Transform().Get_LookNormalizedVector();
+            _vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+            _vector vRight = Transform().Get_RightNormalizedVector();
 
-        vLook *= fLength;
+            // 거리는 각도에 따라 결정
+            _float  fLength = 2.f * (1.f + ((m_fVerticalAngle + 20.f) / 60.f));
 
-        Transform().Set_Position(m_pTarget->Transform().Get_PositionVector() - vLook + XMVectorSet(0.f, 1.f, 0.f, 0.f));
-        XMStoreFloat3(&m_vAt, m_pTarget->Transform().Get_PositionVector() + XMVectorSet(0.f, 1.f, 0.f, 0.f));
-        _matrix matTransform = XMMatrixInverse(nullptr,
-            XMMatrixLookAtLH(Transform().Get_PositionVector(), XMLoadFloat3(&m_vAt), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-        Transform().Set_Transform(matTransform);
+            vLook = XMVector3Rotate(vLook, XMQuaternionRotationAxis(vRight, XMConvertToRadians(m_fVerticalAngle)));
+            //vLook = XMVector3Rotate(vLook, XMQuaternionRotationAxis(vUp, XMConvertToRadians(m_fVerticalAngle)));
+
+            vLook *= fLength;
+            m_fSpringLength = fLength;
+
+            Transform().Set_Position(m_pPivotComp->Transform().Get_PositionVector() - vLook);
+            XMStoreFloat3(&m_vAt, m_pPivotComp->Transform().Get_PositionVector());
+            _matrix matTransform = XMMatrixInverse(nullptr,
+                XMMatrixLookAtLH(Transform().Get_PositionVector(), XMLoadFloat3(&m_vAt), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+            Transform().Set_Transform(matTransform);
+        }
     }
 
     if (GI()->IsKey_Pressed(DIK_F3))

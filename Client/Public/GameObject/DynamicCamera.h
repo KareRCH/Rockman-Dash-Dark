@@ -3,6 +3,8 @@
 #include "BaseClass/Camera.h"
 #include "Client_Define.h"
 
+#include "Component/PivotComponent.h"
+
 BEGIN(Client)
 
 /// <summary>
@@ -32,11 +34,13 @@ protected:
 	virtual void	Free() override;
 
 private:
+	CPivotComponent* m_pPivotComp = { nullptr };
 	CGameObject* m_pTarget = { nullptr };
 
 private:
 	_float		m_fHorizontalAngle = { 0.f };
 	_float		m_fVerticalAngle = { 0.f };
+	_float		m_fSpringLength = { 5.f };
 };
 
 END

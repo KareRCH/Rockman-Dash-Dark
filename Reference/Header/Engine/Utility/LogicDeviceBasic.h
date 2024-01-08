@@ -35,6 +35,8 @@ public:
 			fCur = fMax;
 			return true;
 		}
+		else if (fCur <= 0.f)
+			fCur = 0.f;
 
 		return false;
 	}
@@ -49,6 +51,8 @@ public:
 			fCur = point;
 			return true;
 		}
+		else if (fCur <= 0.f)
+			fCur = 0.f;
 
 		return false;
 	}
@@ -66,6 +70,8 @@ public:
 			}
 			return true;
 		}
+		else if (fCur <= 0.f)
+			fCur = 0.f;
 
 		return false;
 	}

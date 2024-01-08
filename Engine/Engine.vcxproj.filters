@@ -310,6 +310,9 @@
     <Filter Include="02. Utility\08. DebugDraw">
       <UniqueIdentifier>{01ccb778-d8db-4a86-82d8-b2bcd8410564}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\01. TransformComponent\PivotComponent">
+      <UniqueIdentifier>{ae418622-780d-4898-bc9b-b1456cc07fc2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -669,6 +672,9 @@
     <ClInclude Include="Public\Utility\DebugDraw.h">
       <Filter>02. Utility\08. DebugDraw</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Component\PivotComponent.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\01. TransformComponent\PivotComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -955,6 +961,9 @@
     </ClCompile>
     <ClCompile Include="Private\Utility\DebugDraw.cpp">
       <Filter>02. Utility\08. DebugDraw</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\PivotComponent.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\01. TransformComponent\PivotComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
