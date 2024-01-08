@@ -50,7 +50,7 @@ public:
 	HRESULT Bind_Model(TYPE eType, EModelGroupIndex eGroupIndex, const wstring& strModelFilePath);
 	void Add_MaskTime(_uint iIndex, _float fAddTrackPos);
 	void Apply_Pos();
-	void Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse = false);
+	void Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse = false, _float fTransitionSpeed = 0.1f);
 	void Add_AnimTime(const _float& fTimeDelta);
 	void Invalidate_Animation();
 	void Invalidate_BoneTransforms();

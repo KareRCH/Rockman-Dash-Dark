@@ -257,7 +257,7 @@ _bool CAnimationComponent::IsAnimation_Finished()
 	return (m_CurAnim.bIsReverse) ? (m_CurAnim.fTrackPos <= 0) : (m_CurAnim.fTrackPos >= m_CurAnim.fDuration);
 }
 
-void CAnimationComponent::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse)
+void CAnimationComponent::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse, _float fTransitionSpeed)
 {
 	if (iAnimIndex < 0 || iAnimIndex >= m_pAnimGroup->Get_NumAnims())
 		return;
@@ -271,6 +271,7 @@ void CAnimationComponent::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply,
 	{
 		m_PrevAnim = m_CurAnim;
 		m_fTransitionGauge = 0.f;
+		m_fTransitionSpeed = fTransitionSpeed;
 	}
 
 	m_CurAnim.iAnimID = iAnimIndex;

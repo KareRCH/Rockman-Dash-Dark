@@ -25,7 +25,7 @@ cbuffer LightBuffer : register(b1)
 // »À Çà·Äµé
 cbuffer BoneBuffer : register(b2)
 {
-    matrix g_matBones[128];
+    matrix g_matBones[256];
 };
 
 vector g_vCamPosition = vector(0.f, 0.f, 0.f, 0.f);
@@ -130,6 +130,10 @@ PS_OUTPUT PS_MAIN(VPS_INOUT input)
 
     output.vColor = g_vLightDiffuse * vMtrlDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
 		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
+    //float fStair = 1.f;
+    //float fAlpha = output.vColor.a;
+    //output.vColor = float4(floor(output.vColor.x * fStair), floor(output.vColor.y * fStair), floor(output.vColor.z * fStair), 1.f) / fStair;
+    //output.vColor.a = fAlpha;
     
     output.vNormal = float4(input.vNormal, 1.f);
     

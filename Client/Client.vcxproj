@@ -327,6 +327,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\GameObject\Effect_Common.h" />
     <ClInclude Include="Public\GameObject\ItemChest.h" />
     <ClInclude Include="Public\GameObject\LoadingScreen.h" />
+    <ClInclude Include="Public\GameObject\ReaverBot_Balfura.h" />
     <ClInclude Include="Public\GameObject\ReaverBot_Horokko.h" />
     <ClInclude Include="Public\GameObject\SkyBox.h" />
     <ClInclude Include="Public\GameObject\Player.h" />
@@ -349,6 +350,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\GameObject\Effect_Common.cpp" />
     <ClCompile Include="Private\GameObject\ItemChest.cpp" />
     <ClCompile Include="Private\GameObject\LoadingScreen.cpp" />
+    <ClCompile Include="Private\GameObject\ReaverBot_Balfura.cpp" />
     <ClCompile Include="Private\GameObject\ReaverBot_Horokko.cpp" />
     <ClCompile Include="Private\GameObject\SkyBox.cpp" />
     <ClCompile Include="Private\GameObject\Player.cpp" />

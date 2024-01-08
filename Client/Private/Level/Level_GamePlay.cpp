@@ -12,6 +12,7 @@
 #include "GameObject/ReaverBot_Horokko.h"
 #include "BaseClass/Navigation.h"
 #include "Component/NavigationComponent.h"
+#include "GameObject/ReaverBot_Balfura.h"
 
 CLevel_GamePlay::CLevel_GamePlay()
 {
@@ -95,6 +96,7 @@ HRESULT CLevel_GamePlay::Ready_Objects()
     GI()->Add_GameObject(CPlayer::Create(_float3(5.f, 0.f, 5.f)));
     GI()->Add_GameObject(CItemChest::Create(_float3(15.f, 0.f, 10.f)));
     GI()->Add_GameObject(CReaverBot_Horokko::Create(_float3(10.f, 0.f, 15.f)));
+	GI()->Add_GameObject(CReaverBot_Balfura::Create(_float3(11.f, 0.f, 16.f)));
     //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
     GI()->Add_GameObject(CDynamicCamera::Create());
 

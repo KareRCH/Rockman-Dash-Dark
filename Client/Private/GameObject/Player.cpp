@@ -175,9 +175,9 @@ HRESULT CPlayer::Initialize_Component()
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
     m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
-    m_pModelComp->Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
+    m_pModelComp->Transform().Set_Scale(_float3(0.08f, 0.08f, 0.08f));
     m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
-    m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Megaman/Megaman.amodel");
+    m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/RockVolnutt.amodel");
 
     /*m_pModelComp->Create_Mask(L"Main", L"Armature", true);
     m_pModelComp->Create_Mask(L"Head", L"Armature", false);
@@ -360,7 +360,7 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(1, 1.f, true);
+        m_pModelComp->Set_Animation(2, 1.f, true);
     }
 
     if (m_State_Act.Can_Update())
@@ -414,7 +414,7 @@ void CPlayer::ActState_Ready_Jump(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(5, 1.f, false);
+        m_pModelComp->Set_Animation(3, 1.f, false);
         GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
     }
 
@@ -436,7 +436,7 @@ void CPlayer::ActState_Jump_Up(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(6, 1.f, false);
+        m_pModelComp->Set_Animation(4, 1.f, false);
     }
 
     if (m_State_Act.Can_Update())
@@ -457,7 +457,7 @@ void CPlayer::ActState_Jump_Down(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(7, 1.f, false);
+        m_pModelComp->Set_Animation(5, 1.f, false);
     }
 
     if (m_State_Act.Can_Update())
@@ -478,7 +478,7 @@ void CPlayer::ActState_Landing(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(8, 1.f, false);
+        m_pModelComp->Set_Animation(6, 1.f, false, false, 0.3f);
         GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_landing.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
     }
 
@@ -500,7 +500,7 @@ void CPlayer::ActState_Buster(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(17, 5.f, false);
+        m_pModelComp->Set_Animation(7, 2.f, false, false, 0.5f);
         GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_buster.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
         ShootBuster();
     }
@@ -508,7 +508,11 @@ void CPlayer::ActState_Buster(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            if (GI()->IsMouse_Pressing(DIM_LB))
+                m_State_Act.Set_State(EState_Act::Buster);
             m_State_Act.Set_State(EState_Act::Idle);
+        }
     }
 
     if (m_State_Act.IsState_Exit())

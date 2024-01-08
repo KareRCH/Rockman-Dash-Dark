@@ -79,12 +79,12 @@ HRESULT CModelMgr::Load_Binary(const wstring& strFileName, CModelLoad* pModel)
                 _uint iNumWeights = Cast<_uint>(Vertex.vecBoneID.size());
 
                 // 정점 정보
-                ifs.read(ReCast<_char*>(&Vertex), 4 * sizeof(_float3) + sizeof(_float2));
-                /*ifs.read(ReCast<_char*>(&Vertex.vPosition), sizeof(_float3));
+                //ifs.read(ReCast<_char*>(&Vertex), 4 * sizeof(_float3) + sizeof(_float2));
+                ifs.read(ReCast<_char*>(&Vertex.vPosition), sizeof(_float3));
                 ifs.read(ReCast<_char*>(&Vertex.vTexCoord), sizeof(_float2));
                 ifs.read(ReCast<_char*>(&Vertex.vNormal), sizeof(_float3));
                 ifs.read(ReCast<_char*>(&Vertex.vTangent), sizeof(_float3));
-                ifs.read(ReCast<_char*>(&Vertex.vBiTangent), sizeof(_float3));*/
+                ifs.read(ReCast<_char*>(&Vertex.vBiTangent), sizeof(_float3));
 
                 // 뼈ID, WeightID 개수
                 ifs.read(ReCast<_char*>(&iNumWeights), sizeof(_uint));
