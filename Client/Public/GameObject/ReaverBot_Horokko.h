@@ -65,6 +65,8 @@ private:
 	_float m_fMoveSpeed = { 5.f };
 
 
+public:
+	void Dead_Effect();
 
 
 public:
@@ -84,6 +86,7 @@ private:		// 약식 상태머신
 	SState_Act		m_State_Act;
 
 	FGauge m_fDeadTime = FGauge(2.f);
+	FGauge m_fDeadEffect = FGauge(0.1f);
 
 private:
 	void ActState_Idle(const _float& fTimeDelta);

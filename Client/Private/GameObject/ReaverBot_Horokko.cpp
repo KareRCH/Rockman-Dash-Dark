@@ -8,6 +8,8 @@
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 
+#include "GameObject/Effect_Common.h"
+
 CReaverBot_Horokko::CReaverBot_Horokko()
 {
 	Set_Name(TEXT("ReaverBot_Horokko"));
@@ -242,6 +244,18 @@ void CReaverBot_Horokko::Move_Update(const _float& fTimeDelta)
 		Transform().TurnRight(-m_fMoveSpeed * fTimeDelta);
 }
 
+void CReaverBot_Horokko::Dead_Effect()
+{
+	CEffect_Common* pEffect = CEffect_Common::Create();
+	if (FAILED(GI()->Add_GameObject(pEffect)))
+		return;
+
+	if (nullptr == pEffect)
+		return;
+
+	pEffect->Transform().Set_Position(Transform().Get_PositionFloat3());
+}
+
 void CReaverBot_Horokko::Register_State()
 {
 	for (_uint i = 0; i < ECast(EActionKey::Size); i++)
@@ -440,6 +454,12 @@ void CReaverBot_Horokko::ActState_Dead(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
+		if (m_fDeadEffect.Increase(fTimeDelta))
+		{
+			m_fDeadEffect.Reset();
+			Dead_Effect();
+		}
+
 		if (m_fDeadTime.Increase(fTimeDelta))
 			Set_Dead();
 	}
