@@ -83,6 +83,8 @@ private:		// 약식 상태머신
 	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
 	SState_Act		m_State_Act;
 
+	FGauge m_fDeadTime = FGauge(2.f);
+
 private:
 	void ActState_Idle(const _float& fTimeDelta);
 	void ActState_Run(const _float& fTimeDelta);
