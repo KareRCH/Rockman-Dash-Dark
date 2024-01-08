@@ -288,6 +288,9 @@ namespace Engine
 		// 현재 상태를 바꾸는 함수 (탈출 코드랑 진입 코드를 작동 시킨다.)
 		void Set_State(T _eState)
 		{
+			if (bIsExit)
+				return;
+
 			ePrevState = eState;
 			eState = _eState;
 			bIsExit = true;
