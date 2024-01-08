@@ -79,6 +79,9 @@
     <Filter Include="02. GameObject\04. Characters\00. Effects">
       <UniqueIdentifier>{d1272671-581b-4978-8fbf-54708fcb35aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. Object\02. Deflector">
+      <UniqueIdentifier>{8a59cf73-2514-4aee-b03c-4e048567049b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -156,6 +159,9 @@
     <ClInclude Include="Public\GameObject\ReaverBot_Balfura.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\Item_Deflector.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -219,6 +225,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\ReaverBot_Balfura.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Item_Deflector.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
