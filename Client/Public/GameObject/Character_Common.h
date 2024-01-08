@@ -51,9 +51,11 @@ private:
 	CTeamAgentComp* m_pTeamAgentComp = { nullptr };
 #pragma endregion
 
+public:
+	void Damage_HP(_float fDamage) { m_fHP.fCur -= fDamage; }
 
 protected:
-	FGauge	m_fHP = FGauge(100.f);
+	FGauge	m_fHP = FGauge(100.f, true);
 	//FGauge
 
 };

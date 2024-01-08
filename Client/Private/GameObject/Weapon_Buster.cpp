@@ -168,8 +168,6 @@ HRESULT CWeapon_Buster::Initialize_Component()
 void CWeapon_Buster::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
 	SUPER::OnCollision(pDst, pContact);
-
-	cout << "충돌함" << endl;
 	
 }
 
@@ -177,13 +175,13 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 {
 	SUPER::OnCollisionEntered(pDst, pContact);
 
-	cout << "충돌 진입" << endl;
 	CCharacter_Common* pEnemy = DynCast<CCharacter_Common*>(pDst);
 	if (pEnemy)
 	{
 		if (CTeamAgentComp::ERelation::Hostile == 
 			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
 		{
+			pEnemy->Damage_HP(1.f);
 			Create_Effect();
 			Set_Dead();
 		}
@@ -195,7 +193,6 @@ void CWeapon_Buster::OnCollisionExited(CGameObject* pDst)
 {
 	SUPER::OnCollisionExited(pDst);
 
-	cout << "충돌 나감" << endl;
 }
 
 void CWeapon_Buster::Create_Effect()

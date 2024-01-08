@@ -12,6 +12,7 @@ CReaverBot_Horokko::CReaverBot_Horokko()
 {
 	Set_Name(TEXT("ReaverBot_Horokko"));
 	Set_RenderGroup(ERenderGroup::Alpha);
+	m_fHP = FGauge(10.f, true);
 }
 
 CReaverBot_Horokko::CReaverBot_Horokko(const CReaverBot_Horokko& rhs)
@@ -75,6 +76,9 @@ void CReaverBot_Horokko::Tick(const _float& fTimeDelta)
 	SUPER::Tick(fTimeDelta);
 
 	Input_ActionKey();
+	if (!m_State_Act.IsOnState(EState_Act::Dead) && m_fHP.Get_Percent() <= 0.f)
+		m_State_Act.Set_State(EState_Act::Dead);
+
 	//m_State_AI.Get_StateFunc()(this, fTimeDelta);
 	m_State_Act.Get_StateFunc()(this, fTimeDelta);
 	m_ActionKey.Reset();
@@ -436,7 +440,7 @@ void CReaverBot_Horokko::ActState_Dead(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+		if (m_fDeadTime.Increase(fTimeDelta))
 			Set_Dead();
 	}
 
