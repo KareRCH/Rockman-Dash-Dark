@@ -4,6 +4,7 @@
 #include "Client_Define.h"
 
 #include "Utility/LogicDeviceBasic.h"
+#include "Component/PivotComponent.h"
 
 BEGIN(Engine)
 
@@ -61,9 +62,12 @@ public:		// 충돌 이벤트
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
 	CNavigationComponent* m_pNaviComp = { nullptr };
+	CPivotComponent* m_pCameraPivotComp = { nullptr };
 
 private:
+	void	Register_State();
 	void	Move_Update(const _float& fTimeDelta);
+	void	Look_Update(const _float& fTimeDelta);
 
 private:
 	_bool		m_bIsOnGround = true;
@@ -81,8 +85,20 @@ private:
 	FGauge		m_fDamageKnockback = FGauge(0.5f);		// 넉백 시간
 	FGauge		m_fStrongKnockback = FGauge(1.f);		// 강하게 넉백
 
+	FGauge		m_fKnockDownTime = FGauge(2.f);			// 넉다운 시간
+	FGauge		m_fKnockDownValue = FGauge(3.f);		// 넉다운 되기 위한 수치
+	FDelay		m_fKnockDownDelay = FDelay(0.7f);		// 넉다운 딜레이
+
+	_bool		m_bInvisible = { false };				// 무적
+	FDelay		m_fInvisibleTime = FDelay(5.f, true);	// 무적시간
+
+	enum MOVE_DIR { MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK };
+	MOVE_DIR	m_ePrevMoveDir = { MOVE_FORWARD };
+	MOVE_DIR	m_eMoveDir = { MOVE_FORWARD };
+
 public:
-	enum class EState_Act { Idle, Run, Walk, Ready_Jump, Jump_Up, Jump_Down, Landing, Buster };
+	enum class EState_Act { Idle, Run, Walk, Ready_Jump, Jump_Up, Jump_Down, Landing, Buster, 
+		DamagedLight, DamagedHeavy, KnockDown, StandUp, ReadyLaser, ShootingLaser, EndLaser };
 
 private:		// 약식 상태머신
 	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
@@ -97,6 +113,13 @@ private:
 	void ActState_Jump_Down(const _float& fTimeDelta);
 	void ActState_Landing(const _float& fTimeDelta);
 	void ActState_Buster(const _float& fTimeDelta);
+	void ActState_DamagedLight(const _float& fTimeDelta);
+	void ActState_DamagedHeavy(const _float& fTimeDelta);
+	void ActState_KnockDown(const _float& fTimeDelta);
+	void ActState_StandUp(const _float& fTimeDelta);
+	void ActState_ReadyLaser(const _float& fTimeDelta);
+	void ActState_ShootingLaser(const _float& fTimeDelta);
+	void ActState_EndLaser(const _float& fTimeDelta);
 
 private:
 	void ShootBuster();

@@ -93,6 +93,7 @@ private:
 public:
 	_bool	IsAnimation_Finished();
 	void Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse = false, _float fTransitionSpeed = 0.1f);
+	void Set_AnimationMaintain(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse = false, _float fTransitionSpeed = 0.1f);
 	void Add_AnimTime(const _float& fTimeDelta);
 	void Invalidate_Animation();
 	void Invalidate_AnimationWithMask(class CAnimMaskComp* pAnimMaskComp);

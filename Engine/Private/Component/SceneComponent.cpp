@@ -114,3 +114,25 @@ _float4x4 CSceneComponent::Calculate_TransformFloat4x4FromParent()
 
 	return matResult;
 }
+
+_matrix CSceneComponent::Calculate_TransformMatrixFromParentNoSelf()
+{
+	_matrix matCalc = XMMatrixIdentity();
+
+	if (m_pParentSceneComp)
+		matCalc *= Calculate_TransformMatrixFromParent();
+	else if (Get_OwnerObject())
+		matCalc *= Get_OwnerObject()->Transform().Get_TransformMatrix();
+
+	return matCalc;
+}
+
+_float4x4 CSceneComponent::Calculate_TransformFloat4x4FromParentNoSelf()
+{
+	_matrix matCalc = Calculate_TransformMatrixFromParentNoSelf();
+
+	_float4x4 matResult = {};
+	XMStoreFloat4x4(&matResult, matCalc);
+
+	return matResult;
+}

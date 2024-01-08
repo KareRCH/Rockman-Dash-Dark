@@ -244,6 +244,7 @@
     <ClInclude Include="Public\Component\MeshComp.h" />
     <ClInclude Include="Public\Component\NaviCellBufferComp.h" />
     <ClInclude Include="Public\Component\NavigationComponent.h" />
+    <ClInclude Include="Public\Component\PivotComponent.h" />
     <ClInclude Include="Public\Component\PlaneModelComp.h" />
     <ClInclude Include="Public\Component\TerrainBufferComp.h" />
     <ClInclude Include="Public\Component\TerrainModelComp.h" />
@@ -385,6 +386,7 @@
     <ClCompile Include="Private\Component\ModelComponent.cpp" />
     <ClCompile Include="Private\Component\ModelShaderComp.cpp" />
     <ClCompile Include="Private\Component\MultiMeshBufComp.cpp" />
+    <ClCompile Include="Private\Component\PivotComponent.cpp" />
     <ClCompile Include="Private\Component\PlaneModelComp.cpp" />
     <ClCompile Include="Private\Component\RectBufferComp.cpp" />
     <ClCompile Include="Private\Component\SceneComponent.cpp" />

@@ -283,6 +283,31 @@ void CAnimationComponent::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply,
 	m_CurAnim.fTrackPos = (!bReverse) ? 0.f : m_CurAnim.fDuration;
 }
 
+void CAnimationComponent::Set_AnimationMaintain(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse, _float fTransitionSpeed)
+{
+	if (iAnimIndex < 0 || iAnimIndex >= m_pAnimGroup->Get_NumAnims())
+		return;
+
+	auto pBoneAnimData = m_pAnimGroup->Find_BoneAnim(iAnimIndex);
+	if (pBoneAnimData == nullptr)
+		return;
+
+	// 이전 애니메이션 설정
+	if (m_CurAnim.iAnimID != iAnimIndex)
+	{
+		m_PrevAnim = m_CurAnim;
+		m_fTransitionGauge = 0.f;
+		m_fTransitionSpeed = fTransitionSpeed;
+	}
+
+	m_CurAnim.iAnimID = iAnimIndex;
+	m_CurAnim.fDuration = pBoneAnimData->fDuration;
+	m_CurAnim.fTickPerSeconds = pBoneAnimData->fTickPerSecond;
+	m_CurAnim.fSpeedMultiply = fSpeedMultiply;
+	m_CurAnim.bIsLoop = bIsLoop;
+	m_CurAnim.bIsReverse = bReverse;
+}
+
 void CAnimationComponent::Add_AnimTime(const _float& fTimeDelta)
 {
 	m_CurAnim.fTrackPos += m_CurAnim.fTickPerSeconds * m_CurAnim.fSpeedMultiply * fTimeDelta * (m_CurAnim.bIsReverse ? -1 : 1);

@@ -15,29 +15,14 @@
 CPlayer::CPlayer()
 {
     Set_Name(L"Player");
-
-    m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
-    m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
-    m_State_Act.Add_Func(EState_Act::Walk, &ThisClass::ActState_Walk);
-    m_State_Act.Add_Func(EState_Act::Ready_Jump, &ThisClass::ActState_Ready_Jump);
-    m_State_Act.Add_Func(EState_Act::Jump_Up, &ThisClass::ActState_Jump_Up);
-    m_State_Act.Add_Func(EState_Act::Jump_Down, &ThisClass::ActState_Jump_Down);
-    m_State_Act.Add_Func(EState_Act::Landing, &ThisClass::ActState_Landing);
-    m_State_Act.Add_Func(EState_Act::Buster, &ThisClass::ActState_Buster);
+    Register_State();
 }
 
 CPlayer::CPlayer(const CPlayer& rhs)
     : Base(rhs)
     , m_pModelComp(rhs.m_pModelComp)
 {
-    m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
-    m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
-    m_State_Act.Add_Func(EState_Act::Walk, &ThisClass::ActState_Walk);
-    m_State_Act.Add_Func(EState_Act::Ready_Jump, &ThisClass::ActState_Ready_Jump);
-    m_State_Act.Add_Func(EState_Act::Jump_Up, &ThisClass::ActState_Jump_Up);
-    m_State_Act.Add_Func(EState_Act::Jump_Down, &ThisClass::ActState_Jump_Down);
-    m_State_Act.Add_Func(EState_Act::Landing, &ThisClass::ActState_Landing);
-    m_State_Act.Add_Func(EState_Act::Buster, &ThisClass::ActState_Buster);
+    Register_State();
 }
 
 HRESULT CPlayer::Initialize_Prototype()
@@ -96,9 +81,16 @@ void CPlayer::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
+    if (m_fInvisibleTime.Increase(fTimeDelta))
+        m_bInvisible = false;
+
+    m_fKnockDownDelay.Increase(fTimeDelta);
+    // 넉다운 수치 시간당 감소
+    m_fKnockDownValue.Increase(-fTimeDelta * 0.1f);
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
 
     m_pColliderComp->Tick(fTimeDelta);
+    m_pCameraPivotComp->Tick(fTimeDelta);
 }
 
 void CPlayer::Late_Tick(const _float& fTimeDelta)
@@ -174,8 +166,11 @@ HRESULT CPlayer::Initialize_Component()
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
     //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
 
+    FAILED_CHECK_RETURN(Add_Component(L"CameraPivot", m_pCameraPivotComp = CPivotComponent::Create()), E_FAIL);
+    m_pCameraPivotComp->OffsetTransform().Set_Position(0.f, 1.3f, 0.f);
+
     m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
-    m_pModelComp->Transform().Set_Scale(_float3(0.08f, 0.08f, 0.08f));
+    m_pModelComp->Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
     m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
     m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/RockVolnutt.amodel");
 
@@ -208,24 +203,66 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
     SUPER::OnCollision(pDst, pContact);
 
-    cout << "충돌함" << endl;
+    CCharacter_Common* pEnemy = DynCast<CCharacter_Common*>(pDst);
+    if (pEnemy)
+    {
+        if (CTeamAgentComp::ERelation::Hostile ==
+            CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
+        {
+            if (m_fKnockDownDelay.IsMax() && !m_bInvisible)
+            {
+                m_fKnockDownDelay.Reset();
+                if (m_fKnockDownValue.Increase(2.5f))
+                {
+                    m_State_Act.Set_State(EState_Act::DamagedHeavy);
+                    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+                }
+                else
+                {
+                    m_State_Act.Set_State(EState_Act::DamagedLight);
+                    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+                }
+            }
+
+            //Create_Effect();
+        }
+    }
 }
 
 void CPlayer::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
 {
     SUPER::OnCollisionEntered(pDst, pContact);
 
-    cout << "충돌 진입" << endl;
+    
 }
 
 void CPlayer::OnCollisionExited(CGameObject* pDst)
 {
     SUPER::OnCollisionExited(pDst);
 
-    cout << "충돌 나감" << endl;
 }
 
 
+
+void CPlayer::Register_State()
+{
+    m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
+    m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
+    m_State_Act.Add_Func(EState_Act::Walk, &ThisClass::ActState_Walk);
+    m_State_Act.Add_Func(EState_Act::Ready_Jump, &ThisClass::ActState_Ready_Jump);
+    m_State_Act.Add_Func(EState_Act::Jump_Up, &ThisClass::ActState_Jump_Up);
+    m_State_Act.Add_Func(EState_Act::Jump_Down, &ThisClass::ActState_Jump_Down);
+    m_State_Act.Add_Func(EState_Act::Landing, &ThisClass::ActState_Landing);
+    m_State_Act.Add_Func(EState_Act::Buster, &ThisClass::ActState_Buster);
+    m_State_Act.Add_Func(EState_Act::DamagedLight, &ThisClass::ActState_DamagedLight);
+    m_State_Act.Add_Func(EState_Act::DamagedHeavy, &ThisClass::ActState_DamagedHeavy);
+    m_State_Act.Add_Func(EState_Act::KnockDown, &ThisClass::ActState_KnockDown);
+    m_State_Act.Add_Func(EState_Act::StandUp, &ThisClass::ActState_StandUp);
+    m_State_Act.Add_Func(EState_Act::ReadyLaser, &ThisClass::ActState_ReadyLaser);
+    m_State_Act.Add_Func(EState_Act::ShootingLaser, &ThisClass::ActState_ShootingLaser);
+    m_State_Act.Add_Func(EState_Act::EndLaser, &ThisClass::ActState_EndLaser);
+    m_State_Act.Set_State(EState_Act::Idle);
+}
 
 void CPlayer::Move_Update(const _float& fTimeDelta)
 {
@@ -247,17 +284,20 @@ void CPlayer::Move_Update(const _float& fTimeDelta)
 
     m_bIsMoving = false;
     m_vLookDirection = {};
+    m_ePrevMoveDir = m_eMoveDir;
     if (GI()->IsKey_Pressing(DIK_W))
     {
         m_vLookDirection.z = 1.f;
         m_vVelocity.z += m_vAcceleration.z * fTimeDelta;
         m_bIsMoving = true;
+        m_eMoveDir = MOVE_FORWARD;
     }
     else if (GI()->IsKey_Pressing(DIK_S))
     {
         m_vLookDirection.z = -1.f;
         m_vVelocity.z -= m_vAcceleration.z * fTimeDelta;
         m_bIsMoving = true;
+        m_eMoveDir = MOVE_BACK;
     }
     else
     {
@@ -272,12 +312,14 @@ void CPlayer::Move_Update(const _float& fTimeDelta)
         m_vLookDirection.x = 1.f;
         m_vVelocity.x += m_vAcceleration.x * fTimeDelta;
         m_bIsMoving = true;
+        m_eMoveDir = MOVE_RIGHT;
     }
     else if (GI()->IsKey_Pressing(DIK_A))
     {
         m_vLookDirection.x = -1.f;
         m_vVelocity.x -= m_vAcceleration.x * fTimeDelta;
         m_bIsMoving = true;
+        m_eMoveDir = MOVE_LEFT;
     }
     else
     {
@@ -298,7 +340,7 @@ void CPlayer::Move_Update(const _float& fTimeDelta)
     vCurMoveDir = XMVector3Rotate(vCurMoveDir, XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), fFinalAngle));
     XMStoreFloat3(&m_vLookDirection_Blend, vCurMoveDir);*/
 
-    Transform().TurnAxis(_float3(0.f, 1.f, 0.f), m_vLookDirection.x * 5.f * fTimeDelta);
+    //Transform().TurnAxis(_float3(0.f, 1.f, 0.f), m_vLookDirection.x * 5.f * fTimeDelta);
 
     if (m_bIsOnGround)
     {
@@ -327,7 +369,10 @@ void CPlayer::Move_Update(const _float& fTimeDelta)
     Transform().MoveRightward(m_vVelocity.x * fTimeDelta);
     if (!m_pNaviComp->IsMove(Transform().Get_PositionVector()))
         Transform().Set_Position(vPos);
+}
 
+void CPlayer::Look_Update(const _float& fTimeDelta)
+{
     Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
 }
 
@@ -341,6 +386,7 @@ void CPlayer::ActState_Idle(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
         Move_Update(fTimeDelta);
+        Look_Update(fTimeDelta);
 
         if (!m_bIsOnGround)
             m_State_Act.Set_State(EState_Act::Ready_Jump);
@@ -348,6 +394,8 @@ void CPlayer::ActState_Idle(const _float& fTimeDelta)
             m_State_Act.Set_State(EState_Act::Run);
         if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_LB))
             m_State_Act.Set_State(EState_Act::Buster);
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
+            m_State_Act.Set_State(EState_Act::ReadyLaser);
     }
 
     if (m_State_Act.IsState_Exit())
@@ -360,12 +408,46 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(2, 1.f, true);
+        switch (m_eMoveDir)
+        {
+        case MOVE_FORWARD:
+            m_pModelComp->Set_Animation(2, 1.0f, true);
+            break;
+        case MOVE_RIGHT:
+            m_pModelComp->Set_Animation(8, 1.0f, true);
+            break;
+        case MOVE_LEFT:
+            m_pModelComp->Set_Animation(9, 1.0f, true);
+            break;
+        case MOVE_BACK:
+            m_pModelComp->Set_Animation(10, 1.0f, true);
+            break;
+        }
     }
 
     if (m_State_Act.Can_Update())
     {
         Move_Update(fTimeDelta);
+        Look_Update(fTimeDelta);
+
+        if (m_ePrevMoveDir != m_eMoveDir)
+        {
+            switch (m_eMoveDir)
+            {
+            case MOVE_FORWARD:
+                m_pModelComp->Set_AnimationMaintain(2, 1.0f, true);
+                break;
+            case MOVE_RIGHT:
+                m_pModelComp->Set_AnimationMaintain(8, 1.0f, true);
+                break;
+            case MOVE_LEFT:
+                m_pModelComp->Set_AnimationMaintain(9, 1.0f, true);
+                break;
+            case MOVE_BACK:
+                m_pModelComp->Set_AnimationMaintain(10, 1.0f, true);
+                break;
+            }
+        }
 
         if (m_fFootSound.Increase(fTimeDelta))
         {
@@ -379,6 +461,8 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
             m_State_Act.Set_State(EState_Act::Idle);
         if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_LB))
             m_State_Act.Set_State(EState_Act::Buster);
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
+            m_State_Act.Set_State(EState_Act::ReadyLaser);
     }
 
     if (m_State_Act.IsState_Exit())
@@ -397,6 +481,7 @@ void CPlayer::ActState_Walk(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
         Move_Update(fTimeDelta);
+        Look_Update(fTimeDelta);
 
         if (!m_bIsOnGround)
             m_State_Act.Set_State(EState_Act::Ready_Jump);
@@ -421,6 +506,7 @@ void CPlayer::ActState_Ready_Jump(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
         Move_Update(fTimeDelta);
+        Look_Update(fTimeDelta);
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
             m_State_Act.Set_State(EState_Act::Jump_Up);
@@ -442,6 +528,7 @@ void CPlayer::ActState_Jump_Up(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
         Move_Update(fTimeDelta);
+        Look_Update(fTimeDelta);
 
         if (m_vVelocity.y < 0)
             m_State_Act.Set_State(EState_Act::Jump_Down);
@@ -463,6 +550,7 @@ void CPlayer::ActState_Jump_Down(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
         Move_Update(fTimeDelta);
+        Look_Update(fTimeDelta);
 
         if (m_bIsOnGround)
             m_State_Act.Set_State(EState_Act::Landing);
@@ -485,6 +573,7 @@ void CPlayer::ActState_Landing(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
         Move_Update(fTimeDelta);
+        Look_Update(fTimeDelta);
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
             m_State_Act.Set_State(EState_Act::Idle);
@@ -507,10 +596,169 @@ void CPlayer::ActState_Buster(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
+        Look_Update(fTimeDelta);
+
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
             if (GI()->IsMouse_Pressing(DIM_LB))
                 m_State_Act.Set_State(EState_Act::Buster);
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_DamagedLight(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(14, 1.f, false, false, 0.5f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_DamagedHeavy(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(15, 1.f, false, false, 0.3f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::KnockDown);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_KnockDown(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(16, 1.f, false, false, 0.1f);
+        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+        m_bInvisible = true;
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        m_fInvisibleTime.Reset();
+        if (m_fKnockDownTime.Increase(fTimeDelta))
+        {
+            m_fKnockDownTime.Reset();
+            m_State_Act.Set_State(EState_Act::StandUp);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+        m_fKnockDownValue.Reset();
+    }
+}
+
+void CPlayer::ActState_StandUp(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(17, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ReadyLaser(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(18, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::ShootingLaser);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ShootingLaser(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(19, 1.f, true, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (!GI()->IsMouse_Pressing(DIM_RB))
+        {
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_EndLaser(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(18, 1.f, false, true, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
             m_State_Act.Set_State(EState_Act::Idle);
         }
     }

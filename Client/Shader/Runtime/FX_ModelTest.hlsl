@@ -120,6 +120,11 @@ PS_OUTPUT PS_MAIN(VPS_INOUT input)
 
     if (vMtrlDiffuse.a < 0.3f)
         discard;
+    
+    float fStair = 10.f;
+    float fAlpha = vMtrlDiffuse.a;
+    vMtrlDiffuse = float4(floor(vMtrlDiffuse.x * fStair), floor(vMtrlDiffuse.y * fStair), floor(vMtrlDiffuse.z * fStair), 1.f) / fStair;
+    vMtrlDiffuse.a = fAlpha;
 
     float fShade = max(dot(normalize(g_vLightDir) * -1.f, normalize(vector(input.vNormal, 1.f))), 0.f);
 
@@ -130,10 +135,8 @@ PS_OUTPUT PS_MAIN(VPS_INOUT input)
 
     output.vColor = g_vLightDiffuse * vMtrlDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
 		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
-    //float fStair = 1.f;
-    //float fAlpha = output.vColor.a;
-    //output.vColor = float4(floor(output.vColor.x * fStair), floor(output.vColor.y * fStair), floor(output.vColor.z * fStair), 1.f) / fStair;
-    //output.vColor.a = fAlpha;
+    
+
     
     output.vNormal = float4(input.vNormal, 1.f);
     

@@ -60,6 +60,9 @@ public:
 
 	_matrix Calculate_TransformMatrixFromParent();
 	_float4x4 Calculate_TransformFloat4x4FromParent();
+	// 자신은 뺴고 부모의 트랜스폼만 계산
+	_matrix Calculate_TransformMatrixFromParentNoSelf();
+	_float4x4 Calculate_TransformFloat4x4FromParentNoSelf();
 
 private:
 	CTransformComponent* m_pTransformComp = { nullptr };			// 내부 트랜스폼 컴포넌트 포함  
