@@ -7,6 +7,7 @@
 #include "Component/Define/Component_Define.h"
 #include "BaseClass/GameObject_Define.h"
 #include "Component/GameObjectComp.h"
+#include "Utility/RapidJsonSerial.h"
 
 BEGIN(Engine)
 
@@ -45,6 +46,10 @@ public:
 
 protected:
 	virtual void	Free() override;
+
+public:
+	// 직렬화 데이터 뽑아낼 때 사용하는 함수. 각 오브젝트 별로 뽑아내는 데이터가 다릅니다.
+	virtual FSerialData SerializeData();
 
 
 

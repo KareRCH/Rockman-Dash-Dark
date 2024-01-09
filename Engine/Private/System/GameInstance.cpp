@@ -17,6 +17,7 @@
 #include "System/CloudStationMgr.h"
 #include "System/TextureMgr.h"
 #include "System/RenderMgr.h"
+#include "System/RenderTargetMgr.h"
 #include "System/ModelMgr.h"
 #include "System/ParticleMgr.h"
 
@@ -38,6 +39,7 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDevi
 	DX11DEVICE_T tDevice = { Get_GraphicDev().Get(), Get_GraphicContext().Get() };
 
 	FAILED_CHECK_RETURN(Initialize_InputDev(hInst, hWnd), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_RenderTargetMgr(tDevice), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_RenderMgr(tDevice), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_PipelineMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_PhysicsMgr(1), E_FAIL);
@@ -77,6 +79,7 @@ void CGameInstance::Release_Managers()
 {
 	Safe_Release(m_pModelMgr);
 	Safe_Release(m_pRenderMgr);
+	Safe_Release(m_pRenderTargetMgr);
 	Safe_Release(m_pComponentMgr);
 	Safe_Release(m_pObjectMgr);
 	Safe_Release(m_pLevelMgr);
@@ -950,6 +953,14 @@ CGameObject* CGameInstance::Find_GameObjectByName(const wstring& strName)
 	return m_pObjectMgr->Find_GameObjectByName(strName);
 }
 
+vector<class CGameObject*> CGameInstance::Get_AllGameObjectFromLevel(const wstring& strLevelTag)
+{
+	if (nullptr == m_pObjectMgr)
+		return vector<class CGameObject*>();
+
+	return m_pObjectMgr->Get_AllGameObjectFromLevel(strLevelTag);
+}
+
 void CGameInstance::Clear_GameObject(const wstring& strLayerTag)
 {
 	if (nullptr == m_pObjectMgr)
@@ -1126,72 +1137,42 @@ void CGameInstance::Clear_RenderGroup()
 	m_pRenderMgr->Clear_RenderGroup();
 }
 
-void CGameInstance::Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPers)
-{
-	if (nullptr == m_pRenderMgr)
-		return;
-
-	m_pRenderMgr->Set_PerspectiveViewMatrix(iCam, matPers);
-}
-
-const _matrix CGameInstance::Get_PerspectiveViewMatrix(const _uint iCam) const
-{
-	if (nullptr == m_pRenderMgr)
-		return _matrix();
-
-	return m_pRenderMgr->Get_PerspectiveViewMatrix(iCam);
-}
-
-void CGameInstance::Set_PerspectiveProjMatrix(const _uint iCam, const _matrix& matPersProj)
-{
-	if (nullptr == m_pRenderMgr)
-		return;
-
-	m_pRenderMgr->Set_PerspectiveProjMatrix(iCam, matPersProj);
-}
-
-const _matrix CGameInstance::Get_PerspectiveProjMatrix(const _uint iCam) const
-{
-	if (nullptr == m_pRenderMgr)
-		return _matrix();
-
-	return m_pRenderMgr->Get_PerspectiveProjMatrix(iCam);
-}
-
-void CGameInstance::Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrtho)
-{
-	if (nullptr == m_pRenderMgr)
-		return;
-
-	m_pRenderMgr->Set_OrthogonalViewMatrix(iCam, matOrtho);
-}
-
-const _matrix CGameInstance::Get_OrthogonalViewMatrix(const _uint iCam) const
-{
-	if (nullptr == m_pRenderMgr)
-		return _matrix();
-
-	return m_pRenderMgr->Get_OrthogonalViewMatrix(iCam);
-}
-
-void CGameInstance::Set_OrthogonalProjMatrix(const _uint iCam, const _matrix& matOrthoProj)
-{
-	if (nullptr == m_pRenderMgr)
-		return;
-
-	m_pRenderMgr->Set_OrthogonalProjMatrix(iCam, matOrthoProj);
-}
-
-const _matrix CGameInstance::Get_OrthogonalProjMatrix(const _uint iCam) const
-{
-	if (nullptr == m_pRenderMgr)
-		return _matrix();
-
-	return m_pRenderMgr->Get_OrthogonalProjMatrix(iCam);
-}
-
 #pragma endregion
 
+
+
+#pragma region ·»´õÅ¸°Ù ¸Å´ÏÀú
+
+HRESULT CGameInstance::Initialize_RenderTargetMgr(const DX11DEVICE_T tDevice)
+{
+	if (nullptr != m_pRenderTargetMgr)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(m_pRenderTargetMgr = CRenderTargetMgr::Create(tDevice), E_FAIL);
+
+	return S_OK;
+}
+
+HRESULT CGameInstance::Add_RenderTarget(const wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	if (nullptr == m_pRenderTargetMgr)
+		return E_FAIL;
+
+	return m_pRenderTargetMgr->Add_RenderTarget(strTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor);
+}
+
+HRESULT CGameInstance::Add_MRT(const wstring& strMRTTag, const wstring& strTargetTag)
+{
+	if (nullptr == m_pRenderTargetMgr)
+		return E_FAIL;
+
+	return m_pRenderTargetMgr->Add_MRT(strMRTTag, strTargetTag);
+}
+#pragma endregion
+
+
+
+#pragma region ¸ðµ¨ ¸Å´ÏÀú
 HRESULT CGameInstance::Initialize_ModelMgr(const wstring& strMainPath)
 {
 	if (nullptr != m_pModelMgr)
@@ -1273,6 +1254,8 @@ const FMaterialData* const CGameInstance::Find_MaterialData(const EModelGroupInd
 
 	return m_pModelMgr->Find_MaterialData(eGroupIndex, strModelKey, iIndex);
 }
+#pragma endregion
+
 
 HRESULT CGameInstance::Initialize_ShaderMgr(const DX11DEVICE_T tDevice, const wstring& strMainPath)
 {

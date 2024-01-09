@@ -148,6 +148,11 @@ void CReaverBot_Balfura::Free()
     SUPER::Free();
 }
 
+FSerialData CReaverBot_Balfura::SerializeData()
+{
+    return FSerialData();
+}
+
 HRESULT CReaverBot_Balfura::Initialize_Component()
 {
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);

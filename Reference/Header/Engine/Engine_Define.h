@@ -3,6 +3,7 @@
 
 #pragma warning(disable : 26495)
 #pragma warning(disable : 4251)
+#pragma warning(disable : 4244)
 
 
 // min max 매크로는 호환성 문제로 사용되지 않습니다. ( assimp )
@@ -20,11 +21,14 @@
 //#include "rttr/registration_friend.h"
 
 // Assimp 라이브러리
+
+//#include <assimp/Importer.hpp>
+//#include <assimp/cimport.h>
+//#include <assimp/postprocess.h>
+//#include <assimp/scene.h>
 #define AI_LMW_MAX_WEIGHTS 4
-#include <assimp/Importer.hpp>
-#include <assimp/cimport.h>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+#include <assimp/config.h>
+#include <assimp/material.h>
 
 
 // 다이렉트X 11 라이브러리

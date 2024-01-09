@@ -50,6 +50,9 @@ public:
 protected:
 	virtual void	Free() override;
 
+public:
+	virtual FSerialData SerializeData() override;
+
 private:
 	HRESULT	Initialize_Component();
 

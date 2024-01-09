@@ -1,5 +1,8 @@
 #include "ImGuiWin/ImGuiWin_MapTool.h"
 
+#include "Utility/RapidJsonSerial.h"
+#include "BaseClass/GameObject.h"
+
 HRESULT CImGuiWin_MapTool::Initialize()
 {
 	m_bOpen = true;
@@ -17,7 +20,7 @@ void CImGuiWin_MapTool::Tick(const _float& fTimeDelta)
     if (!m_bOpen)
         return;
 
-    ImGuiWindowFlags iMain_Flags = ImGuiWindowFlags_NoMove;
+    ImGuiWindowFlags iMain_Flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar;
     ImGuiDockNodeFlags DockSpace_Flags = ImGuiDockNodeFlags_NoDockingInCentralNode;
 
     ImGui::Begin("Center", NULL, iMain_Flags);
@@ -59,6 +62,8 @@ void CImGuiWin_MapTool::Tick(const _float& fTimeDelta)
 
     m_Actions.Reset();
     Shortcut_Manage();
+
+    Layout_MenuBar(fTimeDelta);
     DoMove_PickedObjects(fTimeDelta);
 
     SUPER::Tick(fTimeDelta);
@@ -90,6 +95,29 @@ CImGuiWin_MapTool* CImGuiWin_MapTool::Create()
 void CImGuiWin_MapTool::Free()
 {
 	SUPER::Free();
+}
+
+void CImGuiWin_MapTool::Layout_MenuBar(const _float& fTimeDelta)
+{
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("Level"))
+        {
+            if (ImGui::MenuItem("Open"))
+            {
+
+            }
+
+            if (ImGui::MenuItem("Save"))
+            {
+                Save_Level();
+            }
+
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMenuBar();
+    }
 }
 
 void CImGuiWin_MapTool::Shortcut_Manage()
@@ -287,6 +315,22 @@ void CImGuiWin_MapTool::Scale_PickedObjects(const _float& fTimeDelta)
 void CImGuiWin_MapTool::Escape_MovePickedObjects()
 {
     // 이동 편집 중이던 작업 취소
+}
+
+void CImGuiWin_MapTool::Save_Level()
+{
+    auto vecGameObjects = GI()->Get_AllGameObjectFromLevel(TEXT("GamePlay"));
+
+    FSerialData LevelData;
+    LevelData.Add_MemberString("Name", "GamePlay");
+
+    for (size_t i = 0; i < vecGameObjects.size(); i++)
+    {
+        auto ObjData = vecGameObjects[i]->SerializeData();
+        LevelData.Pushback_Member("Objects", ObjData);
+    }
+
+    LevelData.Save_Data(TEXT("../Client/Resource/GamePlay.alevel"));
 }
 
 

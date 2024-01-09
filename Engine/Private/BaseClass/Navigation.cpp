@@ -128,6 +128,11 @@ void CNavigation::Free()
     SUPER::Free();
 }
 
+FSerialData CNavigation::SerializeData()
+{
+    return FSerialData();
+}
+
 HRESULT CNavigation::Initialize_Component()
 {
     CNavigationComponent::TCloneDesc tDesc = { 0 };

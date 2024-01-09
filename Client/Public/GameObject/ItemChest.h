@@ -41,6 +41,9 @@ protected:
 private:
 	HRESULT	Initialize_Component();
 
+public:
+	virtual FSerialData SerializeData() override;
+
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
 

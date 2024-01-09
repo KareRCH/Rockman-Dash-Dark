@@ -63,6 +63,8 @@ public:
 	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);
 	// 이름 검색
 	class CGameObject* Find_GameObjectByName(const wstring& strName);
+	// 해당 레벨 태그가 달린 모든 게임 오브젝트를 반환하다. 툴에서 쓰인다.
+	vector<class CGameObject*> Get_AllGameObjectFromLevel(const wstring& strLevelTag);
 	// 특정 레벨 태그를 가진 객체를 제거한다.
 	void				Clear_GameObject(const wstring& strLevelTag);
 

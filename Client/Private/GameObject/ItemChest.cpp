@@ -146,3 +146,8 @@ HRESULT CItemChest::Initialize_Component()
 
 	return S_OK;
 }
+
+FSerialData CItemChest::SerializeData()
+{
+	return FSerialData();
+}

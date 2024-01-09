@@ -146,6 +146,11 @@ void CWeapon_Buster::Free()
 	SUPER::Free();
 }
 
+FSerialData CWeapon_Buster::SerializeData()
+{
+	return FSerialData();
+}
+
 HRESULT CWeapon_Buster::Initialize_Component()
 {
 	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);

@@ -253,7 +253,9 @@
     <ClInclude Include="Public\ModelLoad.h" />
     <ClInclude Include="Public\System\Data\MaterialData.h" />
     <ClInclude Include="Public\System\Data\ModelData.h" />
+    <ClInclude Include="Public\System\Data\RenderTarget.h" />
     <ClInclude Include="Public\System\Define\RenderMgr_Define.h" />
+    <ClInclude Include="Public\System\RenderTargetMgr.h" />
     <ClInclude Include="Public\Utility\DebugDraw.h" />
     <ClInclude Include="Public\Utility\DelegateTemplate.h" />
     <ClInclude Include="Public\Utility\LogicDeviceBasic.h" />
@@ -436,6 +438,7 @@
     <ClCompile Include="Private\System\InputDev.cpp" />
     <ClCompile Include="Private\System\ComponentMgr.cpp" />
     <ClCompile Include="Private\System\RenderMgr.cpp" />
+    <ClCompile Include="Private\System\RenderTargetMgr.cpp" />
     <ClCompile Include="Private\System\ShaderMgr.cpp" />
     <ClCompile Include="Private\System\SoundMgr.cpp" />
     <ClCompile Include="Private\System\Texture.cpp" />
@@ -450,6 +453,7 @@
     <ClCompile Include="Private\Component\PrimitiveComponent.cpp" />
     <ClCompile Include="Private\Component\CloudStationComp.cpp" />
     <ClCompile Include="Private\Component\TerrainBufferComp.cpp" />
+    <ClCompile Include="Public\System\Data\RenderTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Runtime\FX_VtxPosTexAlpha.hlsl">

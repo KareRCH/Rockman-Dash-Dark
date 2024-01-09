@@ -135,7 +135,6 @@ PS_OUTPUT PS_MAIN(VPS_INOUT input)
 
     output.vColor = g_vLightDiffuse * vMtrlDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
 		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
-    
 
     
     output.vNormal = float4(input.vNormal, 1.f);

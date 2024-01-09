@@ -78,6 +78,11 @@ void CUI_Player::Free()
 
 }
 
+FSerialData CUI_Player::SerializeData()
+{
+    return FSerialData();
+}
+
 HRESULT CUI_Player::Initialize_Component()
 {
     return S_OK;

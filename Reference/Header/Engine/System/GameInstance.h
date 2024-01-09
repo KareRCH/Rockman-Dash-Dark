@@ -213,6 +213,7 @@ public:		// 매니지먼트
 	class CGameObject*	Find_GameObjectByID(_uint iFindID);
 	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);
 	class CGameObject*	Find_GameObjectByName(const wstring& strName);
+	vector<class CGameObject*> Get_AllGameObjectFromLevel(const wstring& strLevelTag);
 	void				Clear_GameObject(const wstring& strLayerTag);
 #pragma endregion
 
@@ -257,15 +258,15 @@ public:		// 렌더 매니저
 	void			Render();
 	void			Add_RenderGroup(ERenderGroup eType, class CGameObject* pGameObject);
 	void			Clear_RenderGroup();
-	void			Set_PerspectiveViewMatrix(const _uint iCam, const _matrix& matPersView);
-	const _matrix 	Get_PerspectiveViewMatrix(const _uint iCam) const;
-	void			Set_PerspectiveProjMatrix(const _uint iCam, const _matrix& matPersProj);
-	const _matrix	Get_PerspectiveProjMatrix(const _uint iCam) const;
-	void			Set_OrthogonalViewMatrix(const _uint iCam, const _matrix& matOrthoView);
-	const _matrix	Get_OrthogonalViewMatrix(const _uint iCam) const;
-	void			Set_OrthogonalProjMatrix(const _uint iCam, const _matrix& matOrthoProj);
-	const _matrix	Get_OrthogonalProjMatrix(const _uint iCam) const;
 #pragma endregion
+
+#pragma region 렌더타겟 매니저
+public:
+	HRESULT			Initialize_RenderTargetMgr(const DX11DEVICE_T tDevice);
+	HRESULT			Add_RenderTarget(const wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT			Add_MRT(const wstring& strMRTTag, const wstring& strTargetTag);
+#pragma endregion
+
 
 
 
@@ -318,6 +319,7 @@ private:
 	class CObjectMgr*		m_pObjectMgr = nullptr;
 	class CComponentMgr*	m_pComponentMgr = nullptr;
 	class CRenderMgr*		m_pRenderMgr = nullptr;
+	class CRenderTargetMgr* m_pRenderTargetMgr = { nullptr };
 	class CCloudStationMgr*	m_pBlackBoardMgr = nullptr;
 	
 	class CModelMgr*		m_pModelMgr = nullptr;

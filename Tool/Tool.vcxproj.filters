@@ -221,6 +221,15 @@
     <ClCompile Include="..\Client\Private\GameObject\UI_Player.cpp">
       <Filter>98 Client</Filter>
     </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Effect_Common.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Item_Deflector.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Balfura.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Include\Tool.rc">
