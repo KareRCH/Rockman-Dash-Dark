@@ -39,6 +39,9 @@ protected:
 private:
 	HRESULT	Initialize_Component();
 
+public:
+	virtual FSerialData SerializeData() override;
+
 public:		// 충돌 이벤트
 	virtual void OnCollision(CGameObject* pDst, const FContact* pContact);
 	virtual void OnCollisionEntered(CGameObject* pDst, const FContact* pContact);

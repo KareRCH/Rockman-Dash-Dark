@@ -195,9 +195,12 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\Character.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Character_Common.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\DynamicCamera.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\Effect_Common.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ItemChest.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\Item_Deflector.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\LoadingScreen.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Player.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Balfura.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Horokko.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\SkyBox.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp" />

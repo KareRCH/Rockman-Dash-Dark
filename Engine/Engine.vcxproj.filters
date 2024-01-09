@@ -313,6 +313,12 @@
     <Filter Include="02. Utility\02. Component\01. SceneComponent\01. TransformComponent\PivotComponent">
       <UniqueIdentifier>{ae418622-780d-4898-bc9b-b1456cc07fc2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr">
+      <UniqueIdentifier>{2d4b907a-0087-4347-b14e-bad42c72ba21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr\RenderTarget">
+      <UniqueIdentifier>{f8d3fa88-21cd-4ddb-9169-79332b2a7b15}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -675,6 +681,10 @@
     <ClInclude Include="Public\Component\PivotComponent.h">
       <Filter>02. Utility\02. Component\01. SceneComponent\01. TransformComponent\PivotComponent</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\RenderTargetMgr.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\Data\RenderTarget.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -965,6 +975,10 @@
     <ClCompile Include="Private\Component\PivotComponent.cpp">
       <Filter>02. Utility\02. Component\01. SceneComponent\01. TransformComponent\PivotComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Private\System\RenderTargetMgr.cpp">
+      <Filter>01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\System\Data\RenderTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">

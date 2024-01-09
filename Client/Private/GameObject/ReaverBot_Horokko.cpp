@@ -156,6 +156,11 @@ void CReaverBot_Horokko::Free()
 	SUPER::Free();
 }
 
+FSerialData CReaverBot_Horokko::SerializeData()
+{
+	return FSerialData();
+}
+
 HRESULT CReaverBot_Horokko::Initialize_Component()
 {
 	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);

@@ -161,6 +161,17 @@ void CPlayer::Free()
     SUPER::Free();
 }
 
+FSerialData CPlayer::SerializeData()
+{
+    FSerialData Data = __super::SerializeData();
+
+    Data.Add_Member("HP", m_fHP.fMax);
+    Data.Add_Member("MoveSpeed", m_vMaxMoveSpeed.x);
+    Data.Add_Member("JumpSpeed", m_vMaxMoveSpeed.y);
+
+    return Data;
+}
+
 HRESULT CPlayer::Initialize_Component()
 {
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);

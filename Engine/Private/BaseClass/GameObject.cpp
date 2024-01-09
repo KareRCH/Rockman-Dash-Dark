@@ -102,6 +102,34 @@ void CGameObject::Free()
 	Safe_Release(m_pPipelineComp);
 }
 
+FSerialData CGameObject::SerializeData()
+{
+	FSerialData Data;
+
+	Data.Add_MemberString("Name", ConvertToString(m_strName));
+	Data.Add_Member("StateFlag", m_iStateFlag);
+
+	Data.Add_Member("PriorityTick", m_fPriority[ECast(EGObjTickPriority::Tick)]);
+	Data.Add_Member("PriorityRender", m_fPriority[ECast(EGObjTickPriority::Render)]);
+
+	_float3 vPos = Transform().Get_PositionFloat3();
+	Data.Add_Member("PosX", vPos.x);
+	Data.Add_Member("PosY", vPos.y);
+	Data.Add_Member("PosZ", vPos.z);
+
+	_float3 vRot = Transform().Get_RotationEulerFloat3();
+	Data.Add_Member("RotX", XMConvertToDegrees(vRot.x));
+	Data.Add_Member("RotY", XMConvertToDegrees(vRot.y));
+	Data.Add_Member("RotZ", XMConvertToDegrees(vRot.z));
+
+	_float3 vScale = Transform().Get_ScaleFloat3();
+	Data.Add_Member("ScaleX", vScale.x);
+	Data.Add_Member("ScaleY", vScale.y);
+	Data.Add_Member("ScaleZ", vScale.z);
+
+	return Data;
+}
+
 void CGameObject::Delete_Tag(const EGObjTag eTagType, const wstring& strTag)
 {
 	auto iter = m_setTag[ECast(eTagType)].find(strTag);

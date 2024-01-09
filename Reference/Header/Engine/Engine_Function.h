@@ -114,9 +114,14 @@ namespace Engine
 /// </summary>
 /// <param name="str">string</param>
 /// <returns></returns>
-	inline wstring Make_Wstring(const string& str)
+	inline wstring ConvertToWstring(const string& str)
 	{
 		return wstring(str.begin(), str.end());
+	}
+
+	inline string ConvertToString(const wstring& str)
+	{
+		return string(str.begin(), str.end());
 	}
 #pragma endregion
 

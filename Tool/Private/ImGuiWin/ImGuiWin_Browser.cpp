@@ -24,7 +24,9 @@ void CImGuiWin_Browser::Tick(const _float& fTimeDelta)
 	Link_ToTerrainGui();
 	Link_ToViewer();
 
-	ImGui::Begin(u8"宏扼快历");
+	ImGuiWindowFlags iMain_Flags = ImGuiWindowFlags_NoMove;
+
+	ImGui::Begin(u8"宏扼快历", NULL, iMain_Flags);
 
 	Layout_Object(fTimeDelta);
 
@@ -134,6 +136,8 @@ void CImGuiWin_Browser::Handle_TerrainBrushModeSelected(_bool bIsEdit)
 
 void CImGuiWin_Browser::Handle_PlacePicked(_float3 vPickedWorldPos)
 {
+	GI()->Set_LevelTag(TEXT("GamePlay"));
+
 	CGameObject* pAddedObject = { nullptr };
 	switch (m_iSelected_Object)
 	{

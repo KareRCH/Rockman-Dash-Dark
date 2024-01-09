@@ -279,7 +279,7 @@ wstring CShaderMgr::Make_MacroToWstring(const D3D_SHADER_MACRO* pShaderMacro) co
 			++i;
 		}
 
-		strMacroDefine = Make_Wstring(szMacroId);
+		strMacroDefine = ConvertToWstring(szMacroId);
 	}
 
 	return strMacroDefine;

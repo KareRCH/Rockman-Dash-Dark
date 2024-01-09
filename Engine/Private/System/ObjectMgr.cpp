@@ -207,6 +207,23 @@ CGameObject* CObjectMgr::Find_GameObjectByName(const wstring& strName)
 	return *iter;
 }
 
+vector<CGameObject*> CObjectMgr::Get_AllGameObjectFromLevel(const wstring& strLevelTag)
+{
+	vector<CGameObject*> vecObjects;
+	vecObjects.reserve(m_vecGameObjects.size());
+
+	for (auto iter = m_vecGameObjects.begin(); iter != m_vecGameObjects.end(); ++iter)
+	{
+		if (nullptr == *iter)
+			continue;
+
+		if ((*iter)->Has_Tag(EGObjTag::Level, strLevelTag))
+			vecObjects.push_back(*iter);
+	}
+
+	return vecObjects;
+}
+
 void CObjectMgr::Clear_GameObject(const wstring& strLevelTag)
 {
 	for (_uint i = 0; i < m_vecGameObjects.size(); i++)

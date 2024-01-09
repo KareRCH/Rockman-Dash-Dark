@@ -12,12 +12,12 @@ HRESULT CCloudStationMgr::Initialize()
 _int CCloudStationMgr::Tick()
 {
 	// 만료시 삭제하는 블랙보드 삭제.
-	for (auto iter = m_mapBlackBoard.begin(); iter != m_mapBlackBoard.end();)
+	for (auto iter = m_mapCloudStations.begin(); iter != m_mapCloudStations.end();)
 	{
 		if ((*iter).second->IsExpired())
 		{
 			Safe_Release((*iter).second);
-			iter = m_mapBlackBoard.erase(iter);
+			iter = m_mapCloudStations.erase(iter);
 		}
 		else
 			++iter;
@@ -43,16 +43,16 @@ CCloudStationMgr* CCloudStationMgr::Create()
 
 void CCloudStationMgr::Free()
 {
-	for (auto itemPair : m_mapBlackBoard)
+	for (auto itemPair : m_mapCloudStations)
 	{
 		Safe_Release(itemPair.second);
 	}
-	m_mapBlackBoard.clear();
+	m_mapCloudStations.clear();
 }
 
 HRESULT CCloudStationMgr::Add_BlackBoard(const wstring& strBoardName, CCloudStation* pBlackBoard)
 {
-	auto iter = m_mapBlackBoard.emplace(strBoardName, pBlackBoard);
+	auto iter = m_mapCloudStations.emplace(strBoardName, pBlackBoard);
 	if (!iter.second)
 	{
 #ifdef _DEBUG
@@ -69,8 +69,8 @@ HRESULT CCloudStationMgr::Add_BlackBoard(const wstring& strBoardName, CCloudStat
 
 HRESULT CCloudStationMgr::Delete_BlackBoard(const wstring& strBoardName)
 {
-	auto iter = m_mapBlackBoard.find(strBoardName);
-	if (iter == m_mapBlackBoard.end())
+	auto iter = m_mapCloudStations.find(strBoardName);
+	if (iter == m_mapCloudStations.end())
 	{
 #ifdef _DEBUG
 		OutputDebugString(strBoardName.c_str());
@@ -81,15 +81,15 @@ HRESULT CCloudStationMgr::Delete_BlackBoard(const wstring& strBoardName)
 
 	// 만료 시키고 삭제하기, 다른 곳에서 이제 알아서 링크를 끊게 된다.
 	(*iter).second->Set_Expired();
-	m_mapBlackBoard.erase(iter);
+	m_mapCloudStations.erase(iter);
 
 	return S_OK;
 }
 
 CCloudStation* CCloudStationMgr::Get_BlackBoard(const wstring& strBoardName)
 {
-	auto iter = m_mapBlackBoard.find(strBoardName);
-	if (iter == m_mapBlackBoard.end())
+	auto iter = m_mapCloudStations.find(strBoardName);
+	if (iter == m_mapCloudStations.end())
 	{
 #ifdef _DEBUG
 		OutputDebugString(strBoardName.c_str());

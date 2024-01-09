@@ -153,6 +153,11 @@ HRESULT CItem_Deflector::Initialize_Component()
     return S_OK;
 }
 
+FSerialData CItem_Deflector::SerializeData()
+{
+    return FSerialData();
+}
+
 void CItem_Deflector::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
 }

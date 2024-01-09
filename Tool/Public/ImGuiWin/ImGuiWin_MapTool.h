@@ -33,6 +33,8 @@ public:
 private:
 	virtual void	Free() override;
 
+public:
+	void Layout_MenuBar(const _float& fTimeDelta);
 
 public:
 	void Shortcut_Manage();
@@ -41,6 +43,8 @@ public:
 	void Rotate_PickedObjects(const _float& fTimeDelta);
 	void Scale_PickedObjects(const _float& fTimeDelta);
 	void Escape_MovePickedObjects();
+
+	void Save_Level();
 
 public:
 	enum class EAction { CancelMove, ConfirmMove };

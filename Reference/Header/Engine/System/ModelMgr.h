@@ -69,9 +69,6 @@ public:
 	CMaterialGroup*			Find_MaterialGroup(const EModelGroupIndex eGroupIndex, const wstring& strModelKey);
 
 private:
-	const aiScene*		m_pScene = nullptr;				// 내부 통신용 씬 저장변수
-	aiNode*				m_pRootArmature;				// 내부용, 아마추어 노드
-
 	string				m_strLoadFilePath;				// 내부용, 로드한 파일 경로.
 	_int				m_iNodeID;						// 내부용, 노드 번호 부여용.
 	_uint				m_iMaterialCount = 0U;

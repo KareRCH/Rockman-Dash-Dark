@@ -1,0 +1,17 @@
+{
+    "Test": 1.0,
+    "Objects": [
+        {
+            "Name": "Test",
+            "Pos": 0.0
+        },
+        {
+            "Name": "Test",
+            "Pos": 0.0
+        },
+        {
+            "Name": "Test",
+            "Pos": 0.0
+        }
+    ]
+}

@@ -98,6 +98,11 @@ void CEffect_Common::Free()
 	Safe_Release(m_pPlaneModelComp);
 }
 
+FSerialData CEffect_Common::SerializeData()
+{
+	return FSerialData();
+}
+
 HRESULT CEffect_Common::Initialize_Component()
 {
 	// 프로토타입용 컴포넌트 초기화

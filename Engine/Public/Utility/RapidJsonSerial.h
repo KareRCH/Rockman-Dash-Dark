@@ -10,19 +10,33 @@ using namespace rapidjson;
 /// RapidJson이 사용된 동적 파싱 클래스
 /// 기존 버전과 다르게 다양한 데이터 형식을 표현할 수 있도록 제작되었다.
 /// </summary>
-class FSerialData
+class ENGINE_DLL FSerialData
 {
-	
 public:
-	FSerialData() {}
+	FSerialData();
+	FSerialData(const FSerialData& rhs);
 	~FSerialData() {}
-public:
-	using ValuePair = pair<Type, Value>;			// 타입과 Value를 저장하여 동적으로 데이터를 얻어올 수 있음.
-	map<const string, ValuePair>		m_Values;	// 이름으로 데이터 찾기.
 
 public:
-	HRESULT Save_Data();
-	HRESULT Load_Data();
+	HRESULT Save_Data(const wstring& strPath);
+	HRESULT Load_Data(const wstring& strPath);
+
+public:
+	// 멤버에 단순 데이터 추가, String
+	HRESULT Add_MemberString(const string& strMemberName, const string& strValue);
+	// 멤버에 단순 데이터 추가, Bool
+	HRESULT Add_Member(const string& strMemberName, const _bool bValue);
+	// 멤버에 단순 데이터 추가, Int
+	HRESULT Add_Member(const string& strMemberName, const _int iValue);
+	// 멤버에 단순 데이터 추가, Int
+	HRESULT Add_Member(const string& strMemberName, const _uint iValue);
+	// 멤버에 단순 데이터 추가, Float
+	HRESULT Add_Member(const string& strMemberName, const _float fValue);
+	// 배열에 다른 Document 추가
+	HRESULT Pushback_Member(const string& strArrayMember, FSerialData& SerialData);
+
+public:
+	Document	m_Doc;
 
 };
 

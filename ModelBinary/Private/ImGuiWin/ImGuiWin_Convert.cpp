@@ -71,7 +71,7 @@ void CImGuiWin_Convert::Tick(const _float& fTimeDelta)
     if (ImGui::Button(u8"FBX 찾기"))
     {
         m_FBX_Paths.clear();
-        SearchAllFBX(Make_Wstring(m_strDirectory));
+        SearchAllFBX(ConvertToWstring(m_strDirectory));
     }
 
     ImGui::SameLine();
@@ -327,7 +327,7 @@ HRESULT CImGuiWin_Convert::Load_Bones(const aiScene* pScene, CModelLoad* pModel)
 
     Bone.iID = iID++;
     Bone.iParentID = -1;
-    Bone.strName = Make_Wstring(pRootNode->mName.C_Str());
+    Bone.strName = ConvertToWstring(pRootNode->mName.C_Str());
     _matrix TransformMatrix;
     memcpy(&TransformMatrix, &pRootNode->mTransformation, sizeof(_matrix));
     XMStoreFloat4x4(&Bone.matTransform, XMMatrixTranspose(TransformMatrix));
@@ -347,7 +347,7 @@ HRESULT CImGuiWin_Convert::Load_Bone(const aiNode* pNode, CModelLoad* pModel, _u
 
     Bone.iID = iID++;                                       // ID
     Bone.iParentID = ParentBone.iID;                        // 부모
-    Bone.strName = Make_Wstring(pNode->mName.C_Str());      // 이름
+    Bone.strName = ConvertToWstring(pNode->mName.C_Str());      // 이름
     _matrix TransformMatrix;                                // 행렬
     memcpy(&TransformMatrix, &pNode->mTransformation, sizeof(_matrix));
     XMStoreFloat4x4(&Bone.matTransform, XMMatrixTranspose(TransformMatrix));
@@ -375,7 +375,7 @@ HRESULT CImGuiWin_Convert::Load_Animations(const aiScene* pScene, CModelLoad* pM
         AnimData.fDuration = pAnim->mDuration;
         AnimData.fTickPerSeconds = pAnim->mTicksPerSecond;
         AnimData.iID = i;
-        AnimData.strName = Make_Wstring(pAnim->mName.C_Str());
+        AnimData.strName = ConvertToWstring(pAnim->mName.C_Str());
 
         AnimData.vecChannels.resize(pAnim->mNumChannels, {});
         for (_uint j = 0; j < pAnim->mNumChannels; j++)
@@ -387,7 +387,7 @@ HRESULT CImGuiWin_Convert::Load_Animations(const aiScene* pScene, CModelLoad* pM
             vector<TBone>& vecBones = pModel->vecBones;
             auto	iter = find_if(vecBones.begin(), vecBones.end(), [&](TBone& Bone)
                 {
-                    if (Make_Wstring(pChannel->mNodeName.C_Str()) == Bone.strName)
+                    if (ConvertToWstring(pChannel->mNodeName.C_Str()) == Bone.strName)
                     {
                         return true;
                     }
@@ -401,7 +401,7 @@ HRESULT CImGuiWin_Convert::Load_Animations(const aiScene* pScene, CModelLoad* pM
                 return E_FAIL;
 
             ChannelData.iBoneID = iBoneIndex;
-            ChannelData.strName = Make_Wstring(pChannel->mNodeName.C_Str());
+            ChannelData.strName = ConvertToWstring(pChannel->mNodeName.C_Str());
 
 
             _uint iNumKeyFrames = max(max(pChannel->mNumPositionKeys, pChannel->mNumRotationKeys), pChannel->mNumScalingKeys);
@@ -457,7 +457,7 @@ HRESULT CImGuiWin_Convert::Load_Meshes(const aiScene* pScene, CModelLoad* pModel
         TMesh& MeshData = pModel->vecMeshes[i];
 
         MeshData.iID = i;
-        MeshData.strName = Make_Wstring(pMesh->mName.C_Str());
+        MeshData.strName = ConvertToWstring(pMesh->mName.C_Str());
         MeshData.iMaterialIndex = pMesh->mMaterialIndex;
         
         MeshData.vecVertices.resize(pMesh->mNumVertices);
@@ -495,7 +495,7 @@ HRESULT CImGuiWin_Convert::Load_Meshes(const aiScene* pScene, CModelLoad* pModel
             vector<TBone>& vecBones = pModel->vecBones;
             auto	iter = find_if(vecBones.begin(), vecBones.end(), [&](TBone& Bone)
             {
-                if (Make_Wstring(pAIBone->mName.C_Str()) == Bone.strName)
+                if (ConvertToWstring(pAIBone->mName.C_Str()) == Bone.strName)
                 {
                     return true;
                 }
@@ -543,7 +543,7 @@ HRESULT CImGuiWin_Convert::Load_Materials(const aiScene* pScene, CModelLoad* pMo
         aiMaterial* pAIMaterial = pScene->mMaterials[i];
         TMaterial&	MatrialData = pModel->vecMaterials[i];
 
-        MatrialData.strName = Make_Wstring(pAIMaterial->GetName().C_Str());
+        MatrialData.strName = ConvertToWstring(pAIMaterial->GetName().C_Str());
 
         for (size_t j = 1; j < AI_TEXTURE_TYPE_MAX; j++)
         {
@@ -578,7 +578,7 @@ HRESULT CImGuiWin_Convert::Load_Materials(const aiScene* pScene, CModelLoad* pMo
             string strFullPath = szFileName;
             strFullPath += szEXT;
 
-            MatrialData.strTextures[j] = Make_Wstring(strFullPath);
+            MatrialData.strTextures[j] = ConvertToWstring(strFullPath);
         }
     }
 

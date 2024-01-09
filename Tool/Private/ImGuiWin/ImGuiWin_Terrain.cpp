@@ -33,7 +33,9 @@ void CImGuiWin_Terrain::Tick(const _float& fTimeDelta)
 	// 부모 창으로부터 뷰어하나에 대해 델리게이트를 연결
 	Link_ToViewer();
 
-	ImGui::Begin(u8"터레인");
+	ImGuiWindowFlags iMain_Flags = ImGuiWindowFlags_NoMove;
+
+	ImGui::Begin(u8"터레인", NULL, iMain_Flags);
 
 	if (ImGui::BeginTabBar(u8"터레인 모드"))
 	{

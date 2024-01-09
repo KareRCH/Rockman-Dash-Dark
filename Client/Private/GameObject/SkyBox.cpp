@@ -96,6 +96,11 @@ void CSkyBox::Free()
     SUPER::Free();
 }
 
+FSerialData CSkyBox::SerializeData()
+{
+    return FSerialData();
+}
+
 HRESULT CSkyBox::Initialize_Component()
 {
     // 컴포넌트의 기본을 추가

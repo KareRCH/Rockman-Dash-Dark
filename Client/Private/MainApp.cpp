@@ -11,6 +11,8 @@
 
 #include "DirectXColors.h"
 
+#include "Utility/RapidJsonSerial.h"
+
 IMPLEMENT_SINGLETON(CMainApp)
 
 CMainApp::CMainApp()
@@ -56,8 +58,6 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGI->Initialize_TextureMgr(tDevice, L"Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr(L"Resource/"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
-	GameInstance()->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
-	GameInstance()->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
 	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 	GI()->Load_Effect(L"Runtime/FX_Terrain.hlsl", SHADER_VTX_NORM::Elements, SHADER_VTX_NORM::iNumElements);
 
@@ -70,6 +70,18 @@ HRESULT CMainApp::Initialize()
 	CTeamAgentComp::Add_TeamRelation(ETEAM_ENEMY, ETEAM_PLAYER, ETeamRelation::Hostile);
 
 	FAILED_CHECK_RETURN(Open_Level(LEVEL_LOGO), E_FAIL);
+
+	FSerialData Level;
+	Level.Add_Member("Test", 1);
+	Level.Add_Member("Test", 1.f);
+
+	FSerialData Object;
+	Object.Add_MemberString("Name", "Test");
+	Object.Add_Member("Pos", 0.f);
+	Level.Pushback_Member("Objects", Object);
+	Level.Pushback_Member("Objects", Object);
+	Level.Pushback_Member("Objects", Object);
+	Level.Save_Data(TEXT("Resource/Test.json"));
 	
 	return S_OK;
 }

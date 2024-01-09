@@ -36,7 +36,9 @@ void CImGuiWin_Viewer::Tick(const _float& fTimeDelta)
     Link_ToTerrainEditor();
     Link_ToBrowser();
 
-	ImGui::Begin(u8"ºä¾î");
+    ImGuiWindowFlags iMain_Flags = ImGuiWindowFlags_NoMove;
+
+	ImGui::Begin(u8"ºä¾î", NULL, iMain_Flags);
 
     //ImGuizmo::DecomposeMatrixToComponents(matrix.m16)
     

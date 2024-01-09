@@ -48,6 +48,8 @@ public:
 protected:
 	virtual void	Free() override;
 
+	virtual FSerialData SerializeData() override;
+
 private:
 	HRESULT	Initialize_Component();
 	HRESULT	Initialize_Component(const FInitTerrain& tInit);

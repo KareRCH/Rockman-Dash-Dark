@@ -33,7 +33,7 @@ public:
 	
 
 private:
-	_unmap<wstring, CCloudStation*>			m_mapBlackBoard;
+	_unmap<wstring, CCloudStation*>			m_mapCloudStations;
 
 };
 

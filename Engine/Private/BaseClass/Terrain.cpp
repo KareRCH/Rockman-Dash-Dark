@@ -115,6 +115,11 @@ void CTerrain::Free()
     SUPER::Free();
 }
 
+FSerialData CTerrain::SerializeData()
+{
+    return FSerialData();
+}
+
 HRESULT CTerrain::Initialize_Component()
 {
     FAILED_CHECK_RETURN(Add_Component(L"TerrainModelComp", m_pTerrainModelComp = CTerrainModelComp::Create()), E_FAIL);

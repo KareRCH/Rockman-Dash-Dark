@@ -147,3 +147,8 @@ void CDynamicCamera::Free()
 
     Safe_Release(m_pTarget);
 }
+
+FSerialData CDynamicCamera::SerializeData()
+{
+    return FSerialData();
+}

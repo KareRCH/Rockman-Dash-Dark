@@ -99,6 +99,11 @@ void CLoadingScreen::Free()
     Safe_Release(m_pPlaneModelComp);
 }
 
+FSerialData CLoadingScreen::SerializeData()
+{
+    return FSerialData();
+}
+
 HRESULT CLoadingScreen::Initialize_Component()
 {
     // 프로토타입용 컴포넌트 초기화
