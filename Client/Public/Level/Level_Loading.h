@@ -20,11 +20,13 @@ private:
 public:
 	virtual HRESULT Initialize() { return S_OK; }
 	virtual HRESULT Initialize(LEVEL eNextLevelID);
+	virtual HRESULT Initialize(LEVEL eNextLevelID, const wstring& strParsedLevelName);
 	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual HRESULT Render() override;
 
 public:
 	static CLevel_Loading*	Create(LEVEL eNextLevelID);
+	static CLevel_Loading*	Create(LEVEL eNextLevelID, const wstring& strParsedLevelName);
 	virtual void			Free() override;
 
 private:
@@ -32,6 +34,7 @@ private:
 
 private:
 	LEVEL			m_eNextLevelID = { LEVEL_END };
+	wstring			m_strParsedLevelDataPath = { TEXT("") };
 	class CLoader*	m_pLoader = { nullptr };
 
 

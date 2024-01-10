@@ -82,6 +82,12 @@
     <Filter Include="02. GameObject\05. Object\02. Deflector">
       <UniqueIdentifier>{8a59cf73-2514-4aee-b03c-4e048567049b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\04. Parsed">
+      <UniqueIdentifier>{41822438-55e1-4e20-ac43-8b0fe0c58d0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\00. Factory">
+      <UniqueIdentifier>{3245b4e3-08b4-469e-ac5e-9528e69383ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -162,6 +168,12 @@
     <ClInclude Include="Public\GameObject\Item_Deflector.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Level\Level_Parsed.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\GameObjectFactory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -228,6 +240,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\Item_Deflector.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Level\Level_Parsed.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\GameObjectFactory.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

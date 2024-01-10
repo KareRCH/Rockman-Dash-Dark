@@ -36,6 +36,17 @@ public:
 	HRESULT Pushback_Member(const string& strArrayMember, FSerialData& SerialData);
 
 public:
+	HRESULT Get_Data(const string& strMemberName, _bool& tValue);
+	HRESULT Get_Data(const string& strMemberName, string& tValue);
+	HRESULT Get_Data(const string& strMemberName, _int& tValue);
+	HRESULT Get_Data(const string& strMemberName, _uint& tValue);
+	HRESULT Get_Data(const string& strMemberName, _float& tValue);
+
+public:
+	_uint Get_ArraySize(const string& strMemberName);
+	HRESULT Get_ObjectFromArray(const string& strMemberName, _uint iIndex, FSerialData& DstData);
+
+public:
 	Document	m_Doc;
 
 };

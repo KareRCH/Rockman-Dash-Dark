@@ -196,6 +196,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\Character_Common.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\DynamicCamera.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Effect_Common.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\GameObjectFactory.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ItemChest.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Item_Deflector.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\LoadingScreen.cpp" />

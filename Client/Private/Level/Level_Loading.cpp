@@ -3,6 +3,7 @@
 #include "Loader.h"
 #include "Level/Level_Logo.h"
 #include "Level/Level_GamePlay.h"
+#include "Level/Level_Parsed.h"
 
 #include "GameObject/LoadingScreen.h"
 #include "Component/PlaneModelComp.h"
@@ -21,6 +22,21 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 		return E_FAIL;
 
 	m_eNextLevelID = eNextLevelID;
+
+	m_pLoader = CLoader::Create(eNextLevelID);
+	if (nullptr == m_pLoader)
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID, const wstring& strParsedLevelDataPath)
+{
+	if (FAILED(Ready_Objects()))
+		return E_FAIL;
+
+	m_eNextLevelID = eNextLevelID;
+	m_strParsedLevelDataPath = strParsedLevelDataPath;
 
 	m_pLoader = CLoader::Create(eNextLevelID);
 	if (nullptr == m_pLoader)
@@ -48,6 +64,9 @@ void CLevel_Loading::Tick(const _float& fTimeDelta)
 			case LEVEL_GAMEPLAY:
 				pNewLevel = CLevel_GamePlay::Create();
 				break;
+			case LEVEL_PARSED:
+				pNewLevel = CLevel_Parsed::Create(m_strParsedLevelDataPath);
+				break;
 			}
 
 			if (nullptr == pNewLevel)
@@ -71,6 +90,19 @@ CLevel_Loading* CLevel_Loading::Create(LEVEL eNextLevelID)
 	CLevel_Loading* pInstance = new CLevel_Loading();
 
 	if (FAILED(pInstance->Initialize(eNextLevelID)))
+	{
+		MSG_BOX("Failed to Created : CLevel_Loading");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CLevel_Loading* CLevel_Loading::Create(LEVEL eNextLevelID, const wstring& strParsedLevelDataPath)
+{
+	CLevel_Loading* pInstance = new CLevel_Loading();
+
+	if (FAILED(pInstance->Initialize(eNextLevelID, strParsedLevelDataPath)))
 	{
 		MSG_BOX("Failed to Created : CLevel_Loading");
 		Safe_Release(pInstance);
