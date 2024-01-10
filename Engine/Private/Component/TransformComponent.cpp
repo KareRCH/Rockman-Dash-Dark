@@ -153,4 +153,40 @@ void CTransformComponent::Look_At_OnLand(_fvector vTargetPos)
 	Set_Look(vLook);
 }
 
+_float CTransformComponent::Look_At_OnLand(_fvector vTargetPos, _float fRadianSpeed)
+{
+	_float3		vScale = Get_ScaleFloat3();
+
+	_vector		vPosition = Get_PositionVector();
+	_vector		vLook = XMVector3Normalize(vTargetPos - vPosition);
+	_vector		vOriginLook = Get_LookNormalizedVector();
+
+	_vector		vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	_vector		vRight = XMVector3Normalize(XMVector3Cross(vUp, vLook));
+	vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
+
+	_float fDot = XMVectorGetX(XMVector3Dot(vLook, vOriginLook));
+	_float fDir = XMVectorGetX(XMVector3Dot(vRight, vOriginLook));
+	_float fRadian = min(acos(fDot), fRadianSpeed);
+	_vector vQuaternion = {};
+
+	if (fDir <= 0.f)
+		vQuaternion = XMQuaternionRotationAxis(vUp, fRadianSpeed);
+	else
+		vQuaternion = XMQuaternionRotationAxis(vUp, -fRadianSpeed);
+	
+	vLook = XMVector3Normalize(XMVector3Rotate(vOriginLook, vQuaternion));
+	vRight = XMVector3Normalize(XMVector3Cross(vUp, vLook));
+
+	vRight	*= vScale.x;
+	vUp		*= vScale.y;
+	vLook	*= vScale.z;
+
+	Set_Right(vRight);
+	Set_Up(vUp);
+	Set_Look(vLook);
+
+	return fRadian;
+}
+
 

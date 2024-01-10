@@ -14,8 +14,6 @@
 #include "Utility/ClassID.h"
 #include "GameObject/GameObjectFactory.h"
 
-DECLARE_CLASSID(CPlayer, CClassID::g_iCountClassID)
-
 CPlayer::CPlayer()
 {
     Set_Name(L"Player");
@@ -204,7 +202,7 @@ FSerialData CPlayer::SerializeData()
 {
     FSerialData Data = __super::SerializeData();
 
-    Data.Add_Member("ClassID", ThisClass::g_ClassID);
+    Data.Add_Member("ClassID", ECast(ThisClass::g_ClassID));
     Data.Add_Member("HP", m_fHP.fMax);
     Data.Add_Member("MoveSpeed", m_vMaxMoveSpeed.x);
     Data.Add_Member("JumpSpeed", m_vMaxMoveSpeed.y);
@@ -413,8 +411,6 @@ void CPlayer::Move_Update(const _float& fTimeDelta)
         m_vVelocity.z = m_vMoveSpeed.z;
     else if (m_vVelocity.z < -m_vMoveSpeed.z)
         m_vVelocity.z = -m_vMoveSpeed.z;
-
-    cout << m_vVelocity.z << endl;
 
     Transform().MoveForward(m_vVelocity.z * fTimeDelta);
     Transform().MoveRightward(m_vVelocity.x * fTimeDelta);

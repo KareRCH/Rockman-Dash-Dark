@@ -110,7 +110,7 @@ void CReaverBot_Horokko::Tick(const _float& fTimeDelta)
 	if (!m_State_Act.IsOnState(EState_Act::Dead) && m_fHP.Get_Percent() <= 0.f)
 		m_State_Act.Set_State(EState_Act::Dead);
 
-	//m_State_AI.Get_StateFunc()(this, fTimeDelta);
+	m_State_AI.Get_StateFunc()(this, fTimeDelta);
 	m_State_Act.Get_StateFunc()(this, fTimeDelta);
 	m_ActionKey.Reset();
 
@@ -289,6 +289,10 @@ void CReaverBot_Horokko::Move_Update(const _float& fTimeDelta)
 		Transform().TurnRight(m_fMoveSpeed * fTimeDelta);
 	else if (m_ActionKey.IsAct(EActionKey::TurnLeft))
 		Transform().TurnRight(-m_fMoveSpeed * fTimeDelta);
+
+	if (m_ActionKey.IsAct(EActionKey::LookTarget)
+		&& nullptr != m_pTarget)
+		Transform().Look_At_OnLand(m_pTarget->Transform().Get_PositionVector(), 5.f * fTimeDelta);
 }
 
 void CReaverBot_Horokko::Dead_Effect()
@@ -347,7 +351,8 @@ void CReaverBot_Horokko::ActState_Idle(const _float& fTimeDelta)
 			m_State_Act.Set_State(EState_Act::Ready_Shooting);
 		// 움직임
 		if (m_ActionKey.IsAct(EActionKey::MoveForward) || m_ActionKey.IsAct(EActionKey::MoveBackward)
-			|| m_ActionKey.IsAct(EActionKey::TurnRight) || m_ActionKey.IsAct(EActionKey::TurnLeft))
+			|| m_ActionKey.IsAct(EActionKey::TurnRight) || m_ActionKey.IsAct(EActionKey::TurnLeft)
+			|| m_ActionKey.IsAct(EActionKey::LookTarget))
 			m_State_Act.Set_State(EState_Act::Run);
 	}
 
@@ -376,7 +381,8 @@ void CReaverBot_Horokko::ActState_Run(const _float& fTimeDelta)
 			m_State_Act.Set_State(EState_Act::Ready_Shooting);
 		// 움직임
 		if (!m_ActionKey.IsAct(EActionKey::MoveForward) && !m_ActionKey.IsAct(EActionKey::MoveBackward)
-			&& !m_ActionKey.IsAct(EActionKey::TurnRight) && !m_ActionKey.IsAct(EActionKey::TurnLeft))
+			&& !m_ActionKey.IsAct(EActionKey::TurnRight) && !m_ActionKey.IsAct(EActionKey::TurnLeft)
+			&& !m_ActionKey.IsAct(EActionKey::LookTarget))
 			m_State_Act.Set_State(EState_Act::Idle);
 	}
 
@@ -530,25 +536,39 @@ void CReaverBot_Horokko::AIState_Idle(const _float& fTimeDelta)
 {
 	if (m_State_AI.IsState_Entered())
 	{
-		m_fIdleTime.Reset();
+		m_fIdleTime.Readjust(3.f);
 	}
 
 	if (m_State_AI.Can_Update())
 	{
 		// 가만히 있다가 적이 사정권 안에 들어오면 응시하다가 적을 추적한다.
 		// 적이 없으면 배회 패턴으로 넘어간다.
-		
-		if (m_fIdleTime.Increase(fTimeDelta))
+
+		m_pTarget = Find_Target();
+
+		if (nullptr != m_pTarget)
 		{
-			uniform_int_distribution<_uint> RandomPattern(0, 1);
-			switch (RandomPattern(m_RandomNumber))
+			_vector vLook = Transform().Get_LookNormalizedVector();
+			_vector vTargetLook = XMVector3Normalize(XMVectorSetY(m_pTarget->Transform().Get_PositionVector()
+																	- Transform().Get_PositionVector(), 0.f));
+			_float fDot = XMVectorGetX(XMVector3Dot(vLook, vTargetLook));
+			if (fDot < 1.f - 0.001f)
+				m_ActionKey.Act(EActionKey::LookTarget);
+			else
 			{
-			case 0:
-				m_State_AI.Set_State(EState_AI::Prowl);
-				break;
-			case 1:
-				m_State_AI.Set_State(EState_AI::Chase);
-				break;
+				if (m_fIdleTime.Increase(fTimeDelta))
+				{
+					uniform_int_distribution<_uint> RandomPattern(0, 1);
+					switch (RandomPattern(m_RandomNumber))
+					{
+					case 0:
+						m_State_AI.Set_State(EState_AI::Chase);
+						break;
+					case 1:
+						m_State_AI.Set_State(EState_AI::Prowl);
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -563,7 +583,7 @@ void CReaverBot_Horokko::AIState_Chase(const _float& fTimeDelta)
 {
 	if (m_State_AI.IsState_Entered())
 	{
-		m_fIdleTime.Reset();
+		m_fIdleTime.Readjust(5.f);
 	}
 
 	if (m_State_AI.Can_Update())
@@ -572,9 +592,17 @@ void CReaverBot_Horokko::AIState_Chase(const _float& fTimeDelta)
 		// 일정 거리 안에 들었다면 기를 모은다.
 		// 플레이어가 도망갈시 Idle 상태로 변경됨
 
-		if (m_fIdleTime.Increase(fTimeDelta))
+		m_pTarget = Find_Target();
+
+		if (nullptr != m_pTarget)
 		{
-			m_State_AI.Set_State(EState_AI::Chase);
+			m_ActionKey.Act(EActionKey::LookTarget);
+			m_ActionKey.Act(EActionKey::MoveForward);
+
+			if (m_fIdleTime.Increase(fTimeDelta))
+			{
+				m_State_AI.Set_State(EState_AI::Charge);
+			}
 		}
 	}
 
@@ -588,16 +616,31 @@ void CReaverBot_Horokko::AIState_Charge(const _float& fTimeDelta)
 {
 	if (m_State_AI.IsState_Entered())
 	{
-		m_fIdleTime.Reset();
+		m_fIdleTime.Readjust(2.5f);
 	}
 
 	if (m_State_AI.Can_Update())
 	{
 		// 사정거리 안에 들어온 적을 바라보며 기를 모은다.
+		m_ActionKey.Act(EActionKey::Charge);
+
+		m_pTarget = Find_Target();
+
+		if (nullptr != m_pTarget)
+		{
+			_vector vLook = Transform().Get_LookNormalizedVector();
+			_vector vTargetLook = XMVector3Normalize(XMVectorSetY(m_pTarget->Transform().Get_PositionVector()
+				- Transform().Get_PositionVector(), 0.f));
+			_float fDot = XMVectorGetX(XMVector3Dot(vLook, vTargetLook));
+			if (fDot < 1.f - 0.001f)
+			{
+				m_ActionKey.Act(EActionKey::LookTarget);
+			}
+		}
 
 		if (m_fIdleTime.Increase(fTimeDelta))
 		{
-			m_State_AI.Set_State(EState_AI::Chase);
+			m_State_AI.Set_State(EState_AI::Charge_Attack);
 		}
 	}
 
@@ -611,16 +654,25 @@ void CReaverBot_Horokko::AIState_Charge_Attack(const _float& fTimeDelta)
 {
 	if (m_State_AI.IsState_Entered())
 	{
-		m_fIdleTime.Reset();
+		m_fIdleTime.Readjust(2.f);
 	}
 
 	if (m_State_AI.Can_Update())
 	{
 		// 적을 바라보며 빙글빙글 돌며 돌진한다.
+		m_pTarget = Find_Target();
+
+		if (nullptr != m_pTarget)
+		{
+			m_ActionKey.Act(EActionKey::LookTarget);
+		}
+
+		m_ActionKey.Act(EActionKey::MoveForward);
 
 		if (m_fIdleTime.Increase(fTimeDelta))
 		{
-			m_State_AI.Set_State(EState_AI::Chase);
+			m_ActionKey.Act(EActionKey::Charge);
+			m_State_AI.Set_State(EState_AI::Idle);
 		}
 	}
 
@@ -634,12 +686,32 @@ void CReaverBot_Horokko::AIState_Prowl(const _float& fTimeDelta)
 {
 	if (m_State_AI.IsState_Entered())
 	{
-		m_fIdleTime.Reset();
+		m_fIdleTime.Readjust(9.f);
+		uniform_real_distribution<_float> RandomPatternFloat(2.f, 3.5f);
+		m_fTurnTime.Readjust(RandomPatternFloat(m_RandomNumber));
+		uniform_int_distribution<_int> RandomPatternInt(0, 1);
+		m_fTurnLeft = RandomPatternInt(m_RandomNumber);
 	}
 
 	if (m_State_AI.Can_Update())
 	{
 		// 특정 위치를 기반으로 주변을 배회한다.
+		if (m_fTurnTime.Increase(fTimeDelta))
+		{
+			uniform_int_distribution<_int> RandomPatternInt(0, 1);
+			m_fTurnLeft = RandomPatternInt(m_RandomNumber);
+			uniform_real_distribution<_float> RandomPatternFloat(0.f, 1.5f);
+			m_fTurnTime.Readjust(RandomPatternFloat(m_RandomNumber));
+		}
+
+		if (m_fTurnLeft)
+		{
+			m_ActionKey.Act(EActionKey::TurnLeft);
+		}
+		else
+			m_ActionKey.Act(EActionKey::TurnRight);
+
+		m_ActionKey.Act(EActionKey::MoveForward);
 
 		if (m_fIdleTime.Increase(fTimeDelta))
 		{
@@ -687,4 +759,30 @@ void CReaverBot_Horokko::AIState_Escape(const _float& fTimeDelta)
 	{
 
 	}
+}
+
+CCharacter_Common* CReaverBot_Horokko::Find_Target()
+{
+	auto listObjects = GI()->IntersectTests_Sphere_GetGameObject(0, Transform().Get_PositionFloat3(), 10.f, COLLAYER_CHARACTER);
+	_float fDistance = FLT_MAX;
+	CGameObject* pClosestObj = { nullptr };
+	for (auto iter = listObjects.begin(); iter != listObjects.end(); iter++)
+	{
+		auto pObj = iter->first;
+		auto& ContactData = iter->second;
+		_float fObjDistance = XMVectorGetX(XMVector3Length((Transform().Get_PositionVector() - pObj->Transform().Get_PositionVector())));
+		if (fObjDistance <= fDistance
+			&& pObj != this && nullptr != DynCast<CCharacter_Common*>(pObj))
+		{
+			if (ETeamRelation::Hostile ==
+				CTeamAgentComp::Check_Relation(&DynCast<CCharacter_Common*>(pObj)->TeamAgentComp(), &TeamAgentComp()))
+			{
+				fDistance = fObjDistance;
+				pClosestObj = pObj;
+			}
+
+		}
+	}
+
+	return DynCast<CCharacter_Common*>(pClosestObj);
 }

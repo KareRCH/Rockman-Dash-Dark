@@ -262,7 +262,7 @@ HRESULT FSerialData::Get_Data(const string& strMemberName, _uint& tValue)
 		return E_FAIL;
 
 	Value& ValueData = iter->value;
-	if (ValueData.IsUint())
+	if (ValueData.IsInt() || ValueData.IsUint())
 	{
 		tValue = iter->value.GetUint();
 	}

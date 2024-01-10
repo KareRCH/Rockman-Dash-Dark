@@ -4,6 +4,7 @@
 #include "System/InputDev.h"
 #include "System/KeyMgr.h"
 #include "System/PhysicsMgr.h"
+#include "Physics/PhysicsWorld3D.h"
 #include "System/SoundMgr.h"
 #include "System/FrameMgr.h"
 #include "System/TimerMgr.h"
@@ -584,6 +585,54 @@ inline void CGameInstance::Delete_ColliderToPhysicsWorld(const _uint iWorldID, F
 		return;
 
 	m_pPhysicsMgr->Get_World3D(iWorldID)->Delete_RigidBody(pCollider->pBody);
+}
+
+list<pair<CGameObject*, FContact>> CGameInstance::IntersectTests_Collider_GetGameObject(const _uint iWorldID, const _float3 vPos, CColliderComponent* pSrc, _ulong iMask)
+{
+	if (nullptr == m_pPhysicsMgr)
+		return list<pair<CGameObject*, FContact>>();
+
+	return m_pPhysicsMgr->IntersectTests_Collider_GetGameObject(iWorldID, vPos, pSrc, iMask);
+}
+
+list<pair<CGameObject*, FContact>> CGameInstance::IntersectTests_Sphere_GetGameObject(const _uint iWorldID, _float3 vPos, _float fRadius, _ulong iMask)
+{
+	if (nullptr == m_pPhysicsMgr)
+		return list<pair<CGameObject*, FContact>>();
+
+	return m_pPhysicsMgr->IntersectTests_Sphere_GetGameObject(iWorldID, vPos, fRadius, iMask);
+}
+
+list<pair<CGameObject*, FContact>> CGameInstance::IntersectTests_Box_GetGameObject(const _uint iWorldID, _float3 vPos, _float3 vHalfSize, _ulong iMask)
+{
+	if (nullptr == m_pPhysicsMgr)
+		return list<pair<CGameObject*, FContact>>();
+
+	return m_pPhysicsMgr->IntersectTests_Box_GetGameObject(iWorldID, vPos, vHalfSize, iMask);
+}
+
+list<pair<CGameObject*, FContact>> CGameInstance::IntersectTests_Capsule_GetGameObject(const _uint iWorldID, _float3 vPos, _float3 vNormal, _float fRadius, _ulong iMask)
+{
+	if (nullptr == m_pPhysicsMgr)
+		return list<pair<CGameObject*, FContact>>();
+
+	return m_pPhysicsMgr->IntersectTests_Capsule_GetGameObject(iWorldID, vPos, vNormal, fRadius, iMask);
+}
+
+list<pair<CGameObject*, FContact>> CGameInstance::IntersectTests_Line_GetGameObject(const _uint iWorldID, _float3 vStart, _float3 vEnd, _ulong iMask)
+{
+	if (nullptr == m_pPhysicsMgr)
+		return list<pair<CGameObject*, FContact>>();
+
+	return m_pPhysicsMgr->IntersectTests_Line_GetGameObject(iWorldID, vStart, vEnd, iMask);
+}
+
+list<pair<CGameObject*, FContact>> CGameInstance::IntersectTests_Ray_GetGameObject(const _uint iWorldID, const _float3 vPos, const _float3 vNormal, _ulong iMask)
+{
+	if (nullptr == m_pPhysicsMgr)
+		return list<pair<CGameObject*, FContact>>();
+
+	return m_pPhysicsMgr->IntersectTests_Line_GetGameObject(iWorldID, vPos, vNormal, iMask);
 }
 
 #pragma endregion

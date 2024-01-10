@@ -79,16 +79,17 @@ HRESULT CLevel_Parsed::Ready_Objects(FSerialData& Data)
 		FSerialData ObjectData;
 		Data.Get_ObjectFromArray("Objects", i, ObjectData);
 
-		_uint iClassID;
-		Data.Get_Data("ClassID", iClassID);
-		m_pGI->Add_GameObject(CGameObjectFactory::Create(ObjectData));
-		//Create_Object(iClassID, ObjectData);
-
 		/*StringBuffer buffer;
 		PrettyWriter<StringBuffer> writer(buffer);
 		ObjectData.m_Doc.Accept(writer);
 
 		cout << buffer.GetString() << endl;*/
+
+		_uint iClassID = 0;
+		if (FAILED(ObjectData.Get_Data("ClassID", iClassID)))
+			return E_FAIL;
+		m_pGI->Add_GameObject(CGameObjectFactory::Create(ObjectData));
+		
 	}
 
 	GI()->Add_GameObject(CItemChest::Create(_float3(15.f, 0.f, 10.f)));

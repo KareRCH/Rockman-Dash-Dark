@@ -6,6 +6,8 @@
 #include "Utility/LogicDeviceBasic.h"
 #include "Component/PivotComponent.h"
 
+#include "GameObject/GameObjectFactory.h"
+
 BEGIN(Engine)
 
 class CTriBufferComp;
@@ -26,7 +28,9 @@ BEGIN(Client)
 class CPlayer final : public CCharacter_Common
 {
 	DERIVED_CLASS(CCharacter_Common, CPlayer)
-	REGISTER_CLASSID(CPlayer)
+
+public:
+	const EObjectClassID g_ClassID = EObjectClassID::Player;
 
 protected:
 	explicit CPlayer();
@@ -130,6 +134,12 @@ private:
 private:
 	void ShootBuster();
 
+};
+
+template <>
+struct TObjectClassTrait<EObjectClassID::Player>
+{
+	using Class = CPlayer;
 };
 
 END

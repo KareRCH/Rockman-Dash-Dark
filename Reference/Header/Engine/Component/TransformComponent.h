@@ -403,6 +403,8 @@ public:
 	void Look_At(_fvector vTargetPos);
 	// 특정 위치에 대해 Right벡터를 고정하고 보도록하는 함수
 	void Look_At_OnLand(_fvector vTargetPos);
+	// 특정 위치에 대해 Right벡터를 고정하고 Scale에 해당하는 값 만큼 회전하기, 반환값은 회전한 정도
+	_float Look_At_OnLand(_fvector vTargetPos, _float fRadianSpeed);
 	
 
 private:
