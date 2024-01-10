@@ -9,6 +9,9 @@
 #include "Component/ColliderComponent.h"
 
 #include "GameObject/Effect_Common.h"
+#include "Utility/ClassID.h"
+
+DECLARE_CLASSID(CReaverBot_Horokko, CClassID::g_iCountClassID)
 
 CReaverBot_Horokko::CReaverBot_Horokko()
 {
@@ -42,6 +45,32 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype(const _float3 vPos)
 
 	Transform().Set_Position(vPos);
 	
+	Register_State();
+
+	m_pModelComp->Set_Animation(0, 1.f, true);
+
+	return S_OK;
+}
+
+HRESULT CReaverBot_Horokko::Initialize_Prototype(FSerialData& Data)
+{
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
+	if (FAILED(Initialize_Component()))
+		return E_FAIL;
+
+	m_RandomNumber = mt19937_64(m_RandomDevice());
+
+	_float3 vPos = {};
+	if (FAILED(Data.Get_Data("PosX", vPos.x)))
+		return E_FAIL;
+	if (FAILED(Data.Get_Data("PosY", vPos.y)))
+		return E_FAIL;
+	if (FAILED(Data.Get_Data("PosZ", vPos.z)))
+		return E_FAIL;
+
+	Transform().Set_Position(vPos);
+
 	Register_State();
 
 	m_pModelComp->Set_Animation(0, 1.f, true);
@@ -130,6 +159,19 @@ CReaverBot_Horokko* CReaverBot_Horokko::Create(const _float3 vPos)
 	ThisClass* pInstance = new ThisClass();
 
 	if (FAILED(pInstance->Initialize_Prototype(vPos)))
+	{
+		MSG_BOX("CUI_Player Create Failed");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CReaverBot_Horokko* CReaverBot_Horokko::Create(FSerialData& Data)
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize_Prototype(Data)))
 	{
 		MSG_BOX("CUI_Player Create Failed");
 		Safe_Release(pInstance);
@@ -275,6 +317,15 @@ void CReaverBot_Horokko::Register_State()
 	m_State_Act.Add_Func(EState_Act::End_Shooting, &ThisClass::ActState_End_Shooting);
 	m_State_Act.Add_Func(EState_Act::Dead, &ThisClass::ActState_Dead);
 	m_State_Act.Set_State(EState_Act::Idle);
+
+	m_State_AI.Add_Func(EState_AI::Idle, &ThisClass::AIState_Idle);
+	m_State_AI.Add_Func(EState_AI::Chase, &ThisClass::AIState_Chase);
+	m_State_AI.Add_Func(EState_AI::Charge, &ThisClass::AIState_Charge);
+	m_State_AI.Add_Func(EState_AI::Charge_Attack, &ThisClass::AIState_Charge_Attack);
+	m_State_AI.Add_Func(EState_AI::Prowl, &ThisClass::AIState_Prowl);
+	m_State_AI.Add_Func(EState_AI::Dead, &ThisClass::AIState_Dead);
+	m_State_AI.Add_Func(EState_AI::Escape, &ThisClass::AIState_Escape);
+	m_State_AI.Set_State(EState_AI::Idle);
 }
 
 void CReaverBot_Horokko::ActState_Idle(const _float& fTimeDelta)
@@ -470,6 +521,169 @@ void CReaverBot_Horokko::ActState_Dead(const _float& fTimeDelta)
 	}
 
 	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::AIState_Idle(const _float& fTimeDelta)
+{
+	if (m_State_AI.IsState_Entered())
+	{
+		m_fIdleTime.Reset();
+	}
+
+	if (m_State_AI.Can_Update())
+	{
+		// 가만히 있다가 적이 사정권 안에 들어오면 응시하다가 적을 추적한다.
+		// 적이 없으면 배회 패턴으로 넘어간다.
+		
+		if (m_fIdleTime.Increase(fTimeDelta))
+		{
+			uniform_int_distribution<_uint> RandomPattern(0, 1);
+			switch (RandomPattern(m_RandomNumber))
+			{
+			case 0:
+				m_State_AI.Set_State(EState_AI::Prowl);
+				break;
+			case 1:
+				m_State_AI.Set_State(EState_AI::Chase);
+				break;
+			}
+		}
+	}
+
+	if (m_State_AI.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::AIState_Chase(const _float& fTimeDelta)
+{
+	if (m_State_AI.IsState_Entered())
+	{
+		m_fIdleTime.Reset();
+	}
+
+	if (m_State_AI.Can_Update())
+	{
+		// 적을 직선적으로 추적한다.
+		// 일정 거리 안에 들었다면 기를 모은다.
+		// 플레이어가 도망갈시 Idle 상태로 변경됨
+
+		if (m_fIdleTime.Increase(fTimeDelta))
+		{
+			m_State_AI.Set_State(EState_AI::Chase);
+		}
+	}
+
+	if (m_State_AI.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::AIState_Charge(const _float& fTimeDelta)
+{
+	if (m_State_AI.IsState_Entered())
+	{
+		m_fIdleTime.Reset();
+	}
+
+	if (m_State_AI.Can_Update())
+	{
+		// 사정거리 안에 들어온 적을 바라보며 기를 모은다.
+
+		if (m_fIdleTime.Increase(fTimeDelta))
+		{
+			m_State_AI.Set_State(EState_AI::Chase);
+		}
+	}
+
+	if (m_State_AI.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::AIState_Charge_Attack(const _float& fTimeDelta)
+{
+	if (m_State_AI.IsState_Entered())
+	{
+		m_fIdleTime.Reset();
+	}
+
+	if (m_State_AI.Can_Update())
+	{
+		// 적을 바라보며 빙글빙글 돌며 돌진한다.
+
+		if (m_fIdleTime.Increase(fTimeDelta))
+		{
+			m_State_AI.Set_State(EState_AI::Chase);
+		}
+	}
+
+	if (m_State_AI.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::AIState_Prowl(const _float& fTimeDelta)
+{
+	if (m_State_AI.IsState_Entered())
+	{
+		m_fIdleTime.Reset();
+	}
+
+	if (m_State_AI.Can_Update())
+	{
+		// 특정 위치를 기반으로 주변을 배회한다.
+
+		if (m_fIdleTime.Increase(fTimeDelta))
+		{
+			uniform_int_distribution<_uint> RandomPattern(0, 1);
+			switch (RandomPattern(m_RandomNumber))
+			{
+			case 0:
+				m_State_AI.Set_State(EState_AI::Idle);
+				break;
+			case 1:
+				m_State_AI.Set_State(EState_AI::Chase);
+				break;
+			}
+		}
+	}
+
+	if (m_State_AI.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Horokko::AIState_Dead(const _float& fTimeDelta)
+{
+}
+
+void CReaverBot_Horokko::AIState_Escape(const _float& fTimeDelta)
+{
+	if (m_State_AI.IsState_Entered())
+	{
+		m_fIdleTime.Reset();
+	}
+
+	if (m_State_AI.Can_Update())
+	{
+		// 현재 필드에서 땅속으로 탈출한다.
+
+		if (m_fIdleTime.Increase(fTimeDelta))
+		{
+			
+		}
+	}
+
+	if (m_State_AI.IsState_Exit())
 	{
 
 	}
