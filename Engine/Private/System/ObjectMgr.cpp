@@ -4,6 +4,8 @@
 #include "System/GameInstance.h"
 #include "System/RenderMgr.h"
 
+_uint CObjectMgr::g_iCountClassID = 0;
+
 HRESULT CObjectMgr::Initialize(_uint iNumLevels)
 {
 	m_vecGameObjects.reserve(100000);	// 기본 크기는 10만

@@ -187,3 +187,152 @@ HRESULT FSerialData::Pushback_Member(const string& strArrayMember, FSerialData& 
 
 	return S_OK;
 }
+
+HRESULT FSerialData::Get_Data(const string& strMemberName, _bool& tValue)
+{
+	if (m_Doc.HasParseError())
+		return E_FAIL;
+
+	const _char* pMemberName = strMemberName.c_str();
+	Value::MemberIterator iter = m_Doc.FindMember(pMemberName);
+	if (iter == m_Doc.MemberEnd())
+		return E_FAIL;
+
+	Value& ValueData = iter->value;
+	if (ValueData.IsBool())
+	{
+		tValue = iter->value.GetBool();
+	}
+	else
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT FSerialData::Get_Data(const string& strMemberName, string& tValue)
+{
+	if (m_Doc.HasParseError())
+		return E_FAIL;
+
+	const _char* pMemberName = strMemberName.c_str();
+	Value::MemberIterator iter = m_Doc.FindMember(pMemberName);
+	if (iter == m_Doc.MemberEnd())
+		return E_FAIL;
+
+	Value& ValueData = iter->value;
+	if (ValueData.IsString())
+	{
+		tValue = iter->value.GetString();
+	}
+	else
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT FSerialData::Get_Data(const string& strMemberName, _int& tValue)
+{
+	if (m_Doc.HasParseError())
+		return E_FAIL;
+
+	const _char* pMemberName = strMemberName.c_str();
+	Value::MemberIterator iter = m_Doc.FindMember(pMemberName);
+	if (iter == m_Doc.MemberEnd())
+		return E_FAIL;
+
+	Value& ValueData = iter->value;
+	if (ValueData.IsInt())
+	{
+		tValue = iter->value.GetInt();
+	}
+	else
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT FSerialData::Get_Data(const string& strMemberName, _uint& tValue)
+{
+	if (m_Doc.HasParseError())
+		return E_FAIL;
+
+	const _char* pMemberName = strMemberName.c_str();
+	Value::MemberIterator iter = m_Doc.FindMember(pMemberName);
+	if (iter == m_Doc.MemberEnd())
+		return E_FAIL;
+
+	Value& ValueData = iter->value;
+	if (ValueData.IsUint())
+	{
+		tValue = iter->value.GetUint();
+	}
+	else
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT FSerialData::Get_Data(const string& strMemberName, _float& tValue)
+{
+	if (m_Doc.HasParseError())
+		return E_FAIL;
+
+	const _char* pMemberName = strMemberName.c_str();
+	Value::MemberIterator iter = m_Doc.FindMember(pMemberName);
+	if (iter == m_Doc.MemberEnd())
+		return E_FAIL;
+
+	Value& ValueData = iter->value;
+	if (ValueData.IsFloat())
+	{
+		tValue = iter->value.GetFloat();
+	}
+	else
+		return E_FAIL;
+
+	return S_OK;
+}
+
+_uint FSerialData::Get_ArraySize(const string& strMemberName)
+{
+	if (m_Doc.HasParseError())
+		return 0;
+
+	const _char* pMemberName = strMemberName.c_str();
+	Value::MemberIterator iter = m_Doc.FindMember(pMemberName);
+	if (iter == m_Doc.MemberEnd())
+		return 0;
+
+	Value& ValueData = iter->value;
+	if (ValueData.IsArray())
+	{
+		return Cast<_uint>(ValueData.GetArray().Size());
+	}
+
+	return 0;
+}
+
+HRESULT FSerialData::Get_ObjectFromArray(const string& strMemberName, _uint iIndex, FSerialData& DstData)
+{
+	if (m_Doc.HasParseError())
+		return E_FAIL;
+
+	const _char* pMemberName = strMemberName.c_str();
+	Value::MemberIterator iter = m_Doc.FindMember(pMemberName);
+	if (iter == m_Doc.MemberEnd())
+		return E_FAIL;
+
+	Value& ValueData = iter->value;
+	if (ValueData.IsArray())
+	{
+		if (iIndex < 0 || iIndex >= Cast<_uint>(ValueData.GetArray().Size()))
+			return E_FAIL;
+
+		Value& ObjectData = ValueData.GetArray()[iIndex];
+		DstData.m_Doc.CopyFrom(ObjectData, DstData.m_Doc.GetAllocator());
+	}
+	else
+		return E_FAIL;
+
+	return S_OK;
+}

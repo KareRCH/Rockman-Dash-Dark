@@ -4,7 +4,7 @@
 
 namespace Client 
 {
-	enum LEVEL { LEVEL_STATIC, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_LOADING, LEVEL_END };
+	enum LEVEL { LEVEL_STATIC, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_LOADING, LEVEL_PARSED, LEVEL_END };
 	const float g_fGravity = 9.8f * 1.30f;
 
 	// 충돌 레이어, 마스크 전용, 이 설정으로 충돌쌍이 결정됨.

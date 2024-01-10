@@ -35,6 +35,10 @@ public:
 private:
 	virtual void		Free();
 
+
+public:
+	static _uint g_iCountClassID;
+
 #pragma region 프로토타입 관리
 public:
 	HRESULT				Add_Prototype(const wstring& strTag, const wstring& strPrototypeKey, class CGameObject* pPrototype);

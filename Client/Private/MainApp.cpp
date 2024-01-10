@@ -71,7 +71,7 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK_RETURN(Open_Level(LEVEL_LOGO), E_FAIL);
 
-	FSerialData Level;
+	/*FSerialData Level;
 	Level.Add_Member("Test", 1);
 	Level.Add_Member("Test", 1.f);
 
@@ -81,7 +81,7 @@ HRESULT CMainApp::Initialize()
 	Level.Pushback_Member("Objects", Object);
 	Level.Pushback_Member("Objects", Object);
 	Level.Pushback_Member("Objects", Object);
-	Level.Save_Data(TEXT("Resource/Test.json"));
+	Level.Save_Data(TEXT("Resource/Test.json"));*/
 	
 	return S_OK;
 }

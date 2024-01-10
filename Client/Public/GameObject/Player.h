@@ -26,6 +26,7 @@ BEGIN(Client)
 class CPlayer final : public CCharacter_Common
 {
 	DERIVED_CLASS(CCharacter_Common, CPlayer)
+	REGISTER_CLASSID(CPlayer)
 
 protected:
 	explicit CPlayer();
@@ -35,6 +36,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize_Prototype(const _float3 vPos);
+	virtual HRESULT Initialize_Prototype(FSerialData& Data);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(const _float3 vPos);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
@@ -45,6 +47,7 @@ public:
 public:
 	static CPlayer* Create();
 	static CPlayer* Create(const _float3 vPos);
+	static CPlayer* Create(FSerialData& Data);
 	virtual CGameObject* Clone(void* Arg = nullptr);
 
 protected:

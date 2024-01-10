@@ -126,6 +126,17 @@
 					DERIVED_CLASS(BASENAME, THISCLASS)	\
 					DECLARE_SINGLETON(THISCLASS)
 
+#define			REGISTER_CLASSID(CLASSNAME)	\
+		public:								\
+			static const _uint g_ClassID;
+#define			DECLARE_CLASSID(CLASSNAME, ID)	\
+		const _uint CLASSNAME::g_ClassID = ID++;
+
+#define			CREATE_WITH_CLASSID(CLASSNAME, INITDATA)	\
+		CLASSNAME::Create(INITDATA)
+#define			GET_CLASSID(CLASSNAME)	\
+		CLASSNAME::g_ClassID
+
 // getset 매크로
 // 일반 Set 함수
 #define SET(TYPE, MVALUE, NAME)										\

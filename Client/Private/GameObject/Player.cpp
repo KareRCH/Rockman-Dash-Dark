@@ -11,6 +11,9 @@
 #include "Component/ColliderComponent.h"
 
 #include "System/RenderMgr.h"
+#include "GameObject/GameObjectFactory.h"
+
+DECLARE_CLASSID(CPlayer, CGameObjectFactory::g_iCountClassID)
 
 CPlayer::CPlayer()
 {
@@ -39,6 +42,28 @@ HRESULT CPlayer::Initialize_Prototype(const _float3 vPos)
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
+
+    Transform().Set_Position(vPos);
+    m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, 10.f, 6.f };
+    m_vAcceleration = { 100.f, g_fGravity, 100.f };
+
+    m_pModelComp->Set_Animation(0, 1.f, true);
+
+    return S_OK;
+}
+
+HRESULT CPlayer::Initialize_Prototype(FSerialData& Data)
+{
+    FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+    FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
+
+    _float3 vPos = {};
+    if (FAILED(Data.Get_Data("PosX", vPos.x)))
+        return E_FAIL;
+    if (FAILED(Data.Get_Data("PosY", vPos.y)))
+        return E_FAIL;
+    if (FAILED(Data.Get_Data("PosZ", vPos.z)))
+        return E_FAIL;
 
     Transform().Set_Position(vPos);
     m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, 10.f, 6.f };
@@ -123,7 +148,7 @@ CPlayer* CPlayer::Create()
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("TestObject Create Failed");
+        MSG_BOX("Player Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -136,7 +161,20 @@ CPlayer* CPlayer::Create(const _float3 vPos)
 
     if (FAILED(pInstance->Initialize_Prototype(vPos)))
     {
-        MSG_BOX("TestObject Create Failed");
+        MSG_BOX("Player Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
+CPlayer* CPlayer::Create(FSerialData& Data)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize_Prototype(Data)))
+    {
+        MSG_BOX("Player Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -149,7 +187,7 @@ CGameObject* CPlayer::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        MSG_BOX("TestObject Create Failed");
+        MSG_BOX("Player Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -165,6 +203,7 @@ FSerialData CPlayer::SerializeData()
 {
     FSerialData Data = __super::SerializeData();
 
+    Data.Add_Member("ClassID", ThisClass::g_ClassID);
     Data.Add_Member("HP", m_fHP.fMax);
     Data.Add_Member("MoveSpeed", m_vMaxMoveSpeed.x);
     Data.Add_Member("JumpSpeed", m_vMaxMoveSpeed.y);
@@ -510,7 +549,7 @@ void CPlayer::ActState_Ready_Jump(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(3, 1.f, false);
+        m_pModelComp->Set_Animation(3, 1.f, false, false, 0.5f);
         GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
     }
 

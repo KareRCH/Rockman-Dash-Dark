@@ -81,6 +81,10 @@ HRESULT CLoader::Loading()
 	case LEVEL_GAMEPLAY:
 		hr = Loading_For_GamePlay_Level();
 		break;
+
+	case LEVEL_PARSED:
+		hr = Loading_For_Parsed_Level();
+		break;
 	}
 
 	if (FAILED(hr))
@@ -110,6 +114,17 @@ HRESULT CLoader::Loading_For_GamePlay_Level()
 
 	// 원형 컴포넌트 로드
 	/* For.Prototype_Component_Navigation */
+	if (FAILED(GI()->Add_PrototypeComp(TEXT("GamePlay"), TEXT("Prototype_Component_Navigation"),
+		CNavigationComponent::Create(TEXT("Resource/Navigation.dat")))))
+		return E_FAIL;
+
+	m_bIsFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Parsed_Level()
+{
 	if (FAILED(GI()->Add_PrototypeComp(TEXT("GamePlay"), TEXT("Prototype_Component_Navigation"),
 		CNavigationComponent::Create(TEXT("Resource/Navigation.dat")))))
 		return E_FAIL;
