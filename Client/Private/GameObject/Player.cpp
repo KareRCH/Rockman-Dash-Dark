@@ -11,9 +11,10 @@
 #include "Component/ColliderComponent.h"
 
 #include "System/RenderMgr.h"
+#include "Utility/ClassID.h"
 #include "GameObject/GameObjectFactory.h"
 
-DECLARE_CLASSID(CPlayer, CGameObjectFactory::g_iCountClassID)
+DECLARE_CLASSID(CPlayer, CClassID::g_iCountClassID)
 
 CPlayer::CPlayer()
 {

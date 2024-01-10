@@ -5,7 +5,6 @@
 
 #include "GameObject/Player.h"
 
-_uint CGameObjectFactory::g_iCountClassID = 0;
 
 CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 {

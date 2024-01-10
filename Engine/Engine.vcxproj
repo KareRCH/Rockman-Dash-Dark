@@ -256,6 +256,7 @@
     <ClInclude Include="Public\System\Data\RenderTarget.h" />
     <ClInclude Include="Public\System\Define\RenderMgr_Define.h" />
     <ClInclude Include="Public\System\RenderTargetMgr.h" />
+    <ClInclude Include="Public\Utility\ClassID.h" />
     <ClInclude Include="Public\Utility\DebugDraw.h" />
     <ClInclude Include="Public\Utility\DelegateTemplate.h" />
     <ClInclude Include="Public\Utility\LogicDeviceBasic.h" />
@@ -445,6 +446,7 @@
     <ClCompile Include="Private\System\TextureMgr.cpp" />
     <ClCompile Include="Private\System\Timer.cpp" />
     <ClCompile Include="Private\System\TimerMgr.cpp" />
+    <ClCompile Include="Private\Utility\ClassID.cpp" />
     <ClCompile Include="Private\Utility\DebugDraw.cpp" />
     <ClCompile Include="Private\Utility\RapidJsonSerial.cpp" />
     <ClCompile Include="Private\ParticleRectBufferComp.cpp" />

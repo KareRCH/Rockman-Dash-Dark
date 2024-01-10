@@ -12,7 +12,6 @@ BEGIN(Client)
 class CGameObjectFactory abstract
 {
 public:
-	static _uint g_iCountClassID;
 	static class CGameObject* Create(FSerialData& Data);
 };
 

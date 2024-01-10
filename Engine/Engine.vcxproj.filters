@@ -319,6 +319,9 @@
     <Filter Include="01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr\RenderTarget">
       <UniqueIdentifier>{f8d3fa88-21cd-4ddb-9169-79332b2a7b15}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\09. ClassID">
+      <UniqueIdentifier>{37c19717-0faf-4530-aa6f-fb33996b9ad6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -685,6 +688,7 @@
       <Filter>01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Data\RenderTarget.h" />
+    <ClInclude Include="Public\Utility\ClassID.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -979,6 +983,7 @@
       <Filter>01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr</Filter>
     </ClCompile>
     <ClCompile Include="Public\System\Data\RenderTarget.cpp" />
+    <ClCompile Include="Private\Utility\ClassID.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">

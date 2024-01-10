@@ -3,6 +3,8 @@
 #include "Client_Define.h"
 #include "GameObject/Character_Common.h"
 
+#include "Utility/LogicDeviceBasic.h"
+
 
 BEGIN(Engine)
 
@@ -19,6 +21,7 @@ BEGIN(Client)
 class CReaverBot_Horokko : public CCharacter_Common
 {
 	DERIVED_CLASS(CCharacter_Common, CReaverBot_Horokko)
+	REGISTER_CLASSID(CReaverBot_Horokko)
 
 protected:
 	explicit CReaverBot_Horokko();
@@ -28,6 +31,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize_Prototype(const _float3 vPos);
+	virtual HRESULT Initialize_Prototype(FSerialData& Data);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(const _float3 vPos);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
@@ -38,6 +42,7 @@ public:
 public:
 	static CReaverBot_Horokko* Create();
 	static CReaverBot_Horokko* Create(const _float3 vPos);
+	static CReaverBot_Horokko* Create(FSerialData& Data);
 	virtual CGameObject* Clone(void* Arg = nullptr);
 
 protected:
@@ -57,8 +62,9 @@ public:		// 충돌 이벤트
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
 
-
-
+private:
+	random_device				m_RandomDevice;
+	mt19937_64					m_RandomNumber;
 
 public:
 	void Input_ActionKey();
@@ -103,11 +109,13 @@ private:
 
 
 public:
-	enum class EState_AI { Idle, Chase, Charge, Charge_Attack, Prowl, Dead };
+	enum class EState_AI { Idle, Chase, Charge, Charge_Attack, Prowl, Dead, Escape };
 
 private:		// 약식 상태머신
 	using SState_AI = STATE_SET<EState_AI, void(ThisClass*, const _float&)>;
 	SState_AI		m_State_AI;
+
+	FGauge m_fIdleTime = FGauge(3.f);
 
 private:
 	void AIState_Idle(const _float& fTimeDelta);
@@ -116,6 +124,10 @@ private:
 	void AIState_Charge_Attack(const _float& fTimeDelta);
 	void AIState_Prowl(const _float& fTimeDelta);
 	void AIState_Dead(const _float& fTimeDelta);
+	void AIState_Escape(const _float& fTimeDelta);
+
+private:
+	CGameObject* m_pTarget = { nullptr };
 
 };
 
