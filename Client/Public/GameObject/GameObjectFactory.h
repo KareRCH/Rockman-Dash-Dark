@@ -3,11 +3,20 @@
 #include "Client_Define.h"
 #include "Engine_Define.h"
 
-BEGIN(Enging)
+BEGIN(Engine)
 class FSerialData;
 END
 
 BEGIN(Client)
+
+enum class EObjectClassID : _uint
+{
+	Player,
+	Horokko,
+};
+
+template <EObjectClassID T>
+struct TObjectClassTrait;
 
 class CGameObjectFactory abstract
 {

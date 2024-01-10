@@ -37,6 +37,8 @@ public:
 		pBody->Set_Owner(this);
 		m_dwCollisionLayer_Flag = 0UL;
 		m_dwCollisionMask_Flag = 0UL;
+		XMStoreFloat3x4(&matTransform, XMMatrixIdentity());
+		XMStoreFloat3x4(&matOffset, XMMatrixIdentity());
 	}
 	FCollisionPrimitive(const FCollisionPrimitive& rhs)
 		: m_dwCollisionLayer_Flag(rhs.m_dwCollisionLayer_Flag)
@@ -192,12 +194,14 @@ class ENGINE_DLL FCollisionSphere : public FCollisionPrimitive
 
 public:
 	FCollisionSphere()
-		: fRadius(0.5f)
+		: fBaseRadius(0.5f)
+		, fRadius(0.5f)
 	{
 		eType = ECollisionType::Sphere;
 	}
 	FCollisionSphere(const FCollisionSphere& rhs)
 		: Base(rhs)
+		, fBaseRadius(rhs.fBaseRadius)
 		, fRadius(rhs.fRadius)
 	{
 	}
@@ -207,7 +211,7 @@ public:
 	virtual void Calculate_Shape() override
 	{
 		_float3 vScale = Get_ScaleFloat3();
-		fRadius = max(max(vScale.x, vScale.y), vScale.z) * 0.5f;
+		fRadius = fBaseRadius * max(max(vScale.x, vScale.y), vScale.z);
 		_vector vSimLength = XMVectorSet(fRadius, fRadius, fRadius, fRadius);
 		XMStoreFloat3(&BoundingBox.vMin,(Get_PositionVector() - vSimLength));
 		XMStoreFloat3(&BoundingBox.vMax,(Get_PositionVector() + vSimLength));
@@ -227,6 +231,7 @@ public:
 #endif
 
 public:
+	_float		fBaseRadius;
 	_float		fRadius;
 };
 

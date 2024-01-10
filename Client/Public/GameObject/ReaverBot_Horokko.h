@@ -79,7 +79,7 @@ public:
 
 
 public:
-	enum class EActionKey : _uint { MoveForward, MoveBackward, TurnRight, TurnLeft, Charge, ReadyBomb, ShootBomb, Size };
+	enum class EActionKey : _uint { MoveForward, MoveBackward, TurnRight, TurnLeft, LookTarget, Charge, ReadyBomb, ShootBomb, Size };
 	
 private:
 	ACTION_SET<EActionKey>	m_ActionKey;
@@ -115,7 +115,9 @@ private:		// 약식 상태머신
 	using SState_AI = STATE_SET<EState_AI, void(ThisClass*, const _float&)>;
 	SState_AI		m_State_AI;
 
-	FGauge m_fIdleTime = FGauge(3.f);
+	FGauge			m_fIdleTime = FGauge(3.f);
+	FGauge			m_fTurnTime = FGauge(1.f);
+	_bool			m_fTurnLeft = { true };
 
 private:
 	void AIState_Idle(const _float& fTimeDelta);
@@ -126,9 +128,13 @@ private:
 	void AIState_Dead(const _float& fTimeDelta);
 	void AIState_Escape(const _float& fTimeDelta);
 
-private:
-	CGameObject* m_pTarget = { nullptr };
 
+private:
+	CCharacter_Common* Find_Target();
+
+private:
+	CGameObject*	m_pTarget = { nullptr };
+	
 };
 
 END

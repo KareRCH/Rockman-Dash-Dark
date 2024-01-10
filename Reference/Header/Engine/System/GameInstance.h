@@ -16,6 +16,8 @@ class FModelData;
 class FMeshData;
 class CMeshGroup;
 class FMaterialData;
+class FContact;
+class CColliderComponent;
 
 class CLevel;
 class FCollisionPrimitive;
@@ -109,23 +111,38 @@ public:					// 키 매니저
 	void				Tick_KeyMgr();
 	void				Late_Tick_KeyMgr();
 	// 키 입력
-	inline _bool		IsKey_Pressing(const int& iKey);
-	inline _bool		IsKey_Pressed(const int& iKey);
-	inline _bool		IsKey_Released(const int& iKey);
+	_bool		IsKey_Pressing(const int& iKey);
+	_bool		IsKey_Pressed(const int& iKey);
+	_bool		IsKey_Released(const int& iKey);
 	// 마우스 입력
-	inline _bool		IsMouse_Pressing(const MOUSEKEYSTATE& iMouse);
-	inline _bool		IsMouse_Pressed(const MOUSEKEYSTATE& iMouse);
-	inline _bool		IsMouse_Released(const MOUSEKEYSTATE& iMouse);
+	_bool		IsMouse_Pressing(const MOUSEKEYSTATE& iMouse);
+	_bool		IsMouse_Pressed(const MOUSEKEYSTATE& iMouse);
+	_bool		IsMouse_Released(const MOUSEKEYSTATE& iMouse);
 
+
+#pragma endregion
+
+
+
+
+#pragma region 피직스 매니저
 public:		// 피직스 매니저
 	HRESULT				Initialize_PhysicsMgr(_uint iPhysicsWorldCount = 1);
-	inline void			StartFrame_PhysicsMgr();
-	inline _int			Tick_PhysicsMgr(const _float& fTimeDelta);
-	inline void			Pause_PhysicsSimulation(const _uint iWorldID);
-	inline void			Play_PhysicsSimulation(const _uint iWorldID);
-	inline void			Add_ColliderToPhysicsWorld(const _uint iWorldID, FCollisionPrimitive* pCollider);
-	inline void			Delete_ColliderToPhysicsWorld(const _uint iWorldID, FCollisionPrimitive* pCollider);
+	void			StartFrame_PhysicsMgr();
+	_int			Tick_PhysicsMgr(const _float& fTimeDelta);
+	void			Pause_PhysicsSimulation(const _uint iWorldID);
+	void			Play_PhysicsSimulation(const _uint iWorldID);
+	void			Add_ColliderToPhysicsWorld(const _uint iWorldID, FCollisionPrimitive* pCollider);
+	void			Delete_ColliderToPhysicsWorld(const _uint iWorldID, FCollisionPrimitive* pCollider);
+
+	list<pair<class CGameObject*, FContact>> IntersectTests_Collider_GetGameObject(const _uint iWorldID, const _float3 vPos, CColliderComponent* pSrc, _ulong iMask);
+	list<pair<class CGameObject*, FContact>> IntersectTests_Sphere_GetGameObject(const _uint iWorldID, _float3 vPos, _float fRadius, _ulong iMask);
+	list<pair<class CGameObject*, FContact>> IntersectTests_Box_GetGameObject(const _uint iWorldID, _float3 vPos, _float3 vHalfSize, _ulong iMask);
+	list<pair<class CGameObject*, FContact>> IntersectTests_Capsule_GetGameObject(const _uint iWorldID, _float3 vPos, _float3 vNormal, _float fRadius, _ulong iMask);
+	list<pair<class CGameObject*, FContact>> IntersectTests_Line_GetGameObject(const _uint iWorldID, _float3 vStart, _float3 vEnd, _ulong iMask);
+	list<pair<class CGameObject*, FContact>> IntersectTests_Ray_GetGameObject(const _uint iWorldID, const _float3 vPos, const _float3 vNormal, _ulong iMask);
 #pragma endregion
+
 
 
 

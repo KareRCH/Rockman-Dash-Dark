@@ -4,6 +4,7 @@
 #include "Utility/RapidJsonSerial.h"
 
 #include "GameObject/Player.h"
+#include "GameObject/ReaverBot_Horokko.h"
 
 
 CGameObject* CGameObjectFactory::Create(FSerialData& Data)
@@ -14,9 +15,15 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 
 	CGameObject* pObj = { nullptr };
 
-	if (iClassID == GET_CLASSID(CPlayer))
+	EObjectClassID eID = Cast<EObjectClassID>(iClassID);
+	switch (eID)
 	{
-		pObj = CREATE_WITH_CLASSID(CPlayer, Data);
+	case EObjectClassID::Player:
+		pObj = TObjectClassTrait<EObjectClassID::Player>::Class::Create(Data);
+		break;
+	case EObjectClassID::Horokko:
+		//pObj = CREATE_WITH_CLASSID(CReaverbot_Horokko, Data);
+		break;
 	}
 
 	return pObj;
