@@ -36,10 +36,17 @@ public:
 	void			Clear_RenderGroup();
 
 	void			Render_Priority();
-	void			Render_Alpha();
-	void			Render_NonAlpha();
+	void			Render_NonLight();
+	void			Render_NonBlend();
+	void			Render_Blend();
 	void			Render_UI();
 	void			Render_PostProcess();
+
+	HRESULT			Render_LightAcc();
+#ifdef _DEBUG
+private:
+	HRESULT			Render_Debug();
+#endif
 
 public:
 	GETSET_1(HRESULT, m_hReadyResult, ReadyResult, GET_C_REF)
@@ -53,6 +60,15 @@ private:
 private:
 	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
 	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
+	class CGameInstance*			m_pGI = { nullptr };
+	list<class CGameObject*>		m_RenderObjects[RENDER_END];
+
+private:
+	class CEffectComponent* m_pEffect = { nullptr };
+	class CRectBufferComp* m_pVIBuffer = { nullptr };
+
+	_float4x4								m_WorldMatrix;
+	_float4x4								m_ViewMatrix, m_ProjMatrix;
 
 public:
 	GETSET_1(vector<D3D11_VIEWPORT>, m_vecViewport,	VecViewport, GET_REF)

@@ -322,6 +322,12 @@
     <Filter Include="02. Utility\09. ClassID">
       <UniqueIdentifier>{37c19717-0faf-4530-aa6f-fb33996b9ad6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\08. LightMgr">
+      <UniqueIdentifier>{5ba35785-1e6b-467a-bde0-7341cf9db6f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. System\01. Manager\02. GamePipeline\08. LightMgr\Light">
+      <UniqueIdentifier>{2961a4c5-1c9f-4e00-89ad-39dac4f84789}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -687,8 +693,16 @@
     <ClInclude Include="Public\System\RenderTargetMgr.h">
       <Filter>01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System\Data\RenderTarget.h" />
     <ClInclude Include="Public\Utility\ClassID.h" />
+    <ClInclude Include="Public\System\LightMgr.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\08. LightMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\Data\RenderTarget.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr\RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System\Data\Light.h">
+      <Filter>01. System\01. Manager\02. GamePipeline\08. LightMgr\Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -982,8 +996,16 @@
     <ClCompile Include="Private\System\RenderTargetMgr.cpp">
       <Filter>01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr</Filter>
     </ClCompile>
-    <ClCompile Include="Public\System\Data\RenderTarget.cpp" />
     <ClCompile Include="Private\Utility\ClassID.cpp" />
+    <ClCompile Include="Private\System\LightMgr.cpp">
+      <Filter>01. System\01. Manager\02. GamePipeline\08. LightMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\System\Data\RenderTarget.cpp">
+      <Filter>01. System\01. Manager\02. GamePipeline\07. RenderTargetMgr\RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System\Data\Light.cpp">
+      <Filter>01. System\01. Manager\02. GamePipeline\08. LightMgr\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">
@@ -1035,6 +1057,9 @@
     </None>
     <None Include="Shader\Runtime\FX_VtxPosTexAlpha.hlsl">
       <Filter>03. Shader\03. Effect</Filter>
+    </None>
+    <None Include="Shader\Runtime\FX_Deferred.hlsl">
+      <Filter>03. Shader\02. DeferredShading</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

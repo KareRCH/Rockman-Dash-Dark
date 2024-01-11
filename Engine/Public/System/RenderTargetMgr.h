@@ -14,7 +14,16 @@ private:
 	virtual ~CRenderTargetMgr() = default;
 
 public:
-	HRESULT			Initialize();
+	HRESULT		Initialize();
+	HRESULT		Begin_MRT(const wstring& strMRTTag);
+	HRESULT		End_MRT();
+	HRESULT		Bind_ShaderResource(const wstring& strTargetTag, class CEffectComponent* pEffect, const _char* pConstantName);
+
+#ifdef _DEBUG
+public:
+	HRESULT		Ready_Debug(const wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
+	HRESULT		Render_Debug(const wstring& strMRTTag, class CEffectComponent* pEffect, class CRectBufferComp* pVIBuffer);
+#endif
 
 public:
 	static CRenderTargetMgr* Create(const DX11DEVICE_T tDevice);
@@ -33,7 +42,7 @@ private:
 	map<const wstring, list<class CRenderTarget*>>		m_MRTs;
 
 public:
-	HRESULT Add_RenderTarget(const wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT Add_RenderTarget(const wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 vClearColor);
 	HRESULT Add_MRT(const wstring& strMRTTag, const wstring& strTargetTag);
 
 private:

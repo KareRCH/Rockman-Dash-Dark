@@ -19,6 +19,7 @@ struct FDEVICE_INIT
 	_uint	iResolutionX;
 	_uint	iResolutionY;
 	_uint	iRenderTargetCount;
+	wstring strMainPath;
 };
 
 /// <summary>
@@ -99,6 +100,8 @@ public:
 	const D3D11_TEXTURE2D_DESC* Get_RTV_Desc(_uint iIndex) const;
 	// ∑ª¥ı≈∏∞Ÿ º≥¡§∫Ø∞Ê, ∑ª¥ı≈∏∞Ÿµµ ∞∞¿Ã πŸ≤Ô¥Ÿ.
 	void						Set_RTV_Desc(_uint iIndex, D3D11_TEXTURE2D_DESC& Desc);
+	ID3D11RenderTargetView*		Get_BackBufferRTV() const { return m_pRTV[0].Get(); }
+	ID3D11DepthStencilView*		Get_DSV() const { return m_pDepthStencilView.Get(); }
 	
 
 private:	// ∑ª¥ı ≈∏∞Ÿ

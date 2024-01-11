@@ -251,10 +251,12 @@
     <ClInclude Include="Public\Component\InstancingBufferComp.h" />
     <ClInclude Include="Public\Component\ParticleRectBufferComp.h" />
     <ClInclude Include="Public\ModelLoad.h" />
+    <ClInclude Include="Public\System\Data\Light.h" />
     <ClInclude Include="Public\System\Data\MaterialData.h" />
     <ClInclude Include="Public\System\Data\ModelData.h" />
     <ClInclude Include="Public\System\Data\RenderTarget.h" />
     <ClInclude Include="Public\System\Define\RenderMgr_Define.h" />
+    <ClInclude Include="Public\System\LightMgr.h" />
     <ClInclude Include="Public\System\RenderTargetMgr.h" />
     <ClInclude Include="Public\Utility\ClassID.h" />
     <ClInclude Include="Public\Utility\DebugDraw.h" />
@@ -414,8 +416,10 @@
     <ClCompile Include="Private\System\AnimationMgr.cpp" />
     <ClCompile Include="Private\System\CloudStationMgr.cpp" />
     <ClCompile Include="Private\System\CloudStationPtr.cpp" />
+    <ClCompile Include="Private\System\Data\Light.cpp" />
     <ClCompile Include="Private\System\Data\MaterialData.cpp" />
     <ClCompile Include="Private\System\Data\ModelData.cpp" />
+    <ClCompile Include="Private\System\LightMgr.cpp" />
     <ClCompile Include="Private\System\PipelineMgr.cpp" />
     <ClCompile Include="Private\System\Data\BoneAnimData.cpp" />
     <ClCompile Include="Private\System\Data\MeshData.cpp" />
@@ -458,6 +462,21 @@
     <ClCompile Include="Public\System\Data\RenderTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\Runtime\FX_Deferred.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <FileType>Document</FileType>
+    </None>
     <None Include="Shader\Runtime\FX_VtxPosTexAlpha.hlsl">
       <FileType>Document</FileType>
     </None>

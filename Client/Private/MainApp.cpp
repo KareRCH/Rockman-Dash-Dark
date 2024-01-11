@@ -46,18 +46,14 @@ HRESULT CMainApp::Initialize()
 	tDeviceInit.fScreenDepth = 1000.f;
 	tDeviceInit.fScreenNear = 0.1f;
 	tDeviceInit.iRenderTargetCount = 2;
+	tDeviceInit.strMainPath = L"./";
 
 	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(g_hInst, g_hWnd, tDeviceInit), E_FAIL);
 
 	DX11DEVICE_T tDevice = { m_pGI->Get_GraphicDev(), m_pGI->Get_GraphicContext() };
 
-	FAILED_CHECK_RETURN(m_pGI->Initialize_FontMgr(tDevice, TEXT("Resource/Fonts/")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Add_Font(TEXT("Default"), TEXT("DungGeunMo-30.spritefont")), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGI->Initialize_SoundMgr("Resource/Sound/"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Initialize_TextureMgr(tDevice, L"Resource/"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr(L"Resource/"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
 	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 	GI()->Load_Effect(L"Runtime/FX_Terrain.hlsl", SHADER_VTX_NORM::Elements, SHADER_VTX_NORM::iNumElements);
 

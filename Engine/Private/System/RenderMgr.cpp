@@ -1,6 +1,8 @@
 #include "System/RenderMgr.h"
 
 #include "System/GameInstance.h"
+#include "Component/EffectComponent.h"
+#include "Component/RectBufferComp.h"
 
 CRenderMgr::CRenderMgr(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext), m_hReadyResult(E_FAIL)
@@ -49,6 +51,29 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
 
+	m_pVIBuffer = CRectBufferComp::Create();
+	if (nullptr == m_pVIBuffer)
+		return E_FAIL;
+
+	m_pEffect = CEffectComponent::Create();
+	if (nullptr == m_pVIBuffer)
+		return E_FAIL;
+	if (FAILED(m_pEffect->Bind_Effect(TEXT("Runtime/FX_Deferred.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements)))
+		return E_FAIL;
+
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(m_vecViewport[0].Width, m_vecViewport[0].Height, 1.f));
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_vecViewport[0].Width, m_vecViewport[0].Height, 0.f, 1.f));
+
+#ifdef _DEBUG
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Diffuse"), 100.f, 100.f, 200.f, 200.f)))
+		return E_FAIL;
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Normal"), 100.f, 300.f, 200.f, 200.f)))
+		return E_FAIL;
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Shade"), 300.f, 100.f, 200.f, 200.f)))
+		return E_FAIL;
+#endif
+
 	return m_hReadyResult = S_OK;
 }
 
@@ -56,10 +81,16 @@ void CRenderMgr::Render()
 {
 	// 렌더처리를 하는 종류에 따라 따로 모아서 처리한다.
 	Render_Priority();
-	Render_Alpha();
-	Render_NonAlpha();
+	Render_NonLight();
+	Render_NonBlend();
+	//Render_LightAcc();
+	Render_Blend();
 	Render_UI();
 	Render_PostProcess();
+
+#ifdef _DEBUG
+	//Render_Debug();
+#endif // _DEBUG
 
 	// 항상 처리 후 다음 프레임을 위해 초기화시킨다.
 	Clear_RenderGroup();
@@ -81,6 +112,9 @@ CRenderMgr* CRenderMgr::Create(const DX11DEVICE_T tDevice, const _uint iWidth, c
 void CRenderMgr::Free()
 {
 	Clear_RenderGroup();
+
+	Safe_Release(m_pEffect);
+	Safe_Release(m_pVIBuffer);
 }
 
 void CRenderMgr::Add_RenderGroup(ERenderGroup eType, CGameObject* pGameObject)
@@ -110,18 +144,37 @@ void CRenderMgr::Render_Priority()
 	}
 }
 
-void CRenderMgr::Render_Alpha()
+void CRenderMgr::Render_NonLight()
 {
-	GameInstance()->TurnOn_ZBuffer();
+	GameInstance()->TurnOff_ZBuffer();
 
-	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::Alpha)])
+	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::NonLight)])
 	{
 		pObj->Render();
 		Safe_Release(pObj);
 	}
 }
 
-void CRenderMgr::Render_NonAlpha()
+void CRenderMgr::Render_NonBlend()
+{
+	GameInstance()->TurnOn_ZBuffer();
+
+	/* 기존에 셋팅되어있던 백버퍼를 빼내고 Diffuse와 Normal을 장치에 바인딩한다. */
+	//if (FAILED(GI()->Begin_MRT(TEXT("MRT_GameObjects"))))
+		//return;
+
+	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::Alpha)])
+	{
+		pObj->Render();
+		Safe_Release(pObj);
+	}
+
+	/* 백버퍼를 원래 위치로 다시 장치에 바인딩한다. */
+	//if (FAILED(GI()->End_MRT()))
+		//return;
+}
+
+void CRenderMgr::Render_Blend()
 {
 	GameInstance()->TurnOn_ZBuffer();
 
@@ -152,5 +205,41 @@ void CRenderMgr::Render_PostProcess()
 		pObj->Render();
 		Safe_Release(pObj);
 	}
+}
+
+HRESULT CRenderMgr::Render_LightAcc()
+{
+	/* Shade */
+	/* 여러개 빛의 연산 결과를 저장해 준다. */
+	if (FAILED(GI()->Begin_MRT(TEXT("MRT_LightAcc"))))
+		return E_FAIL;
+
+	if (FAILED(m_pEffect->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEffect->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEffect->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Normal"), m_pEffect, "g_NormalTexture")))
+		return E_FAIL;
+
+	GI()->Render_Lights(m_pEffect, m_pVIBuffer);
+
+	if (FAILED(GI()->End_MRT()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CRenderMgr::Render_Debug()
+{
+	m_pEffect->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
+	m_pEffect->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
+
+	GI()->Render_Debug_RTVs(TEXT("MRT_GameObjects"), m_pEffect, m_pVIBuffer);
+	GI()->Render_Debug_RTVs(TEXT("MRT_LightAcc"), m_pEffect, m_pVIBuffer);
+
+	return S_OK;
 }
 

@@ -178,6 +178,22 @@ namespace Engine
 		ComPtr<ID3D11DeviceContext> pDeviceContext;
 	};
 
+	struct TLIGHT_DESC
+	{
+		enum TYPE { TYPE_DIRECTIONAL, TYPE_POINT, TYPE_END };
+		TYPE			eType;
+		_float4		vDirection;
+		_float4		vPosition;
+
+		float			fRange;
+		float			fPower;
+		float			fDamping;
+
+		_float4		vDiffuse;
+		_float4		vAmbient;
+		_float4		vSpecular;
+	};
+
 	//typedef struct tagVertexTexture
 	//{
 	//	_float3		vPosition;
