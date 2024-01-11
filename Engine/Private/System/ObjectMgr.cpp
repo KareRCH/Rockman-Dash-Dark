@@ -145,6 +145,32 @@ HRESULT CObjectMgr::Add_GameObject(CGameObject* pObj)
 	pObj->m_iID = m_iGiveObjectID++;
 
 	pObj->m_setTag[ECast(EGObjTag::Level)].emplace(m_strLevelTag);
+	wstring& strName = pObj->m_strName;
+	auto iter = m_setObjectNames.find(strName);
+	// 대충 중복 이름 있으면 숫자 붙여서 넣는 방식
+	if (iter != m_setObjectNames.end())
+	{
+		_uint i = 0U;
+		while (true)
+		{
+			wstringstream ss;
+			ss << i;
+			wstring strNew = strName + ss.str();
+			auto iterObject = m_setObjectNames.find(strNew);
+			// 없으면 추가하기
+			if (iterObject == m_setObjectNames.end())
+			{
+				m_setObjectNames.emplace(strNew);
+				pObj->Set_Name(strNew);
+				break;
+			}
+			++i;
+		}
+	}
+	else
+	{
+		m_setObjectNames.emplace(strName);
+	}
 
 	return S_OK;
 }
@@ -156,6 +182,33 @@ HRESULT CObjectMgr::Add_GameObject(const wstring& strLevelTag, CGameObject* pObj
 
 	pObj->m_setTag[ECast(EGObjTag::Level)].emplace(m_strLevelTag);
 	pObj->m_setTag[ECast(EGObjTag::Level)].emplace(strLevelTag);
+
+	wstring& strName = pObj->m_strName;
+	auto iter = m_setObjectNames.find(strName);
+	// 대충 중복 이름 있으면 숫자 붙여서 넣는 방식
+	if (iter != m_setObjectNames.end())
+	{
+		_uint i = 0U;
+		while (true)
+		{
+			wstringstream ss;
+			ss << i;
+			wstring strNew = strName + ss.str();
+			auto iterObject = m_setObjectNames.find(strNew);
+			// 없으면 추가하기
+			if (iterObject == m_setObjectNames.end())
+			{
+				m_setObjectNames.emplace(strNew);
+				pObj->Set_Name(strNew);
+				break;
+			}
+			++i;
+		}
+	}
+	else
+	{
+		m_setObjectNames.emplace(strName);
+	}
 
 	return S_OK;
 }
@@ -238,6 +291,9 @@ void CObjectMgr::Clear_GameObject(const wstring& strLevelTag)
 			if ((*ppObj)->Tag_Size(EGObjTag::Level) == 0U)
 			{
 				(*ppObj)->Set_Dead();
+				auto iter = m_setObjectNames.find((*ppObj)->Get_Name());
+				if (iter != m_setObjectNames.end())
+					m_setObjectNames.erase(iter);
 			}
 		}
 	}

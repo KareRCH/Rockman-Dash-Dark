@@ -56,12 +56,17 @@ public:		// 그래픽 디바이스
 	HRESULT							Clear_BackBuffer_View(_float4 vClearColor);
 	HRESULT							Clear_DepthStencil_View();
 	HRESULT							Present();
+
 	ComPtr<ID3D11Device>			Get_GraphicDev();
 	ComPtr<ID3D11DeviceContext>		Get_GraphicContext();
+	ID3D11RenderTargetView*			Get_BackBufferRTV() const;
+	ID3D11DepthStencilView*			Get_DSV() const;
+			
 	void							TurnOn_ZBuffer();
 	void							TurnOff_ZBuffer();
 	void							TurnOn_Cull();
 	void							TurnOff_Cull();
+
 	
 	HRESULT							Resize_SwapChain(_uint iWidth, _uint iHeight);
 	HRESULT							Regist_RenderTarget(_uint iRenderTargetIndex);
@@ -279,11 +284,25 @@ public:		// 렌더 매니저
 
 #pragma region 렌더타겟 매니저
 public:
-	HRESULT			Initialize_RenderTargetMgr(const DX11DEVICE_T tDevice);
-	HRESULT			Add_RenderTarget(const wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	HRESULT			Add_MRT(const wstring& strMRTTag, const wstring& strTargetTag);
+	HRESULT	Initialize_RenderTargetMgr(const DX11DEVICE_T tDevice);
+	HRESULT	Add_RenderTarget(const wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT	Add_MRT(const wstring& strMRTTag, const wstring& strTargetTag);
+	HRESULT Begin_MRT(const wstring& strMRTTag);
+	HRESULT End_MRT();
+	HRESULT Bind_RenderTarget_ShaderResource(const wstring& strTargetTag, class CEffectComponent* pEffect, const _char* pConstantName);
+#ifdef _DEBUG
+	HRESULT Ready_RenderTarget_Debug(const wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
+	HRESULT Render_Debug_RTVs(const wstring& strMRTTag, class CEffectComponent* pEffect, class CRectBufferComp* pVIBuffer);
+#endif
+
 #pragma endregion
 
+#pragma region 라이트 매니저
+public: /* For.Light_Manager */
+	HRESULT Initialize_LightMgr();
+	HRESULT Add_Light(const TLIGHT_DESC& LightDesc);
+	HRESULT Render_Lights(class CEffectComponent* pEffect, class CRectBufferComp* pVIBuffer);
+#pragma endregion
 
 
 
@@ -337,6 +356,7 @@ private:
 	class CComponentMgr*	m_pComponentMgr = nullptr;
 	class CRenderMgr*		m_pRenderMgr = nullptr;
 	class CRenderTargetMgr* m_pRenderTargetMgr = { nullptr };
+	class CLightMgr*		m_pLightMgr = { nullptr };
 	class CCloudStationMgr*	m_pBlackBoardMgr = nullptr;
 	
 	class CModelMgr*		m_pModelMgr = nullptr;

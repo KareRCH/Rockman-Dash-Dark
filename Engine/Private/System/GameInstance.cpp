@@ -19,11 +19,14 @@
 #include "System/TextureMgr.h"
 #include "System/RenderMgr.h"
 #include "System/RenderTargetMgr.h"
+#include "System/LightMgr.h"
 #include "System/ModelMgr.h"
 #include "System/ParticleMgr.h"
 
 #include "BaseClass/GameObject.h"
 #include "Component/Component.h"
+#include "Component/EffectComponent.h"
+#include "Component/RectBufferComp.h"
 
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -40,9 +43,21 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDevi
 	DX11DEVICE_T tDevice = { Get_GraphicDev().Get(), Get_GraphicContext().Get() };
 
 	FAILED_CHECK_RETURN(Initialize_InputDev(hInst, hWnd), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_PipelineMgr(), E_FAIL);
+
+	FAILED_CHECK_RETURN(Initialize_ComponentMgr(), E_FAIL);
+	Add_PrototypeComp(TEXT("System"), TEXT("GraphicDevComp"), CD3D11DeviceComp::Create());
+	Add_PrototypeComp(TEXT("System"), TEXT("CamViewComp"), CPipelineComp::Create());
+
+	FAILED_CHECK_RETURN(Initialize_FontMgr(tDevice, tDeviceInit.strMainPath + TEXT("Resource/Fonts/")), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_SoundMgr(ConvertToString(tDeviceInit.strMainPath) + "Resource/Sound/"), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_TextureMgr(tDevice, tDeviceInit.strMainPath + TEXT("Resource/")), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_ModelMgr(tDeviceInit.strMainPath + TEXT("Resource/")), E_FAIL);
+	FAILED_CHECK_RETURN(Initialize_ShaderMgr(tDevice, tDeviceInit.strMainPath + TEXT("Shader/")), E_FAIL);
+
+	FAILED_CHECK_RETURN(Initialize_LightMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_RenderTargetMgr(tDevice), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_RenderMgr(tDevice), E_FAIL);
-	FAILED_CHECK_RETURN(Initialize_PipelineMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_PhysicsMgr(1), E_FAIL);
 
 	FAILED_CHECK_RETURN(Initialize_KeyMgr(), E_FAIL);
@@ -50,13 +65,9 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDevi
 	FAILED_CHECK_RETURN(Initialize_TimerMgr(), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_CloudStationMgr(), E_FAIL);
 
-	FAILED_CHECK_RETURN(Initialize_ComponentMgr(), E_FAIL);
-	Add_PrototypeComp(TEXT("System"), TEXT("GraphicDevComp"), CD3D11DeviceComp::Create());
-	Add_PrototypeComp(TEXT("System"), TEXT("CamViewComp"), CPipelineComp::Create());
-
 	FAILED_CHECK_RETURN(Initialize_ObjectMgr(), E_FAIL);
 	
-
+	
 	FAILED_CHECK_RETURN(Initialize_LevelMgr(), E_FAIL);
 
 	return S_OK;
@@ -81,6 +92,7 @@ void CGameInstance::Release_Managers()
 	Safe_Release(m_pModelMgr);
 	Safe_Release(m_pRenderMgr);
 	Safe_Release(m_pRenderTargetMgr);
+	Safe_Release(m_pLightMgr);
 	Safe_Release(m_pComponentMgr);
 	Safe_Release(m_pObjectMgr);
 	Safe_Release(m_pLevelMgr);
@@ -164,6 +176,22 @@ ComPtr<ID3D11DeviceContext> CGameInstance::Get_GraphicContext()
 	return m_pGraphicDev->Get_DeviceContext();
 }
 
+ID3D11RenderTargetView* CGameInstance::Get_BackBufferRTV() const
+{
+	if (nullptr == m_pGraphicDev)
+		return nullptr;
+
+	return m_pGraphicDev->Get_BackBufferRTV();
+}
+
+ID3D11DepthStencilView* CGameInstance::Get_DSV() const
+{
+	if (nullptr == m_pGraphicDev)
+		return nullptr;
+
+	return m_pGraphicDev->Get_DSV();
+}
+
 void CGameInstance::TurnOn_ZBuffer()
 {
 	if (nullptr == m_pGraphicDev)
@@ -171,6 +199,8 @@ void CGameInstance::TurnOn_ZBuffer()
 
 	m_pGraphicDev->TurnOn_ZBuffer();
 }
+
+
 
 void CGameInstance::TurnOff_ZBuffer()
 {
@@ -1217,6 +1247,80 @@ HRESULT CGameInstance::Add_MRT(const wstring& strMRTTag, const wstring& strTarge
 
 	return m_pRenderTargetMgr->Add_MRT(strMRTTag, strTargetTag);
 }
+
+HRESULT CGameInstance::Begin_MRT(const wstring& strMRTTag)
+{
+	if (nullptr == m_pRenderTargetMgr)
+		return E_FAIL;
+
+	return m_pRenderTargetMgr->Begin_MRT(strMRTTag);
+}
+
+HRESULT CGameInstance::End_MRT()
+{
+	if (nullptr == m_pRenderTargetMgr)
+		return E_FAIL;
+
+	return m_pRenderTargetMgr->End_MRT();
+}
+
+HRESULT CGameInstance::Bind_RenderTarget_ShaderResource(const wstring& strTargetTag, CEffectComponent* pEffect, const _char* pConstantName)
+{
+	if (nullptr == m_pRenderTargetMgr)
+		return E_FAIL;
+
+	return m_pRenderTargetMgr->Bind_ShaderResource(strTargetTag, pEffect, pConstantName);
+}
+
+#ifdef _DEBUG
+HRESULT CGameInstance::Ready_RenderTarget_Debug(const wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
+{
+	if (nullptr == m_pRenderTargetMgr)
+		return E_FAIL;
+
+	return m_pRenderTargetMgr->Ready_Debug(strTargetTag, fX, fY, fSizeX, fSizeY);
+}
+HRESULT CGameInstance::Render_Debug_RTVs(const wstring& strMRTTag, CEffectComponent* pEffect, CRectBufferComp* pVIBuffer)
+{
+	if (nullptr == m_pRenderTargetMgr)
+		return E_FAIL;
+
+	return m_pRenderTargetMgr->Render_Debug(strMRTTag, pEffect, pVIBuffer);
+}
+#endif // _DEBUG
+
+#pragma endregion
+
+
+
+
+#pragma region 라이트 매니저
+HRESULT CGameInstance::Initialize_LightMgr()
+{
+	if (nullptr != m_pLightMgr)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(m_pLightMgr = CLightMgr::Create(), E_FAIL);
+
+	return S_OK;
+}
+
+HRESULT CGameInstance::Add_Light(const TLIGHT_DESC& LightDesc)
+{
+	if (nullptr == m_pLightMgr)
+		return E_FAIL;
+
+	return m_pLightMgr->Add_Light(LightDesc);
+}
+
+HRESULT CGameInstance::Render_Lights(CEffectComponent* pEffect, CRectBufferComp* pVIBuffer)
+{
+	if (nullptr == m_pLightMgr)
+		return E_FAIL;
+
+	return m_pLightMgr->Render(pEffect, pVIBuffer);
+}
+
 #pragma endregion
 
 

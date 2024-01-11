@@ -56,6 +56,7 @@ HRESULT CMainApp::Initialize()
 	tDeviceInit.fScreenDepth = 1000.f;
 	tDeviceInit.fScreenNear = 0.1f;
 	tDeviceInit.iRenderTargetCount = 2;
+	tDeviceInit.strMainPath = TEXT("..Client/");
 
 	FAILED_CHECK_RETURN(Engine::GI()->Initialize(g_hInst, g_hWnd, tDeviceInit), E_FAIL);
 	GI()->Add_SystemViewport({ 0.f, 0.f, g_iWindowSizeX, g_iWindowSizeY, 0.f, 1.f });
@@ -66,15 +67,9 @@ HRESULT CMainApp::Initialize()
 
 	DX11DEVICE_T tDevice = { m_pGI->Get_GraphicDev(), m_pGI->Get_GraphicContext() };
 
-	FAILED_CHECK_RETURN(m_pGI->Initialize_FontMgr(tDevice, TEXT("../Client/Resource/Fonts/")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Add_Font(TEXT("Default"), TEXT("DungGeunMo-30.spritefont")), E_FAIL);
-
-	FAILED_CHECK_RETURN(m_pGI->Initialize_TextureMgr(tDevice, L"../Client/Resource/"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr(L"../Client/Resource/"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"../Client/Shader/"), E_FAIL);
 	m_pGI->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
 	m_pGI->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
-	m_pGI->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 120.f), E_FAIL);
 

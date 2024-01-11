@@ -79,6 +79,7 @@ private:
 private:
 	_uint							m_iGiveObjectID = 0;		// 부여되는 게임 오브젝트의 ID
 	vector<class CGameObject*>		m_vecGameObjects;			// 게임 오브젝트 저장공간
+	_unset<wstring>					m_setObjectNames;			// 게임 오브젝트 이름 중복 검사용
 	wstring							m_strLevelTag;				// 생성할 오브젝트에 대한 부여 레벨 태그
 #pragma endregion
 

@@ -14,7 +14,6 @@ FBoneData* FBoneData::Create()
 	if (!pInstance)
 	{
 		MSG_BOX("FBoneNodeData Create Failed");
-		return nullptr;
 	}
 
 	return pInstance;

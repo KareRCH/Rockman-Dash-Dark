@@ -6,6 +6,7 @@
 CEffect_Common::CEffect_Common()
 {
 	Set_Name(TEXT("Effect_Common"));
+	Set_RenderGroup(ERenderGroup::Blend);
 }
 
 CEffect_Common::CEffect_Common(const CEffect_Common& rhs)
@@ -16,9 +17,6 @@ CEffect_Common::CEffect_Common(const CEffect_Common& rhs)
 HRESULT CEffect_Common::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
-
-	TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의
-	Set_RenderGroup(ERenderGroup::Blend);
 
 	return S_OK;
 }

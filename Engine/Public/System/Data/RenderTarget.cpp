@@ -1,13 +1,16 @@
 #include "RenderTarget.h"
 
+#include "Component/EffectComponent.h"
+#include "Component/VIBufferComp.h"
+
 CRenderTarget::CRenderTarget(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pContext(tDevice.pDeviceContext)
 {
 }
 
-HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat)
+HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, _float4 vClearColor)
 {
-	ComPtr<ID3D11Texture2D> pTexture2D = { nullptr };
+	m_vClearColor = vClearColor;
 
 	D3D11_TEXTURE2D_DESC	TextureDesc = {};
 
@@ -25,25 +28,23 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixel
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
 
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, pTexture2D.GetAddressOf())))
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, m_pTexture2D.GetAddressOf())))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->CreateRenderTargetView(pTexture2D.Get(), nullptr, m_pRTV.GetAddressOf())))
+	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D.Get(), nullptr, m_pRTV.GetAddressOf())))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->CreateShaderResourceView(pTexture2D.Get(), nullptr, m_pSRV.GetAddressOf())))
+	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D.Get(), nullptr, m_pSRV.GetAddressOf())))
 		return E_FAIL;
-
-	m_pTexture2D = pTexture2D;
 
 	return S_OK;
 }
 
-CRenderTarget* CRenderTarget::Create(const DX11DEVICE_T tDevice, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat)
+CRenderTarget* CRenderTarget::Create(const DX11DEVICE_T tDevice, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, _float4 vClearColor)
 {
 	ThisClass* pInstance = new ThisClass(tDevice);
 
-	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, ePixelFormat)))
+	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, ePixelFormat, vClearColor)))
 	{
 		MSG_BOX("RenderMgr Create Failed");
 		Safe_Release(pInstance);
@@ -54,9 +55,52 @@ CRenderTarget* CRenderTarget::Create(const DX11DEVICE_T tDevice, _uint iSizeX, _
 
 void CRenderTarget::Free()
 {
-	m_pTexture2D.Reset();
-	m_pRTV.Reset();
-	m_pSRV.Reset();
-	m_pDevice.Reset();
-	m_pContext.Reset();
 }
+
+HRESULT CRenderTarget::Bind_ShaderResource(CEffectComponent* pEffect, const _char* pConstantName)
+{
+	return pEffect->Bind_SRV(pConstantName, m_pSRV.Get());
+}
+
+HRESULT CRenderTarget::Clear()
+{
+	m_pContext->ClearRenderTargetView(m_pRTV.Get(), (_float*)&m_vClearColor);
+
+	return S_OK;
+}
+
+#ifdef _DEBUG
+HRESULT CRenderTarget::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
+{
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
+
+	m_WorldMatrix._11 = fSizeX;
+	m_WorldMatrix._22 = fSizeY;
+
+	D3D11_VIEWPORT		Viewport;
+	_uint				iNumViewport = { 1 };
+
+	m_pContext->RSGetViewports(&iNumViewport, &Viewport);
+
+	m_WorldMatrix._41 = fX - Viewport.Width * 0.5f;
+	m_WorldMatrix._42 = -fY + Viewport.Height * 0.5f;
+
+	return S_OK;
+}
+
+HRESULT CRenderTarget::Render_Debug(CEffectComponent* pEffect, CVIBufferComp* pVIBuffer)
+{
+	if (FAILED(pEffect->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	if (FAILED(pEffect->Bind_SRV("g_DiffuseTexture", m_pSRV.Get())))
+		return E_FAIL;
+
+	pEffect->Begin(0);
+
+	pVIBuffer->Bind_Buffer();
+
+	return pVIBuffer->Render_Buffer();
+}
+#endif // _DEBUG
+

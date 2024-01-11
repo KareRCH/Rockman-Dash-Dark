@@ -1,6 +1,9 @@
 #include "System/RenderTargetMgr.h"
 #include "System/Data/RenderTarget.h"
 
+#include "System/GameInstance.h"
+#include "Component/VIBufferComp.h"
+
 CRenderTargetMgr::CRenderTargetMgr(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pContext(tDevice.pDeviceContext)
 {
@@ -10,6 +13,73 @@ HRESULT CRenderTargetMgr::Initialize()
 {
 	return S_OK;
 }
+
+HRESULT CRenderTargetMgr::Begin_MRT(const wstring& strMRTTag)
+{
+	/* strMRTTag에 모여있는 렌더타겟들을 장치에 순차적으로 바인딩한다. */
+	list<CRenderTarget*>* pMRTList = Find_MRT(strMRTTag);
+	if (nullptr == pMRTList)
+		return E_FAIL;
+	ID3D11RenderTargetView* pRTVs[8];
+
+	_uint		iNumRTVs = { 0 };
+
+	for (auto& pRenderTarget : *pMRTList)
+	{
+		pRenderTarget->Clear();
+		pRTVs[iNumRTVs++] = pRenderTarget->Get_RTV();
+	}
+
+	m_pContext->OMSetRenderTargets(iNumRTVs, pRTVs, GI()->Get_DSV());
+
+	return S_OK;
+}
+
+HRESULT CRenderTargetMgr::End_MRT()
+{
+	ID3D11RenderTargetView* pRTVs[] = {
+		GI()->Get_BackBufferRTV()
+	};
+
+	/* 최초의 상태(백버퍼)로 되돌린다. */
+	m_pContext->OMSetRenderTargets(1, pRTVs, GI()->Get_DSV());
+
+	return S_OK;
+}
+
+HRESULT CRenderTargetMgr::Bind_ShaderResource(const wstring& strTargetTag, CEffectComponent* pEffect, const _char* pConstantName)
+{
+	CRenderTarget* pRenderTarget = Find_RenderTarget(strTargetTag);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	return pRenderTarget->Bind_ShaderResource(pEffect, pConstantName);
+}
+
+#ifdef _DEBUG
+HRESULT CRenderTargetMgr::Ready_Debug(const wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
+{
+	CRenderTarget* pRenderTarget = Find_RenderTarget(strTargetTag);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	return pRenderTarget->Ready_Debug(fX, fY, fSizeX, fSizeY);
+}
+
+HRESULT CRenderTargetMgr::Render_Debug(const wstring& strMRTTag, CEffectComponent* pEffect, CRectBufferComp* pVIBuffer)
+{
+	list<CRenderTarget*>* pMRTList = Find_MRT(strMRTTag);
+	if (nullptr == pMRTList)
+		return E_FAIL;
+
+	for (auto& pRenderTarget : *pMRTList)
+	{
+		pRenderTarget->Render_Debug(pEffect, Cast<CVIBufferComp*>(pVIBuffer));
+	}
+	return S_OK;
+}
+#endif // _DEBUG
+
 
 CRenderTargetMgr* CRenderTargetMgr::Create(const DX11DEVICE_T tDevice)
 {
@@ -40,12 +110,12 @@ void CRenderTargetMgr::Free()
 	m_RenderTargets.clear();
 }
 
-HRESULT CRenderTargetMgr::Add_RenderTarget(const wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CRenderTargetMgr::Add_RenderTarget(const wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 vClearColor)
 {
 	if (nullptr != Find_RenderTarget(strTargetTag))
 		return E_FAIL;
 
-	CRenderTarget* pRenderTarget = CRenderTarget::Create({ m_pDevice, m_pContext }, iSizeX, iSizeY, ePixelFormat);
+	CRenderTarget* pRenderTarget = CRenderTarget::Create({ m_pDevice, m_pContext }, iSizeX, iSizeY, ePixelFormat, vClearColor);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
