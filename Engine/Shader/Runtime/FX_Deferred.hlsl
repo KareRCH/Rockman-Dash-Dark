@@ -6,6 +6,7 @@ vector g_vLightDir;
 
 Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
+Texture2D g_ShadeTexture;
 
 struct VS_IN
 {
@@ -85,13 +86,28 @@ PS_OUT_LIGHT PS_MAIN_LIGHT(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_MAIN_FINAL(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    if (0.0f == vDiffuse.a)
+        discard;
+
+    vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexcoord);
+
+    Out.vColor = vDiffuse * vShade;
+
+    return Out;
+}
+
 
 technique11 DefaultTechnique
 {
     pass Debug
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -102,7 +118,7 @@ technique11 DefaultTechnique
     pass Light_Directional
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -113,11 +129,22 @@ technique11 DefaultTechnique
     pass Light_Point
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_LIGHT();
+    }
+
+    pass Final
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_FINAL();
     }
 }

@@ -84,7 +84,7 @@ private:	// 기본 속성
 	_uint				m_iStateFlag = 0U;					// 상태 플래그, 32가지의 상태를 구현한다. 시스템에서 쓰인다.
 	_unset<wstring>		m_setTag[ECast(EGObjTag::Size)];	// 분류 태그. 시스템과 게임 로직에 사용된다.
 
-	ERenderGroup		m_eRenderGroup = ERenderGroup::Alpha;
+	ERenderGroup		m_eRenderGroup = ERenderGroup::NonBlend;
 
 	_float				m_fPriority[ECast(EGObjTickPriority::Size)];	// 우선도
 

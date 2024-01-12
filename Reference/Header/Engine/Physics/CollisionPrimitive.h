@@ -119,7 +119,18 @@ public:
 	const _float3 Get_Rotation() const
 	{
 		CheckAnd_CreateBody();
+
+		
+
 		return pBody->Get_Rotation();
+	}
+	_vector Get_QuaternionVector() const
+	{
+		_matrix matSimTransform = XMLoadFloat3x4(&matTransform);
+		_vector vPos, vQuat, vScale;
+		XMMatrixDecompose(&vScale, &vQuat, &vPos, matSimTransform);
+
+		return vQuat;
 	}
 	void Set_Rotation(const _float3 vRot)
 	{
@@ -304,16 +315,17 @@ public:
 	{
 		vDirHalfSize = _float3(0.f, Get_ScaleFloat3().y * 0.5f, 0.f);
 		fRadius = max(Get_ScaleFloat3().x, Get_ScaleFloat3().z) * 0.5f;
-		_vector vLength = XMVectorSet(fRadius, vDirHalfSize.y + fRadius, fRadius, 0.f);
+		_vector vPos = Get_PositionVector();
+		_vector vLength = XMVectorSet(fRadius, fabs(vDirHalfSize.y) + fRadius, fRadius, 0.f);
 
-		XMStoreFloat3(&BoundingBox.vMin, Get_PositionVector() - vLength);
-		XMStoreFloat3(&BoundingBox.vMax, Get_PositionVector() + vLength);
+		XMStoreFloat3(&BoundingBox.vMin, vPos - vLength);
+		XMStoreFloat3(&BoundingBox.vMax, vPos + vLength);
 	}
 
 #ifdef _DEBUG
 	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 	{
-
+		DX::Draw(pBatch, *this, vColor);
 
 		return S_OK;
 	}

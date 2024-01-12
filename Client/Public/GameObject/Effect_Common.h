@@ -48,6 +48,7 @@ private:
 	_float			m_fAnimSpeed = { 0.f };
 	FGauge			m_fAnimTime = FGauge(0.f);
 	FGauge			m_fLifeTime = FGauge(1.f);
+	_float			m_fAlphaMinTime = { 0.4f };		// 애니메이션 재생 시간에 따라 알파값이 적용되는 시점
 
 };
 

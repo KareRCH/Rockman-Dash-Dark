@@ -14,7 +14,7 @@
 CReaverBot_Horokko::CReaverBot_Horokko()
 {
 	Set_Name(TEXT("ReaverBot_Horokko"));
-	Set_RenderGroup(ERenderGroup::Alpha);
+	Set_RenderGroup(ERenderGroup::NonBlend);
 	m_fHP = FGauge(10.f, true);
 }
 
@@ -133,7 +133,7 @@ HRESULT CReaverBot_Horokko::Render()
 	m_pModelComp->Render();
 
 #ifdef _DEBUG
-	m_pColliderComp->Render();
+	GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
 	return S_OK;
@@ -210,9 +210,12 @@ HRESULT CReaverBot_Horokko::Initialize_Component()
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Horokko/Horokko.amodel");
 	//m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Fingerii/Fingerii.amodel");
+	
 	if (nullptr == m_pColliderComp)
 		return E_FAIL;
-	m_pColliderComp->Bind_Collision(ECollisionType::OBB);
+	m_pColliderComp->Transform().Set_Position(0.f, 0.5f, 0.f);
+	m_pColliderComp->Transform().Set_Scale(1.f, 0.5f, 1.f);
+	m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
 	m_pColliderComp->EnterToPhysics(0);
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR

@@ -1,6 +1,7 @@
 #include "Component/TransformComponent.h"
 
 #include "Component/EffectComponent.h"
+#include <iomanip>
 
 CTransformComponent::CTransformComponent()
 	: m_qtOrientation(_float4(0.f, 0.f, 0.f, 1.f)), m_vScale(1.f, 1.f, 1.f)
@@ -155,6 +156,9 @@ void CTransformComponent::Look_At_OnLand(_fvector vTargetPos)
 	_vector		vPosition = Get_PositionVector();
 	_vector		vLook = vTargetPos - vPosition;
 
+	if (XMVector3Equal(vLook, XMVectorSet(0.f, 0.f, 0.f, 0.f)))
+		vLook = Get_LookNormalizedVector();
+
 	_vector		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
 
 	vLook = XMVector3Normalize(XMVector3Cross(vRight, XMVectorSet(0.f, 1.f, 0.f, 0.f))) * vScale.z;
@@ -164,6 +168,12 @@ void CTransformComponent::Look_At_OnLand(_fvector vTargetPos)
 	Set_Right(vRight);
 	Set_Up(vUp);
 	Set_Look(vLook);
+
+	_matrix		vMat = Get_TransformMatrix();
+	if (isnan(vMat.r->m128_f32[0]))
+	{
+		int t = 0;
+	}
 }
 
 _float CTransformComponent::Look_At_OnLand(_fvector vTargetPos, _float fRadianSpeed)
@@ -173,14 +183,16 @@ _float CTransformComponent::Look_At_OnLand(_fvector vTargetPos, _float fRadianSp
 	_vector		vPosition = Get_PositionVector();
 	_vector		vLook = XMVector3Normalize(vTargetPos - vPosition);
 	_vector		vOriginLook = Get_LookNormalizedVector();
-
+	
 	_vector		vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	_vector		vRight = XMVector3Normalize(XMVector3Cross(vUp, vLook));
 	vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
 
 	_float fDot = XMVectorGetX(XMVector3Dot(vLook, vOriginLook));
 	_float fDir = XMVectorGetX(XMVector3Dot(vRight, vOriginLook));
-	_float fRadian = min(acos(fDot), fRadianSpeed);
+	_float fRadian = max(min(acos(fDot), fRadianSpeed), 0.f);
+	if (isnan(fRadian))
+		fRadian = 0.f;
 	_vector vQuaternion = XMQuaternionIdentity();
 
 	if (fDir <= 0.f)

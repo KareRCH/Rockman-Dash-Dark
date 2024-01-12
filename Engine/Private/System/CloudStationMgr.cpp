@@ -9,7 +9,7 @@ HRESULT CCloudStationMgr::Initialize()
 	return S_OK;
 }
 
-_int CCloudStationMgr::Tick()
+void CCloudStationMgr::Tick()
 {
 	// 만료시 삭제하는 블랙보드 삭제.
 	for (auto iter = m_mapCloudStations.begin(); iter != m_mapCloudStations.end();)
@@ -22,8 +22,6 @@ _int CCloudStationMgr::Tick()
 		else
 			++iter;
 	}
-
-	return 0;
 }
 
 CCloudStationMgr* CCloudStationMgr::Create()
@@ -44,20 +42,18 @@ CCloudStationMgr* CCloudStationMgr::Create()
 void CCloudStationMgr::Free()
 {
 	for (auto itemPair : m_mapCloudStations)
-	{
 		Safe_Release(itemPair.second);
-	}
 	m_mapCloudStations.clear();
 }
 
-HRESULT CCloudStationMgr::Add_BlackBoard(const wstring& strBoardName, CCloudStation* pBlackBoard)
+HRESULT CCloudStationMgr::Add_CloudStation(const wstring& strBoardName, CCloudStation* pBlackBoard)
 {
 	auto iter = m_mapCloudStations.emplace(strBoardName, pBlackBoard);
 	if (!iter.second)
 	{
 #ifdef _DEBUG
 		OutputDebugString(strBoardName.c_str());
-		OutputDebugString(L" : 블랙보드 추가 못함!\n");
+		OutputDebugString(L" : 클라우드 스테이션 추가 못함!\n");
 #endif // _DEBUG
 		// 실패시 블랙보드를 해제 시킨다.
 		Safe_Release(pBlackBoard);
@@ -67,14 +63,14 @@ HRESULT CCloudStationMgr::Add_BlackBoard(const wstring& strBoardName, CCloudStat
 	return S_OK;
 }
 
-HRESULT CCloudStationMgr::Delete_BlackBoard(const wstring& strBoardName)
+HRESULT CCloudStationMgr::Delete_CloudStation(const wstring& strBoardName)
 {
 	auto iter = m_mapCloudStations.find(strBoardName);
 	if (iter == m_mapCloudStations.end())
 	{
 #ifdef _DEBUG
 		OutputDebugString(strBoardName.c_str());
-		OutputDebugString(L" : 블랙보드가 없어 삭제 실패!\n");
+		OutputDebugString(L" : 클라우드 스테이션이 없어 삭제 실패!\n");
 #endif // _DEBUG
 		return E_FAIL;
 	}
@@ -86,14 +82,14 @@ HRESULT CCloudStationMgr::Delete_BlackBoard(const wstring& strBoardName)
 	return S_OK;
 }
 
-CCloudStation* CCloudStationMgr::Get_BlackBoard(const wstring& strBoardName)
+CCloudStation* CCloudStationMgr::Get_CloudStation(const wstring& strBoardName)
 {
 	auto iter = m_mapCloudStations.find(strBoardName);
 	if (iter == m_mapCloudStations.end())
 	{
 #ifdef _DEBUG
 		OutputDebugString(strBoardName.c_str());
-		OutputDebugString(L" : 블랙보드 찾지 못함!\n");
+		OutputDebugString(L" : 클라우드 스테이션 찾지 못함!\n");
 #endif // _DEBUG
 		return nullptr;
 	}

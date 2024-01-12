@@ -7,6 +7,7 @@
 CRenderMgr::CRenderMgr(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext), m_hReadyResult(E_FAIL)
 {
+	NULL_CHECK(m_pPipelineComp = DynCast<CPipelineComp*>(GI()->Reference_PrototypeComp(TEXT("CamViewComp"))));
 }
 
 HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
@@ -77,23 +78,35 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	return m_hReadyResult = S_OK;
 }
 
-void CRenderMgr::Render()
+HRESULT CRenderMgr::Render()
 {
 	// 렌더처리를 하는 종류에 따라 따로 모아서 처리한다.
-	Render_Priority();
-	Render_NonLight();
-	Render_NonBlend();
-	//Render_LightAcc();
-	Render_Blend();
-	Render_UI();
-	Render_PostProcess();
+	if (FAILED(Render_Priority()))
+		return E_FAIL;
+	if (FAILED(Render_NonLight()))
+		return E_FAIL;
+	if (FAILED(Render_NonBlend()))
+		return E_FAIL;
+	if (FAILED(Render_LightAcc()))
+		return E_FAIL;
+	if (FAILED(Render_Deferred()))
+		return E_FAIL;
+	if (FAILED(Render_Blend()))
+		return E_FAIL;
+	if (FAILED(Render_UI()))
+		return E_FAIL;
+	if (FAILED(Render_PostProcess()))
+		return E_FAIL;
 
 #ifdef _DEBUG
-	//Render_Debug();
+	if (FAILED(Render_Debug()))
+		return E_FAIL;
 #endif // _DEBUG
 
 	// 항상 처리 후 다음 프레임을 위해 초기화시킨다.
 	Clear_RenderGroup();
+
+	return S_OK;
 }
 
 CRenderMgr* CRenderMgr::Create(const DX11DEVICE_T tDevice, const _uint iWidth, const _uint iHeight)
@@ -115,6 +128,7 @@ void CRenderMgr::Free()
 
 	Safe_Release(m_pEffect);
 	Safe_Release(m_pVIBuffer);
+	Safe_Release(m_pPipelineComp);
 }
 
 void CRenderMgr::Add_RenderGroup(ERenderGroup eType, CGameObject* pGameObject)
@@ -133,70 +147,93 @@ void CRenderMgr::Clear_RenderGroup()
 		m_RenderGroup[i].clear();
 }
 
-void CRenderMgr::Render_Priority()
+HRESULT CRenderMgr::Render_Priority()
 {
-	GameInstance()->TurnOff_ZBuffer();
+	//GameInstance()->TurnOff_ZBuffer();
 
 	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::Priority)])
 	{
 		pObj->Render();
 		Safe_Release(pObj);
 	}
+
+	return S_OK;
 }
 
-void CRenderMgr::Render_NonLight()
+HRESULT CRenderMgr::Render_NonLight()
 {
-	GameInstance()->TurnOff_ZBuffer();
+	//GameInstance()->TurnOff_ZBuffer();
 
 	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::NonLight)])
 	{
 		pObj->Render();
 		Safe_Release(pObj);
 	}
+
+	return S_OK;
 }
 
-void CRenderMgr::Render_NonBlend()
+HRESULT CRenderMgr::Render_NonBlend()
 {
-	GameInstance()->TurnOn_ZBuffer();
+	//GameInstance()->TurnOn_ZBuffer();
 
 	/* 기존에 셋팅되어있던 백버퍼를 빼내고 Diffuse와 Normal을 장치에 바인딩한다. */
-	//if (FAILED(GI()->Begin_MRT(TEXT("MRT_GameObjects"))))
-		//return;
+	if (FAILED(GI()->Begin_MRT(TEXT("MRT_GameObjects"))))
+		return E_FAIL;
 
-	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::Alpha)])
+	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::NonBlend)])
 	{
 		pObj->Render();
 		Safe_Release(pObj);
 	}
 
 	/* 백버퍼를 원래 위치로 다시 장치에 바인딩한다. */
-	//if (FAILED(GI()->End_MRT()))
-		//return;
+	if (FAILED(GI()->End_MRT()))
+		return E_FAIL;
+
+	return S_OK;
 }
 
-void CRenderMgr::Render_Blend()
+HRESULT CRenderMgr::Render_Blend()
 {
-	GameInstance()->TurnOn_ZBuffer();
+	//GameInstance()->TurnOn_ZBuffer();
+
+	_vector vCamPos = PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One);
+	m_RenderGroup[ECast(ERenderGroup::Blend)].sort(
+		[&vCamPos](CGameObject* pDst, CGameObject* pSrc) {
+			_vector vDstPos = vCamPos - pDst->Transform().Get_PositionVector();
+			_float fDstLength = XMVectorGetX(XMVector3Length(vDstPos));
+
+			_vector vSrcPos = vCamPos - pSrc->Transform().Get_PositionVector();
+			_float fSrcLength = XMVectorGetX(XMVector3Length(vSrcPos));
+
+			return fDstLength > fSrcLength;
+		}
+	);
 
 	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::Blend)])
 	{
 		pObj->Render();
 		Safe_Release(pObj);
 	}
+
+	return S_OK;
 }
 
-void CRenderMgr::Render_UI()
+HRESULT CRenderMgr::Render_UI()
 {
-	GameInstance()->TurnOff_ZBuffer();
+	//GameInstance()->TurnOff_ZBuffer();
 
 	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::UI)])
 	{
 		pObj->Render();
 		Safe_Release(pObj);
 	}
+
+	return S_OK;
 }
 
-void CRenderMgr::Render_PostProcess()
+HRESULT CRenderMgr::Render_PostProcess()
 {
 	GameInstance()->TurnOff_ZBuffer();
 
@@ -205,6 +242,8 @@ void CRenderMgr::Render_PostProcess()
 		pObj->Render();
 		Safe_Release(pObj);
 	}
+
+	return S_OK;
 }
 
 HRESULT CRenderMgr::Render_LightAcc()
@@ -232,10 +271,40 @@ HRESULT CRenderMgr::Render_LightAcc()
 	return S_OK;
 }
 
+HRESULT CRenderMgr::Render_Deferred()
+{
+	if (FAILED(m_pEffect->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEffect->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEffect->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Diffuse"), m_pEffect, "g_DiffuseTexture")))
+		return E_FAIL;
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Shade"), m_pEffect, "g_ShadeTexture")))
+		return E_FAIL;
+
+	m_pEffect->Begin(3);
+
+	m_pVIBuffer->Bind_Buffer();
+
+	m_pVIBuffer->Render_Buffer();
+
+	ID3D11ShaderResourceView* pSRV = { nullptr };
+	m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
+
+	return S_OK;
+}
+
 HRESULT CRenderMgr::Render_Debug()
 {
 	m_pEffect->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
 	m_pEffect->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
+
+	// 디버그용 렌더 이벤트를 등록하고 실행한뒤 제거한다.
+	m_DebugEvent.Broadcast();
+	m_DebugEvent.Clear();
 
 	GI()->Render_Debug_RTVs(TEXT("MRT_GameObjects"), m_pEffect, m_pVIBuffer);
 	GI()->Render_Debug_RTVs(TEXT("MRT_LightAcc"), m_pEffect, m_pVIBuffer);

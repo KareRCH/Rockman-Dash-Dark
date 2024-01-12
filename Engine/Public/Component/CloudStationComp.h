@@ -2,6 +2,8 @@
 
 #include "GameObjectComp.h"
 
+#include "Utility/LogicDeviceBasic.h"
+
 BEGIN(Engine)
 
 /// <summary>
@@ -32,9 +34,19 @@ public:
 protected:
 	virtual void	Free() override;
 
+public:
+	// 클라우드 스테이션의 세션을 여는 함수
+	HRESULT Open_CloudStation_Session(const wstring& strName, class CCloudStationComp* pCloudStation);
+	// 
+	HRESULT Connect_CloudStation(const wstring& strName);
+	void Disconnect_CloudStation(_uint iIndex);
 
 private:
-	
+	_uint				m_iNumCloudStations = { 0 };
+	vector<wstring>		m_CloudStationNames;	// 연결된 클라우드 스테이션들
+
+	FGauge				m_fReconnectTime = FGauge(1.f);	// 재연결 대기시간
+	_float				m_fTimeout = { 10.f };
 
 
 };

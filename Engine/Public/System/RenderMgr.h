@@ -3,7 +3,12 @@
 #include "System/Define/RenderMgr_Define.h"
 #include "BaseClass/GameObject.h"
 
+#include "Utility/DelegateTemplate.h"
+
 BEGIN(Engine)
+
+typedef FastDelegate0<HRESULT> DelegateDebug;
+typedef MulticastDelegate<DelegateDebug> MultiDeleDebug;
 
 /// <summary>
 /// 렌더러는 기존 레이어의 Rendering 역할을 부여받은 클래스로
@@ -23,7 +28,7 @@ private:
 
 public:
 	HRESULT			Initialize(const _uint iWidth = 1280U, const _uint iHeight = 720U);
-	void			Render();
+	HRESULT			Render();
 
 public:
 	static CRenderMgr* Create(const DX11DEVICE_T tDevice, const _uint iWidth = 1280U, const _uint iHeight = 720U);
@@ -35,14 +40,15 @@ public:
 	void			Add_RenderGroup(ERenderGroup eType, CGameObject* pGameObject);
 	void			Clear_RenderGroup();
 
-	void			Render_Priority();
-	void			Render_NonLight();
-	void			Render_NonBlend();
-	void			Render_Blend();
-	void			Render_UI();
-	void			Render_PostProcess();
+	HRESULT			Render_Priority();
+	HRESULT			Render_NonLight();
+	HRESULT			Render_NonBlend();
+	HRESULT			Render_Blend();
+	HRESULT			Render_UI();
+	HRESULT			Render_PostProcess();
 
 	HRESULT			Render_LightAcc();
+	HRESULT			Render_Deferred();
 #ifdef _DEBUG
 private:
 	HRESULT			Render_Debug();
@@ -80,6 +86,21 @@ private:
 	_uint						m_iNumViewPorts = { 0 };
 	vector<D3D11_VIEWPORT>		m_vecViewport;			// 일반 뷰포트 세팅
 	vector<D3D11_VIEWPORT>		m_vecViewport_RT;		// 렌더 타겟 뷰포트
+
+public:
+	void Add_DebugEvent(DelegateDebug DebugEvent) { m_DebugEvent.Add(DebugEvent); }
+
+private:
+	MultiDeleDebug		m_DebugEvent;
+
+
+#pragma region 파이프라인 컴포넌트
+protected:
+	CPipelineComp& PipelineComp() { return (*m_pPipelineComp); }
+
+private:
+	CPipelineComp* m_pPipelineComp = { nullptr };
+#pragma endregion
 
 };
 

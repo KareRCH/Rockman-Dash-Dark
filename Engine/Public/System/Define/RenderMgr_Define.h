@@ -26,7 +26,7 @@ enum class ERenderGroup : _uint
 {
 	Priority,		// 버퍼 없이 가장 먼저 렌더링 되는 그룹
 	NonLight,		// 빛 연산이 필요없는 렌더 그룹
-	Alpha,			// 알파 그룹
+	NonBlend,			// 알파 그룹
 	Blend,			// 알파 블렌드 그룹
 	UI,				// UI 그룹
 	PostProcess,	// 후처리 그룹

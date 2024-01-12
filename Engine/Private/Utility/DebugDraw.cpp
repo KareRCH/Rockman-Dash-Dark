@@ -134,8 +134,7 @@ void XM_CALLCONV DX::Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>*
     const FCollisionOBB& obb, 
     DirectX::FXMVECTOR color)
 {
-    _float3 vRotation = obb.Get_Rotation();
-    _vector vOrientation = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&vRotation));
+    _vector vOrientation = obb.Get_QuaternionVector();
 
     XMMATRIX matWorld = XMMatrixRotationQuaternion(vOrientation);
     XMMATRIX matScale = XMMatrixScaling(obb.vHalfSize.x, obb.vHalfSize.y, obb.vHalfSize.z);
@@ -144,6 +143,52 @@ void XM_CALLCONV DX::Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>*
     matWorld.r[3] = XMVectorSelect(matWorld.r[3], position, g_XMSelect1110);
 
     DrawCube(batch, matWorld, color);
+}
+
+void XM_CALLCONV DX::Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch, const FCollisionCapsule& capsule, DirectX::FXMVECTOR color)
+{
+    XMVECTOR origin = capsule.Get_PositionVector();
+    XMVECTOR vDirHalfSize = XMLoadFloat3(&capsule.vDirHalfSize);
+
+    const float radius = capsule.fRadius;
+
+    XMVECTOR xaxis = g_XMIdentityR0 * radius;
+    XMVECTOR yaxis = g_XMIdentityR1 * radius;
+    XMVECTOR zaxis = g_XMIdentityR2 * radius;
+
+    DrawRing(batch, origin - vDirHalfSize, xaxis, zaxis, color);
+    DrawRing(batch, origin - vDirHalfSize, xaxis, yaxis, color);
+    DrawRing(batch, origin - vDirHalfSize, yaxis, zaxis, color);
+
+    DrawRing(batch, origin + vDirHalfSize, xaxis, zaxis, color);
+    DrawRing(batch, origin + vDirHalfSize, xaxis, yaxis, color);
+    DrawRing(batch, origin + vDirHalfSize, yaxis, zaxis, color);
+
+    
+    XMVECTOR vUp = XMVector3Normalize(vDirHalfSize);
+    XMVECTOR vRight = XMVector3Normalize(XMVector3Cross(xaxis, vUp));
+    XMVECTOR vLook = XMVector3Normalize(XMVector3Cross(vUp, vRight));
+
+    vRight *= radius;
+    vLook *= radius;
+
+    VertexPositionColor verts[8] = {};
+    XMStoreFloat3(&verts[0].position, origin + vRight - vDirHalfSize);
+    XMStoreFloat3(&verts[1].position, origin + vRight + vDirHalfSize);
+    XMStoreFloat3(&verts[2].position, origin + - vRight - vDirHalfSize);
+    XMStoreFloat3(&verts[3].position, origin + - vRight + vDirHalfSize);
+
+    XMStoreFloat3(&verts[4].position, origin + vLook - vDirHalfSize);
+    XMStoreFloat3(&verts[5].position, origin + vLook + vDirHalfSize);
+    XMStoreFloat3(&verts[6].position, origin + - vLook - vDirHalfSize);
+    XMStoreFloat3(&verts[7].position, origin + - vLook + vDirHalfSize);
+
+    for (size_t j = 0; j < _countof(verts); ++j)
+    {
+        XMStoreFloat4(&verts[j].color, color);
+    }
+
+    batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, verts, _countof(verts));
 }
 
 void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,

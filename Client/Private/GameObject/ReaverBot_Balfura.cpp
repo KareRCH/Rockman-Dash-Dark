@@ -11,7 +11,7 @@
 CReaverBot_Balfura::CReaverBot_Balfura()
 {
     Set_Name(TEXT("ReaverBot_Balfura"));
-    Set_RenderGroup(ERenderGroup::Alpha);
+    Set_RenderGroup(ERenderGroup::NonBlend);
 }
 
 CReaverBot_Balfura::CReaverBot_Balfura(const CReaverBot_Balfura& rhs)
@@ -98,7 +98,7 @@ HRESULT CReaverBot_Balfura::Render()
     m_pModelComp->Render();
 
 #ifdef _DEBUG
-    m_pColliderComp->Render();
+    GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
     return S_OK;

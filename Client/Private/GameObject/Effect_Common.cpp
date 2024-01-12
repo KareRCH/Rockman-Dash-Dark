@@ -39,13 +39,14 @@ void CEffect_Common::Tick(const _float& fTimeDelta)
 	SUPER::Tick(fTimeDelta);
 
 	Transform().Look_At(PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One));
-	if (m_fAnimTime.Increase(m_fAnimSpeed * fTimeDelta))
-		m_fAnimTime.Reset();
 	if (m_fLifeTime.Increase(fTimeDelta))
 		Set_Dead();
 
+	if (m_fAnimTime.Increase(m_fAnimSpeed * fTimeDelta))
+		m_fAnimTime.Reset();
+
 	m_pPlaneModelComp->Set_CurrentTextureIndex(Cast<_uint>(m_fAnimTime.fCur));
-	m_pPlaneModelComp->Set_Alpha(max(1.f - m_fLifeTime.Get_Percent() * 3.f, 0.f));
+	m_pPlaneModelComp->Set_Alpha(max(1.f + (m_fAlphaMinTime - m_fLifeTime.Get_Percent()) * 3.f, 0.f));
 }
 
 void CEffect_Common::Late_Tick(const _float& fTimeDelta)

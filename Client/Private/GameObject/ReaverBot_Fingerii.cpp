@@ -15,7 +15,7 @@
 CReaverBot_Fingerii::CReaverBot_Fingerii()
 {
 	Set_Name(TEXT("ReaverBot_Fingerii"));
-	Set_RenderGroup(ERenderGroup::Alpha);
+	Set_RenderGroup(ERenderGroup::NonBlend);
 	m_fHP = FGauge(10.f, true);
 }
 
@@ -134,7 +134,7 @@ HRESULT CReaverBot_Fingerii::Render()
 	m_pModelComp->Render();
 
 #ifdef _DEBUG
-	m_pColliderComp->Render();
+	GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
 	return S_OK;
@@ -215,7 +215,9 @@ HRESULT CReaverBot_Fingerii::Initialize_Component()
 	
 	if (nullptr == m_pColliderComp)
 		return E_FAIL;
-	m_pColliderComp->Bind_Collision(ECollisionType::OBB);
+	m_pColliderComp->Transform().Set_Position(0.f, 2.f, 0.f);
+	m_pColliderComp->Transform().Set_Scale(1.2f, 4.f, 1.2f);
+	m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
 	m_pColliderComp->EnterToPhysics(0);
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
