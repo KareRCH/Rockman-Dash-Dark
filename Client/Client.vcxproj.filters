@@ -174,6 +174,12 @@
     <ClInclude Include="Public\GameObject\GameObjectFactory.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\ReaverBot_Fingerii.h">
+      <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\UI_Lockon.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -246,6 +252,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\GameObjectFactory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\ReaverBot_Fingerii.cpp">
+      <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\UI_Lockon.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

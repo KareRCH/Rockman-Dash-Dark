@@ -13,6 +13,7 @@
 #include "System/RenderMgr.h"
 #include "Utility/ClassID.h"
 #include "GameObject/GameObjectFactory.h"
+#include "GameObject/UI_Lockon.h"
 
 CPlayer::CPlayer()
 {
@@ -111,6 +112,9 @@ void CPlayer::Tick(const _float& fTimeDelta)
     m_fKnockDownDelay.Increase(fTimeDelta);
     // 넉다운 수치 시간당 감소
     m_fKnockDownValue.Increase(-fTimeDelta * 0.1f);
+
+    Lockon_Active(fTimeDelta);
+
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
 
     m_pColliderComp->Tick(fTimeDelta);
@@ -196,6 +200,9 @@ CGameObject* CPlayer::Clone(void* Arg)
 void CPlayer::Free()
 {
     SUPER::Free();
+
+    Safe_Release(m_pLockon_Target);
+    Safe_Release(m_pLockon_UI);
 }
 
 FSerialData CPlayer::SerializeData()
@@ -830,6 +837,88 @@ void CPlayer::ShootBuster()
     pBuster->Set_Speed(20.f);
     pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
     pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+}
+
+void CPlayer::Lockon_Active(const _float& fTimeDelta)
+{
+    if (m_pLockon_Target)
+    {
+        if (m_pLockon_Target->IsDead() || GI()->IsKey_Pressed(DIK_R))
+        {
+            Lockon_Untarget();
+            return;
+        }
+
+        Transform().Look_At_OnLand(m_pLockon_Target->Transform().Get_PositionVector());//, 10.f * fTimeDelta);
+    }
+    else
+    {
+        if (GI()->IsKey_Pressed(DIK_R))
+            Lockon_Target();
+    }
+}
+
+void CPlayer::Lockon_Target()
+{
+    if (nullptr != m_pLockon_Target)
+        return;
+
+    m_pLockon_Target = Find_Target();
+    if (nullptr == m_pLockon_Target)
+        return;
+
+    Safe_AddRef(m_pLockon_Target);
+
+    CUI_Lockon* pLockon = CUI_Lockon::Create();
+    if (FAILED(GI()->Add_GameObject(pLockon)))
+        return;
+
+    if (nullptr == pLockon)
+        return;
+
+    pLockon->Transform().Set_Position(PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One));
+    pLockon->Set_Target(m_pLockon_Target);
+
+    m_pLockon_UI = pLockon;
+    Safe_AddRef(m_pLockon_UI);
+
+    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("lockon.mp3"), CHANNELID::SOUND_SYSTEM_EFFECT, 1.f);
+}
+
+void CPlayer::Lockon_Untarget()
+{
+    Safe_Release(m_pLockon_Target);
+    m_pLockon_Target = nullptr;
+
+    m_pLockon_UI->Clear_Target();
+    Safe_Release(m_pLockon_UI);
+    m_pLockon_UI = nullptr;
+}
+
+CCharacter_Common* CPlayer::Find_Target()
+{
+    auto listObjects = GI()->IntersectTests_Sphere_GetGameObject(0, Transform().Get_PositionFloat3(), 10.f, COLLAYER_CHARACTER);
+    _float fDistance = FLT_MAX;
+    CGameObject* pClosestObj = { nullptr };
+    for (auto iter = listObjects.begin(); iter != listObjects.end(); iter++)
+    {
+        auto pObj = iter->first;
+        auto& ContactData = iter->second;
+        _float fObjDistance = XMVectorGetX(XMVector3Length((Transform().Get_PositionVector() - pObj->Transform().Get_PositionVector())));
+        if (fObjDistance <= fDistance
+            && pObj != this && nullptr != DynCast<CCharacter_Common*>(pObj))
+        {
+            if (ETeamRelation::Hostile ==
+                CTeamAgentComp::Check_Relation(&DynCast<CCharacter_Common*>(pObj)->TeamAgentComp(), &TeamAgentComp()))
+            {
+                fDistance = fObjDistance;
+                pClosestObj = pObj;
+            }
+
+        }
+    }
+
+    return DynCast<CCharacter_Common*>(pClosestObj);
 }
 
 

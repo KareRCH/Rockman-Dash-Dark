@@ -133,6 +133,21 @@ private:
 
 private:
 	void ShootBuster();
+	void Lockon_Active(const _float& fTimeDelta);
+	void Lockon_Target();
+	void Lockon_Untarget();
+
+	
+
+public:
+	void Set_Target(class CCharacter_Common* pTarget) { m_pLockon_Target = pTarget; Safe_AddRef(m_pLockon_Target); }
+
+private:
+	CCharacter_Common* Find_Target();
+
+private:
+	class CCharacter_Common* m_pLockon_Target = { nullptr };
+	class CUI_Lockon* m_pLockon_UI = { nullptr };
 
 };
 

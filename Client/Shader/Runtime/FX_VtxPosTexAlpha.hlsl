@@ -92,7 +92,7 @@ PS_OUT PS_MAIN(VPS_INOUT In)
 technique11 DefaultTechnique
 {
 	/* 내가 원하는 특정 셰이더들을 그리는 모델에 적용한다. */
-    pass UI
+    pass Default
     {
         SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
@@ -105,13 +105,16 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN();
     }
 
-	/* 위와 다른 형태에 내가 원하는 특정 셰이더들을 그리는 모델에 적용한다. */
-    //pass Particle
-    //{
-    //    SetRasterizerState(RS_Default);
-    //    SetDepthStencilState(DSS_Default, 0);
-    //    SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
-    //    VertexShader = compile vs_5_0 VS_MAIN();
-    //    PixelShader = compile ps_5_0 PS_MAIN();
-    //}
+    pass UI
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend_Add, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+		/* 렌더스테이츠 */
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
 }

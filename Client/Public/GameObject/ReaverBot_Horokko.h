@@ -4,6 +4,7 @@
 #include "GameObject/Character_Common.h"
 
 #include "Utility/LogicDeviceBasic.h"
+#include "GameObject/GameObjectFactory.h"
 
 
 BEGIN(Engine)
@@ -21,7 +22,6 @@ BEGIN(Client)
 class CReaverBot_Horokko : public CCharacter_Common
 {
 	DERIVED_CLASS(CCharacter_Common, CReaverBot_Horokko)
-	REGISTER_CLASSID(CReaverBot_Horokko)
 
 protected:
 	explicit CReaverBot_Horokko();
@@ -135,6 +135,12 @@ private:
 private:
 	CGameObject*	m_pTarget = { nullptr };
 	
+};
+
+template <>
+struct TObjectClassTrait<EObjectClassID::Horokko>
+{
+	using Class = CReaverBot_Horokko;
 };
 
 END

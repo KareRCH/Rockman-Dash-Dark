@@ -40,7 +40,9 @@ public:
 	// 원하는 패스를 그릴 수 있도록 추가한 함수
 	void Set_ActivePass(_uint iPass);
 	// 필요없어진 패스를 지울 수 있도록 설정하는 함수
-	void UnSet_ActivePass(_uint iPass);
+	void Unset_ActivePass(_uint iPass);
+	// 액티브 패스 초기화
+	void Reset_ActivePass();
 
 protected:
 	_uint				m_iNumActivePasses = { 0 };

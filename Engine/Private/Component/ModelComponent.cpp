@@ -66,7 +66,7 @@ void CModelComponent::Set_ActivePass(_uint iPass)
 	m_vecActivePasses.push_back(iPass);
 }
 
-void CModelComponent::UnSet_ActivePass(_uint iPass)
+void CModelComponent::Unset_ActivePass(_uint iPass)
 {
 	if (iPass < 0 || iPass >= UINT_MAX)
 		return;
@@ -80,6 +80,12 @@ void CModelComponent::UnSet_ActivePass(_uint iPass)
 
 	m_vecActivePasses.erase(iter);
 	--m_iNumActivePasses;
+}
+
+void CModelComponent::Reset_ActivePass()
+{
+	m_iNumActivePasses = 0;
+	m_vecActivePasses.clear();
 }
 
 

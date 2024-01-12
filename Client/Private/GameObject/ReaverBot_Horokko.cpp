@@ -11,8 +11,6 @@
 #include "GameObject/Effect_Common.h"
 #include "Utility/ClassID.h"
 
-DECLARE_CLASSID(CReaverBot_Horokko, CClassID::g_iCountClassID)
-
 CReaverBot_Horokko::CReaverBot_Horokko()
 {
 	Set_Name(TEXT("ReaverBot_Horokko"));
@@ -211,7 +209,7 @@ HRESULT CReaverBot_Horokko::Initialize_Component()
 	m_pModelComp->Transform().Set_Scale(_float3(0.08f, 0.08f, 0.08f));
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Horokko/Horokko.amodel");
-
+	//m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Fingerii/Fingerii.amodel");
 	if (nullptr == m_pColliderComp)
 		return E_FAIL;
 	m_pColliderComp->Bind_Collision(ECollisionType::OBB);
