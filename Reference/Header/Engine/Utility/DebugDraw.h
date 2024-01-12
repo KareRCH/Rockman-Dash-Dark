@@ -16,6 +16,7 @@ BEGIN(Engine)
 class FCollisionSphere;
 class FCollisionBox;
 class FCollisionOBB;
+class FCollisionCapsule;
 END
 
 namespace DX
@@ -45,6 +46,11 @@ namespace DX
     // CollisionPrimitive 전용
     void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
         const FCollisionOBB& obb,
+        DirectX::FXMVECTOR color = DirectX::Colors::White);
+
+    // CollisionPrimitive 전용
+    void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
+        const FCollisionCapsule& capsule,
         DirectX::FXMVECTOR color = DirectX::Colors::White);
 
     void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,

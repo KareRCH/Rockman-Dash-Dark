@@ -45,9 +45,9 @@ public:
 inline _vector FLineTests::ClosestPointOnLineSegment(const _fvector& vA, const _fvector& vB, const _fvector& vPoint)
 {
 	_vector vAB = vB - vA;
-	//Real fSaturate = in(max(0.f, (vPoint - vA).DotProduct(vAB) / vAB.DotProduct(vAB)), 1.f);
+	_float fSaturate = min(max(0.f, XMVectorGetX(XMVector3Dot((vPoint - vA), vAB))) / XMVectorGetX(XMVector3Dot(vAB, vAB)), 1.f);
 
-	return vA + vAB;// *fSaturate;
+	return vA + vAB * fSaturate;
 }
 
 /// <summary>

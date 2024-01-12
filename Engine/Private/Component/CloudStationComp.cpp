@@ -17,6 +17,7 @@ HRESULT CCloudStationComp::Initialize(void* Arg)
 
 void CCloudStationComp::Priority_Tick(const _float& fTimeDelta)
 {
+
 }
 
 void CCloudStationComp::Tick(const _float& fTimeDelta)

@@ -96,7 +96,7 @@ void CGameInstance::Release_Managers()
 	Safe_Release(m_pComponentMgr);
 	Safe_Release(m_pObjectMgr);
 	Safe_Release(m_pLevelMgr);
-	Safe_Release(m_pBlackBoardMgr);
+	Safe_Release(m_pCloudStationMgr);
 
 
 	Safe_Release(m_pParticleMgr);
@@ -1057,12 +1057,36 @@ void CGameInstance::Clear_GameObject(const wstring& strLayerTag)
 
 HRESULT CGameInstance::Initialize_CloudStationMgr()
 {
-	if (nullptr != m_pBlackBoardMgr)
+	if (nullptr != m_pCloudStationMgr)
 		return E_FAIL;
 
-	NULL_CHECK_RETURN(m_pBlackBoardMgr = CCloudStationMgr::Create(), E_FAIL);
+	NULL_CHECK_RETURN(m_pCloudStationMgr = CCloudStationMgr::Create(), E_FAIL);
 
 	return S_OK;
+}
+
+void CGameInstance::Update_CloudStationMgr()
+{
+	if (nullptr == m_pCloudStationMgr)
+		return;
+
+	m_pCloudStationMgr->Tick();
+}
+
+HRESULT CGameInstance::Add_CloudStation(const wstring& strBoardName, CCloudStation* pCloudStation)
+{
+	if (nullptr == m_pCloudStationMgr)
+		return E_FAIL;
+
+	return m_pCloudStationMgr->Add_CloudStation(strBoardName, pCloudStation);
+}
+
+CCloudStation* CGameInstance::Get_CloudStation(const wstring& strBoardName)
+{
+	if (nullptr == m_pCloudStationMgr)
+		return nullptr;
+
+	return m_pCloudStationMgr->Get_CloudStation(strBoardName);
 }
 
 #pragma endregion
@@ -1214,6 +1238,14 @@ void CGameInstance::Clear_RenderGroup()
 		return;
 
 	m_pRenderMgr->Clear_RenderGroup();
+}
+
+void CGameInstance::Add_DebugEvent(FastDelegate0<HRESULT> Event)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Add_DebugEvent(Event);
 }
 
 #pragma endregion

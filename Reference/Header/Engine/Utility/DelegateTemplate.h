@@ -76,7 +76,13 @@ public:
 		}
 	}
 
+	void Clear()
+	{
+		m_iNumDelegates = 0;
+		m_Delegates.clear();
+	}
+
 private:
-	size_t				m_iNumDelegates;
+	size_t				m_iNumDelegates = { 0 };
 	vector<Delegate>	m_Delegates;
 };

@@ -7,6 +7,8 @@
 #include "System/ShaderMgr.h"
 #include "System/Define/ModelMgr_Define.h"
 
+#include "Utility/DelegateTemplate.h"
+
 BEGIN(Engine)
 
 struct FDEVICE_INIT;
@@ -252,9 +254,12 @@ public:		// 컴포넌트 매니저
 
 
 
-#pragma region 블랙보드 매니저
-public:		// 블랙보드 매니저
-	HRESULT Initialize_CloudStationMgr();
+#pragma region 클라우드 스테이션 매니저
+public:		// 클라우드 스테이션 매니저
+	HRESULT			Initialize_CloudStationMgr();
+	void			Update_CloudStationMgr();
+	HRESULT			Add_CloudStation(const wstring& strBoardName, class CCloudStation* pCloudStation);
+	CCloudStation*	Get_CloudStation(const wstring& strBoardName);
 #pragma endregion
 
 
@@ -280,6 +285,7 @@ public:		// 렌더 매니저
 	void			Render();
 	void			Add_RenderGroup(ERenderGroup eType, class CGameObject* pGameObject);
 	void			Clear_RenderGroup();
+	void			Add_DebugEvent(FastDelegate0<HRESULT> Event);
 #pragma endregion
 
 #pragma region 렌더타겟 매니저
@@ -357,7 +363,7 @@ private:
 	class CRenderMgr*		m_pRenderMgr = nullptr;
 	class CRenderTargetMgr* m_pRenderTargetMgr = { nullptr };
 	class CLightMgr*		m_pLightMgr = { nullptr };
-	class CCloudStationMgr*	m_pBlackBoardMgr = nullptr;
+	class CCloudStationMgr*	m_pCloudStationMgr = nullptr;
 	
 	class CModelMgr*		m_pModelMgr = nullptr;
 	class CTextureMgr*		m_pTextureMgr = nullptr;

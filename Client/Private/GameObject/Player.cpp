@@ -139,7 +139,7 @@ HRESULT CPlayer::Render()
     m_pModelComp->Render();
 
 #ifdef _DEBUG
-    m_pColliderComp->Render();
+    GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
     return S_OK;
@@ -244,7 +244,9 @@ HRESULT CPlayer::Initialize_Component()
 
     if (nullptr == m_pColliderComp)
         return E_FAIL;
-    m_pColliderComp->Bind_Collision(ECollisionType::Sphere);
+    m_pColliderComp->Transform().Set_Position(0.f, 0.8f, 0.f);
+    m_pColliderComp->Transform().Set_Scale(1.f, 0.8f, 1.f);
+    m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
     m_pColliderComp->EnterToPhysics(0);
     m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
     m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
@@ -849,7 +851,7 @@ void CPlayer::Lockon_Active(const _float& fTimeDelta)
             return;
         }
 
-        Transform().Look_At_OnLand(m_pLockon_Target->Transform().Get_PositionVector());//, 10.f * fTimeDelta);
+        Transform().Look_At_OnLand(m_pLockon_Target->Transform().Get_PositionVector(), 10.f * fTimeDelta);
     }
     else
     {
