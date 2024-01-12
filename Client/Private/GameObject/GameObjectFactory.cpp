@@ -5,6 +5,8 @@
 
 #include "GameObject/Player.h"
 #include "GameObject/ReaverBot_Horokko.h"
+#include "GameObject/ReaverBot_Balfura.h"
+#include "GameObject/ReaverBot_Fingerii.h"
 
 
 CGameObject* CGameObjectFactory::Create(FSerialData& Data)
@@ -22,7 +24,13 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 		pObj = TObjectClassTrait<EObjectClassID::Player>::Class::Create(Data);
 		break;
 	case EObjectClassID::Horokko:
-		//pObj = CREATE_WITH_CLASSID(CReaverbot_Horokko, Data);
+		pObj = TObjectClassTrait<EObjectClassID::Horokko>::Class::Create(Data);
+		break;
+	case EObjectClassID::Fingerii:
+		pObj = TObjectClassTrait<EObjectClassID::Fingerii>::Class::Create(Data);
+		break;
+	case EObjectClassID::Balfura:
+		//pObj = TObjectClassTrait<EObjectClassID::Balfura>::Class::Create(Data);
 		break;
 	}
 

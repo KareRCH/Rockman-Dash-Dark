@@ -107,6 +107,19 @@ void CTransformComponent::TurnUp(_float fRadian)
 	Set_Look(XMVector3TransformNormal(vLook, matRotation));
 }
 
+void CTransformComponent::TurnLook(_float fRadian)
+{
+	_vector vRight = Get_RightVector();
+	_vector vUp = Get_UpVector();
+	_vector vLook = Get_LookVector();
+
+	_matrix matRotation = XMMatrixRotationAxis(XMVector3Normalize(vLook), fRadian);
+
+	Set_Right(XMVector3TransformNormal(vRight, matRotation));
+	Set_Up(XMVector3TransformNormal(vUp, matRotation));
+	Set_Look(XMVector3TransformNormal(vLook, matRotation));
+}
+
 void CTransformComponent::TurnAxis(_float3 vAxis, _float fRadian)
 {
 	_vector vRight = Get_RightVector();
@@ -168,12 +181,12 @@ _float CTransformComponent::Look_At_OnLand(_fvector vTargetPos, _float fRadianSp
 	_float fDot = XMVectorGetX(XMVector3Dot(vLook, vOriginLook));
 	_float fDir = XMVectorGetX(XMVector3Dot(vRight, vOriginLook));
 	_float fRadian = min(acos(fDot), fRadianSpeed);
-	_vector vQuaternion = {};
+	_vector vQuaternion = XMQuaternionIdentity();
 
 	if (fDir <= 0.f)
-		vQuaternion = XMQuaternionRotationAxis(vUp, fRadianSpeed);
+		vQuaternion = XMQuaternionRotationAxis(vUp, fRadian);
 	else
-		vQuaternion = XMQuaternionRotationAxis(vUp, -fRadianSpeed);
+		vQuaternion = XMQuaternionRotationAxis(vUp, -fRadian);
 	
 	vLook = XMVector3Normalize(XMVector3Rotate(vOriginLook, vQuaternion));
 	vRight = XMVector3Normalize(XMVector3Cross(vUp, vLook));

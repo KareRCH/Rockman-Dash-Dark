@@ -13,6 +13,8 @@ enum class EObjectClassID : _uint
 {
 	Player,
 	Horokko,
+	Fingerii,
+	Balfura
 };
 
 template <EObjectClassID T>

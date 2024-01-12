@@ -396,6 +396,8 @@ public:
 	void TurnRight(_float fRadian);
 	// 위쪽 방향으로 돌게 하기, 음수면 아래쪽이 됨
 	void TurnUp(_float fRadian);
+	// 보는 방향축으로 돌게 하기, 음수면 반대
+	void TurnLook(_float fRadian);
 	// 원하는 축으로 회전하게 하기
 	void TurnAxis(_float3 vAxis, _float fRadian);
 
