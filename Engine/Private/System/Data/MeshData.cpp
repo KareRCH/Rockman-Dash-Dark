@@ -23,6 +23,8 @@ HRESULT FMeshData::Initialize(const TMesh& MeshData)
 		vecMeshBoneDatas[i].matOffset = tMeshBone.matOffset;
 	}
 
+	
+
 	return S_OK;
 }
 

@@ -1,19 +1,19 @@
 #include "GameObject/Player.h"
 
-#include "Component/TriBufferComp.h"
-#include "Component/ColorShaderComp.h"
-#include "Component/SkinnedModelComp.h"
-#include "Component/ModelShaderComp.h"
-#include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
-#include "Component/NavigationComponent.h"
-#include "GameObject/Weapon_Buster.h"
 #include "Component/ColliderComponent.h"
+#include "Component/NavigationComponent.h"
+#include "Component/CloudStationComp.h"
 
-#include "System/RenderMgr.h"
-#include "Utility/ClassID.h"
 #include "GameObject/GameObjectFactory.h"
 #include "GameObject/UI_Lockon.h"
+#include "GameObject/Weapon_Buster.h"
+#include "GameObject/UI_Player.h"
+
+#include "CloudStation/CloudStation_Player.h"
+
+#include "System/RenderMgr.h"
+
 
 CPlayer::CPlayer()
 {
@@ -100,6 +100,15 @@ HRESULT CPlayer::Initialize(const _float3 vPos)
 void CPlayer::Priority_Tick(const _float& fTimeDelta)
 {
     SUPER::Priority_Tick(fTimeDelta);
+
+    if (nullptr == m_pPlayerCloud)
+    {
+        if (SUCCEEDED(m_pCloudStationComp->Connect_CloudStation(TEXT("Player"))))
+        {
+            m_pPlayerCloud = m_pCloudStationComp->Get_LastCloudStation<CCloudStation_Player>();
+            Safe_AddRef(m_pPlayerCloud);
+        }
+    }
 }
 
 void CPlayer::Tick(const _float& fTimeDelta)
@@ -119,6 +128,8 @@ void CPlayer::Tick(const _float& fTimeDelta)
 
     m_pColliderComp->Tick(fTimeDelta);
     m_pCameraPivotComp->Tick(fTimeDelta);
+
+    Update_ToCloudStation();
 }
 
 void CPlayer::Late_Tick(const _float& fTimeDelta)
@@ -203,6 +214,7 @@ void CPlayer::Free()
 
     Safe_Release(m_pLockon_Target);
     Safe_Release(m_pLockon_UI);
+    Safe_Release(m_pPlayerCloud);
 }
 
 FSerialData CPlayer::SerializeData()
@@ -242,6 +254,10 @@ HRESULT CPlayer::Initialize_Component()
     FAILED_CHECK_RETURN(Add_Component(L"Navigation",
         m_pNaviComp = Cast<CNavigationComponent*>(GI()->Clone_PrototypeComp(TEXT("Prototype_Component_Navigation"), VPCast(&tDesc)))), E_FAIL);
 
+    FAILED_CHECK_RETURN(Add_Component(L"CloudStation", m_pCloudStationComp = CCloudStationComp::Create()), E_FAIL);
+    m_pCloudStationComp->Open_CloudStation_Session(TEXT("Player"), CCloudStation_Player::Create());
+    m_pCloudStationComp->Connect_CloudStation(TEXT("Player"));
+
     if (nullptr == m_pColliderComp)
         return E_FAIL;
     m_pColliderComp->Transform().Set_Position(0.f, 0.8f, 0.f);
@@ -253,6 +269,8 @@ HRESULT CPlayer::Initialize_Component()
                                         | COLLAYER_ITEM | COLLAYER_OBJECT);
 
     TeamAgentComp().Set_TeamID(ETEAM_PLAYER);
+
+    GI()->Add_GameObject(CUI_Player::Create());
 
     return S_OK;
 }
@@ -280,6 +298,7 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
                     m_State_Act.Set_State(EState_Act::DamagedLight);
                     GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
                 }
+                m_fHP.Increase(-5.f);
             }
 
             //Create_Effect();
@@ -298,6 +317,14 @@ void CPlayer::OnCollisionExited(CGameObject* pDst)
 {
     SUPER::OnCollisionExited(pDst);
 
+}
+
+void CPlayer::Update_ToCloudStation()
+{
+    if (nullptr != m_pPlayerCloud)
+    {
+        m_pPlayerCloud->Set_HP(m_fHP);
+    }
 }
 
 

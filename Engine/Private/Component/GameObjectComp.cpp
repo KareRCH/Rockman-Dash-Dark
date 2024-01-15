@@ -30,6 +30,22 @@ void CGameObjectComp::Free()
     Safe_Release(m_pDeviceComp);
 }
 
+FSerialData CGameObjectComp::SerializeData_Prototype()
+{
+    FSerialData Data;
+
+    return Data;
+}
+
+FSerialData CGameObjectComp::SerializeData()
+{
+    FSerialData Data;
+
+    Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
+
+    return Data;
+}
+
 HRESULT CGameObjectComp::Add_PrimComponent(const wstring& strCompKey, CGameObjectComp* pComp)
 {
     auto iter = m_mapPrimComponent.find(strCompKey);

@@ -136,6 +136,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -171,6 +172,8 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Reference\Header\ImGuiFileSystem\ImGuiFileDialog.h" />
+    <ClInclude Include="..\Reference\Header\ImGuiFileSystem\ImGuiFileDialogConfig.h" />
     <ClInclude Include="Include\framework.h" />
     <ClInclude Include="Include\Resource.h" />
     <ClInclude Include="Include\targetver.h" />
@@ -179,12 +182,15 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\ImGuiWin\ImGuiMgr.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Browser.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_ClassBrowser.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Docking.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Hierarchi.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_MapTool.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Navigation.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_ObjectTool.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Property.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_PrototypeBrowser.h" />
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_PrototypeProperty.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Terrain.h" />
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Viewer.h" />
     <ClInclude Include="Public\Level\Level_MapTool.h" />
@@ -192,6 +198,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\Tool_Define.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Client\Private\CloudStation\CloudStation_Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Character.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Character_Common.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\DynamicCamera.cpp" />
@@ -202,11 +209,15 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\LoadingScreen.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Balfura.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Fingerii.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Horokko.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\SkyBox.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\StaticObject.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\UI_Lockon.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_Buster.cpp" />
+    <ClCompile Include="..\Reference\Header\ImGuiFileSystem\ImGuiFileDialog.cpp" />
     <ClCompile Include="..\Reference\Header\ImGuiGizmo\GraphEditor.cpp" />
     <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImCurveEdit.cpp" />
     <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImGradient.cpp" />
@@ -217,12 +228,15 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\ImGuiWin\ImGuiMgr.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Browser.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_ClassBrowser.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Docking.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Hierarchi.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_MapTool.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Navigation.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_ObjectTool.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Property.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_PrototypeBrowser.cpp" />
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_PrototypeProperty.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Terrain.cpp" />
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_Viewer.cpp" />
     <ClCompile Include="Private\Level\Level_MapTool.cpp" />

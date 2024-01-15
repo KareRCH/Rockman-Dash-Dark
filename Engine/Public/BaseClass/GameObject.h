@@ -35,7 +35,9 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype();
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr);
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
@@ -47,8 +49,11 @@ public:
 protected:
 	virtual void	Free() override;
 
+	
+
 public:
 	// 직렬화 데이터 뽑아낼 때 사용하는 함수. 각 오브젝트 별로 뽑아내는 데이터가 다릅니다.
+	virtual FSerialData SerializeData_Prototype();
 	virtual FSerialData SerializeData();
 
 
@@ -103,6 +108,7 @@ private:
 public:
 	// 검색용
 	HRESULT Add_Component(const wstring& strName, CGameObjectComp* pComponent);
+	_uint	Get_NumComponents() { return m_iNumComponents; }
 	template<class T, typename = enable_if_t<is_base_of_v<CGameObjectComp, T>>>
 	T* Get_Component(const _uint iIndex) { return DynCast<T*>(m_vecComponent[iIndex]); }
 	template<class T, typename = enable_if_t<is_base_of_v<CGameObjectComp, T>>>
@@ -114,6 +120,7 @@ public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
 	void OnStateRender_Updated(const CGameObjectComp* const pComp, const ECompTickAuto& bValue);
 
 private:	// 컴포넌트 속성
+	_uint								m_iNumComponents = { 0 };	// 컴포넌트 개수
 	vector<CGameObjectComp*>			m_vecComponent;				// 컴포넌트 관리 컨테이너
 	_unmap<wstring, CGameObjectComp*>	m_mapPrimComp;				// 오브젝트 전용 컴포넌트 관리 컨테이너
 

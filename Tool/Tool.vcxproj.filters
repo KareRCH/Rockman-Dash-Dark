@@ -67,6 +67,21 @@
     <Filter Include="97. ImGuiGizmo">
       <UniqueIdentifier>{f8163e16-0017-49cd-b90a-82f3d5951832}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. ImGuiWin\03. ObjectTool\02. PrototypeBrowser">
+      <UniqueIdentifier>{9290cf44-9cae-4b6c-b2f0-accae3753e4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. ImGuiWin\03. ObjectTool\01. ClassBrowser">
+      <UniqueIdentifier>{bb8a386d-98a7-4c8a-bc06-a3ef50db8d9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98 Client\NewFilter1">
+      <UniqueIdentifier>{81472fbb-ca14-455e-b14a-193a5c6a578c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ImGuiGizmo\FIle">
+      <UniqueIdentifier>{0dab68ec-696e-44c8-b039-c69f6ce8aa44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. ImGuiWin\03. ObjectTool\02. PrototypeProperty">
+      <UniqueIdentifier>{ec306c43-a2be-4ed3-841f-7673e9fb0cc9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\framework.h">
@@ -125,6 +140,21 @@
     </ClInclude>
     <ClInclude Include="Public\ImGuiWin\ImGuiWin_Navigation.h">
       <Filter>01. ImGuiWin\02. MapTool\02. Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_PrototypeBrowser.h">
+      <Filter>01. ImGuiWin\03. ObjectTool\02. PrototypeBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_ClassBrowser.h">
+      <Filter>01. ImGuiWin\03. ObjectTool\01. ClassBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGuiFileSystem\ImGuiFileDialog.h">
+      <Filter>97. ImGuiGizmo\FIle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGuiFileSystem\ImGuiFileDialogConfig.h">
+      <Filter>97. ImGuiGizmo\FIle</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGuiWin\ImGuiWin_PrototypeProperty.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -232,6 +262,30 @@
     </ClCompile>
     <ClCompile Include="..\Client\Private\GameObject\GameObjectFactory.cpp">
       <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\CloudStation\CloudStation_Player.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Fingerii.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\UI_Lockon.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_PrototypeBrowser.cpp">
+      <Filter>01. ImGuiWin\03. ObjectTool\02. PrototypeBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_ClassBrowser.cpp">
+      <Filter>01. ImGuiWin\03. ObjectTool\01. ClassBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\StaticObject.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Header\ImGuiFileSystem\ImGuiFileDialog.cpp">
+      <Filter>97. ImGuiGizmo\FIle</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGuiWin\ImGuiWin_PrototypeProperty.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -37,6 +37,8 @@ CGameInstance::CGameInstance()
 
 HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDeviceInit)
 {
+	m_strMainPath = tDeviceInit.strMainPath;
+
 	// 공통되는 시스템을 로드한다.
 	FAILED_CHECK_RETURN(Initialize_GraphicDev(tDeviceInit), E_FAIL);
 
@@ -116,6 +118,11 @@ void CGameInstance::Release_Managers()
 
 	Safe_Release(m_pInputDev);
 	Safe_Release(m_pGraphicDev);
+}
+
+wstring CGameInstance::Get_MainPath()
+{
+	return m_strMainPath;
 }
 
 
@@ -1008,6 +1015,14 @@ HRESULT CGameInstance::Add_GameObject(CGameObject* pObj)
 	return m_pObjectMgr->Add_GameObject(pObj);
 }
 
+HRESULT CGameInstance::Add_GameObject(const wstring& strLevelTag, CGameObject* pObj)
+{
+	if (nullptr == m_pObjectMgr)
+		return E_FAIL;
+
+	return m_pObjectMgr->Add_GameObject(strLevelTag, pObj);
+}
+
 CGameObject* CGameInstance::Find_GameObjectByID(_uint iFindID)
 {
 	if (nullptr == m_pObjectMgr)
@@ -1038,6 +1053,22 @@ vector<class CGameObject*> CGameInstance::Get_AllGameObjectFromLevel(const wstri
 		return vector<class CGameObject*>();
 
 	return m_pObjectMgr->Get_AllGameObjectFromLevel(strLevelTag);
+}
+
+void CGameInstance::Pause_ObjectsByLevelTag(const wstring& strLevelTag)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->Pause_ObjectsByLevelTag(strLevelTag);
+}
+
+void CGameInstance::Resume_ObjectsByLevelTag(const wstring& strLevelTag)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->Resume_ObjectsByLevelTag(strLevelTag);
 }
 
 void CGameInstance::Clear_GameObject(const wstring& strLayerTag)
@@ -1086,7 +1117,12 @@ CCloudStation* CGameInstance::Get_CloudStation(const wstring& strBoardName)
 	if (nullptr == m_pCloudStationMgr)
 		return nullptr;
 
-	return m_pCloudStationMgr->Get_CloudStation(strBoardName);
+	return m_pCloudStationMgr->Find_CloudStation(strBoardName);
+}
+
+CCloudStationMgr* CGameInstance::Get_CloudStationMgr()
+{
+	return m_pCloudStationMgr;
 }
 
 #pragma endregion
@@ -1247,6 +1283,13 @@ void CGameInstance::Add_DebugEvent(FastDelegate0<HRESULT> Event)
 
 	m_pRenderMgr->Add_DebugEvent(Event);
 }
+void CGameInstance::Toggle_Deferred()
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Toggle_Deferred();
+}
 
 #pragma endregion
 
@@ -1303,6 +1346,8 @@ HRESULT CGameInstance::Bind_RenderTarget_ShaderResource(const wstring& strTarget
 
 	return m_pRenderTargetMgr->Bind_ShaderResource(strTargetTag, pEffect, pConstantName);
 }
+
+
 
 #ifdef _DEBUG
 HRESULT CGameInstance::Ready_RenderTarget_Debug(const wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)

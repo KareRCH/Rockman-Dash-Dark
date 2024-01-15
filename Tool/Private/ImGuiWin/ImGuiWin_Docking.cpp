@@ -157,12 +157,18 @@ void CImGuiWin_Docking::MenuBar(const _float& fTimeDelta)
 			{				
 				Open_JustOneChild(0);
 
+				GI()->Resume_ObjectsByLevelTag(TEXT("MapTool"));
+				GI()->Pause_ObjectsByLevelTag(TEXT("ObjectTool"));
+
 				ImGui::EndTabItem();
 			}
 
 			if (ImGui::BeginTabItem(u8"오브젝트 툴"))
 			{
 				Open_JustOneChild(1);
+
+				GI()->Pause_ObjectsByLevelTag(TEXT("MapTool"));
+				GI()->Resume_ObjectsByLevelTag(TEXT("ObjectTool"));
 
 				ImGui::EndTabItem();
 			}

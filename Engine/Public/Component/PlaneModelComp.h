@@ -86,10 +86,15 @@ public:
 	void Set_CurrentTextureIndex(_uint iIndex) { m_iCurrentTextureIndex = iIndex; }
 	void Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; }
 
+	void Set_MinUV(_float2 vMinUV) { m_vMinUV = vMinUV; }
+	void Set_MaxUV(_float2 vMaxUV) { m_vMaxUV = vMaxUV; }
+
 private:
 	MODE	m_eMode = { MODE_END };
 	_uint	m_iCurrentTextureIndex = { 0 };
 	_float	m_fAlpha = 1.f;
+	_float2 m_vMinUV = {};
+	_float2 m_vMaxUV = { 1.f, 1.f };
 
 };
 

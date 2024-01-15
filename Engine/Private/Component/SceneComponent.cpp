@@ -25,6 +25,42 @@ HRESULT CSceneComponent::Initialize_Prototype(void* Arg)
 	return S_OK;
 }
 
+HRESULT CSceneComponent::Initialize_Prototype(FSerialData& InputData)
+{
+	_float3 vPos, vRot, vScale;
+	if (FAILED(InputData.Get_Data("PosX", vPos.x)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("PosY", vPos.y)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("PosZ", vPos.z)))
+		return E_FAIL;
+
+	Transform().Set_Position(vPos);
+
+	if (FAILED(InputData.Get_Data("RotX", vRot.x)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("RotY", vRot.y)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("RotZ", vRot.z)))
+		return E_FAIL;
+
+	vRot.x = XMConvertToRadians(vRot.x);
+	vRot.y = XMConvertToRadians(vRot.y);
+	vRot.z = XMConvertToRadians(vRot.z);
+	Transform().Set_RotationEuler(vRot);
+
+	if (FAILED(InputData.Get_Data("ScaleX", vScale.x)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("ScaleY", vScale.y)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("ScaleZ", vScale.z)))
+		return E_FAIL;
+
+	Transform().Set_Scale(vScale);
+
+	return S_OK;
+}
+
 HRESULT CSceneComponent::Initialize(void* Arg)
 {
 	return S_OK;
@@ -50,6 +86,50 @@ void CSceneComponent::Free()
 
 	Safe_Release(m_pTransformComp);
 	Safe_Release(m_pPipelineComp);
+}
+
+FSerialData CSceneComponent::SerializeData_Prototype()
+{
+	FSerialData Data = SUPER::SerializeData_Prototype();
+
+	_float3 vPos = Transform().Get_PositionFloat3();
+	Data.Add_Member("PosX", vPos.x);
+	Data.Add_Member("PosY", vPos.y);
+	Data.Add_Member("PosZ", vPos.z);
+
+	_float3 vRot = Transform().Get_RotationEulerFloat3();
+	Data.Add_Member("RotX", XMConvertToDegrees(vRot.x));
+	Data.Add_Member("RotY", XMConvertToDegrees(vRot.y));
+	Data.Add_Member("RotZ", XMConvertToDegrees(vRot.z));
+
+	_float3 vScale = Transform().Get_ScaleFloat3();
+	Data.Add_Member("ScaleX", vScale.x);
+	Data.Add_Member("ScaleY", vScale.y);
+	Data.Add_Member("ScaleZ", vScale.z);
+
+	return Data;
+}
+
+FSerialData CSceneComponent::SerializeData()
+{
+	FSerialData Data = SUPER::SerializeData_Prototype();
+
+	_float3 vPos = Transform().Get_PositionFloat3();
+	Data.Add_Member("PosX", vPos.x);
+	Data.Add_Member("PosY", vPos.y);
+	Data.Add_Member("PosZ", vPos.z);
+
+	_float3 vRot = Transform().Get_RotationEulerFloat3();
+	Data.Add_Member("RotX", XMConvertToDegrees(vRot.x));
+	Data.Add_Member("RotY", XMConvertToDegrees(vRot.y));
+	Data.Add_Member("RotZ", XMConvertToDegrees(vRot.z));
+
+	_float3 vScale = Transform().Get_ScaleFloat3();
+	Data.Add_Member("ScaleX", vScale.x);
+	Data.Add_Member("ScaleY", vScale.y);
+	Data.Add_Member("ScaleZ", vScale.z);
+
+	return Data;
 }
 
 CSceneComponent* CSceneComponent::Get_FirstChildSceneComp()

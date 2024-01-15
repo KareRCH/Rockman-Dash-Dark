@@ -178,8 +178,11 @@ HRESULT CRenderMgr::Render_NonBlend()
 	//GameInstance()->TurnOn_ZBuffer();
 
 	/* 기존에 셋팅되어있던 백버퍼를 빼내고 Diffuse와 Normal을 장치에 바인딩한다. */
-	if (FAILED(GI()->Begin_MRT(TEXT("MRT_GameObjects"))))
-		return E_FAIL;
+	if (m_bIsDeferred)
+	{
+		if (FAILED(GI()->Begin_MRT(TEXT("MRT_GameObjects"))))
+			return E_FAIL;
+	}
 
 	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::NonBlend)])
 	{
@@ -188,8 +191,11 @@ HRESULT CRenderMgr::Render_NonBlend()
 	}
 
 	/* 백버퍼를 원래 위치로 다시 장치에 바인딩한다. */
-	if (FAILED(GI()->End_MRT()))
-		return E_FAIL;
+	if (m_bIsDeferred)
+	{
+		if (FAILED(GI()->End_MRT()))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -248,6 +254,9 @@ HRESULT CRenderMgr::Render_PostProcess()
 
 HRESULT CRenderMgr::Render_LightAcc()
 {
+	if (!m_bIsDeferred)
+		return S_OK;
+
 	/* Shade */
 	/* 여러개 빛의 연산 결과를 저장해 준다. */
 	if (FAILED(GI()->Begin_MRT(TEXT("MRT_LightAcc"))))
@@ -273,6 +282,9 @@ HRESULT CRenderMgr::Render_LightAcc()
 
 HRESULT CRenderMgr::Render_Deferred()
 {
+	if (!m_bIsDeferred)
+		return S_OK;
+
 	if (FAILED(m_pEffect->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pEffect->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -305,6 +317,9 @@ HRESULT CRenderMgr::Render_Debug()
 	// 디버그용 렌더 이벤트를 등록하고 실행한뒤 제거한다.
 	m_DebugEvent.Broadcast();
 	m_DebugEvent.Clear();
+
+	if (!m_bIsDeferred)
+		return S_OK;
 
 	GI()->Render_Debug_RTVs(TEXT("MRT_GameObjects"), m_pEffect, m_pVIBuffer);
 	GI()->Render_Debug_RTVs(TEXT("MRT_LightAcc"), m_pEffect, m_pVIBuffer);

@@ -69,7 +69,12 @@ private:
 	class CGameInstance*			m_pGI = { nullptr };
 	list<class CGameObject*>		m_RenderObjects[RENDER_END];
 
+public:
+	void Toggle_Deferred() { m_bIsDeferred = !m_bIsDeferred; }
+
 private:
+	_bool					m_bIsDeferred = { false };
+
 	class CEffectComponent* m_pEffect = { nullptr };
 	class CRectBufferComp* m_pVIBuffer = { nullptr };
 

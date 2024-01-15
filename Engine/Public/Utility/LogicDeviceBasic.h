@@ -41,6 +41,21 @@ public:
 		return false;
 	}
 
+	_bool Decrease(_float increase)
+	{
+		fPrevCur = fCur;
+		fCur -= increase;
+		if (fCur <= 0.f)
+		{
+			fCur = 0.f;
+			return true;
+		}
+		else if (fCur >= fMax)
+			fCur = fMax;
+
+		return false;
+	}
+
 	// 특정 포인트(지점)를 넘어가면 반환
 	_bool Increase_UpToPoint(_float increase, _float point)
 	{
@@ -80,6 +95,12 @@ public:
 	void Reset()
 	{
 		fCur = _float();
+		fPrevCur = fCur;
+	}
+
+	void Reset(_float vResetValue)
+	{
+		fCur = vResetValue;
 		fPrevCur = fCur;
 	}
 

@@ -7,6 +7,7 @@
 #include "GameObject/ReaverBot_Horokko.h"
 #include "GameObject/ReaverBot_Balfura.h"
 #include "GameObject/ReaverBot_Fingerii.h"
+#include "GameObject/StaticObject.h"
 
 
 CGameObject* CGameObjectFactory::Create(FSerialData& Data)
@@ -31,6 +32,9 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 		break;
 	case EObjectClassID::Balfura:
 		//pObj = TObjectClassTrait<EObjectClassID::Balfura>::Class::Create(Data);
+		break;
+	case EObjectClassID::StaticObject:
+		pObj = TObjectClassTrait<EObjectClassID::StaticObject>::Class::Create(Data);
 		break;
 	}
 

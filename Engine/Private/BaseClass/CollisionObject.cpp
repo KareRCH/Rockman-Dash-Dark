@@ -4,8 +4,7 @@
 
 CCollisionObject::CCollisionObject()
 {
-	FAILED_CHECK_RETURN(Add_Component(TEXT("ColliderComp"), m_pColliderComp = CColliderComponent::Create()), );
-	int t = 0;
+	//FAILED_CHECK_RETURN(Add_Component(TEXT("ColliderComp"), m_pColliderComp = CColliderComponent::Create()), );
 }
 
 CCollisionObject::CCollisionObject(const CCollisionObject& rhs)
@@ -15,7 +14,15 @@ CCollisionObject::CCollisionObject(const CCollisionObject& rhs)
 
 HRESULT CCollisionObject::Initialize_Prototype()
 {
-	if (FAILED(Initialize_Component()))
+	/*if (FAILED(Initialize_Component()))
+		return E_FAIL;*/
+
+	return S_OK;
+}
+
+HRESULT CCollisionObject::Initialize_Prototype(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize_Prototype(InputData)))
 		return E_FAIL;
 
 	return S_OK;
@@ -24,6 +31,14 @@ HRESULT CCollisionObject::Initialize_Prototype()
 HRESULT CCollisionObject::Initialize(void* Arg)
 {
 	if (FAILED(Initialize_Component()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CCollisionObject::Initialize(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize(InputData)))
 		return E_FAIL;
 
 	return S_OK;

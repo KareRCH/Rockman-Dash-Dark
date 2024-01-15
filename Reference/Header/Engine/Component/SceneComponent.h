@@ -22,6 +22,7 @@ protected:
 
 public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
@@ -33,6 +34,12 @@ public:
 
 protected:
 	virtual void	Free() override;
+
+protected:
+	// 프로토타입 제작용 함수
+	virtual FSerialData SerializeData_Prototype();
+	// 클로닝 전용 함수
+	virtual FSerialData SerializeData();
 
 
 #pragma region 씬 컴포넌트 계층

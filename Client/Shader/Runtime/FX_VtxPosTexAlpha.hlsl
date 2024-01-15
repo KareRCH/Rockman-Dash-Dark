@@ -14,6 +14,8 @@ cbuffer Matrices : register(b0)
 }
 
 float g_fAlpha = 1.f;
+float2 g_vMinUV = float2(0.f, 0.f);
+float2 g_vMaxUV = float2(1.f, 1.f);
 
 Texture2D g_Texture;
 
@@ -76,6 +78,10 @@ PS_OUT PS_MAIN(VPS_INOUT In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
+    bool bIsBetween = all(In.vTexcoord >= g_vMinUV) && all(In.vTexcoord <= g_vMaxUV);
+    if (!bIsBetween)
+        discard;
+        
 	/* 첫번째 인자의 방식으로 두번째 인자의 위치에 있는 픽셀의 색을 얻어온다. */
     vector vSourColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
     

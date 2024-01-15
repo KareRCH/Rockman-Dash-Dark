@@ -23,7 +23,9 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;

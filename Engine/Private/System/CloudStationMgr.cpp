@@ -82,7 +82,7 @@ HRESULT CCloudStationMgr::Delete_CloudStation(const wstring& strBoardName)
 	return S_OK;
 }
 
-CCloudStation* CCloudStationMgr::Get_CloudStation(const wstring& strBoardName)
+CCloudStation* CCloudStationMgr::Find_CloudStation(const wstring& strBoardName)
 {
 	auto iter = m_mapCloudStations.find(strBoardName);
 	if (iter == m_mapCloudStations.end())

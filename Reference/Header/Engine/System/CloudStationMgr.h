@@ -14,6 +14,7 @@ class ENGINE_DLL_DBG CCloudStationMgr final : public CBase
 	DERIVED_CLASS(CBase, CCloudStationMgr)
 private:
 	explicit CCloudStationMgr();
+	explicit CCloudStationMgr(const CCloudStationMgr& rhs) = delete;
 	virtual ~CCloudStationMgr() = default;
 
 public:
@@ -29,7 +30,7 @@ private:
 public:
 	HRESULT			Add_CloudStation(const wstring& strBoardName, CCloudStation* pBlackBoard);
 	HRESULT			Delete_CloudStation(const wstring& strBoardName);
-	CCloudStation*	Get_CloudStation(const wstring& strBoardName);
+	CCloudStation*	Find_CloudStation(const wstring& strBoardName);
 	
 private:
 	_unmap<wstring, CCloudStation*>			m_mapCloudStations;

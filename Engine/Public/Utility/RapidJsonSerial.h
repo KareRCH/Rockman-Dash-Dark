@@ -32,6 +32,8 @@ public:
 	HRESULT Add_Member(const string& strMemberName, const _uint iValue);
 	// 멤버에 단순 데이터 추가, Float
 	HRESULT Add_Member(const string& strMemberName, const _float fValue);
+	// 멤버에 오브젝트 데이터 추가
+	HRESULT Add_Member(const string& strMemberName, FSerialData& SerialData);
 	// 배열에 다른 Document 추가
 	HRESULT Pushback_Member(const string& strArrayMember, FSerialData& SerialData);
 

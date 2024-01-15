@@ -14,7 +14,8 @@ enum class EObjectClassID : _uint
 	Player,
 	Horokko,
 	Fingerii,
-	Balfura
+	Balfura,
+	StaticObject
 };
 
 template <EObjectClassID T>

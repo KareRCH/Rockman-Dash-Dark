@@ -16,6 +16,9 @@
 #include "ImGuiWin/ImGuiWin_ObjectTool.h"
 #include "ImGuiWin/ImGuiWin_Terrain.h"
 #include "ImGuiWin/ImGuiWin_Navigation.h"
+#include "ImGuiWin/ImGuiWin_PrototypeBrowser.h"
+#include "ImGuiWin/ImGuiWin_ClassBrowser.h"
+#include "ImGuiWin/ImGuiWin_PrototypeProperty.h"
 #include "ImGuiWin/ImGuiMgr.h"
 #include "Level/Level_MapTool.h"
 
@@ -56,7 +59,7 @@ HRESULT CMainApp::Initialize()
 	tDeviceInit.fScreenDepth = 1000.f;
 	tDeviceInit.fScreenNear = 0.1f;
 	tDeviceInit.iRenderTargetCount = 2;
-	tDeviceInit.strMainPath = TEXT("..Client/");
+	tDeviceInit.strMainPath = TEXT("../Client/");
 
 	FAILED_CHECK_RETURN(Engine::GI()->Initialize(g_hInst, g_hWnd, tDeviceInit), E_FAIL);
 	GI()->Add_SystemViewport({ 0.f, 0.f, g_iWindowSizeX, g_iWindowSizeY, 0.f, 1.f });
@@ -68,8 +71,6 @@ HRESULT CMainApp::Initialize()
 	DX11DEVICE_T tDevice = { m_pGI->Get_GraphicDev(), m_pGI->Get_GraphicContext() };
 
 	FAILED_CHECK_RETURN(m_pGI->Add_Font(TEXT("Default"), TEXT("DungGeunMo-30.spritefont")), E_FAIL);
-	m_pGI->Load_Shader(L"Compiled/PS_ModelTest.cso", EShaderType::Pixel, L"PS_ModelTest");
-	m_pGI->Load_Shader(L"Compiled/VS_ModelTest.cso", EShaderType::Vertex, L"VS_ModelTest");
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 120.f), E_FAIL);
 
@@ -80,13 +81,17 @@ HRESULT CMainApp::Initialize()
 	ImGui::SetCurrentContext(CImGuiMgr::GetInstance()->Get_GuiContext());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsRoot(TEXT("DockingSpace"), CImGuiWin_Docking::Create());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("DockingSpace"), TEXT("MapTool"), CImGuiWin_MapTool::Create());
-	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Viewer"), CImGuiWin_Viewer::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Viewer"), CImGuiWin_Viewer::Create(u8"ºä¾î"));
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Hierarchi"), CImGuiWin_Hierarchi::Create());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Property"), CImGuiWin_Property::Create());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Browser"), CImGuiWin_Browser::Create());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Terrain"), CImGuiWin_Terrain::Create());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Navigation"), CImGuiWin_Navigation::Create());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("DockingSpace"), TEXT("ObjectTool"), CImGuiWin_ObjectTool::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("ObjectTool"), TEXT("ObjectTool_Viewer"), CImGuiWin_Viewer::Create(u8"ºä¾î##ObjectTool"));
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("ObjectTool"), TEXT("ObjectTool_ClassBrowser"), CImGuiWin_ClassBrowser::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("ObjectTool"), TEXT("ObjectTool_ProtoBrowser"), CImGuiWin_PrototypeBrowser::Create());
+	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("ObjectTool"), TEXT("ObjectTool_ProtoProperty"), CImGuiWin_PrototypeProperty::Create());
 
 	m_pGI->Open_Level(0, CLevel_MapTool::Create());
 

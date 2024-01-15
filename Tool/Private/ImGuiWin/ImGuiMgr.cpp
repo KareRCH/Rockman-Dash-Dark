@@ -1,6 +1,9 @@
 #include "ImGuiWin/ImGuiMgr.h"
 #include "ImGuiWin/ImGuiWin.h"
 
+#include "ImGuiFileDialog.h"
+#include "ImGuizmo.h"
+
 IMPLEMENT_SINGLETON(CImGuiMgr)
 
 CImGuiMgr::CImGuiMgr()
@@ -50,6 +53,12 @@ HRESULT CImGuiMgr::Initialize(const FInitImGuiMgr tInit)
 
 	if (!ImGui_ImplDX11_Init(tInit.pDevice.Get(), tInit.pContext.Get()))
 		return E_FAIL;
+
+
+	// ImGuizmo
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
 
     return S_OK;
 }

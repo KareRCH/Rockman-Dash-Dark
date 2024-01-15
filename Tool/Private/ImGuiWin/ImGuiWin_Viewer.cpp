@@ -5,6 +5,7 @@
 #include "BaseClass/Terrain.h"
 #include "GameObject/ToolCamera.h"
 #include "DirectXTex.h"
+#include "ImGuizmo.h"
 
 
 
@@ -24,8 +25,21 @@ HRESULT CImGuiWin_Viewer::Initialize()
     Safe_AddRef(m_pCamera);
 
     // 테스트로 만든 브로드 캐스트 델리게이트
+    XMStoreFloat4x4(&m_TestMatrix, XMMatrixIdentity());
 
 	return S_OK;
+}
+
+HRESULT CImGuiWin_Viewer::Initialize(const string& strWindowName)
+{
+    m_bOpen = true;
+
+    GI()->Add_GameObject(m_pCamera = CToolCamera::Create());
+    Safe_AddRef(m_pCamera);
+
+    m_strWindowName = strWindowName;
+
+    return S_OK;
 }
 
 void CImGuiWin_Viewer::Tick(const _float& fTimeDelta)
@@ -38,12 +52,23 @@ void CImGuiWin_Viewer::Tick(const _float& fTimeDelta)
 
     ImGuiWindowFlags iMain_Flags = ImGuiWindowFlags_NoMove;
 
-	ImGui::Begin(u8"뷰어", NULL, iMain_Flags);
+	ImGui::Begin(m_strWindowName.c_str(), NULL, iMain_Flags);
 
     //ImGuizmo::DecomposeMatrixToComponents(matrix.m16)
     
     Layout_TopBar(fTimeDelta);
     Layout_View(fTimeDelta);
+
+    /*_float4x4 matView = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One);
+    _float fView[16];
+    memcpy(fView, &matView, sizeof(fView));
+    _float4x4 matProj = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One);
+    _float fProj[16];
+    _float fMatrix[16];
+    memcpy(fProj, &matProj, sizeof(fProj));
+
+    ImGuizmo::Manipulate(fProj, fProj, ImGuizmo::ROTATE, ImGuizmo::WORLD, (float*)&m_TestMatrix);
+    ImGuizmo::DrawGrid(fView, fProj, (float*)&m_TestMatrix, 100.f);*/
 
 
 	SUPER::Tick(fTimeDelta);
@@ -64,11 +89,11 @@ HRESULT CImGuiWin_Viewer::Render()
 	return S_OK;
 }
 
-CImGuiWin_Viewer* CImGuiWin_Viewer::Create()
+CImGuiWin_Viewer* CImGuiWin_Viewer::Create(const string& strWindowName)
 {
 	ThisClass* pInstance = new ThisClass();
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize(strWindowName)))
 	{
 		MSG_BOX("CImGuiWin_Viewer Create Failed");
 		Safe_Release(pInstance);
@@ -76,6 +101,8 @@ CImGuiWin_Viewer* CImGuiWin_Viewer::Create()
 
 	return pInstance;
 }
+
+
 
 void CImGuiWin_Viewer::Free()
 {

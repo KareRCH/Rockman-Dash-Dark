@@ -75,6 +75,7 @@ private:
 	EMode	m_ePlaceMode = { EMode::None };
 	
 private:
+	vector<string>	m_vecPrototypeNames;
 	_int	m_iSelected_Object = -1;
 
 

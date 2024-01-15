@@ -6,6 +6,7 @@
 
 #include "Utility/DelegateTemplate.h"
 
+
 BEGIN(Engine)
 class CTerrain;
 END
@@ -36,11 +37,12 @@ protected:
 
 public:
 	virtual HRESULT	Initialize() override;
+	virtual HRESULT	Initialize(const string& strWindowName);
 	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual HRESULT	Render() override;
 
 public:
-	static CImGuiWin_Viewer* Create();
+	static CImGuiWin_Viewer* Create(const string& strWindowName);
 
 private:
 	virtual void	Free() override;
@@ -62,6 +64,8 @@ private:
 	void	Layout_TopBar(const _float& fTimeDelta);
 	void	Layout_View(const _float& fTimeDelta);
 
+private:
+	string	m_strWindowName = { "" };
 
 private:
 	array<const _char*, 3>	m_arrCoord_Item = { u8"월드", u8"로컬", u8"오일러" };
@@ -83,6 +87,7 @@ private:		// 유틸리티
 
 private:
 	ImGuiStyle		m_pStyle;
+	_float4x4		m_TestMatrix = {};
 
 public:
 	void LoadTextureFromFIle(const string& strFileName);

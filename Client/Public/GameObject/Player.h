@@ -15,12 +15,17 @@ class CCommonModelComp;
 class CColorShaderComp;
 class CModelShaderComp;
 class CNavigationComponent;
+class CCloudStationComp;
 
 END
 
 
 
 BEGIN(Client)
+
+class CCloudStation_Player;
+
+static const _tchar* g_PrototypePath = TEXT("Resource/Prototypes/");
 
 /// <summary>
 /// 테스트용 오브젝트
@@ -30,7 +35,7 @@ class CPlayer final : public CCharacter_Common
 	DERIVED_CLASS(CCharacter_Common, CPlayer)
 
 public:
-	const EObjectClassID g_ClassID = EObjectClassID::Player;
+	static const EObjectClassID g_ClassID = EObjectClassID::Player;
 
 protected:
 	explicit CPlayer();
@@ -69,10 +74,17 @@ public:		// 충돌 이벤트
 	virtual void OnCollisionExited(CGameObject* pDst);
 
 
+public:
+	void Update_ToCloudStation();
+
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
 	CNavigationComponent* m_pNaviComp = { nullptr };
 	CPivotComponent* m_pCameraPivotComp = { nullptr };
+	CCloudStationComp* m_pCloudStationComp = { nullptr };
+
+private:
+	CCloudStation_Player* m_pPlayerCloud = { nullptr };
 
 private:
 	void	Register_State();

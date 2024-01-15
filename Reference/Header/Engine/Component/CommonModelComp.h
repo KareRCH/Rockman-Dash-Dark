@@ -28,7 +28,9 @@ protected:
 
 public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
@@ -36,10 +38,18 @@ public:
 
 public:
 	static CCommonModelComp* Create();
+	static CCommonModelComp* Create(FSerialData& InputData);
 	virtual CComponent* Clone(void* Arg = nullptr);
+	virtual CComponent* Clone(FSerialData& InputData);
 
 protected:
 	virtual void	Free() override;
+
+public:
+	// 프로토타입 제작용 함수
+	virtual FSerialData SerializeData_Prototype();
+	// 클로닝 전용 함수
+	virtual FSerialData SerializeData();
 
 public:
 	HRESULT Render_AnimModel();
@@ -48,6 +58,7 @@ public:
 public:
 	HRESULT Link_ToModelMgr();
 	HRESULT Bind_Model(TYPE eType, EModelGroupIndex eGroupIndex, const wstring& strModelFilePath);
+	HRESULT Bind_Model(const wstring& strModelFilePath) { return Bind_Model(m_eModelType, EModelGroupIndex::Permanent, strModelFilePath); }
 	void Add_MaskTime(_uint iIndex, _float fAddTrackPos);
 	void Apply_Pos();
 	void Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse = false, _float fTransitionSpeed = 0.1f);
@@ -60,6 +71,8 @@ public:
 private:
 	// 데이터들을 모두 컴포넌트 형태로 저장함. 원본과 다른 부분
 	TYPE	m_eModelType = { TYPE_END };
+	wstring m_strModelPath = TEXT("");		// 프로토타입에 쓰임
+	wstring m_strEffectPath = TEXT("");		// 프로토타입에 쓰임
 
 
 private:		// 메쉬 관련

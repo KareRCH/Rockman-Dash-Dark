@@ -24,6 +24,12 @@ public:
 
 private:
 	virtual void	Free() override;
+
+private:
+	void Layout_MenuBar(const _float& fTimeDelta);
+	void Show_SavePrototype();
+	void Save_Prototype();
+
 };
 
 END

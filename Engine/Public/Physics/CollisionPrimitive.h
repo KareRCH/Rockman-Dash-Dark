@@ -90,6 +90,9 @@ public:
 public:
 	void Calculate_Transform()
 	{
+		if (!TransformEvent.empty())
+			XMStoreFloat3x4(&matOffset, Handle_TransformEvent());
+
 		XMStoreFloat3x4(&matTransform, pBody->Get_TransformMatrix() * XMLoadFloat3x4(&matOffset));
 	}
 
@@ -165,6 +168,14 @@ public:
 
 protected:
 	_float3x4	matTransform;		// 트랜스 폼 행렬
+
+public:
+	typedef FastDelegate0<_matrix> TransformDelegate;
+	void Set_TransformEvent(TransformDelegate Event) { TransformEvent = Event; }
+	_matrix Handle_TransformEvent() { if (!TransformEvent.empty()) { return TransformEvent(); } }
+
+protected:
+	TransformDelegate	TransformEvent;
 
 public:
 	GETSET_2(_ulong, m_dwCollisionLayer_Flag, CollisionLayer, GET_C_REF, SET_C)
