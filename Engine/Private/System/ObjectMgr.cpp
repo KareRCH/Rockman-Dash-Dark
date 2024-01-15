@@ -141,6 +141,9 @@ void CObjectMgr::Set_LevelTag(const wstring& strLevelTag)
 
 HRESULT CObjectMgr::Add_GameObject(CGameObject* pObj)
 {
+	if (nullptr == pObj)
+		return E_FAIL;
+
 	m_vecGameObjects.push_back(pObj);
 	pObj->m_iID = m_iGiveObjectID++;
 

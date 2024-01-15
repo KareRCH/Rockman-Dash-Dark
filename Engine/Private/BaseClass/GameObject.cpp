@@ -63,7 +63,7 @@ HRESULT CGameObject::Initialize_Prototype(FSerialData& InputData)
 	vRot.x = XMConvertToRadians(vRot.x);
 	vRot.y = XMConvertToRadians(vRot.y);
 	vRot.z = XMConvertToRadians(vRot.z);
-	Transform().Set_RotationEuler(vRot);
+	Transform().Set_RotationFixed(vRot);
 
 	if (FAILED(InputData.Get_Data("ScaleX", vScale.x)))
 		return E_FAIL;
@@ -104,7 +104,7 @@ HRESULT CGameObject::Initialize(FSerialData& InputData)
 	vRot.x = XMConvertToRadians(vRot.x);
 	vRot.y = XMConvertToRadians(vRot.y);
 	vRot.z = XMConvertToRadians(vRot.z);
-	Transform().Set_RotationEuler(vRot);
+	Transform().Set_RotationFixed(vRot);
 
 	if (FAILED(InputData.Get_Data("ScaleX", vScale.x)))
 		return E_FAIL;
@@ -189,7 +189,7 @@ FSerialData CGameObject::SerializeData_Prototype()
 	Data.Add_Member("PosY", vPos.y);
 	Data.Add_Member("PosZ", vPos.z);
 
-	_float3 vRot = Transform().Get_RotationEulerFloat3();
+	_float3 vRot = Transform().Get_RotationFixedFloat3();
 	Data.Add_Member("RotX", XMConvertToDegrees(vRot.x));
 	Data.Add_Member("RotY", XMConvertToDegrees(vRot.y));
 	Data.Add_Member("RotZ", XMConvertToDegrees(vRot.z));
@@ -217,7 +217,7 @@ FSerialData CGameObject::SerializeData()
 	Data.Add_Member("PosY", vPos.y);
 	Data.Add_Member("PosZ", vPos.z);
 
-	_float3 vRot = Transform().Get_RotationEulerFloat3();
+	_float3 vRot = Transform().Get_RotationFixedFloat3();
 	Data.Add_Member("RotX", XMConvertToDegrees(vRot.x));
 	Data.Add_Member("RotY", XMConvertToDegrees(vRot.y));
 	Data.Add_Member("RotZ", XMConvertToDegrees(vRot.z));

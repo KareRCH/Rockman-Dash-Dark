@@ -47,7 +47,7 @@ HRESULT CSceneComponent::Initialize_Prototype(FSerialData& InputData)
 	vRot.x = XMConvertToRadians(vRot.x);
 	vRot.y = XMConvertToRadians(vRot.y);
 	vRot.z = XMConvertToRadians(vRot.z);
-	Transform().Set_RotationEuler(vRot);
+	Transform().Set_RotationFixed(vRot);
 
 	if (FAILED(InputData.Get_Data("ScaleX", vScale.x)))
 		return E_FAIL;

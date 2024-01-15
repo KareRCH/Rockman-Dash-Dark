@@ -85,7 +85,7 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
     _float3 vPos = {}, vRot = {}, vScale = {};
 
     vPos = m_pGameObject->Transform().Get_PositionFloat3();
-    vRot = m_pGameObject->Transform().Get_RotationEulerFloat3();
+    vRot = m_pGameObject->Transform().Get_RotationFixedFloat3();
     vRot.x = XMConvertToDegrees(vRot.x);
     vRot.y = XMConvertToDegrees(vRot.y);
     vRot.z = XMConvertToDegrees(vRot.z);
@@ -154,7 +154,7 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
     ImGui::SetNextItemWidth(50.f);
     if (ImGui::InputFloat("##ProtoRotX", &vRot.x, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        m_pGameObject->Transform().Set_RotationEulerX(XMConvertToRadians(vRot.x));
+        m_pGameObject->Transform().Set_RotationFixedX(XMConvertToRadians(vRot.x));
     }
     if (ImGui::IsItemActive())
         ImGui::SetKeyboardFocusHere(-1);
@@ -165,7 +165,7 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
     ImGui::SetNextItemWidth(50.f);
     if (ImGui::InputFloat("##ProtoRotY", &vRot.y, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        m_pGameObject->Transform().Set_RotationEulerY(XMConvertToRadians(vRot.y));
+        m_pGameObject->Transform().Set_RotationFixedY(XMConvertToRadians(vRot.y));
     }
     if (ImGui::IsItemActive())
         ImGui::SetKeyboardFocusHere(-1);
@@ -176,7 +176,7 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
     ImGui::SetNextItemWidth(50.f);
     if (ImGui::InputFloat("##ProtoRotZ", &vRot.z, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        m_pGameObject->Transform().Set_RotationEulerZ(XMConvertToRadians(vRot.z));
+        m_pGameObject->Transform().Set_RotationFixedZ(XMConvertToRadians(vRot.z));
     }
     if (ImGui::IsItemActive())
         ImGui::SetKeyboardFocusHere(-1);
@@ -224,7 +224,7 @@ void CImGuiWin_PrototypeProperty::Layout_SceneCompProperty(CSceneComponent* pCom
     _float3 vPos = {}, vRot = {}, vScale = {};
 
     vPos = pComp->Transform().Get_PositionFloat3();
-    vRot = pComp->Transform().Get_RotationEulerFloat3();
+    vRot = pComp->Transform().Get_RotationFixedFloat3();
     vRot.x = XMConvertToDegrees(vRot.x);
     vRot.y = XMConvertToDegrees(vRot.y);
     vRot.z = XMConvertToDegrees(vRot.z);
@@ -290,7 +290,7 @@ void CImGuiWin_PrototypeProperty::Layout_SceneCompProperty(CSceneComponent* pCom
     ImGui::SetNextItemWidth(50.f);
     if (ImGui::InputFloat(szName, &vRot.x, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        pComp->Transform().Set_RotationEulerX(XMConvertToRadians(vRot.x));
+        pComp->Transform().Set_RotationFixedX(XMConvertToRadians(vRot.x));
     }
     if (ImGui::IsItemActive())
         ImGui::SetKeyboardFocusHere(-1);
@@ -303,7 +303,7 @@ void CImGuiWin_PrototypeProperty::Layout_SceneCompProperty(CSceneComponent* pCom
     ImGui::SetNextItemWidth(50.f);
     if (ImGui::InputFloat(szName, &vRot.y, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        pComp->Transform().Set_RotationEulerY(XMConvertToRadians(vRot.y));
+        pComp->Transform().Set_RotationFixedY(XMConvertToRadians(vRot.y));
     }
     if (ImGui::IsItemActive())
         ImGui::SetKeyboardFocusHere(-1);
@@ -316,7 +316,7 @@ void CImGuiWin_PrototypeProperty::Layout_SceneCompProperty(CSceneComponent* pCom
     ImGui::SetNextItemWidth(50.f);
     if (ImGui::InputFloat(szName, &vRot.z, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        pComp->Transform().Set_RotationEulerZ(XMConvertToRadians(vRot.z));
+        pComp->Transform().Set_RotationFixedZ(XMConvertToRadians(vRot.z));
     }
     if (ImGui::IsItemActive())
         ImGui::SetKeyboardFocusHere(-1);

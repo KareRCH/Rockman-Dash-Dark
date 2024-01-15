@@ -69,6 +69,7 @@ void CImGuiWin_PrototypeBrowser::Layout_Object(const _float& fTimeDelta)
 		}
 		else
 		{
+			m_vecPrototypeNames.clear();
 			do {
 				if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 					// 디렉터리 무시

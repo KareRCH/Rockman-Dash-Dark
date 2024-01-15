@@ -99,8 +99,11 @@ PS_OUTPUT PS_MAIN(PS_INPUT input)
     vector vReflect = reflect(normalize(g_vLightDir), normalize(vector(input.vNormal, 1.f)));
     float fSpecular = pow(max(dot(normalize(vector(input.vViewDirection, 1.f)) * -1.f, normalize(vReflect)), 0.f), 30.f);
     
-    vector vColor = g_vLightDiffuse * vMtrlDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
+    float fStair = 5.f;
+    vector vLight = g_vLightDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
 		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
+    vector vColor = vMtrlDiffuse * vector(ceil(vLight.x * fStair),
+                    ceil(vLight.y * fStair), ceil(vLight.z * fStair), fStair) / fStair;
     
     output.vColor = vColor;
     output.vNormal = float4(input.vNormal, 1.f);
