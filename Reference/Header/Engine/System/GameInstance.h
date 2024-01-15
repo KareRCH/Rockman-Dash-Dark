@@ -51,6 +51,9 @@ private:
 public:
 	void Release_Managers();
 
+public:
+	wstring Get_MainPath();
+
 
 #pragma region 그래픽 디바이스
 public:		// 그래픽 디바이스
@@ -234,10 +237,13 @@ public:		// 매니지먼트
 
 	void				Set_LevelTag(const wstring& strLevelTag);
 	HRESULT				Add_GameObject(class CGameObject* pObj);
+	HRESULT				Add_GameObject(const wstring& strLevelTag, class CGameObject* pObj);
 	class CGameObject*	Find_GameObjectByID(_uint iFindID);
 	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);
 	class CGameObject*	Find_GameObjectByName(const wstring& strName);
 	vector<class CGameObject*> Get_AllGameObjectFromLevel(const wstring& strLevelTag);
+	void				Pause_ObjectsByLevelTag(const wstring& strLevelTag);
+	void				Resume_ObjectsByLevelTag(const wstring& strLevelTag);
 	void				Clear_GameObject(const wstring& strLayerTag);
 #pragma endregion
 
@@ -255,11 +261,15 @@ public:		// 컴포넌트 매니저
 
 
 #pragma region 클라우드 스테이션 매니저
+	friend class CCloudStationComp;
 public:		// 클라우드 스테이션 매니저
 	HRESULT			Initialize_CloudStationMgr();
 	void			Update_CloudStationMgr();
 	HRESULT			Add_CloudStation(const wstring& strBoardName, class CCloudStation* pCloudStation);
 	CCloudStation*	Get_CloudStation(const wstring& strBoardName);
+
+private:
+	class CCloudStationMgr*		Get_CloudStationMgr();
 #pragma endregion
 
 
@@ -286,6 +296,7 @@ public:		// 렌더 매니저
 	void			Add_RenderGroup(ERenderGroup eType, class CGameObject* pGameObject);
 	void			Clear_RenderGroup();
 	void			Add_DebugEvent(FastDelegate0<HRESULT> Event);
+	void			Toggle_Deferred();
 #pragma endregion
 
 #pragma region 렌더타겟 매니저
@@ -345,6 +356,8 @@ private:	// 셰이더 매니저 귀속형 객체 전용
 	class CShaderMgr*				Get_ShaderMgr();
 #pragma endregion
 
+private:
+	wstring m_strMainPath = TEXT("");
 
 private:
 	class CGraphicDev*		m_pGraphicDev = nullptr;

@@ -320,9 +320,23 @@ void CImGuiWin_MapTool::Escape_MovePickedObjects()
 void CImGuiWin_MapTool::Save_Level()
 {
     auto vecGameObjects = GI()->Get_AllGameObjectFromLevel(TEXT("GamePlay"));
+    //auto vecPrototypeObjects = GI()->Get_AllProtoObjectsFromLevel(TEXT("GamePlay"));
+    //auto vecPrototypeComponents = GI()->Get_AllProtoComponentsFromLevel(TEXT("GamePlay"));
 
     FSerialData LevelData;
     LevelData.Add_MemberString("Name", "GamePlay");
+
+    FSerialData PrototypeData;
+    for (size_t i = 0; i < vecGameObjects.size(); i++)
+    {
+        auto ComponentData = vecGameObjects[i]->SerializeData();
+        PrototypeData.Pushback_Member("Components", ComponentData);
+
+        auto ObjData = vecGameObjects[i]->SerializeData();
+        PrototypeData.Pushback_Member("Objects", ObjData);
+    }
+
+    LevelData.Add_Member("Prototype", PrototypeData);
 
     for (size_t i = 0; i < vecGameObjects.size(); i++)
     {

@@ -279,6 +279,30 @@ vector<CGameObject*> CObjectMgr::Get_AllGameObjectFromLevel(const wstring& strLe
 	return vecObjects;
 }
 
+void CObjectMgr::Pause_ObjectsByLevelTag(const wstring& strLevelTag)
+{
+	for (auto iter = m_vecGameObjects.begin(); iter != m_vecGameObjects.end(); ++iter)
+	{
+		if (nullptr == *iter)
+			continue;
+
+		if ((*iter)->Has_Tag(EGObjTag::Level, strLevelTag))
+			(*iter)->TurnOn_State(EGObjectState::Pause);
+	}
+}
+
+void CObjectMgr::Resume_ObjectsByLevelTag(const wstring& strLevelTag)
+{
+	for (auto iter = m_vecGameObjects.begin(); iter != m_vecGameObjects.end(); ++iter)
+	{
+		if (nullptr == *iter)
+			continue;
+
+		if ((*iter)->Has_Tag(EGObjTag::Level, strLevelTag))
+			(*iter)->TurnOff_State(EGObjectState::Pause);
+	}
+}
+
 void CObjectMgr::Clear_GameObject(const wstring& strLevelTag)
 {
 	for (_uint i = 0; i < m_vecGameObjects.size(); i++)
@@ -336,7 +360,7 @@ void CObjectMgr::RegistToTick_GameObjects()
 		else
 		{
 			// 렌더 상태가 켜져있으면 조건에 따라 그룹에 추가한다.
-			if (pObj->IsState(EGObjectState::Render))
+			if (!pObj->IsState(EGObjectState::Pause) && pObj->IsState(EGObjectState::Render))
 			{
 				GI()->Add_RenderGroup(pObj->Get_RenderGroup(), pObj);
 			}

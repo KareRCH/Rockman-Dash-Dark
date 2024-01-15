@@ -449,16 +449,17 @@ HRESULT CImGuiWin_Convert::Load_Meshes(const aiScene* pScene, CModelLoad* pModel
     if (!pScene->HasMeshes())
         return S_OK;
 
-
+    auto pRootNode = pScene->mRootNode;
     pModel->vecMeshes.resize(pScene->mNumMeshes, {});
     for (_uint i = 0; i < pScene->mNumMeshes; i++)
     {
         auto pMesh = pScene->mMeshes[i];
         TMesh& MeshData = pModel->vecMeshes[i];
-
+        
         MeshData.iID = i;
         MeshData.strName = ConvertToWstring(pMesh->mName.C_Str());
         MeshData.iMaterialIndex = pMesh->mMaterialIndex;
+
         
         MeshData.vecVertices.resize(pMesh->mNumVertices);
         for (_uint j = 0; j < pMesh->mNumVertices; j++)

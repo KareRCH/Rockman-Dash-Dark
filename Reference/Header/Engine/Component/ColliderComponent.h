@@ -30,8 +30,10 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override { return S_OK; }
 	virtual HRESULT Initialize_Prototype(ECollisionType eType);
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	PRIVATE virtual HRESULT Initialize(void* Arg = nullptr) { return S_OK; }
 	PUBLIC	virtual HRESULT Initialize(ECollisionType eType);
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
@@ -40,10 +42,17 @@ public:
 public:
 	static	CColliderComponent* Create();
 	static	CColliderComponent*	Create(ECollisionType eType);
+	static	CColliderComponent* Create(FSerialData& InputData);
 	virtual CComponent*			Clone(void* Arg = nullptr) override;
 
 protected:
 	virtual void				Free();
+
+public:
+	// 프로토타입 제작용 함수
+	virtual FSerialData SerializeData_Prototype();
+	// 클로닝 전용 함수
+	virtual FSerialData SerializeData();
 
 public:
 	HRESULT Bind_Collision(ECollisionType eType);

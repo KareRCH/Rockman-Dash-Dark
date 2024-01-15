@@ -6,6 +6,7 @@
 #include "BaseClass/GameObject_Define.h"
 #include "Component/Define/Component_Define.h"
 
+#include "Utility/RapidJsonSerial.h"
 
 BEGIN(Engine)
 
@@ -36,6 +37,15 @@ public:
 
 protected:
 	virtual void Free() override;
+
+protected:
+	// 프로토타입 제작용 함수
+	virtual FSerialData SerializeData_Prototype();
+	// 클로닝 전용 함수
+	virtual FSerialData SerializeData();
+
+protected:
+	wstring	m_strPrototypeName = TEXT("");		// 프로토타입 저장시 사용
 
 #pragma region 그래픽 디바이스
 	/*

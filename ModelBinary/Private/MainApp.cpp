@@ -24,8 +24,6 @@ CMainApp* CMainApp::Create()
 	{
 		MSG_BOX("MainApp Create Failed");
 		Safe_Release(pInstance);
-
-		return nullptr;
 	}
 
 	return pInstance;
@@ -43,16 +41,11 @@ HRESULT CMainApp::Initialize()
 	tDeviceInit.fScreenDepth = 1000.f;
 	tDeviceInit.fScreenNear = 0.1f;
 	tDeviceInit.iRenderTargetCount = 2;
+	tDeviceInit.strMainPath = L"../Client/";
 
 	FAILED_CHECK_RETURN(Engine::GameInstance()->Initialize(g_hInst, g_hWnd, tDeviceInit), E_FAIL);
 
 	DX11DEVICE_T tDevice = { m_pGI->Get_GraphicDev(), m_pGI->Get_GraphicContext() };
-
-	FAILED_CHECK_RETURN(m_pGI->Initialize_FontMgr(tDevice, TEXT("../Client/Resource/Font/")), E_FAIL);
-
-	FAILED_CHECK_RETURN(m_pGI->Initialize_TextureMgr(tDevice, L"Resource/"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Initialize_ModelMgr(L"Resource/Model/"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pGI->Initialize_ShaderMgr(tDevice, L"Shader/"), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 60.f), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_Immediate"), E_FAIL);
@@ -61,13 +54,6 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(CImGuiMgr::GetInstance()->Initialize({ g_hWnd, tDevice.pDevice.Get(), tDevice.pDeviceContext.Get() }), E_FAIL);
 	ImGui::SetCurrentContext(CImGuiMgr::GetInstance()->Get_GuiContext());
 	CImGuiMgr::GetInstance()->Add_ImGuiWinAsRoot(TEXT("Convert"), CImGuiWin_Convert::Create());
-	/*CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("DockingSpace"), TEXT("MapTool"), CImGuiWin_MapTool::Create());
-	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Viewer"), CImGuiWin_Viewer::Create());
-	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Hierarchi"), CImGuiWin_Hierarchi::Create());
-	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Property"), CImGuiWin_Property::Create());
-	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Browser"), CImGuiWin_Browser::Create());
-	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("MapTool"), TEXT("MapTool_Terrain"), CImGuiWin_Terrain::Create());
-	CImGuiMgr::GetInstance()->Add_ImGuiWinAsChild(TEXT("DockingSpace"), TEXT("ObjectTool"), CImGuiWin_ObjectTool::Create());*/
 
 	return S_OK;
 }
@@ -121,6 +107,7 @@ void CMainApp::Render()
 void CMainApp::Free()
 {
 	// dll ½Ì±ÛÅæ Á¦°Å
+	m_pGI->Release_Managers();
 	Safe_Release(m_pGI);
 	CImGuiMgr::GetInstance()->DestroyInstance();
 }

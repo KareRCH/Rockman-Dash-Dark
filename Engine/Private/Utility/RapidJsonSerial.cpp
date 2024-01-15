@@ -31,6 +31,8 @@ HRESULT FSerialData::Save_Data(const wstring& strPath)
 	else
 	{
 		cout << "파일 열기 실패" << endl;
+
+		ofs.close();
 		return E_FAIL;
 	}
 
@@ -154,6 +156,30 @@ HRESULT FSerialData::Add_Member(const string& strMemberName, const _float fValue
 
 	Value& DataValue = iter->value;
 	DataValue.SetFloat(fValue);
+
+	return S_OK;
+}
+
+HRESULT FSerialData::Add_Member(const string& strMemberName, FSerialData& SerialData)
+{
+	// 추가하려는 Doc이 비어있으면 실패
+	if (SerialData.m_Doc.HasParseError())
+		return E_FAIL;
+
+	const _char* pMemberName = strMemberName.c_str();
+	Value::MemberIterator iter = m_Doc.FindMember(pMemberName);
+	if (iter == m_Doc.MemberEnd())
+	{
+		Value KeyValue(pMemberName, m_Doc.GetAllocator());
+		Value CopyValue(SerialData.m_Doc, m_Doc.GetAllocator());
+		m_Doc.AddMember(KeyValue, CopyValue, m_Doc.GetAllocator());
+
+		return S_OK;
+	}
+
+	Value& DataValue = iter->value;
+	Value CopyValue(SerialData.m_Doc, m_Doc.GetAllocator());
+	DataValue.CopyFrom(CopyValue, m_Doc.GetAllocator());
 
 	return S_OK;
 }

@@ -57,6 +57,8 @@ HRESULT CMainApp::Initialize()
 	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 	GI()->Load_Effect(L"Runtime/FX_Terrain.hlsl", SHADER_VTX_NORM::Elements, SHADER_VTX_NORM::iNumElements);
 
+	GI()->Toggle_Deferred();
+
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 60.f), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_Immediate"), E_FAIL);

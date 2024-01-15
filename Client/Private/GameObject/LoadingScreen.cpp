@@ -47,7 +47,6 @@ void CLoadingScreen::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
-    
 }
 
 void CLoadingScreen::Late_Tick(const _float& fTimeDelta)
@@ -114,7 +113,10 @@ HRESULT CLoadingScreen::Initialize_Component()
     m_pPlaneModelComp->Set_CurrentTextureIndex(0);
     m_pPlaneModelComp->Set_Mode(CPlaneModelComp::ORTHO);
     hr = m_pPlaneModelComp->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/Images/Splash.png"));
-    hr = m_pPlaneModelComp->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTex.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
+    hr = m_pPlaneModelComp->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
+    m_pPlaneModelComp->Reset_ActivePass();
+    m_pPlaneModelComp->Set_ActivePass(1);
+    m_pPlaneModelComp->Set_Alpha(1.f);
 
     return S_OK;
 }

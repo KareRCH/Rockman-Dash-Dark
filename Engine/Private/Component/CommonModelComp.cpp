@@ -30,12 +30,56 @@ HRESULT CCommonModelComp::Initialize_Prototype(void* Arg)
     return S_OK;
 }
 
+HRESULT CCommonModelComp::Initialize_Prototype(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize_Prototype(InputData)))
+		return E_FAIL;
+
+	_uint iModelType;
+	if (FAILED(InputData.Get_Data("ModelType", iModelType)))
+		return E_FAIL;
+	m_eModelType = Cast<TYPE>(iModelType);
+
+	string strModelPath;
+	if (FAILED(InputData.Get_Data("ModelPath", strModelPath)))
+		return E_FAIL;
+	 
+	if (FAILED(Bind_Model(m_eModelType, EModelGroupIndex::Permanent, ConvertToWstring(strModelPath))))
+		return E_FAIL;
+
+	string strEffectPath;
+	if (FAILED(InputData.Get_Data("EffectPath", strEffectPath)))
+		return E_FAIL;
+
+	switch (m_eModelType)
+	{
+	case TYPE_ANIM:
+		Bind_Effect(ConvertToWstring(strEffectPath), SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
+		break;
+	case TYPE_NONANIM:
+		Bind_Effect(ConvertToWstring(strEffectPath), SHADER_VTX_MODEL::Elements, SHADER_VTX_MODEL::iNumElements);
+		break;
+	}
+
+	return S_OK;
+}
+
 HRESULT CCommonModelComp::Initialize(void* Arg)
 {
 	if (FAILED(__super::Initialize(Arg)))
 		return E_FAIL;
 
     return S_OK;
+}
+
+HRESULT CCommonModelComp::Initialize(FSerialData& InputData)
+{
+	//if (FAILED(__super::Initialize(InputData)))
+		//return E_FAIL;
+
+	
+
+	return S_OK;
 }
 
 void CCommonModelComp::Priority_Tick(const _float& fTimeDelta)
@@ -92,11 +136,37 @@ CCommonModelComp* CCommonModelComp::Create()
 	return pInstance;
 }
 
+CCommonModelComp* CCommonModelComp::Create(FSerialData& InputData)
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize_Prototype(InputData)))
+	{
+		MSG_BOX("CommonModelComp Create Failed");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 CComponent* CCommonModelComp::Clone(void* Arg)
 {
 	ThisClass* pInstance = new ThisClass(*this);
 
 	if (FAILED(pInstance->Initialize(Arg)))
+	{
+		MSG_BOX("CommonModelComp Copy Failed");
+		Safe_Release(pInstance);
+	}
+
+	return Cast<CComponent*>(pInstance);
+}
+
+CComponent* CCommonModelComp::Clone(FSerialData& InputData)
+{
+	ThisClass* pInstance = new ThisClass(*this);
+
+	if (FAILED(pInstance->Initialize(InputData)))
 	{
 		MSG_BOX("CommonModelComp Copy Failed");
 		Safe_Release(pInstance);
@@ -118,6 +188,28 @@ void CCommonModelComp::Free()
 	Safe_Release(m_pSkeletalComp);
 	Safe_Release(m_pAnimationComp);
 	Safe_Release(m_pEffectComp);
+}
+
+FSerialData CCommonModelComp::SerializeData_Prototype()
+{
+	FSerialData Data = SUPER::SerializeData_Prototype();
+
+	Data.Add_Member("ComponentID", 2);
+	Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
+	Data.Add_Member("ModelType", Cast<_uint>(m_eModelType));
+	Data.Add_MemberString("ModelPath", ConvertToString(m_strModelPath));
+	Data.Add_MemberString("EffectPath", ConvertToString(m_strEffectPath));
+
+	return Data;
+}
+
+FSerialData CCommonModelComp::SerializeData()
+{
+	FSerialData Data = SUPER::SerializeData();
+
+	Data.Add_Member("ComponentID", 2);
+
+	return Data;
 }
 
 HRESULT CCommonModelComp::Render_AnimModel()
@@ -145,14 +237,17 @@ HRESULT CCommonModelComp::Render_AnimModel()
 		_uint iMatIndex = m_pMeshComps[i]->Get_MeshMaterialIndex();
 		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
 
-		// 그리기 시작
-		m_pEffectComp->Begin(m_vecActivePasses[0]);
+		for (_uint j = 0; j < m_iNumActivePasses; j++)
+		{
+			// 그리기 시작
+			m_pEffectComp->Begin(m_vecActivePasses[j]);
 
-		// 버퍼를 장치에 바인드
-		m_pMeshComps[i]->Bind_Buffer();
+			// 버퍼를 장치에 바인드
+			m_pMeshComps[i]->Bind_Buffer();
 
-		// 바인딩된 정점, 인덱스 그리기
-		m_pMeshComps[i]->Render_Buffer();
+			// 바인딩된 정점, 인덱스 그리기
+			m_pMeshComps[i]->Render_Buffer();
+		}
 	}
 
 	return S_OK;
@@ -210,6 +305,7 @@ HRESULT CCommonModelComp::Bind_Model(TYPE eType, EModelGroupIndex eGroupIndex, c
 		return E_FAIL;
 
 	m_eModelType = eType;
+	m_strModelPath = strModelFilePath;
 
 	const FModelData* pModelData = m_pGI->Find_ModelData(eGroupIndex, strModelFilePath);
 	// 로드 성공이면 무조건 찾지만, 혹시 모를 버그를 위해 안전 코드
@@ -303,6 +399,8 @@ HRESULT CCommonModelComp::Bind_Effect(const wstring& strEffectKey, const D3D11_I
 {
 	if (m_pEffectComp == nullptr)
 		return E_FAIL;
+
+	m_strEffectPath = strEffectKey;
 
 	return m_pEffectComp->Bind_Effect(strEffectKey, pElements, iNumElements);
 }

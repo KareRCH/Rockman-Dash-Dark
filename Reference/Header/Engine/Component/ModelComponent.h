@@ -23,7 +23,9 @@ protected:
 
 public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
@@ -34,6 +36,12 @@ public:
 
 protected:
 	virtual void	Free() override;
+
+public:
+	// 프로토타입 제작용 함수
+	virtual FSerialData SerializeData_Prototype();
+	// 클로닝 전용 함수
+	virtual FSerialData SerializeData();
 
 
 public:

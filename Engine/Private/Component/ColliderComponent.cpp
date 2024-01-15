@@ -98,6 +98,19 @@ CColliderComponent* CColliderComponent::Create(ECollisionType eType)
     return pInstance;
 }
 
+CColliderComponent* CColliderComponent::Create(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize_Prototype(InputData)))
+    {
+        MSG_BOX("ColliderComponent Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
 CComponent* CColliderComponent::Clone(void* Arg)
 {
     ThisClass* pInstance = new ThisClass(*this);
@@ -126,6 +139,58 @@ void CColliderComponent::Free()
         Safe_Delete(m_pEffect);
     }
 #endif
+}
+
+FSerialData CColliderComponent::SerializeData_Prototype()
+{
+    FSerialData Data = SUPER::SerializeData_Prototype();
+
+    Data.Add_Member("ComponentID", 1);
+
+    switch (m_pCollisionShape->Get_Type())
+    {
+    case ECollisionType::Sphere:
+        Data.Add_MemberString("ProtoName", "Prototype_Collider_Sphere");
+        break;
+    case ECollisionType::Box:
+        Data.Add_MemberString("ProtoName", "Prototype_Collider_Box");
+        break;
+    case ECollisionType::Capsule:
+        Data.Add_MemberString("ProtoName", "Prototype_Collider_Capsule");
+        break;
+    case ECollisionType::Plane:
+        Data.Add_MemberString("ProtoName", "Prototype_Collider_Plane");
+        break;
+    case ECollisionType::Line:
+        Data.Add_MemberString("ProtoName", "Prototype_Collider_Line");
+        break;
+    case ECollisionType::Ray:
+        Data.Add_MemberString("ProtoName", "Prototype_Collider_Ray");
+        break;
+    case ECollisionType::Triangle:
+        Data.Add_MemberString("ProtoName", "Prototype_Collider_Triangle");
+        break;
+    case ECollisionType::OBB:
+        Data.Add_MemberString("ProtoName", "Prototype_Collider_OBB");
+        break;
+    }
+    Data.Add_Member("CollisionType", ECast(m_pCollisionShape->Get_Type()));
+
+    return Data;
+}
+
+FSerialData CColliderComponent::SerializeData()
+{
+    FSerialData Data = SUPER::SerializeData();
+
+    Data.Add_Member("ComponentID", 1);
+    Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
+
+    Data.Add_Member("CollisionType", ECast(m_pCollisionShape->Get_Type()));
+    Data.Add_Member("CollisionLayer", m_iCollisionLayer_Flag);
+    Data.Add_Member("CollisionMask", m_iCollisionMask_Flag);
+
+    return Data;
 }
 
 HRESULT CColliderComponent::Bind_Collision(ECollisionType eType)
@@ -169,6 +234,9 @@ HRESULT CColliderComponent::Bind_Collision(ECollisionType eType)
 
     // 충돌체에 충돌 이벤트 추가하기
     m_pCollisionShape->Set_CollisionEvent(MakeDelegate(this, &ThisClass::OnCollision));
+
+    // 
+    m_pCollisionShape->Set_TransformEvent(MakeDelegate(this, &ThisClass::Calculate_TransformMatrixFromParent));
 
     // 디버그용 콜리전 시각 표시
 #ifdef _DEBUG
@@ -228,6 +296,21 @@ HRESULT CColliderComponent::Initialize_Prototype(ECollisionType eType)
     return S_OK;
 }
 
+HRESULT CColliderComponent::Initialize_Prototype(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize_Prototype(InputData)))
+        return E_FAIL;
+
+    _uint iCollisionType = 0;
+    if (FAILED(InputData.Get_Data("CollisionType", iCollisionType)))
+        return E_FAIL;
+
+    if (FAILED(Bind_Collision(Cast<ECollisionType>(iCollisionType))))
+        return E_FAIL;
+
+    return S_OK;
+}
+
 HRESULT CColliderComponent::Initialize(ECollisionType eType)
 {
     if (nullptr == m_pCollisionShape)
@@ -238,6 +321,12 @@ HRESULT CColliderComponent::Initialize(ECollisionType eType)
 
     // 충돌체에 충돌 이벤트 추가하기
     m_pCollisionShape->Set_CollisionEvent(MakeDelegate(this, &ThisClass::OnCollision));
+
+    return S_OK;
+}
+
+HRESULT CColliderComponent::Initialize(FSerialData& InputData)
+{
 
     return S_OK;
 }
@@ -259,7 +348,7 @@ void CColliderComponent::Tick(const _float& fTimeDelta)
         iter->second = false;
 
     m_bIsCollision = false;
-    Update_Physics();
+    //Update_Physics();
 }
 
 void CColliderComponent::Late_Tick(const _float& fTimeDelta)
@@ -295,18 +384,24 @@ HRESULT CColliderComponent::Render()
 
 void CColliderComponent::EnterToPhysics(_uint iIndex)
 {
+    if (nullptr == m_pCollisionShape)
+        return;
+
     m_iPhysics3dWorld_Index = iIndex;
     m_pGI->Add_ColliderToPhysicsWorld(iIndex, m_pCollisionShape);
 }
 
 void CColliderComponent::ExitFromPhysics(_uint iIndex)
 {
+    if (nullptr == m_pCollisionShape)
+        return;
+
     m_pGI->Delete_ColliderToPhysicsWorld(iIndex, m_pCollisionShape);
 }
 
 void CColliderComponent::Update_Physics()
 {
-    _matrix vMatrix = Transform().Get_TransformMatrix() * Get_OwnerObject()->Transform().Get_TransformMatrix();
+    _matrix vMatrix = Calculate_TransformMatrixFromParent();
     _float4x4 vfMatrix = {};
     XMStoreFloat4x4(&vfMatrix, vMatrix);
 

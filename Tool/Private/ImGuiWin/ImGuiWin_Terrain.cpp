@@ -195,7 +195,9 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 		tInit.iMaxWidth = m_ivTerrainMaxWidth;
 		tInit.pShaderMacro = SHADER_MACRO_TOOL::Desc;
 
-		GI()->Add_GameObject(m_pPickedTerrain = CTerrain::Create(tInit));
+		GI()->Set_LevelTag(TEXT("MapTool"));
+
+		GI()->Add_GameObject(TEXT("Static"), m_pPickedTerrain = CTerrain::Create(tInit));
 		Safe_AddRef(m_pPickedTerrain);
 
 		// 텍스처를 바인딩

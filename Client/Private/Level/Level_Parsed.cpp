@@ -17,6 +17,7 @@
 #include "Component/NavigationComponent.h"
 #include "GameObject/ReaverBot_Balfura.h"
 #include "GameObject/ReaverBot_Fingerii.h"
+#include "GameObject/StaticObject.h"
 
 CLevel_Parsed::CLevel_Parsed()
 {
@@ -90,13 +91,13 @@ HRESULT CLevel_Parsed::Ready_Objects(FSerialData& Data)
 		if (FAILED(ObjectData.Get_Data("ClassID", iClassID)))
 			return E_FAIL;
 		m_pGI->Add_GameObject(CGameObjectFactory::Create(ObjectData));
-		
 	}
 
 	GI()->Add_GameObject(CItemChest::Create(_float3(15.f, 0.f, 10.f)));
 	GI()->Add_GameObject(CReaverBot_Horokko::Create(_float3(10.f, 0.f, 15.f)));
 	GI()->Add_GameObject(CReaverBot_Balfura::Create(_float3(11.f, 1.f, 16.f)));
 	GI()->Add_GameObject(CReaverBot_Fingerii::Create(_float3(14.f, 0.f, 15.f)));
+	GI()->Add_GameObject(CStaticObject::Create());
 	//GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
 	GI()->Add_GameObject(CDynamicCamera::Create());
 

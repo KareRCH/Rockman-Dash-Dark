@@ -62,10 +62,10 @@ void CToolCamera::Tick(const _float& fTimeDelta)
 
         Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
         Transform().TurnUp(Cast<_float>(GI()->Get_DIMouseMove(DIMS_Y)) * 0.1f * fTimeDelta);
-    }
 
-    // 현재 카메라의 상태를 통해 전역 카메라 행렬을 업데이트 한다.
-    Apply_ViewProjMatrix();
+        // 현재 카메라의 상태를 통해 전역 카메라 행렬을 업데이트 한다.
+        Apply_ViewProjMatrix();
+    }
 }
 
 void CToolCamera::Late_Tick(const _float& fTimeDelta)

@@ -8,6 +8,9 @@
 #include "GameObject/ReaverBot_Horokko.h"
 #include "GameObject/ItemChest.h"
 
+#include "GameObject/GameObjectFactory.h"
+
+
 HRESULT CImGuiWin_Browser::Initialize()
 {
 	m_bOpen = true;
@@ -70,19 +73,48 @@ void CImGuiWin_Browser::Layout_Object(const _float& fTimeDelta)
 		}
 	}
 
+	ImGui::SameLine();
+	if (ImGui::Button(u8"프로토타입 로드하기"))
+	{
+		WIN32_FIND_DATA findFileData;
+		HANDLE hFind = FindFirstFile((GI()->Get_MainPath() + TEXT("Resource/Prototypes/*.aproto")).c_str(), &findFileData);
+
+		if (hFind == INVALID_HANDLE_VALUE) {
+			std::cerr << "파일찾기 에러" << std::endl;
+		}
+		else
+		{
+			do {
+				if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+					// 디렉터리 무시
+				}
+				else {
+					// 파일 이름 출력
+					m_vecPrototypeNames.push_back(ConvertToString(wstring(findFileData.cFileName)));
+				}
+			} while (FindNextFile(hFind, &findFileData) != 0);
+		}
+
+		FindClose(hFind);
+	}
+
 	if (ImGui::BeginListBox(u8"##오브젝트"))
 	{
 		ImGuiSelectableFlags eFlag = {};
 		eFlag = ImGuiSelectableFlags_None;
 		
-
-		if (ImGui::Selectable(u8"TestObject", (m_iSelected_Object == 0), eFlag))
+		for (_uint i = 0; i < m_vecPrototypeNames.size(); i++)
 		{
-			m_iSelected_Object = 0;
+			_char szName[MAX_PATH] = {};
+			strcpy_s(szName, m_vecPrototypeNames[i].c_str());
+			if (ImGui::Selectable(szName, (m_iSelected_Object == i), eFlag))
+			{
+				m_iSelected_Object = i;
+			}
 		}
 
 		ImGui::EndListBox();
-	}	
+	}
 }
 
 void CImGuiWin_Browser::Link_ToMapTool()
@@ -136,20 +168,32 @@ void CImGuiWin_Browser::Handle_TerrainBrushModeSelected(_bool bIsEdit)
 
 void CImGuiWin_Browser::Handle_PlacePicked(_float3 vPickedWorldPos)
 {
-	GI()->Set_LevelTag(TEXT("GamePlay"));
+	if (m_iSelected_Object == -1)
+		return;
+
+	GI()->Set_LevelTag(TEXT("MapTool"));
+
+	FSerialData Data;
+	Data.Load_Data(GI()->Get_MainPath()  + g_PrototypePath + ConvertToWstring(m_vecPrototypeNames[m_iSelected_Object]));
+
+	Data.Add_Member("PosX", vPickedWorldPos.x);
+	Data.Add_Member("PosY", vPickedWorldPos.y);
+	Data.Add_Member("PosZ", vPickedWorldPos.z);
 
 	CGameObject* pAddedObject = { nullptr };
-	switch (m_iSelected_Object)
+	GI()->Add_GameObject(pAddedObject = CGameObjectFactory::Create(Data));
+	/*switch (m_iSelected_Object)
 	{
 	case 0:
 		GI()->Add_GameObject(pAddedObject = CPlayer::Create(vPickedWorldPos));
 		break;
-	}
+	}*/
 
 	if (pAddedObject == nullptr)
 		return;
 
 	pAddedObject->TurnOff_State(EGObjectState::Tick);
+
 	
 	OnObjectPlaced.Broadcast(pAddedObject);
 }

@@ -1,0 +1,53 @@
+{
+    "Name": "StaticObject",
+    "StateFlag": 52,
+    "PriorityTick": 0.0,
+    "PriorityRender": 0.0,
+    "PosX": 0.0,
+    "PosY": 0.0,
+    "PosZ": 0.0,
+    "RotX": -0.0,
+    "RotY": 0.0,
+    "RotZ": -0.0,
+    "ScaleX": 1.0,
+    "ScaleY": 1.0,
+    "ScaleZ": 1.0,
+    "ClassID": 4,
+    "Components": [
+        {
+            "PosX": 0.0,
+            "PosY": 3.0,
+            "PosZ": 0.0,
+            "RotX": -90.00000762939453,
+            "RotY": -0.000013660377589985728,
+            "RotZ": -180.0,
+            "ScaleX": 1.0,
+            "ScaleY": 1.0,
+            "ScaleZ": 1.0,
+            "ActivePasses": [
+                {
+                    "PassNum": 0
+                }
+            ],
+            "ComponentID": 2,
+            "ProtoName": "",
+            "ModelType": 0,
+            "ModelPath": "Model\\Map\\Main\\Wall-Corner.amodel",
+            "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
+        },
+        {
+            "PosX": -0.5,
+            "PosY": 3.0,
+            "PosZ": 0.5,
+            "RotX": 0.0,
+            "RotY": -32.64720916748047,
+            "RotZ": 0.0,
+            "ScaleX": 4.0,
+            "ScaleY": 6.0,
+            "ScaleZ": 0.10000000149011612,
+            "ComponentID": 1,
+            "ProtoName": "Prototype_Collider_OBB",
+            "CollisionType": 7
+        }
+    ]
+}

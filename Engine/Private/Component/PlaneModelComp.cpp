@@ -128,6 +128,12 @@ HRESULT CPlaneModelComp::Bind_ShaderResources()
             return E_FAIL;
         if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Ortho, ECamMatrix::Proj, ECamNum::One)))))
             return E_FAIL;
+        if (FAILED(m_pEffectComp->Bind_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
+            return E_FAIL;
+        if (FAILED(m_pEffectComp->Bind_RawValue("g_vMinUV", &m_vMinUV, sizeof(_float2))))
+            return E_FAIL;
+        if (FAILED(m_pEffectComp->Bind_RawValue("g_vMaxUV", &m_vMaxUV, sizeof(_float2))))
+            return E_FAIL;
     }
     else if (m_eMode == PERSP)
     {
@@ -139,6 +145,10 @@ HRESULT CPlaneModelComp::Bind_ShaderResources()
         if (FAILED(m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
             return E_FAIL;
         if (FAILED(m_pEffectComp->Bind_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
+            return E_FAIL;
+        if (FAILED(m_pEffectComp->Bind_RawValue("g_vMinUV", &m_vMinUV, sizeof(_float2))))
+            return E_FAIL;
+        if (FAILED(m_pEffectComp->Bind_RawValue("g_vMaxUV", &m_vMaxUV, sizeof(_float2))))
             return E_FAIL;
     }
     if (FAILED(m_pTextureComp->Bind_SRVToEffect(m_pEffectComp, "g_Texture", m_iCurrentTextureIndex)))

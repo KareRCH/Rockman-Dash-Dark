@@ -23,15 +23,18 @@ protected:
 protected:
     virtual HRESULT     Initialize();
 
-private:
+public:
     static CCloudStation_Player*    Create();
+private:
     virtual void		            Free();
 
+public:
+    GETSET_2(FGauge, m_fHP, HP, GET_C_REF, SET_C_REF)
 
 private:    // 현재 상태
-    FGauge      m_fHP;
-    FGauge      m_fSubWeapon_Main;
-    FGauge      m_fSubWeapon_Usage;
+    FGauge          m_fHP;
+    FGauge          m_fSubWeapon_Main;
+    FGauge          m_fSubWeapon_Usage;
 
     _int            m_iSubWeapon_Equipped = { -1 };
     _int            m_iHeadPart_Equipped = { -1 };

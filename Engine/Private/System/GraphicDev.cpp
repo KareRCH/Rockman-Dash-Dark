@@ -132,7 +132,8 @@ void CGraphicDev::Free()
 
 
 #ifdef _DEBUG
-    m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+    if (m_pDebug)
+        m_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
     //m_pDxDebug->ReportLiveObjects(DXGI_DEBUG_D3D11, DXGI_DEBUG_RLO_DETAIL);
     //ID3D11InfoQueue* pInfoQueue = nullptr;
     //m_pDebug->QueryInterface(__uuidof(ID3D11InfoQueue), (void**)&pInfoQueue);
@@ -180,7 +181,8 @@ HRESULT CGraphicDev::Ready_SwapChain(const FDEVICE_INIT& tInit)
     ComPtr<IDXGIFactory> pFactory = { nullptr };
     pAdapter->GetParent(__uuidof(IDXGIFactory), ReCast<void**>(pFactory.GetAddressOf()));
 
-    pFactory->EnumAdapters(adapterIndex, pAdapter.GetAddressOf());
+    ComPtr<IDXGIAdapter> pNumAdapter = { nullptr };
+    pFactory->EnumAdapters(adapterIndex, pNumAdapter.GetAddressOf());
 
     // µð¹ö±×
 #ifdef _DEBUG
