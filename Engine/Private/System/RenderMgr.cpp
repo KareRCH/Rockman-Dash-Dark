@@ -39,18 +39,28 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Normal"), 
 		Cast<_uint>(m_vecViewport[0].Width), Cast<_uint>(m_vecViewport[0].Height), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+	
+	/* Target_DepthAndID */
+	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_PosAndID"),
+		Cast<_uint>(m_vecViewport[0].Width), Cast<_uint>(m_vecViewport[0].Height), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, -1.f))))
+		return E_FAIL;
 
 	/* Target_Shade */
 	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Shade"), 
 		Cast<_uint>(m_vecViewport[0].Width), Cast<_uint>(m_vecViewport[0].Height), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
+	
+
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
 		return E_FAIL;
+	if (FAILED(GI()->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_PosAndID"))))
+		return E_FAIL;
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
+	
 
 	m_pVIBuffer = CRectBufferComp::Create();
 	if (nullptr == m_pVIBuffer)
@@ -72,6 +82,8 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Normal"), 100.f, 300.f, 200.f, 200.f)))
 		return E_FAIL;
 	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Shade"), 300.f, 100.f, 200.f, 200.f)))
+		return E_FAIL;
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_PosAndID"), 300.f, 100.f, 200.f, 200.f)))
 		return E_FAIL;
 #endif
 
@@ -241,7 +253,7 @@ HRESULT CRenderMgr::Render_UI()
 
 HRESULT CRenderMgr::Render_PostProcess()
 {
-	GameInstance()->TurnOff_ZBuffer();
+	//GameInstance()->TurnOff_ZBuffer();
 
 	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::PostProcess)])
 	{

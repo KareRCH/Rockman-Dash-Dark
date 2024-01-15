@@ -172,7 +172,11 @@ protected:
 public:
 	typedef FastDelegate0<_matrix> TransformDelegate;
 	void Set_TransformEvent(TransformDelegate Event) { TransformEvent = Event; }
-	_matrix Handle_TransformEvent() { if (!TransformEvent.empty()) { return TransformEvent(); } }
+	_matrix Handle_TransformEvent() 
+	{ 
+		if (!TransformEvent.empty()) { return TransformEvent(); } 
+		else { return XMMatrixIdentity(); }
+	}
 
 protected:
 	TransformDelegate	TransformEvent;

@@ -158,43 +158,30 @@ public:
 #pragma region Rotation
 	const _vector Get_RotationEulerVector()
 	{
-		_matrix matRot = {
-			m_matTransform._11, m_matTransform._12, m_matTransform._13, 0,
-			m_matTransform._21, m_matTransform._22, m_matTransform._23, 0,
-			m_matTransform._31, m_matTransform._32, m_matTransform._33, 0,
-			0, 0, 0, 1
-		};
+		_float3 vReturn = Get_RotationEulerFloat3();
 
-		_vector vRot = XMQuaternionRotationMatrix(matRot);
-		_float3 vEuler = {};
-		_float pitch, yaw, roll;
-		_float t0, t1;
-		t0 = 2.f * (vRot.m128_f32[3] * vRot.m128_f32[0] + vRot.m128_f32[1] * vRot.m128_f32[2]);
-		t1 = 1.f - 2.f * (vRot.m128_f32[0] * vRot.m128_f32[0] + vRot.m128_f32[1] * vRot.m128_f32[1]);
-		pitch = atan2(t0, t1);
-
-		_float t2;
-		t2 = 2.f * (vRot.m128_f32[3] * vRot.m128_f32[1] - vRot.m128_f32[2] * vRot.m128_f32[0]);
-		t2 = (t2 > 1.f) ? 1.f : t2;
-		t2 = (t2 < -1.f) ? -1.f : t2;
-		yaw = asin(t2);
-
-		_float t3, t4;
-		t3 = 2.f * (vRot.m128_f32[3] * vRot.m128_f32[2] + vRot.m128_f32[0] * vRot.m128_f32[1]);
-		t4 = 1.f - 2.f * (vRot.m128_f32[1] * vRot.m128_f32[1] + vRot.m128_f32[2] * vRot.m128_f32[2]);
-		roll = atan2(t3, t4);
-
-		return XMVectorSet(pitch, yaw, roll, 0.f);
+		return XMLoadFloat3(&vReturn);
 	}
 	const _float3 Get_RotationEulerFloat3()
 	{
-		_vector vRot = XMQuaternionRotationMatrix(XMLoadFloat4x4(&m_matTransform));
+		_vector vRight = Get_RightNormalizedVector();
+		_vector vUp = Get_UpNormalizedVector();
+		_vector vLook = Get_LookNormalizedVector();
+		
+		_float4x4 matRotation = {
+			vRight.m128_f32[0], vRight.m128_f32[1], vRight.m128_f32[2], 0.f,
+			vUp.m128_f32[0], vUp.m128_f32[1], vUp.m128_f32[2], 0.f,
+			vLook.m128_f32[0], vLook.m128_f32[1], vLook.m128_f32[2], 0.f,
+			0.f, 0.f, 0.f, 1.f
+		};
+
+		_vector vRot = XMQuaternionRotationMatrix(XMLoadFloat4x4(&matRotation));
 		_float4 vfRot = {};
 		XMStoreFloat4(&vfRot, vRot);
 
 		_float3 vEuler = {};
 		_float pitch, yaw, roll;
-		_float t0, t1;
+		_double t0, t1;
 		t0 = 2.f * (vfRot.w * vfRot.x + vfRot.y * vfRot.z);
 		t1 = 1.f - 2.f * (vfRot.x * vfRot.x + vfRot.y * vfRot.y);
 		pitch = atan2(t0, t1);
@@ -203,6 +190,7 @@ public:
 		t2 = 2.f * (vfRot.w * vfRot.y - vfRot.z * vfRot.x);
 		t2 = (t2 > 1.f) ? 1.f : t2;
 		t2 = (t2 < -1.f) ? -1.f : t2;
+		
 		yaw = asin(t2);
 
 		_float t3, t4;
@@ -212,6 +200,15 @@ public:
 
 		return _float3(pitch, yaw, roll);
 	}
+	_float3 Get_RotationFixedFloat3()
+	{
+		return m_vRotation;
+	}
+	_vector Get_RotationFixedVector()
+	{
+		return XMLoadFloat3(&m_vRotation);
+	}
+
 	void Set_RotationEuler(_fvector vRot)
 	{
 		_vector vPosition = Get_PositionVector();
@@ -267,6 +264,32 @@ public:
 	void Set_RotationAxis(const _float3 vAxis, _float fRadian)
 	{
 		Set_RotationAxis(XMLoadFloat3(&vAxis), fRadian);
+	}
+	void Set_RotationFixed(const _float3 vRot)
+	{
+		_matrix matScale = XMMatrixScalingFromVector(Get_ScaleVector());
+		_matrix matRotX = XMMatrixRotationX(vRot.x);
+		_matrix matRotY = XMMatrixRotationY(vRot.y);
+		_matrix matRotZ = XMMatrixRotationZ(vRot.z);
+		_matrix matTranslate = XMMatrixTranslationFromVector(Get_PositionVector());
+
+		XMStoreFloat4x4(&m_matTransform, matScale * matRotZ * matRotY * matRotX * matTranslate);
+		m_vRotation = vRot;
+	}
+	void Set_RotationFixedX(const _float fX)
+	{
+		m_vRotation.x = fX;
+		Set_RotationFixed(m_vRotation);
+	}
+	void Set_RotationFixedY(const _float fY)
+	{
+		m_vRotation.y = fY;
+		Set_RotationFixed(m_vRotation);
+	}
+	void Set_RotationFixedZ(const _float fZ)
+	{
+		m_vRotation.z = fZ;
+		Set_RotationFixed(m_vRotation);
 	}
 
 	const _vector Get_RotationQuaternionVector() { return _vector(); }
@@ -447,6 +470,7 @@ public:
 	
 
 private:
+	_float3		m_vRotation;		// 고정축 회전을 추적하기 위한 벡터
 	_float4		m_qtOrientation;	// 회전을 저장하는 쿼터니언
 	_float3		m_vScale;			// 회전에 의해 사이즈가 작아지기에 원형 사이즈가 필요하다.
 	_float4x4	m_matTransform;		// 변환된 행렬

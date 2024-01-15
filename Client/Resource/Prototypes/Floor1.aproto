@@ -1,5 +1,5 @@
 {
-    "Name": "StaticObject",
+    "Name": "StaticObject1",
     "StateFlag": 52,
     "PriorityTick": 0.0,
     "PriorityRender": 0.0,
@@ -16,11 +16,11 @@
     "Components": [
         {
             "PosX": 0.0,
-            "PosY": 3.0,
+            "PosY": 0.0,
             "PosZ": 0.0,
-            "RotX": -90.00000762939453,
-            "RotY": 0.000013660377589985728,
-            "RotZ": 180.0,
+            "RotX": 89.99996185302734,
+            "RotY": 1.628443907497612e-11,
+            "RotZ": 0.000027320742447045632,
             "ScaleX": 1.0,
             "ScaleY": 1.0,
             "ScaleZ": 1.0,
@@ -37,14 +37,14 @@
         },
         {
             "PosX": 0.0,
-            "PosY": 3.0,
+            "PosY": 0.0,
             "PosZ": 0.0,
-            "RotX": 78.70350646972656,
+            "RotX": 89.99996185302734,
             "RotY": 0.0,
             "RotZ": 0.0,
             "ScaleX": 4.0,
             "ScaleY": 4.0,
-            "ScaleZ": 0.10000000149011612,
+            "ScaleZ": 0.009999999776482582,
             "ComponentID": 1,
             "ProtoName": "Prototype_Collider_OBB",
             "CollisionType": 7

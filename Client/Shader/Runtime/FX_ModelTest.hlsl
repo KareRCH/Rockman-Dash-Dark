@@ -121,11 +121,6 @@ PS_OUTPUT PS_MAIN(VPS_INOUT input)
     if (vMtrlDiffuse.a < 0.3f)
         discard;
     
-    float fStair = 10.f;
-    float fAlpha = vMtrlDiffuse.a;
-    vMtrlDiffuse = float4(floor(vMtrlDiffuse.x * fStair), floor(vMtrlDiffuse.y * fStair), floor(vMtrlDiffuse.z * fStair), 1.f) / fStair;
-    vMtrlDiffuse.a = fAlpha;
-
     float fShade = max(dot(normalize(g_vLightDir) * -1.f, normalize(vector(input.vNormal, 1.f))), 0.f);
 
 	/* 스펙큘러가 보여져야하는 영역에서는 1로, 아닌 영역에서는 0으로 정의되는 스펙큘러의 세기가 필요하다. */
@@ -133,10 +128,13 @@ PS_OUTPUT PS_MAIN(VPS_INOUT input)
 
     float fSpecular = pow(max(dot(normalize(vector(input.vViewDirection, 1.f)) * -1.f, normalize(vReflect)), 0.f), 30.f);
 
-    output.vColor = g_vLightDiffuse * vMtrlDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
+    float fStair = 3.f;
+    vector vLight = g_vLightDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
 		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
-
+    vector vColor = vMtrlDiffuse * vector(ceil(vLight.x * fStair),
+                    ceil(vLight.y * fStair), ceil(vLight.z * fStair), fStair) / fStair;
     
+    output.vColor = vColor;
     output.vNormal = float4(input.vNormal, 1.f);
     
     return output;

@@ -12,7 +12,7 @@ cbuffer DirectionalLightBuffer : register(b1)
     float4 g_vLightDiffuse = float4(1.f, 1.f, 1.f, 1.f);
     float4 g_vLightAmbient = float4(1.f, 1.f, 1.f, 1.f);
     float4 g_vLightSpecular = float4(1.f, 1.f, 1.f, 1.f);
-    float g_fLightRange = 30.f;
+    float g_fLightRange = 60.f;
     float3 g_vLightDir = float3(1.f, -1.f, 1.f);
 }
 
@@ -130,8 +130,13 @@ PS_OUT PS_MAIN(VPS_INOUT In)
 
     float fSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), g_fLightRange);
 
-    Out.vColor = g_vLightDiffuse * vMtrlDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
+    float fStair = 20.f;
+    vector vLight = g_vLightDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
 		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
+    vector vColor = vMtrlDiffuse * vector(ceil(vLight.x * fStair),
+                    ceil(vLight.y * fStair), ceil(vLight.z * fStair), fStair) / fStair;
+    
+    Out.vColor = vColor;
     
     return Out;
 }
@@ -209,8 +214,13 @@ PS_OUT_TOOL PS_MAIN_TOOL(VPS_INOUT In)
 
     float fSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), g_fLightRange);
 
-    Out.vColor = g_vLightDiffuse * vMtrlDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
+    float fStair = 5.f;
+    vector vLight = g_vLightDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
 		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
+    vector vColor = vMtrlDiffuse * vector(ceil(vLight.x * fStair),
+                    ceil(vLight.y * fStair), ceil(vLight.z * fStair), fStair) / fStair;
+    
+    Out.vColor = vColor;
     
     // 툴 피킹 때문에 만든 기능. 화면에 그려지는 픽셀들을 기준으로 물체를 선택 할 수 있다.
     Out.vPosAndID = float4(In.vWorldPos.xyz, g_iObjectID);

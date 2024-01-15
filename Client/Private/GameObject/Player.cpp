@@ -258,8 +258,7 @@ HRESULT CPlayer::Initialize_Component()
     m_pCloudStationComp->Open_CloudStation_Session(TEXT("Player"), CCloudStation_Player::Create());
     m_pCloudStationComp->Connect_CloudStation(TEXT("Player"));
 
-    if (nullptr == m_pColliderComp)
-        return E_FAIL;
+    FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
     m_pColliderComp->Transform().Set_Position(0.f, 0.8f, 0.f);
     m_pColliderComp->Transform().Set_Scale(1.f, 0.8f, 1.f);
     m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
