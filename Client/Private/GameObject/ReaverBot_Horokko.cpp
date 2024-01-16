@@ -54,7 +54,7 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype()
 
 HRESULT CReaverBot_Horokko::Initialize_Prototype(FSerialData& InputData)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(InputData)))
 		return E_FAIL;
 
 	_uint iNumPrototype = 0;
@@ -161,7 +161,7 @@ CReaverBot_Horokko* CReaverBot_Horokko::Create()
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("CUI_Player Create Failed");
+		MSG_BOX("Reaverbot_Balfura Create Failed");
 		Safe_Release(pInstance);
 	}
 
@@ -174,7 +174,7 @@ CReaverBot_Horokko* CReaverBot_Horokko::Create(FSerialData& InputData)
 
 	if (FAILED(pInstance->Initialize_Prototype(InputData)))
 	{
-		MSG_BOX("CUI_Player Create Failed");
+		MSG_BOX("Reaverbot_Balfura Create Failed");
 		Safe_Release(pInstance);
 	}
 
@@ -187,7 +187,7 @@ CGameObject* CReaverBot_Horokko::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("CUI_Player Create Failed");
+		MSG_BOX("Reaverbot_Balfura Create Failed");
 		Safe_Release(pInstance);
 	}
 
@@ -200,7 +200,7 @@ CGameObject* CReaverBot_Horokko::Clone(FSerialData& InputData)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("CUI_Player Create Failed");
+		MSG_BOX("Reaverbot_Balfura Create Failed");
 		Safe_Release(pInstance);
 	}
 

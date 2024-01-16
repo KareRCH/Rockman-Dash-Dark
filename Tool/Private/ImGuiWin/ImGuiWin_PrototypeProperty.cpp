@@ -106,9 +106,31 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
     ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, fMatrix);
 */
 
+    string strName = ConvertToString(m_pGameObject->Get_Name());
     _char szName[MAX_PATH];
     strcpy_s(szName, ConvertToString(m_pGameObject->Get_Name()).c_str());
     ImGui::Text(szName);
+
+    ImGui::Button(u8"이름");
+    ImGui::SameLine();
+    strcpy_s(szName, strName.c_str());
+    ImGui::Text(szName);
+
+
+    ImGui::Button(u8"프로토 이름");
+    ImGui::SameLine();
+    _char szProtoName[MAX_PATH];
+    strcpy_s(szProtoName, ConvertToString(m_pGameObject->Get_ProtoName()).c_str());
+    string strProp = "";
+    strProp = "##ProtoName" + strName;
+    strcpy_s(szName, strProp.c_str());
+    ImGui::SetNextItemWidth(150.f);
+    if (ImGui::InputText(szName, szProtoName, sizeof szProtoName, ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        m_pGameObject->Set_ProtoName(ConvertToWstring(szProtoName));
+    }
+
+    
 
     ImGui::Text(u8"위치");
     ImGui::Button("X##ProtoPosX");
@@ -234,9 +256,23 @@ void CImGuiWin_PrototypeProperty::Layout_SceneCompProperty(CSceneComponent* pCom
     _char szName[MAX_PATH];
 
     
-
+    ImGui::Button(u8"이름");
+    ImGui::SameLine();
     strcpy_s(szName, strName.c_str());
     ImGui::Text(szName);
+
+
+    ImGui::Button(u8"프로토 이름");
+    ImGui::SameLine();
+    _char szProtoName[MAX_PATH];
+    strcpy_s(szProtoName, ConvertToString(pComp->Get_ProtoName()).c_str());
+    strProp = "##ProtoName" + strName;
+    strcpy_s(szName, strProp.c_str());
+    ImGui::SetNextItemWidth(150.f);
+    if (ImGui::InputText(szName, szProtoName, sizeof szProtoName, ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        pComp->Set_ProtoName(ConvertToWstring(szProtoName));
+    }
 
     ImGui::Text(u8"위치");
     ImGui::Button("X##ProtoPosX");

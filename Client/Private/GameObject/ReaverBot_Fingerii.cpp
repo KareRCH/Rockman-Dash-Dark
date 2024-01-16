@@ -56,7 +56,7 @@ HRESULT CReaverBot_Fingerii::Initialize_Prototype()
 
 HRESULT CReaverBot_Fingerii::Initialize_Prototype(FSerialData& InputData)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(InputData)))
 		return E_FAIL;
 
 	_uint iNumPrototype = 0;

@@ -78,11 +78,11 @@ HRESULT CLevel_Parsed::Ready_Objects(FSerialData& Data)
 	FSerialData ObjectDatas;
 	Data.Get_Data("CloneObjects", ObjectDatas);
 
-	_uint iNumObjects = Data.Get_ArraySize("Objects");
+	_uint iNumObjects = ObjectDatas.Get_ArraySize("Objects");
 	for (_uint i = 0; i < iNumObjects; i++)
 	{
 		FSerialData ObjectData;
-		Data.Get_ObjectFromArray("Objects", i, ObjectData);
+		ObjectDatas.Get_ObjectFromArray("Objects", i, ObjectData);
 
 		/*StringBuffer buffer;
 		PrettyWriter<StringBuffer> writer(buffer);

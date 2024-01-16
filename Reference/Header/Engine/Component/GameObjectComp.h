@@ -46,7 +46,8 @@ public:
 protected:
 	virtual void Free() override;
 
-
+public:
+	GETSET_2(wstring, m_strPrototypeName, ProtoName, GET_C_REF, SET_C_REF)
 
 protected:
 	wstring	m_strPrototypeName = TEXT("");		// 프로토타입 저장시 사용

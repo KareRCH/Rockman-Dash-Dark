@@ -4,6 +4,7 @@
 #include "Component/NavigationComponent.h"
 #include "Utility/RapidJsonSerial.h"
 #include "GameObject/GameObjectFactory.h"
+#include "GameObject/ComponentFactory.h"
 
 #include "process.h"
 
@@ -143,28 +144,32 @@ HRESULT CLoader::Loading_For_Parsed_Level()
 		CNavigationComponent::Create(TEXT("Resource/Navigation.dat")))))
 		return E_FAIL;
 
-	_uint iNumComponents = Data.Get_ArraySize("Components");
+	FSerialData PrototypeData;
+	Data.Get_Data("Prototypes", PrototypeData);
+
+	_uint iNumComponents = PrototypeData.Get_ArraySize("Components");
 	for (_uint i = 0; i < iNumComponents; i++)
 	{
 		FSerialData ComponentData;
-		Data.Get_ObjectFromArray("Components", i, ComponentData);
+		PrototypeData.Get_ObjectFromArray("Components", i, ComponentData);
 
 		string strProtoName = "";
-		if (FAILED(Data.Get_Data("ProtoName", strProtoName)))
+		if (FAILED(ComponentData.Get_Data("ProtoName", strProtoName)))
 			return E_FAIL;
 
-		/*GI()->Add_PrototypeComp(strConvertName, ConvertToWstring(strProtoName)
-			CComponentFactory::Create(ComponentData));*/
+		
+		GI()->Add_PrototypeComp(strConvertName, ConvertToWstring(strProtoName),
+			CComponentFactory::Create(ComponentData));
 	}
 
-	_uint iNumObjects = Data.Get_ArraySize("Objects");
+	_uint iNumObjects = PrototypeData.Get_ArraySize("Objects");
 	for (_uint i = 0; i < iNumObjects; i++)
 	{
 		FSerialData ObjectData;
-		Data.Get_ObjectFromArray("Components", i, ObjectData);
+		PrototypeData.Get_ObjectFromArray("Objects", i, ObjectData);
 
 		string strProtoName = "";
-		if (FAILED(Data.Get_Data("ProtoName", strProtoName)))
+		if (FAILED(ObjectData.Get_Data("ProtoName", strProtoName)))
 			return E_FAIL;
 
 		GI()->Add_PrototypeObject(strConvertName, ConvertToWstring(strProtoName),

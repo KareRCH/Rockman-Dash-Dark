@@ -36,12 +36,9 @@ HRESULT CComponentMgr::Add_Prototype(const wstring& strTag, const wstring& strPr
         return E_FAIL;
 
     CComponent* pInstance = Find_Prototype(strProtoKey);
-    
     if (nullptr != pInstance)
     {
-        MSG_BOX("Add Component Proto Failed");
         Safe_Release(pPrototype);
-
         return E_FAIL;
     }
 

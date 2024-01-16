@@ -17,6 +17,7 @@ CGameObject::CGameObject()
 CGameObject::CGameObject(const CGameObject& rhs)
 	: m_pPipelineComp(rhs.m_pPipelineComp)
 	, m_iStateFlag(rhs.m_iStateFlag)
+	, m_strPrototypeName(rhs.m_strPrototypeName)
 {
 	// 파이프라인 참조
 	Safe_AddRef(m_pPipelineComp);
@@ -43,7 +44,22 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize_Prototype(FSerialData& InputData)
 {
-	_float3 vPos, vRot, vScale;
+	string strName = "";
+	if (FAILED(InputData.Get_Data("Name", strName)))
+		return E_FAIL;
+	m_strName = ConvertToWstring(strName);
+
+	string strProtoName = "";
+	if (FAILED(InputData.Get_Data("ProtoName", strProtoName)))
+		return E_FAIL;
+	m_strPrototypeName = ConvertToWstring(strProtoName);
+
+	if (FAILED(InputData.Get_Data("PriorityTick", m_fPriority[ECast(EGObjTickPriority::Tick)])))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("PriorityRender", m_fPriority[ECast(EGObjTickPriority::Render)])))
+		return E_FAIL;
+
+	_float3 vPos = {}, vRot = {}, vScale = {};
 	if (FAILED(InputData.Get_Data("PosX", vPos.x)))
 		return E_FAIL;
 	if (FAILED(InputData.Get_Data("PosY", vPos.y)))
@@ -84,7 +100,7 @@ HRESULT CGameObject::Initialize(void* Arg)
 
 HRESULT CGameObject::Initialize(FSerialData& InputData)
 {
-	_float3 vPos, vRot, vScale;
+	_float3 vPos = {}, vRot = {}, vScale = {};
 	if (FAILED(InputData.Get_Data("PosX", vPos.x)))
 		return E_FAIL;
 	if (FAILED(InputData.Get_Data("PosY", vPos.y)))
@@ -168,6 +184,7 @@ FSerialData CGameObject::SerializeData_Prototype()
 
 	Data.Add_MemberString("Name", ConvertToString(m_strName));
 	Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
+	Data.Add_Member("ClassID", 0U);		// 기본값
 	Data.Add_Member("StateFlag", m_iStateFlag);
 
 	Data.Add_Member("PriorityTick", m_fPriority[ECast(EGObjTickPriority::Tick)]);
@@ -203,6 +220,7 @@ FSerialData CGameObject::SerializeData()
 
 	Data.Add_MemberString("Name", ConvertToString(m_strName));
 	Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
+	Data.Add_Member("ClassID", 0U);		// 기본값
 	Data.Add_Member("StateFlag", m_iStateFlag);
 
 	Data.Add_Member("PriorityTick", m_fPriority[ECast(EGObjTickPriority::Tick)]);

@@ -72,8 +72,10 @@ void CObjectMgr::Free()
 
 HRESULT CObjectMgr::Add_Prototype(const wstring& strTag, const wstring& strPrototypeKey, CGameObject* pPrototype)
 {
-	if (nullptr == pPrototype ||
-		nullptr != Find_Prototype(strPrototypeKey))
+	if (nullptr == pPrototype)
+		return E_FAIL;
+
+	if (nullptr != Find_Prototype(strPrototypeKey))
 	{
 		Safe_Release(pPrototype);
 		return E_FAIL;
@@ -378,6 +380,10 @@ void CObjectMgr::RegistToTick_GameObjects()
 		if (pObj->IsDead())
 		{
 			// 레퍼런스 카운터가 1이상이었을 때 추가적인 해제 작업이 필요하다.
+			auto iter = m_setObjectNames.find(pObj->Get_Name());
+			if (iter != m_setObjectNames.end())
+				m_setObjectNames.erase(iter);
+
 			_uint iRefCount = Safe_Release(pObj);
 			m_vecGameObjects[i] = nullptr;
 			bChanged = true;

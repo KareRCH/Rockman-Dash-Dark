@@ -189,6 +189,9 @@
     <ClInclude Include="Public\GameObject\GameObjectFactory.h">
       <Filter>02. GameObject\00. Factory</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\ComponentFactory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -271,6 +274,9 @@
     </ClCompile>
     <ClCompile Include="Private\GameObject\GameObjectFactory.cpp">
       <Filter>02. GameObject\00. Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\ComponentFactory.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

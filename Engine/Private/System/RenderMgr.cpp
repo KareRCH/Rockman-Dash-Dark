@@ -31,23 +31,23 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	}
 
 	/* Target_Diffuse */
-	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Diffuse"), 
-		Cast<_uint>(m_vecViewport[0].Width), Cast<_uint>(m_vecViewport[0].Height), DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Diffuse"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
 
 	/* Target_Normal */
-	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Normal"), 
-		Cast<_uint>(m_vecViewport[0].Width), Cast<_uint>(m_vecViewport[0].Height), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Normal"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-	
-	/* Target_DepthAndID */
-	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_PosAndID"),
-		Cast<_uint>(m_vecViewport[0].Width), Cast<_uint>(m_vecViewport[0].Height), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, -1.f))))
+
+	/* Target_Depth */
+	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Depth"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 	/* Target_Shade */
-	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Shade"), 
-		Cast<_uint>(m_vecViewport[0].Width), Cast<_uint>(m_vecViewport[0].Height), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Shade"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+
+	/* Target_Specular */
+	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Specular"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	
@@ -56,9 +56,11 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 		return E_FAIL;
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
 		return E_FAIL;
-	if (FAILED(GI()->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_PosAndID"))))
+	if (FAILED(GI()->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
 		return E_FAIL;
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
+		return E_FAIL;
+	if (FAILED(GI()->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
 	
 
@@ -81,9 +83,11 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 		return E_FAIL;
 	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Normal"), 100.f, 300.f, 200.f, 200.f)))
 		return E_FAIL;
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Depth"), 100.f, 500.f, 200.f, 200.f)))
+		return E_FAIL;
 	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Shade"), 300.f, 100.f, 200.f, 200.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_PosAndID"), 300.f, 100.f, 200.f, 200.f)))
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Specular"), 300.f, 300.f, 200.f, 200.f)))
 		return E_FAIL;
 #endif
 
@@ -284,6 +288,19 @@ HRESULT CRenderMgr::Render_LightAcc()
 	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Normal"), m_pEffect, "g_NormalTexture")))
 		return E_FAIL;
 
+	_float4x4 matTemp = {};
+	if (FAILED(m_pEffect->Bind_Matrix("g_ViewMatrixInv", 
+		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
+		return E_FAIL;
+	if (FAILED(m_pEffect->Bind_Matrix("g_ProjMatrixInv", 
+		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
+		return E_FAIL;
+
+	_float4 vCamPos = {};
+	if (FAILED(m_pEffect->Bind_RawValue("g_vCamPosition",
+		&(vCamPos = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
+		return E_FAIL;
+
 	GI()->Render_Lights(m_pEffect, m_pVIBuffer);
 
 	if (FAILED(GI()->End_MRT()))
@@ -307,6 +324,8 @@ HRESULT CRenderMgr::Render_Deferred()
 	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Diffuse"), m_pEffect, "g_DiffuseTexture")))
 		return E_FAIL;
 	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Shade"), m_pEffect, "g_ShadeTexture")))
+		return E_FAIL;
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Specular"), m_pEffect, "g_SpecularTexture")))
 		return E_FAIL;
 
 	m_pEffect->Begin(3);
