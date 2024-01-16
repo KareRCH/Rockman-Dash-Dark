@@ -43,6 +43,7 @@ public:
 	HRESULT Get_Data(const string& strMemberName, _int& tValue);
 	HRESULT Get_Data(const string& strMemberName, _uint& tValue);
 	HRESULT Get_Data(const string& strMemberName, _float& tValue);
+	HRESULT Get_Data(const string& strMemberName, FSerialData& Data);
 
 public:
 	_uint Get_ArraySize(const string& strMemberName);

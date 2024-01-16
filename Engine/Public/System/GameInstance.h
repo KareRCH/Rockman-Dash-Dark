@@ -232,6 +232,7 @@ public:		// 매니지먼트
 
 	HRESULT				Add_PrototypeObject(const wstring& strTag, const wstring& strPrototypeKey, class CGameObject* pPrototype);
 	HRESULT				Add_CloneObject(const wstring& strPrototypeKey, void* pArg = nullptr);
+	HRESULT				Add_CloneObject(class FSerialData& InputData);
 	class CGameObject*	Find_PrototypeObject(const wstring& strPrototypeKey);
 	void				Clear_PrototypeObejcts(const wstring& strContainTag);
 

@@ -23,7 +23,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 
 	m_eNextLevelID = eNextLevelID;
 
-	m_pLoader = CLoader::Create(eNextLevelID);
+	m_pLoader = CLoader::Create(eNextLevelID, TEXT(""));
 	if (nullptr == m_pLoader)
 		return E_FAIL;
 
@@ -38,7 +38,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID, const wstring& strParsedL
 	m_eNextLevelID = eNextLevelID;
 	m_strParsedLevelDataPath = strParsedLevelDataPath;
 
-	m_pLoader = CLoader::Create(eNextLevelID);
+	m_pLoader = CLoader::Create(eNextLevelID, strParsedLevelDataPath);
 	if (nullptr == m_pLoader)
 		return E_FAIL;
 

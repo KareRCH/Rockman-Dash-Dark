@@ -27,11 +27,30 @@ CCylinderModelComp::CCylinderModelComp(const CCylinderModelComp& rhs)
 
 HRESULT CCylinderModelComp::Initialize_Prototype(void* Arg)
 {
+	if (FAILED(__super::Initialize_Prototype(Arg)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CCylinderModelComp::Initialize_Prototype(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize_Prototype(InputData)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CCylinderModelComp::Initialize(void* Arg)
 {
+	return S_OK;
+}
+
+HRESULT CCylinderModelComp::Initialize(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize(InputData)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -57,13 +76,30 @@ HRESULT CCylinderModelComp::Render()
 {
 	Bind_ShaderResources();
 
-	m_pEffectComp->Begin(m_vecActivePasses[0]);
+	for (_uint i = 0; i < m_iNumActivePasses; i++)
+	{
+		m_pEffectComp->Begin(m_vecActivePasses[i]);
 
-	m_pVIBufferComp->Bind_Buffer();
+		m_pVIBufferComp->Bind_Buffer();
 
-	m_pVIBufferComp->Render_Buffer();
+		m_pVIBufferComp->Render_Buffer();
+	}
 
 	return S_OK;
+}
+
+FSerialData CCylinderModelComp::SerializeData_Prototype()
+{
+	FSerialData Data = SUPER::SerializeData_Prototype();
+
+	return Data;
+}
+
+FSerialData CCylinderModelComp::SerializeData()
+{
+	FSerialData Data = SUPER::SerializeData();
+
+	return Data;
 }
 
 CCylinderModelComp* CCylinderModelComp::Create()
@@ -79,6 +115,11 @@ CCylinderModelComp* CCylinderModelComp::Create()
 	return pInstance;
 }
 
+CCylinderModelComp* CCylinderModelComp::Create(FSerialData& InputData)
+{
+	return nullptr;
+}
+
 CComponent* CCylinderModelComp::Clone(void* Arg)
 {
 	ThisClass* pInstance = new ThisClass(*this);
@@ -90,6 +131,11 @@ CComponent* CCylinderModelComp::Clone(void* Arg)
 	}
 
 	return Cast<CComponent*>(pInstance);
+}
+
+CComponent* CCylinderModelComp::Clone(FSerialData& InputData)
+{
+	return nullptr;
 }
 
 void CCylinderModelComp::Free()

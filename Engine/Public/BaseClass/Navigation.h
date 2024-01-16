@@ -2,7 +2,7 @@
 
 
 #include "GameObject.h"
-
+#include "Utility/ClassID.h"
 
 BEGIN(Engine)
 
@@ -15,6 +15,9 @@ BEGIN(Engine)
 class ENGINE_DLL CNavigation : public CGameObject
 {
 	DERIVED_CLASS(CGameObject, CNavigation)
+
+public:
+	static const _uint g_ClassID = ECast(EObjectID::Navigation);
 
 protected:
 	explicit CNavigation();
@@ -48,6 +51,13 @@ private:
 
 private:
 	class CNavigationComponent* m_pNaviComp = { nullptr };
+
+};
+
+template <>
+struct TObjectTrait<CNavigation::g_ClassID>
+{
+	using Class = CNavigation;
 };
 
 END

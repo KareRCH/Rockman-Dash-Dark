@@ -19,7 +19,7 @@ class CStaticObject final : public CCollisionObject
 	DERIVED_CLASS(CCollisionObject, CStaticObject)
 
 public:
-	static const EObjectClassID g_ClassID = EObjectClassID::StaticObject;
+	static const _uint g_ClassID = ECast(EObjectIDExt::StaticObject);
 
 protected:
 	explicit CStaticObject();
@@ -40,6 +40,7 @@ public:
 	static CStaticObject* Create();
 	static CStaticObject* Create(FSerialData& InputData);
 	virtual CGameObject* Clone(void* Arg = nullptr);
+	virtual CGameObject* Clone(FSerialData& InputData);
 
 protected:
 	virtual void			Free() override;
@@ -66,7 +67,7 @@ private:
 };
 
 template <>
-struct TObjectClassTrait<EObjectClassID::StaticObject>
+struct TObjectExtTrait<CStaticObject::g_ClassID>
 {
 	using Class = CStaticObject;
 };

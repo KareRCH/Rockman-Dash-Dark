@@ -81,10 +81,31 @@ HRESULT CNavigationComponent::Initialize_Prototype(const wstring& strNavigationF
     return S_OK;
 }
 
+HRESULT CNavigationComponent::Initialize_Prototype(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize_Prototype(InputData)))
+        return E_FAIL;
+
+
+#ifdef _DEBUG
+    m_pEffectComp->Bind_Effect(TEXT("RunTime/FX_Navigation.hlsl"), SHADER_VTX_SINGLE::Elements, SHADER_VTX_SINGLE::iNumElements);
+#endif
+
+    return S_OK;
+}
+
 HRESULT CNavigationComponent::Initialize(void* Arg)
 {
     if (Arg != nullptr)
         m_iCurrentCell = ReCast<TCloneDesc*>(Arg)->iCurrentInex;
+
+    return S_OK;
+}
+
+HRESULT CNavigationComponent::Initialize(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize(InputData)))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -114,6 +135,24 @@ HRESULT CNavigationComponent::Render()
     return S_OK;
 }
 
+FSerialData CNavigationComponent::SerializeData_Prototype()
+{
+    FSerialData Data = SUPER::SerializeData_Prototype();
+
+    Data.Add_Member("ComponentID", g_ClassID);
+
+    return Data;
+}
+
+FSerialData CNavigationComponent::SerializeData()
+{
+    FSerialData Data = SUPER::SerializeData();
+
+    Data.Add_Member("ComponentID", g_ClassID);
+
+    return Data;
+}
+
 CNavigationComponent* CNavigationComponent::Create()
 {
     ThisClass* pInstance = new ThisClass();
@@ -140,11 +179,37 @@ CNavigationComponent* CNavigationComponent::Create(const wstring& strNavigationF
     return pInstance;
 }
 
+CNavigationComponent* CNavigationComponent::Create(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize_Prototype(InputData)))
+    {
+        MSG_BOX("NavigationComponent Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
 CComponent* CNavigationComponent::Clone(void* Arg)
 {
     ThisClass* pInstance = new ThisClass(*this);
 
     if (FAILED(pInstance->Initialize(Arg)))
+    {
+        MSG_BOX("NavigationComponent Copy Failed");
+        Safe_Release(pInstance);
+    }
+
+    return Cast<CComponent*>(pInstance);
+}
+
+CComponent* CNavigationComponent::Clone(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize(InputData)))
     {
         MSG_BOX("NavigationComponent Copy Failed");
         Safe_Release(pInstance);

@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "Component/TerrainModelComp.h"
 
+#include "Utility/ClassID.h"
+
 BEGIN(Engine)
 
 /// <summary>
@@ -12,6 +14,9 @@ BEGIN(Engine)
 class ENGINE_DLL CTerrain : public CGameObject
 {
 	DERIVED_CLASS(CGameObject, CTerrain)
+
+public:
+	static const _uint g_ClassID = ECast(EObjectID::Terrain);
 
 public:
 	struct FInitTerrain : public FInitGameObjectBase
@@ -62,6 +67,12 @@ public:
 	
 protected:
 	CTerrainModelComp* m_pTerrainModelComp = { nullptr };
+};
+
+template <>
+struct TObjectTrait<CTerrain::g_ClassID>
+{
+	using Class = CTerrain;
 };
 
 END

@@ -3,6 +3,7 @@
 #include "Component/GameObjectComp.h"
 
 #include "Component/Interface/ITeamAgentComp.h"
+#include "Utility/ClassID.h"
 
 BEGIN(Engine)
 
@@ -15,6 +16,10 @@ BEGIN(Engine)
 class ENGINE_DLL CTeamAgentComp final : public CGameObjectComp
 {
 	DERIVED_CLASS(CGameObjectComp, CTeamAgentComp)
+
+public:
+	static const _uint g_ClassID = ECast(EComponentID::TeamAgent);
+
 protected:
 	explicit CTeamAgentComp();
 	explicit CTeamAgentComp(const CTeamAgentComp& rhs);
@@ -22,15 +27,25 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype(void* Arg = nullptr);
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr);
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
 	virtual HRESULT	Render();
 
 public:
-	static CTeamAgentComp* Create();
+	// 프로토타입 제작용 함수
+	virtual FSerialData SerializeData_Prototype();
+	// 클로닝 전용 함수
+	virtual FSerialData SerializeData();
+
+public:
+	static	CTeamAgentComp* Create();
+	static	CTeamAgentComp* Create(FSerialData& InputData);
 	virtual CComponent* Clone(void* Arg = nullptr);
+	virtual CComponent* Clone(FSerialData& InputData);
 
 protected:
 	virtual void	Free();
@@ -119,5 +134,11 @@ private:
 };
 
 using ETeamRelation = CTeamAgentComp::ERelation;
+
+template <>
+struct TComponentTrait<CTeamAgentComp::g_ClassID>
+{
+	using Class = CTeamAgentComp;
+};
 
 END

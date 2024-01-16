@@ -44,20 +44,16 @@ public:
 	virtual HRESULT	Render();
 
 public:
-	virtual CGameObject* Clone(void* Arg) PURE;
-
-protected:
-	virtual void	Free() override;
-
-	
-
-public:
 	// 직렬화 데이터 뽑아낼 때 사용하는 함수. 각 오브젝트 별로 뽑아내는 데이터가 다릅니다.
 	virtual FSerialData SerializeData_Prototype();
 	virtual FSerialData SerializeData();
 
+public:
+	virtual CGameObject* Clone(void* Arg) PURE;
+	virtual CGameObject* Clone(FSerialData& InputData) { return nullptr; }
 
-
+protected:
+	virtual void	Free() override;
 
 
 #pragma region 기본 속성
@@ -93,6 +89,8 @@ private:	// 기본 속성
 
 	_float				m_fPriority[ECast(EGObjTickPriority::Size)];	// 우선도
 
+	wstring				m_strPrototypeName = TEXT("");		// 프로토타입 이름
+
 public: // 각 오브젝트는 자식 오브젝트를 가질 수 있음
 	GETSET_2(CGameObject*, m_pOwner, Owner, GET_REF_C, SET__C)
 
@@ -110,7 +108,7 @@ public:
 	HRESULT Add_Component(const wstring& strName, CGameObjectComp* pComponent);
 	_uint	Get_NumComponents() { return m_iNumComponents; }
 	template<class T, typename = enable_if_t<is_base_of_v<CGameObjectComp, T>>>
-	T* Get_Component(const _uint iIndex) { return DynCast<T*>(m_vecComponent[iIndex]); }
+	T* Get_Component(const _uint iIndex) { return DynCast<T*>(m_vecComponents[iIndex]); }
 	template<class T, typename = enable_if_t<is_base_of_v<CGameObjectComp, T>>>
 	T* Get_Component(const wstring& strName);
 
@@ -121,7 +119,7 @@ public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
 
 private:	// 컴포넌트 속성
 	_uint								m_iNumComponents = { 0 };	// 컴포넌트 개수
-	vector<CGameObjectComp*>			m_vecComponent;				// 컴포넌트 관리 컨테이너
+	vector<CGameObjectComp*>			m_vecComponents;				// 컴포넌트 관리 컨테이너
 	_unmap<wstring, CGameObjectComp*>	m_mapPrimComp;				// 오브젝트 전용 컴포넌트 관리 컨테이너
 
 	using list_comp = list<CGameObjectComp*>;
@@ -163,12 +161,12 @@ END
 template<class T, typename>
 T* CGameObject::Get_Component(const wstring& strName)
 {
-	auto iter = find_if(m_vecComponent.begin(), m_vecComponent.end(),
+	auto iter = find_if(m_vecComponents.begin(), m_vecComponents.end(),
 		[&strName](CGameObjectComp* pComp) {
 			return pComp->Get_Name() == strName;
 		});
 
-	if (iter != m_vecComponent.end())
+	if (iter != m_vecComponents.end())
 	{
 		return DynCast<T*>(*iter);
 	}

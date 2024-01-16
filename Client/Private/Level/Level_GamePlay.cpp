@@ -67,7 +67,7 @@ HRESULT CLevel_GamePlay::Ready_Objects()
 
 	_ulong		dwByte = { 0 };
 
-	_float3		vPoints[3];
+	_float3		vPoints[3] = {};
 
 	vPoints[0] = _float3(0.f, 0.0f, 100.f);
 	vPoints[1] = _float3(100.f, 0.0f, 0.0f);
@@ -93,10 +93,6 @@ HRESULT CLevel_GamePlay::Ready_Objects()
 
 
 
-    GI()->Add_GameObject(CPlayer::Create(_float3(5.f, 0.f, 5.f)));
-    GI()->Add_GameObject(CItemChest::Create(_float3(15.f, 0.f, 10.f)));
-    GI()->Add_GameObject(CReaverBot_Horokko::Create(_float3(10.f, 0.f, 15.f)));
-	GI()->Add_GameObject(CReaverBot_Balfura::Create(_float3(11.f, 1.f, 16.f)));
     //GI()->Add_GameObject(CTestObject::Create(_float3(0.f, 0.f, 1.f)));
     GI()->Add_GameObject(CDynamicCamera::Create());
 

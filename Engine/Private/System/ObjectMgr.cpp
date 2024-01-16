@@ -102,6 +102,27 @@ HRESULT CObjectMgr::Add_CloneObject(const wstring& strPrototypeKey, void* pArg)
 	return S_OK;
 }
 
+HRESULT CObjectMgr::Add_CloneObject(FSerialData& InputData)
+{
+	string strPrototypeKey = "";
+	if (FAILED(InputData.Get_Data("ProtoName", strPrototypeKey)))
+		return E_FAIL;
+
+	/* 원형을 찾고. */
+	CGameObject* pPrototype = Find_Prototype(ConvertToWstring(strPrototypeKey));
+	if (nullptr == pPrototype)
+		return E_FAIL;
+
+	/* 원형을 복제하여 실제 게임내에 사용할 사본 객체를 생성해낸다.  */
+	CGameObject* pGameObject = pPrototype->Clone(InputData);
+	if (nullptr == pGameObject)
+		return E_FAIL;
+
+	Add_GameObject(pGameObject);
+
+	return S_OK;
+}
+
 CGameObject* CObjectMgr::Find_Prototype(const wstring& strPrototypeKey)
 {
 	auto iter = m_mapPrototypes.find(strPrototypeKey);
@@ -183,7 +204,9 @@ HRESULT CObjectMgr::Add_GameObject(const wstring& strLevelTag, CGameObject* pObj
 	m_vecGameObjects.push_back(pObj);
 	pObj->m_iID = m_iGiveObjectID++;
 
+	// 세팅된 레벨 태그
 	pObj->m_setTag[ECast(EGObjTag::Level)].emplace(m_strLevelTag);
+	// 추가 레벨 태그
 	pObj->m_setTag[ECast(EGObjTag::Level)].emplace(strLevelTag);
 
 	wstring& strName = pObj->m_strName;

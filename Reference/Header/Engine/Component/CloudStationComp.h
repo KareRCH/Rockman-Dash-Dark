@@ -4,6 +4,7 @@
 
 #include "Utility/LogicDeviceBasic.h"
 #include "BaseClass/CloudStation.h"
+#include "Utility/ClassID.h"
 
 BEGIN(Engine)
 
@@ -15,6 +16,10 @@ BEGIN(Engine)
 class ENGINE_DLL CCloudStationComp final : public CGameObjectComp
 {
 	DERIVED_CLASS(CGameObjectComp, CCloudStationComp)
+
+public:
+	static const _uint g_ClassID = ECast(EComponentID::CloudStation);
+
 protected:
 	explicit CCloudStationComp() = default;
 	explicit CCloudStationComp(const CCloudStationComp& rhs);
@@ -22,15 +27,25 @@ protected:
 
 public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;
 	virtual HRESULT	Render() override;
 
 public:
+	// 프로토타입 제작용 함수
+	virtual FSerialData SerializeData_Prototype();
+	// 클로닝 전용 함수
+	virtual FSerialData SerializeData();
+
+public:
 	static	CCloudStationComp* Create();
+	static	CCloudStationComp* Create(FSerialData& InputData);
 	virtual CComponent* Clone(void* Arg = nullptr) override;
+	virtual CComponent* Clone(FSerialData& InputData);
 
 protected:
 	virtual void	Free() override;
@@ -76,5 +91,11 @@ inline T* CCloudStationComp::Get_LastCloudStation()
 {
 	return DynCast<T*>(m_CloudStations.back());
 }
+
+template <>
+struct TComponentTrait<CCloudStationComp::g_ClassID>
+{
+	using Class = CCloudStationComp;
+};
 
 END

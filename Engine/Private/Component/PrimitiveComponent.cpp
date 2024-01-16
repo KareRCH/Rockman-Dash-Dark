@@ -17,6 +17,22 @@ HRESULT CPrimitiveComponent::Initialize_Prototype(void* Arg)
 	return S_OK;
 }
 
+HRESULT CPrimitiveComponent::Initialize_Prototype(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize_Prototype(InputData)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CPrimitiveComponent::Initialize(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize(InputData)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 void CPrimitiveComponent::Free()
 {
 	SUPER::Free();

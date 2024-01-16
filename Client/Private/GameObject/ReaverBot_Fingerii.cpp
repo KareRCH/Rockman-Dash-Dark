@@ -17,62 +17,79 @@ CReaverBot_Fingerii::CReaverBot_Fingerii()
 	Set_Name(TEXT("ReaverBot_Fingerii"));
 	Set_RenderGroup(ERenderGroup::NonBlend);
 	m_fHP = FGauge(10.f, true);
+	Register_State();
+	m_RandomNumber = mt19937_64(m_RandomDevice());
 }
 
 CReaverBot_Fingerii::CReaverBot_Fingerii(const CReaverBot_Fingerii& rhs)
 	: Base(rhs)
 {
 	NULL_CHECK(m_pModelComp = DynCast<CCommonModelComp*>(rhs.m_pModelComp->Clone()));
+	Register_State();
+	m_RandomNumber = mt19937_64(m_RandomDevice());
 }
 
 HRESULT CReaverBot_Fingerii::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-	if (FAILED(Initialize_Component()))
-		return E_FAIL;
+
+	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
+	m_pModelComp->Transform().Set_RotationFixedY(XMConvertToRadians(180.f));
+	m_pModelComp->Transform().Set_Scale(_float3(0.2f, 0.2f, 0.2f));
+	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelAnim.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
+	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Fingerii/Fingerii.amodel");
+
+	FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
+	m_pColliderComp->Transform().Set_Position(0.f, 2.f, 0.f);
+	m_pColliderComp->Transform().Set_Scale(1.2f, 4.f, 1.2f);
+	m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
+	m_pColliderComp->EnterToPhysics(0);
+	m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
+	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
+		| COLLAYER_ATTACKER | COLLAYER_OBJECT);
+
+	TeamAgentComp().Set_TeamID(ETEAM_ENEMY);
 
 	return S_OK;
 }
 
-HRESULT CReaverBot_Fingerii::Initialize_Prototype(const _float3 vPos)
+HRESULT CReaverBot_Fingerii::Initialize_Prototype(FSerialData& InputData)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-	if (FAILED(Initialize_Component()))
-		return E_FAIL;
 
-	Transform().Set_Position(vPos);
-	
-	Register_State();
+	_uint iNumPrototype = 0;
+	iNumPrototype = InputData.Get_ArraySize("Components");
+	for (_uint i = 0; i < iNumPrototype; i++)
+	{
+		FSerialData ProtoData;
+		InputData.Get_ObjectFromArray("Components", i, ProtoData);
 
-	m_pModelComp->Set_Animation(0, 1.f, true);
+		_uint iComponentID = 0;
+		if (FAILED(ProtoData.Get_Data("ComponentID", iComponentID)))
+			return E_FAIL;
 
-	return S_OK;
-}
+		switch (iComponentID)
+		{
+		case ECast(EComponentID::CommonModel):
+			NULL_CHECK_RETURN(m_pModelComp = CCommonModelComp::Create(ProtoData), E_FAIL);
+			if (FAILED(Add_Component(TEXT("Model"), m_pModelComp)))
+				return E_FAIL;
+			break;
+		case ECast(EComponentID::Collider):
+			NULL_CHECK_RETURN(m_pColliderComp = CColliderComponent::Create(ProtoData), E_FAIL);
+			if (FAILED(Add_Component(TEXT("ColliderComp"), m_pColliderComp)))
+				return E_FAIL;
+			m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
+			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
+			m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+			m_pColliderComp->EnterToPhysics(0);
+			break;
+		}
+	}
 
-HRESULT CReaverBot_Fingerii::Initialize_Prototype(FSerialData& Data)
-{
-	if (FAILED(__super::Initialize_Prototype()))
-		return E_FAIL;
-	if (FAILED(Initialize_Component()))
-		return E_FAIL;
-
-	m_RandomNumber = mt19937_64(m_RandomDevice());
-
-	_float3 vPos = {};
-	if (FAILED(Data.Get_Data("PosX", vPos.x)))
-		return E_FAIL;
-	if (FAILED(Data.Get_Data("PosY", vPos.y)))
-		return E_FAIL;
-	if (FAILED(Data.Get_Data("PosZ", vPos.z)))
-		return E_FAIL;
-
-	Transform().Set_Position(vPos);
-
-	Register_State();
-
-	m_pModelComp->Set_Animation(0, 1.f, true);
+	TeamAgentComp().Set_TeamID(ETEAM_ENEMY);
 
 	return S_OK;
 }
@@ -85,12 +102,12 @@ HRESULT CReaverBot_Fingerii::Initialize(void* Arg)
 	return S_OK;
 }
 
-HRESULT CReaverBot_Fingerii::Initialize(const _float3 vPos)
+HRESULT CReaverBot_Fingerii::Initialize(FSerialData& InputData)
 {
-	if (FAILED(__super::Initialize()))
+	if (FAILED(__super::Initialize(InputData)))
 		return E_FAIL;
-
-	Transform().Set_Position(vPos);
+	if (FAILED(Initialize_Component(InputData)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -153,24 +170,11 @@ CReaverBot_Fingerii* CReaverBot_Fingerii::Create()
 	return pInstance;
 }
 
-CReaverBot_Fingerii* CReaverBot_Fingerii::Create(const _float3 vPos)
+CReaverBot_Fingerii* CReaverBot_Fingerii::Create(FSerialData& InputData)
 {
 	ThisClass* pInstance = new ThisClass();
 
-	if (FAILED(pInstance->Initialize_Prototype(vPos)))
-	{
-		MSG_BOX("ReaverBot_Fingerii Create Failed");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CReaverBot_Fingerii* CReaverBot_Fingerii::Create(FSerialData& Data)
-{
-	ThisClass* pInstance = new ThisClass();
-
-	if (FAILED(pInstance->Initialize_Prototype(Data)))
+	if (FAILED(pInstance->Initialize_Prototype(InputData)))
 	{
 		MSG_BOX("ReaverBot_Fingerii Create Failed");
 		Safe_Release(pInstance);
@@ -192,36 +196,80 @@ CGameObject* CReaverBot_Fingerii::Clone(void* Arg)
 	return Cast<CGameObject*>(pInstance);
 }
 
+CGameObject* CReaverBot_Fingerii::Clone(FSerialData& InputData)
+{
+	ThisClass* pInstance = new ThisClass(*this);
+
+	if (FAILED(pInstance->Initialize(InputData)))
+	{
+		MSG_BOX("ReaverBot_Fingerii Create Failed");
+		Safe_Release(pInstance);
+	}
+
+	return Cast<CGameObject*>(pInstance);
+}
+
 void CReaverBot_Fingerii::Free()
 {
 	SUPER::Free();
+}
+
+FSerialData CReaverBot_Fingerii::SerializeData_Prototype()
+{
+	FSerialData Data = SUPER::SerializeData();
+
+	Data.Add_Member("ClassID", g_ClassID);
+	Data.Add_Member("HP", m_fHP.fMax);
+
+	return Data;
 }
 
 FSerialData CReaverBot_Fingerii::SerializeData()
 {
 	FSerialData Data = SUPER::SerializeData();
 
+	Data.Add_Member("ClassID", g_ClassID);
+	Data.Add_Member("HP", m_fHP.fMax);
+
 	return Data;
 }
 
 HRESULT CReaverBot_Fingerii::Initialize_Component()
 {
-	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
-
-	m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
-	m_pModelComp->Transform().Set_Scale(_float3(0.2f, 0.2f, 0.2f));
-	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
-	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Fingerii/Fingerii.amodel");
 	
-	if (nullptr == m_pColliderComp)
-		return E_FAIL;
-	m_pColliderComp->Transform().Set_Position(0.f, 2.f, 0.f);
-	m_pColliderComp->Transform().Set_Scale(1.2f, 4.f, 1.2f);
-	m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
-	m_pColliderComp->EnterToPhysics(0);
-	m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
-	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
-										| COLLAYER_ATTACKER | COLLAYER_OBJECT);
+
+	return S_OK;
+}
+
+HRESULT CReaverBot_Fingerii::Initialize_Component(FSerialData& InputData)
+{
+	_uint iNumPrototype = 0;
+	iNumPrototype = InputData.Get_ArraySize("Components");
+	for (_uint i = 0; i < iNumPrototype; i++)
+	{
+		FSerialData InputProto;
+		InputData.Get_ObjectFromArray("Components", i, InputProto);
+
+		_uint iComponentID = 0;
+		if (FAILED(InputProto.Get_Data("ComponentID", iComponentID)))
+			return E_FAIL;
+
+		string strName = "";
+		if (FAILED(InputProto.Get_Data("ProtoName", strName)))
+			return E_FAIL;
+
+		switch (iComponentID)
+		{
+		case ECast(EComponentID::CommonModel):
+			NULL_CHECK_RETURN(m_pModelComp
+				= DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
+			break;
+		case ECast(EComponentID::Collider):
+			NULL_CHECK_RETURN(m_pColliderComp
+				= DynCast<CColliderComponent*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
+			break;
+		}
+	}
 
 	TeamAgentComp().Set_TeamID(ETEAM_ENEMY);
 

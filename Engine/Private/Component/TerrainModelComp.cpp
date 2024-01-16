@@ -1,5 +1,14 @@
 #include "Component/TerrainModelComp.h"
 
+CTerrainModelComp::CTerrainModelComp()
+{
+    NULL_CHECK(m_pTerrainBufferComp = CTerrainBufferComp::Create());
+    NULL_CHECK(m_pEffectComp = CEffectComponent::Create());
+    for (_uint i = 0; i < TYPE_END; i++)
+    {
+        NULL_CHECK(m_pTextureComps[i] = CTextureComponent::Create());
+    }
+}
 
 CTerrainModelComp::CTerrainModelComp(const CTerrainModelComp& rhs)
     : Base(rhs)
@@ -14,14 +23,15 @@ HRESULT CTerrainModelComp::Initialize_Prototype(void* Arg)
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 
-    m_pTerrainBufferComp = CTerrainBufferComp::Create();
-    m_pEffectComp = CEffectComponent::Create();
-    for (_uint i = 0; i < TYPE_END; i++)
-    {
-        m_pTextureComps[i] = CTextureComponent::Create();
-    }
-
 	return S_OK;
+}
+
+HRESULT CTerrainModelComp::Initialize_Prototype(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize_Prototype(InputData)))
+        return E_FAIL;
+
+    return S_OK;
 }
 
 HRESULT CTerrainModelComp::Initialize(void* Arg)
@@ -29,6 +39,14 @@ HRESULT CTerrainModelComp::Initialize(void* Arg)
     FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
 
 	return S_OK;
+}
+
+HRESULT CTerrainModelComp::Initialize(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize(InputData)))
+        return E_FAIL;
+
+    return S_OK;
 }
 
 void CTerrainModelComp::Priority_Tick(const _float& fTimeDelta)
@@ -48,13 +66,34 @@ HRESULT CTerrainModelComp::Render()
 {
     Bind_ShaderResources();
 
-    m_pEffectComp->Begin(m_vecActivePasses[0]);
+    for (_uint i = 0; i < m_iNumActivePasses; i++)
+    {
+        m_pEffectComp->Begin(m_vecActivePasses[i]);
 
-    m_pTerrainBufferComp->Bind_Buffer();
+        m_pTerrainBufferComp->Bind_Buffer();
 
-    m_pTerrainBufferComp->Render_Buffer();
+        m_pTerrainBufferComp->Render_Buffer();
+    }
 
     return S_OK;
+}
+
+FSerialData CTerrainModelComp::SerializeData_Prototype()
+{
+    FSerialData Data = SUPER::SerializeData_Prototype();
+
+    Data.Add_Member("ComponentID", g_ClassID);
+
+    return Data;
+}
+
+FSerialData CTerrainModelComp::SerializeData()
+{
+    FSerialData Data = SUPER::SerializeData();
+
+    Data.Add_Member("ComponentID", g_ClassID);
+
+    return Data;
 }
 
 CTerrainModelComp* CTerrainModelComp::Create()
@@ -70,13 +109,39 @@ CTerrainModelComp* CTerrainModelComp::Create()
     return pInstance;
 }
 
+CTerrainModelComp* CTerrainModelComp::Create(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize_Prototype(InputData)))
+    {
+        MSG_BOX("CTerrainModelComp Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
 CComponent* CTerrainModelComp::Clone(void* Arg)
 {
     ThisClass* pInstance = new ThisClass(*this);
 
     if (FAILED(pInstance->Initialize()))
     {
-        MSG_BOX("SkinnedModelComp Create Failed");
+        MSG_BOX("TerrainModelComp Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return Cast<CComponent*>(pInstance);
+}
+
+CComponent* CTerrainModelComp::Clone(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize(InputData)))
+    {
+        MSG_BOX("TerrainModelComp Create Failed");
         Safe_Release(pInstance);
     }
 

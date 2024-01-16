@@ -36,6 +36,14 @@ HRESULT CPlaneModelComp::Initialize_Prototype(void* pArg)
 	return S_OK;
 }
 
+HRESULT CPlaneModelComp::Initialize_Prototype(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize_Prototype(InputData)))
+        return E_FAIL;
+
+    return S_OK;
+}
+
 HRESULT CPlaneModelComp::Initialize(void* pArg)
 {
     TPlaneModelCloneDesc tDesc = {};
@@ -46,6 +54,14 @@ HRESULT CPlaneModelComp::Initialize(void* pArg)
     m_eMode = tDesc.eMode;
 
 	return S_OK;
+}
+
+HRESULT CPlaneModelComp::Initialize(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize(InputData)))
+        return E_FAIL;
+
+    return S_OK;
 }
 
 void CPlaneModelComp::Priority_Tick(const _float& fTimeDelta)
@@ -71,13 +87,30 @@ HRESULT CPlaneModelComp::Render()
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
 
-    m_pEffectComp->Begin(m_vecActivePasses[0]);
+    for (_uint i = 0; i < m_iNumActivePasses; i++)
+    {
+        m_pEffectComp->Begin(m_vecActivePasses[i]);
 
-    m_pVIBufferComp->Bind_Buffer();
+        m_pVIBufferComp->Bind_Buffer();
 
-    m_pVIBufferComp->Render_Buffer();
+        m_pVIBufferComp->Render_Buffer();
+    }
 
 	return S_OK;
+}
+
+FSerialData CPlaneModelComp::SerializeData_Prototype()
+{
+    FSerialData Data = SUPER::SerializeData_Prototype();
+
+    return Data;
+}
+
+FSerialData CPlaneModelComp::SerializeData()
+{
+    FSerialData Data = SUPER::SerializeData();
+
+    return Data;
 }
 
 CPlaneModelComp* CPlaneModelComp::Create()
@@ -93,11 +126,37 @@ CPlaneModelComp* CPlaneModelComp::Create()
     return pInstance;
 }
 
+CPlaneModelComp* CPlaneModelComp::Create(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize_Prototype(InputData)))
+    {
+        MSG_BOX("PlaneModelComp Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
 CComponent* CPlaneModelComp::Clone(void* pArg)
 {
     ThisClass* pInstance = new ThisClass(*this);
 
     if (FAILED(pInstance->Initialize(pArg)))
+    {
+        MSG_BOX("PlaneModelComp Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return Cast<CComponent*>(pInstance);
+}
+
+CComponent* CPlaneModelComp::Clone(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize(InputData)))
     {
         MSG_BOX("PlaneModelComp Create Failed");
         Safe_Release(pInstance);

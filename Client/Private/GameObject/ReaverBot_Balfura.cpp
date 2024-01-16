@@ -22,24 +22,62 @@ HRESULT CReaverBot_Balfura::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-	if (FAILED(Initialize_Component()))
-		return E_FAIL;
+	
+    FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
+    m_pModelComp->Transform().Set_RotationFixedY(XMConvertToRadians(180.f));
+    m_pModelComp->Transform().Set_Scale(_float3(0.32f, 0.32f, 0.32f));
+    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelAnim.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
+    m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Balfura/Balfura.amodel");
+    m_pModelComp->Set_Animation(0, 1.f, true);
+
+    FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
+    m_pColliderComp->Bind_Collision(ECollisionType::OBB);
+    m_pColliderComp->EnterToPhysics(0);
+    m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
+    m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
+        | COLLAYER_ATTACKER | COLLAYER_OBJECT);
+
+    TeamAgentComp().Set_TeamID(ETEAM_ENEMY);
 
     return S_OK;
 }
 
-HRESULT CReaverBot_Balfura::Initialize_Prototype(const _float3 vPos)
+HRESULT CReaverBot_Balfura::Initialize_Prototype(FSerialData& InputData)
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
-    if (FAILED(Initialize_Component()))
-        return E_FAIL;
 
-    Transform().Set_Position(vPos);
+    _uint iNumPrototype = 0;
+    iNumPrototype = InputData.Get_ArraySize("Components");
+    for (_uint i = 0; i < iNumPrototype; i++)
+    {
+        FSerialData ProtoData;
+        InputData.Get_ObjectFromArray("Components", i, ProtoData);
 
-    //Register_State();
+        _uint iComponentID = 0;
+        if (FAILED(ProtoData.Get_Data("ComponentID", iComponentID)))
+            return E_FAIL;
 
-    m_pModelComp->Set_Animation(0, 1.f, true);
+        switch (iComponentID)
+        {
+        case ECast(EComponentID::CommonModel):
+            NULL_CHECK_RETURN(m_pModelComp = CCommonModelComp::Create(ProtoData), E_FAIL);
+            if (FAILED(Add_Component(TEXT("Model"), m_pModelComp)))
+                return E_FAIL;
+            break;
+        case ECast(EComponentID::Collider):
+            NULL_CHECK_RETURN(m_pColliderComp = CColliderComponent::Create(ProtoData), E_FAIL);
+            if (FAILED(Add_Component(TEXT("ColliderComp"), m_pColliderComp)))
+                return E_FAIL;
+            m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
+            m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
+            m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+            m_pColliderComp->EnterToPhysics(0);
+            break;
+        }
+    }
+
+    TeamAgentComp().Set_TeamID(ETEAM_ENEMY);
 
     return S_OK;
 }
@@ -52,12 +90,10 @@ HRESULT CReaverBot_Balfura::Initialize(void* Arg)
     return S_OK;
 }
 
-HRESULT CReaverBot_Balfura::Initialize(const _float3 vPos)
+HRESULT CReaverBot_Balfura::Initialize(FSerialData& InputData)
 {
     if (FAILED(__super::Initialize()))
         return E_FAIL;
-
-    Transform().Set_Position(vPos);
 
     return S_OK;
 }
@@ -104,6 +140,26 @@ HRESULT CReaverBot_Balfura::Render()
     return S_OK;
 }
 
+FSerialData CReaverBot_Balfura::SerializeData_Prototype()
+{
+    FSerialData Data = SUPER::SerializeData_Prototype();
+
+    Data.Add_Member("ClassID", g_ClassID);
+    Data.Add_Member("HP", m_fHP.fMax);
+
+    return Data;
+}
+
+FSerialData CReaverBot_Balfura::SerializeData()
+{
+    FSerialData Data = SUPER::SerializeData();
+
+    Data.Add_Member("ClassID", g_ClassID);
+    Data.Add_Member("HP", m_fHP.fMax);
+
+    return Data;
+}
+
 CReaverBot_Balfura* CReaverBot_Balfura::Create()
 {
     ThisClass* pInstance = new ThisClass();
@@ -117,11 +173,11 @@ CReaverBot_Balfura* CReaverBot_Balfura::Create()
     return pInstance;
 }
 
-CReaverBot_Balfura* CReaverBot_Balfura::Create(const _float3 vPos)
+CReaverBot_Balfura* CReaverBot_Balfura::Create(FSerialData& InputData)
 {
     ThisClass* pInstance = new ThisClass();
 
-    if (FAILED(pInstance->Initialize_Prototype(vPos)))
+    if (FAILED(pInstance->Initialize_Prototype(InputData)))
     {
         MSG_BOX("CUI_Player Create Failed");
         Safe_Release(pInstance);
@@ -143,32 +199,58 @@ CGameObject* CReaverBot_Balfura::Clone(void* Arg)
     return Cast<CGameObject*>(pInstance);
 }
 
+CGameObject* CReaverBot_Balfura::Clone(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize(InputData)))
+    {
+        MSG_BOX("CUI_Player Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return Cast<CGameObject*>(pInstance);
+}
+
 void CReaverBot_Balfura::Free()
 {
     SUPER::Free();
 }
 
-FSerialData CReaverBot_Balfura::SerializeData()
-{
-    return FSerialData();
-}
-
 HRESULT CReaverBot_Balfura::Initialize_Component()
 {
-    FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
+    return S_OK;
+}
 
-    m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
-    m_pModelComp->Transform().Set_Scale(_float3(0.32f, 0.32f, 0.32f));
-    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
-    m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Balfura/Balfura.amodel");
+HRESULT CReaverBot_Balfura::Initialize_Component(FSerialData& InputData)
+{
+    _uint iNumPrototype = 0;
+    iNumPrototype = InputData.Get_ArraySize("Components");
+    for (_uint i = 0; i < iNumPrototype; i++)
+    {
+        FSerialData InputProto;
+        InputData.Get_ObjectFromArray("Components", i, InputProto);
 
-    if (nullptr == m_pColliderComp)
-        return E_FAIL;
-    m_pColliderComp->Bind_Collision(ECollisionType::OBB);
-    m_pColliderComp->EnterToPhysics(0);
-    m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
-    m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
-                                        | COLLAYER_ATTACKER | COLLAYER_OBJECT);
+        _uint iComponentID = 0;
+        if (FAILED(InputProto.Get_Data("ComponentID", iComponentID)))
+            return E_FAIL;
+
+        string strName = "";
+        if (FAILED(InputProto.Get_Data("ProtoName", strName)))
+            return E_FAIL;
+
+        switch (iComponentID)
+        {
+        case ECast(EComponentID::CommonModel):
+            NULL_CHECK_RETURN(m_pModelComp
+                = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
+            break;
+        case ECast(EComponentID::Collider):
+            NULL_CHECK_RETURN(m_pColliderComp
+                = DynCast<CColliderComponent*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
+            break;
+        }
+    }
 
     TeamAgentComp().Set_TeamID(ETEAM_ENEMY);
 

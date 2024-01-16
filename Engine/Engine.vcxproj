@@ -462,6 +462,7 @@
     <ClCompile Include="Public\System\Data\RenderTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="Shader\Runtime\FX_Deferred.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
@@ -565,7 +566,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <FileType>Document</FileType>
     </None>
-    <None Include="Shader\Runtime\FX_ModelTest.hlsl">
+    <None Include="Shader\Runtime\FX_ModelAnim.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="Shader\Compiled\PS_Deferred_GBuffer.hlsl">

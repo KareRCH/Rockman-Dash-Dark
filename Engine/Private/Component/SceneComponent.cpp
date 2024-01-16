@@ -27,7 +27,7 @@ HRESULT CSceneComponent::Initialize_Prototype(void* Arg)
 
 HRESULT CSceneComponent::Initialize_Prototype(FSerialData& InputData)
 {
-	_float3 vPos, vRot, vScale;
+	_float3 vPos = {}, vRot = {}, vScale = {};
 	if (FAILED(InputData.Get_Data("PosX", vPos.x)))
 		return E_FAIL;
 	if (FAILED(InputData.Get_Data("PosY", vPos.y)))
@@ -63,6 +63,42 @@ HRESULT CSceneComponent::Initialize_Prototype(FSerialData& InputData)
 
 HRESULT CSceneComponent::Initialize(void* Arg)
 {
+	return S_OK;
+}
+
+HRESULT CSceneComponent::Initialize(FSerialData& InputData)
+{
+	_float3 vPos = {}, vRot = {}, vScale = {};
+	if (FAILED(InputData.Get_Data("PosX", vPos.x)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("PosY", vPos.y)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("PosZ", vPos.z)))
+		return E_FAIL;
+
+	Transform().Set_Position(vPos);
+
+	if (FAILED(InputData.Get_Data("RotX", vRot.x)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("RotY", vRot.y)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("RotZ", vRot.z)))
+		return E_FAIL;
+
+	vRot.x = XMConvertToRadians(vRot.x);
+	vRot.y = XMConvertToRadians(vRot.y);
+	vRot.z = XMConvertToRadians(vRot.z);
+	Transform().Set_RotationFixed(vRot);
+
+	if (FAILED(InputData.Get_Data("ScaleX", vScale.x)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("ScaleY", vScale.y)))
+		return E_FAIL;
+	if (FAILED(InputData.Get_Data("ScaleZ", vScale.z)))
+		return E_FAIL;
+
+	Transform().Set_Scale(vScale);
+
 	return S_OK;
 }
 

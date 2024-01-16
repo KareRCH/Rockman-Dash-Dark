@@ -66,10 +66,14 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     }
     }
 
+    // 충돌체 소유자 설정
     m_pCollisionShape->Set_Owner(this);
 
     // 충돌체에 충돌 이벤트 추가하기
     m_pCollisionShape->Set_CollisionEvent(MakeDelegate(this, &ThisClass::OnCollision));
+
+    // 충돌체에서 트랜스폼을 얻어갈 때 호출할 함수
+    m_pCollisionShape->Set_TransformEvent(MakeDelegate(this, &ThisClass::Calculate_TransformMatrixFromParent));
 }
 
 CColliderComponent* CColliderComponent::Create()
@@ -77,19 +81,6 @@ CColliderComponent* CColliderComponent::Create()
     ThisClass* pInstance = new ThisClass();
 
     if (FAILED(pInstance->Initialize_Prototype()))
-    {
-        MSG_BOX("ColliderComponent Create Failed");
-        Safe_Release(pInstance);
-    }
-
-    return pInstance;
-}
-
-CColliderComponent* CColliderComponent::Create(ECollisionType eType)
-{
-    ThisClass* pInstance = new ThisClass();
-
-    if (FAILED(pInstance->Initialize_Prototype(eType)))
     {
         MSG_BOX("ColliderComponent Create Failed");
         Safe_Release(pInstance);
@@ -124,6 +115,19 @@ CComponent* CColliderComponent::Clone(void* Arg)
     return Cast<CComponent*>(pInstance);
 }
 
+CComponent* CColliderComponent::Clone(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize(InputData)))
+    {
+        MSG_BOX("ColliderBufferComp Copy Failed");
+        Engine::Safe_Release(pInstance);
+    }
+
+    return Cast<CComponent*>(pInstance);
+}
+
 void CColliderComponent::Free()
 {
     SUPER::Free();
@@ -145,7 +149,7 @@ FSerialData CColliderComponent::SerializeData_Prototype()
 {
     FSerialData Data = SUPER::SerializeData_Prototype();
 
-    Data.Add_Member("ComponentID", 1);
+    Data.Add_Member("ComponentID", g_ClassID);
 
     switch (m_pCollisionShape->Get_Type())
     {
@@ -183,8 +187,7 @@ FSerialData CColliderComponent::SerializeData()
 {
     FSerialData Data = SUPER::SerializeData();
 
-    Data.Add_Member("ComponentID", 1);
-    Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
+    Data.Add_Member("ComponentID", g_ClassID);
 
     Data.Add_Member("CollisionType", ECast(m_pCollisionShape->Get_Type()));
     Data.Add_Member("CollisionLayer", m_iCollisionLayer_Flag);
@@ -235,7 +238,7 @@ HRESULT CColliderComponent::Bind_Collision(ECollisionType eType)
     // 충돌체에 충돌 이벤트 추가하기
     m_pCollisionShape->Set_CollisionEvent(MakeDelegate(this, &ThisClass::OnCollision));
 
-    // 
+    // 충돌체에서 트랜스폼을 얻어갈 때 호출할 함수
     m_pCollisionShape->Set_TransformEvent(MakeDelegate(this, &ThisClass::Calculate_TransformMatrixFromParent));
 
     // 디버그용 콜리전 시각 표시
@@ -253,45 +256,6 @@ HRESULT CColliderComponent::Bind_Collision(ECollisionType eType)
         return E_FAIL;
 
 #endif
-
-    return S_OK;
-}
-
-HRESULT CColliderComponent::Initialize_Prototype(ECollisionType eType)
-{
-    switch (eType)
-    {
-    case ECollisionType::Sphere:
-        m_pCollisionShape = new FCollisionSphere();
-        break;
-    case ECollisionType::Box:
-        m_pCollisionShape = new FCollisionBox();
-        break;
-    case ECollisionType::Capsule:
-        m_pCollisionShape = new FCollisionCapsule();
-        break;
-    case ECollisionType::Plane:
-        m_pCollisionShape = new FCollisionPlane();
-        break;
-    case ECollisionType::Line:
-        m_pCollisionShape = new FCollisionLine();
-        break;
-    case ECollisionType::Ray:
-        m_pCollisionShape = new FCollisionRay();
-        break;
-    case ECollisionType::Triangle:
-        m_pCollisionShape = new FCollisionTriangle();
-        break;
-    case ECollisionType::OBB:
-        m_pCollisionShape = new FCollisionOBB();
-        break;
-    }
-
-    // 충돌체에 오너 설정
-    m_pCollisionShape->Set_Owner(this);
-
-    // 충돌체에 충돌 이벤트 추가하기
-    m_pCollisionShape->Set_CollisionEvent(MakeDelegate(this, &ThisClass::OnCollision));
 
     return S_OK;
 }
