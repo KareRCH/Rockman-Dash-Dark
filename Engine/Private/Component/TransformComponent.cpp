@@ -4,7 +4,9 @@
 #include <iomanip>
 
 CTransformComponent::CTransformComponent()
-	: m_qtOrientation(_float4(0.f, 0.f, 0.f, 1.f)), m_vScale(1.f, 1.f, 1.f)
+	: m_vRotation(_float3(0.f, 0.f, 0.f))
+	, m_qtOrientation(_float4(0.f, 0.f, 0.f, 1.f))
+	, m_vScale(1.f, 1.f, 1.f)
 	, m_matTransform()
 {
 	XMStoreFloat4x4(&m_matTransform, XMMatrixIdentity());

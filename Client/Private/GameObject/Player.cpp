@@ -36,7 +36,7 @@ HRESULT CPlayer::Initialize_Prototype()
     m_pCameraPivotComp->OffsetTransform().Set_Position(0.f, 1.3f, 0.f);
 
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
-    m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
+    m_pModelComp->Transform().Set_RotationFixedY(XMConvertToRadians(180.f));
     m_pModelComp->Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
     m_pModelComp->Bind_Effect(L"Runtime/FX_ModelAnim.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
     m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/RockVolnutt.amodel");
@@ -134,7 +134,7 @@ void CPlayer::Priority_Tick(const _float& fTimeDelta)
 {
     SUPER::Priority_Tick(fTimeDelta);
 
-    if (nullptr == m_pPlayerCloud)
+    if (nullptr == m_pPlayerCloud && nullptr != m_pCloudStationComp)
     {
         if (SUCCEEDED(m_pCloudStationComp->Connect_CloudStation(TEXT("Player"))))
         {
