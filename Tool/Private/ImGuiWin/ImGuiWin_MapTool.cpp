@@ -319,7 +319,7 @@ void CImGuiWin_MapTool::Escape_MovePickedObjects()
 
 void CImGuiWin_MapTool::Save_Level()
 {
-    auto vecGameObjects = GI()->Get_AllGameObjectFromLevel(TEXT("GamePlay"));
+    auto vecGameObjects = GI()->Get_AllGameObjectFromLevel(TEXT("MapTool"));
     //auto vecPrototypeObjects = GI()->Get_AllProtoObjectsFromLevel(TEXT("GamePlay"));
     //auto vecPrototypeComponents = GI()->Get_AllProtoComponentsFromLevel(TEXT("GamePlay"));
 
@@ -327,7 +327,7 @@ void CImGuiWin_MapTool::Save_Level()
     LevelData.Add_MemberString("Name", "GamePlay");
 
     FSerialData PrototypeData;
-    LevelData.Add_Member("Prototypes", PrototypeData);
+    
     for (size_t i = 0; i < vecGameObjects.size(); i++)
     {
         auto ObjData = vecGameObjects[i]->SerializeData();
@@ -342,15 +342,15 @@ void CImGuiWin_MapTool::Save_Level()
 
         PrototypeData.Pushback_Member("Objects", ObjData);
     }
+    LevelData.Add_Member("Prototypes", PrototypeData);
 
     FSerialData CloneData;
-    LevelData.Add_Member("CloneObjects", CloneData);
-
     for (size_t i = 0; i < vecGameObjects.size(); i++)
     {
         auto ObjData = vecGameObjects[i]->SerializeData();
-        LevelData.Pushback_Member("Objects", ObjData);
+        CloneData.Pushback_Member("Objects", ObjData);
     }
+    LevelData.Add_Member("CloneObjects", CloneData);
 
     LevelData.Save_Data(TEXT("../Client/Resource/GamePlay.alevel"));
 }

@@ -27,6 +27,9 @@ HRESULT CSceneComponent::Initialize_Prototype(void* Arg)
 
 HRESULT CSceneComponent::Initialize_Prototype(FSerialData& InputData)
 {
+	if (FAILED(__super::Initialize_Prototype(InputData)))
+		return E_FAIL;
+
 	_float3 vPos = {}, vRot = {}, vScale = {};
 	if (FAILED(InputData.Get_Data("PosX", vPos.x)))
 		return E_FAIL;
@@ -68,6 +71,9 @@ HRESULT CSceneComponent::Initialize(void* Arg)
 
 HRESULT CSceneComponent::Initialize(FSerialData& InputData)
 {
+	if (FAILED(__super::Initialize(InputData)))
+		return E_FAIL;
+
 	_float3 vPos = {}, vRot = {}, vScale = {};
 	if (FAILED(InputData.Get_Data("PosX", vPos.x)))
 		return E_FAIL;

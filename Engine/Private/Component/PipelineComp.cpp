@@ -56,7 +56,7 @@ void CPipelineComp::Free()
     Safe_Release(m_pPipelineMgr);
 }
 
-const _float4x4 CPipelineComp::Get_CamFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
+_float4x4 CPipelineComp::Get_CamFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
 {
     if (!m_pPipelineMgr)
         return _float4x4();
@@ -64,7 +64,7 @@ const _float4x4 CPipelineComp::Get_CamFloat4x4(ECamType eType, ECamMatrix eMatri
     return m_pPipelineMgr->Get_CamFloat4x4(eType, eMatrix, eNum);
 }
 
-const _matrix CPipelineComp::Get_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
+_matrix CPipelineComp::Get_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
 {
     if (!m_pPipelineMgr)
         return _matrix();
@@ -72,7 +72,7 @@ const _matrix CPipelineComp::Get_CamMatrix(ECamType eType, ECamMatrix eMatrix, E
     return m_pPipelineMgr->Get_CamMatrix(eType, eMatrix, eNum);
 }
 
-const _float4x4 CPipelineComp::Get_CamInvFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
+_float4x4 CPipelineComp::Get_CamInvFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
 {
     if (!m_pPipelineMgr)
         return _float4x4();
@@ -80,7 +80,7 @@ const _float4x4 CPipelineComp::Get_CamInvFloat4x4(ECamType eType, ECamMatrix eMa
     return m_pPipelineMgr->Get_CamInvFloat4x4(eType, eMatrix, eNum);
 }
 
-const _matrix CPipelineComp::Get_CamInvMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
+_matrix CPipelineComp::Get_CamInvMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const
 {
     if (!m_pPipelineMgr)
         return _matrix();
@@ -104,7 +104,7 @@ void CPipelineComp::Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eN
     return m_pPipelineMgr->Set_CamMatrix(eType, eMatrix, eNum, mat);
 }
 
-const _float4 CPipelineComp::Get_CamPositionFloat4(ECamType eType, ECamNum eNum) const
+_float4 CPipelineComp::Get_CamPositionFloat4(ECamType eType, ECamNum eNum) const
 {
     if (!m_pPipelineMgr)
         return _float4();
@@ -112,7 +112,7 @@ const _float4 CPipelineComp::Get_CamPositionFloat4(ECamType eType, ECamNum eNum)
     return m_pPipelineMgr->Get_CamPositionFloat4(eType, eNum);
 }
 
-const _vector CPipelineComp::Get_CamPositionVector(ECamType eType, ECamNum eNum) const
+_vector CPipelineComp::Get_CamPositionVector(ECamType eType, ECamNum eNum) const
 {
     if (!m_pPipelineMgr)
         return _vector();

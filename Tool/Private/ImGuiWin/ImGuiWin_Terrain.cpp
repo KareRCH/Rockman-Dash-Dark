@@ -390,9 +390,9 @@ HRESULT CImGuiWin_Terrain::Terrain_SaveFile()
 	CTerrainModelComp* pModelComp = m_pPickedTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"));
 	pModelComp->Copy_VBuffer(pVertices,TextureDesc.Width * TextureDesc.Height, sizeof(SHADER_VTX_NORM));
 
-	for (size_t i = 0; i < TextureDesc.Height; i++)
+	for (_uint i = 0; i < TextureDesc.Height; i++)
 	{
-		for (size_t j = 0; j < TextureDesc.Width; j++)
+		for (_uint j = 0; j < TextureDesc.Width; j++)
 		{
 			_uint iIndex = j + i * TextureDesc.Height;
 			pPixels[iIndex] = pVertices[iIndex].vPosition.y;
@@ -589,9 +589,9 @@ void CImGuiWin_Terrain::HeightBrush_Draw(const _float& fTimeDelta)
 	        }
 
 			_uint iNumIndices = 0;
-			for (size_t i = 0; i < m_iTerrainVertexCountZ - 1; i++)
+			for (_uint i = 0; i < m_iTerrainVertexCountZ - 1; i++)
 			{
-				for (size_t j = 0; j < m_iTerrainVertexCountX - 1; j++)
+				for (_uint j = 0; j < m_iTerrainVertexCountX - 1; j++)
 				{
 					_uint		iIndex = i * m_iTerrainVertexCountX + j;
 
@@ -640,7 +640,7 @@ void CImGuiWin_Terrain::HeightBrush_Draw(const _float& fTimeDelta)
 				}
 			}
 
-	        pModel->Update_VBuffer(m_TerrainVertices.data(), m_TerrainVertices.size());
+	        pModel->Update_VBuffer(m_TerrainVertices.data(), Cast<_uint>(m_TerrainVertices.size()));
 	    }
 	    
 

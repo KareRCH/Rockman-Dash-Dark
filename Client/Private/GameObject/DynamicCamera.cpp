@@ -17,17 +17,28 @@ HRESULT CDynamicCamera::Initialize_Prototype()
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 
     m_pTarget = GI()->Find_GameObjectByName(TEXT("Player"));
-    Safe_AddRef(m_pTarget);
+    if (nullptr != m_pTarget)
+    {
+        Safe_AddRef(m_pTarget);
 
-    Transform().Set_Position(m_pTarget->Transform().Get_PositionVector() + XMVectorSet(0.f, 1.f, 0.f, 0.f) - m_pTarget->Transform().Get_LookVector());
-    XMStoreFloat3(&m_vAt, m_pTarget->Transform().Get_PositionVector() + XMVectorSet(0.f, 1.f, 0.f, 0.f));
-    _matrix matTransform = XMMatrixInverse(nullptr, 
-        XMMatrixLookAtLH(Transform().Get_PositionVector(), XMLoadFloat3(&m_vAt), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-    Transform().Set_Transform(matTransform);
-    Apply_ViewProjMatrix();
+        Transform().Set_Position(m_pTarget->Transform().Get_PositionVector() + XMVectorSet(0.f, 1.f, 0.f, 0.f) - m_pTarget->Transform().Get_LookVector());
+        XMStoreFloat3(&m_vAt, m_pTarget->Transform().Get_PositionVector() + XMVectorSet(0.f, 1.f, 0.f, 0.f));
+        _matrix matTransform = XMMatrixInverse(nullptr,
+            XMMatrixLookAtLH(Transform().Get_PositionVector(), XMLoadFloat3(&m_vAt), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+        Transform().Set_Transform(matTransform);
+        Apply_ViewProjMatrix();
 
-    GI()->Toggle_LockMouseCenter();
-
+        GI()->Toggle_LockMouseCenter();
+    }
+    else
+    {
+        Transform().Set_Position(XMVectorSet(0.f, 5.f, 0.f, 0.f));
+        XMStoreFloat3(&m_vAt, XMVectorSet(10.f, 0.f, 10.f, 0.f));
+        _matrix matTransform = XMMatrixInverse(nullptr,
+            XMMatrixLookAtLH(Transform().Get_PositionVector(), XMLoadFloat3(&m_vAt), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+        Transform().Set_Transform(matTransform);
+        Apply_ViewProjMatrix();
+    }
     
 
     return S_OK;

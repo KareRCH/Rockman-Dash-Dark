@@ -44,7 +44,7 @@ HRESULT CReaverBot_Balfura::Initialize_Prototype()
 
 HRESULT CReaverBot_Balfura::Initialize_Prototype(FSerialData& InputData)
 {
-    if (FAILED(__super::Initialize_Prototype()))
+    if (FAILED(__super::Initialize_Prototype(InputData)))
         return E_FAIL;
 
     _uint iNumPrototype = 0;
@@ -86,13 +86,16 @@ HRESULT CReaverBot_Balfura::Initialize(void* Arg)
 {
     if (FAILED(__super::Initialize()))
         return E_FAIL;
+    
 
     return S_OK;
 }
 
 HRESULT CReaverBot_Balfura::Initialize(FSerialData& InputData)
 {
-    if (FAILED(__super::Initialize()))
+    if (FAILED(__super::Initialize(InputData)))
+        return E_FAIL;
+    if (FAILED(Initialize_Component(InputData)))
         return E_FAIL;
 
     return S_OK;
@@ -166,7 +169,7 @@ CReaverBot_Balfura* CReaverBot_Balfura::Create()
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("CUI_Player Create Failed");
+        MSG_BOX("Reaverbot_Balfura Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -179,7 +182,7 @@ CReaverBot_Balfura* CReaverBot_Balfura::Create(FSerialData& InputData)
 
     if (FAILED(pInstance->Initialize_Prototype(InputData)))
     {
-        MSG_BOX("CUI_Player Create Failed");
+        MSG_BOX("Reaverbot_Balfura Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -192,7 +195,7 @@ CGameObject* CReaverBot_Balfura::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        MSG_BOX("CUI_Player Create Failed");
+        MSG_BOX("Reaverbot_Balfura Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -205,7 +208,7 @@ CGameObject* CReaverBot_Balfura::Clone(FSerialData& InputData)
 
     if (FAILED(pInstance->Initialize(InputData)))
     {
-        MSG_BOX("CUI_Player Create Failed");
+        MSG_BOX("Reaverbot_Balfura Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -248,6 +251,10 @@ HRESULT CReaverBot_Balfura::Initialize_Component(FSerialData& InputData)
         case ECast(EComponentID::Collider):
             NULL_CHECK_RETURN(m_pColliderComp
                 = DynCast<CColliderComponent*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
+            m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
+            m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
+            m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+            m_pColliderComp->EnterToPhysics(0);
             break;
         }
     }

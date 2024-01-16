@@ -1032,6 +1032,9 @@
     <FxCompile Include="Shader\Compiled\PS_Deferred_GBuffer.hlsl">
       <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\Runtime\FX_Deferred.hlsl">
+      <Filter>03. Shader\02. DeferredShading</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Runtime\FX_ModelNoAnim.hlsl">
@@ -1057,9 +1060,6 @@
     </None>
     <None Include="Shader\Runtime\FX_VtxPosTexAlpha.hlsl">
       <Filter>03. Shader\03. Effect</Filter>
-    </None>
-    <None Include="Shader\Runtime\FX_Deferred.hlsl">
-      <Filter>03. Shader\02. DeferredShading</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>

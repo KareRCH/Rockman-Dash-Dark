@@ -42,19 +42,19 @@ protected:
 
 #pragma region Ä·ºä ¸Å´ÏÀú
 public:
-	const _float4x4		Get_CamFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const;
-	const _matrix		Get_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const;
+	_float4x4		Get_CamFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const;
+	_matrix		Get_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const;
 
-	const _float4x4		Get_CamInvFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const;
-	const _matrix		Get_CamInvMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const;
+	_float4x4		Get_CamInvFloat4x4(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const;
+	_matrix		Get_CamInvMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum) const;
 
 public:
 	void				Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _float4x4 mat);
 	void				Set_CamMatrix(ECamType eType, ECamMatrix eMatrix, ECamNum eNum, _fmatrix mat);
 
 public:
-	const _float4		Get_CamPositionFloat4(ECamType eType, ECamNum eNum) const;
-	const _vector		Get_CamPositionVector(ECamType eType, ECamNum eNum) const;
+	_float4		Get_CamPositionFloat4(ECamType eType, ECamNum eNum) const;
+	_vector		Get_CamPositionVector(ECamType eType, ECamNum eNum) const;
 
 public:
 	const D3D11_VIEWPORT Get_Viewport(EViewportNum eNum);
