@@ -3,6 +3,15 @@
 #include "GameObject/StaticObject.h"
 #include "ImGuiWin/ImGuiWin_PrototypeProperty.h"
 
+#include "Utility/ClassID.h"
+#include "GameObject/GameObjectFactory.h"
+#include "GameObject/Player.h"
+#include "GameObject/ItemChest.h"
+#include "GameObject/Item_Deflector.h"
+#include "GameObject/ReaverBot_Balfura.h"
+#include "GameObject/ReaverBot_Fingerii.h"
+#include "GameObject/ReaverBot_Horokko.h"
+
 HRESULT CImGuiWin_ClassBrowser::Initialize()
 {
     m_bOpen = true;
@@ -57,19 +66,45 @@ void CImGuiWin_ClassBrowser::Layout_Browser(const _float& fTimeDelta)
 	{
 		ImGuiSelectableFlags eFlag = ImGuiSelectableFlags_None | ImGuiSelectableFlags_AllowDoubleClick;
 
-		if (ImGui::Selectable(u8"Player", (m_iSelected_Object == 0), eFlag))
+        _uint iIndex = UINT_MAX;
+		if (ImGui::Selectable(u8"0. Player", (m_iSelected_Object == ++iIndex), eFlag))
 		{
-			m_iSelected_Object = 0;
+            m_iSelected_Object = iIndex;
 		}
-        if (ImGui::Selectable(u8"StaticObject", (m_iSelected_Object == 1), eFlag))
+        if (ImGui::Selectable(u8"1. StaticObject", (m_iSelected_Object == ++iIndex), eFlag))
         {
-            m_iSelected_Object = 1;
+            m_iSelected_Object = iIndex;
+        }
+        if (ImGui::Selectable(u8"2. Horokko", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
+        }
+        if (ImGui::Selectable(u8"3. Fingerii", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
+        }
+        if (ImGui::Selectable(u8"4. Balfura", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
+        }
+        if (ImGui::Selectable(u8"5. Item_Deflector", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
+        }
+        if (ImGui::Selectable(u8"6. Chest", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
+        }
+        if (ImGui::Selectable(u8"7. Balfura1", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
         }
 
 		ImGui::EndListBox();
 	}
 
-    if (ImGui::Button(u8"프로토타입 생성"))
+    if (ImGui::Button(u8"프로토타입 생성")
+        || ImGui::IsKeyDown(ImGuiKey_LeftShift) && ImGui::IsKeyPressed(ImGuiKey_A))
     {
         if (m_iSelected_Object != -1)
         {
@@ -91,18 +126,32 @@ void CImGuiWin_ClassBrowser::Create_Object()
     switch (m_iSelected_Object)
     {
     case 0:
-
+        GI()->Add_GameObject(m_pGameObject = CPlayer::Create());
         break;
     case 1:
-    {
         GI()->Add_GameObject(m_pGameObject = CStaticObject::Create());
-        Safe_AddRef(m_pGameObject);
         break;
-    }
+    case 2:
+        GI()->Add_GameObject(m_pGameObject = CReaverBot_Horokko::Create());
+        break;
+    case 3:
+        GI()->Add_GameObject(m_pGameObject = CReaverBot_Fingerii::Create());
+        break;
+    case 4:
+        GI()->Add_GameObject(m_pGameObject = CReaverBot_Balfura::Create());
+        break;
+    case 5:
+        GI()->Add_GameObject(m_pGameObject = CItem_Deflector::Create());
+        break;
+    case 6:
+        GI()->Add_GameObject(m_pGameObject = CItemChest::Create());
+        break;
     }
 
     if (nullptr != m_pGameObject)
     {
+        m_pGameObject->TurnOff_State(EGObjectState::Tick);
+        Safe_AddRef(m_pGameObject);
         if (m_pParentWin)
         {
             CImGuiWin_PrototypeProperty* pWin = { nullptr };

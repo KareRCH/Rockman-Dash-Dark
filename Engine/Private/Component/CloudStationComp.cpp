@@ -157,9 +157,14 @@ HRESULT CCloudStationComp::Open_CloudStation_Session(const wstring& strName, CCl
 	if (m_pGI == nullptr)
 		return E_FAIL;
 
-	m_pCloudStationMgr = m_pGI->Get_CloudStationMgr();
-	if (m_pCloudStationMgr == nullptr)
-		return E_FAIL;
+	if (nullptr == m_pCloudStationMgr)
+	{
+		m_pCloudStationMgr = m_pGI->Get_CloudStationMgr();
+		if (m_pCloudStationMgr == nullptr)
+			return E_FAIL;
+
+		Safe_AddRef(m_pCloudStationMgr);
+	}
 
 	m_pCloudStationMgr->Add_CloudStation(strName, pCloudStation);
 
@@ -171,9 +176,14 @@ HRESULT CCloudStationComp::Connect_CloudStation(const wstring& strName)
 	if (m_pGI == nullptr)
 		return E_FAIL;
 
-	m_pCloudStationMgr = m_pGI->Get_CloudStationMgr();
-	if (m_pCloudStationMgr == nullptr)
-		return E_FAIL;
+	if (nullptr == m_pCloudStationMgr)
+	{
+		m_pCloudStationMgr = m_pGI->Get_CloudStationMgr();
+		if (m_pCloudStationMgr == nullptr)
+			return E_FAIL;
+
+		Safe_AddRef(m_pCloudStationMgr);
+	}
 
 	// 못 찾으면 실패
 	CCloudStation* pCloudStation = m_pCloudStationMgr->Find_CloudStation(strName);

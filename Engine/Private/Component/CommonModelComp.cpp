@@ -208,6 +208,10 @@ FSerialData CCommonModelComp::SerializeData()
 	FSerialData Data = SUPER::SerializeData();
 
 	Data.Add_Member("ComponentID", 2);
+	Data.Add_Member("ModelType", Cast<_uint>(m_eModelType));
+	Data.Add_MemberString("ModelPath", ConvertToString(m_strModelPath));
+	Data.Add_MemberString("EffectPath", ConvertToString(m_strEffectPath));
+
 
 	return Data;
 }
