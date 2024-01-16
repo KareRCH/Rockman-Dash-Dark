@@ -162,23 +162,12 @@ HRESULT CGameObject::Render()
 	return S_OK;
 }
 
-void CGameObject::Free()
-{
-	for (auto iter = m_vecComponent.begin(); iter != m_vecComponent.end(); ++iter)
-	{
-		Safe_Release((*iter));
-	}
-	m_vecComponent.clear();
-
-	Release_Transform();
-	Safe_Release(m_pPipelineComp);
-}
-
 FSerialData CGameObject::SerializeData_Prototype()
 {
 	FSerialData Data;
 
 	Data.Add_MemberString("Name", ConvertToString(m_strName));
+	Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
 	Data.Add_Member("StateFlag", m_iStateFlag);
 
 	Data.Add_Member("PriorityTick", m_fPriority[ECast(EGObjTickPriority::Tick)]);
@@ -198,6 +187,12 @@ FSerialData CGameObject::SerializeData_Prototype()
 	Data.Add_Member("ScaleX", vScale.x);
 	Data.Add_Member("ScaleY", vScale.y);
 	Data.Add_Member("ScaleZ", vScale.z);
+
+	for (auto& pObj : m_vecComponents)
+	{
+		FSerialData CompData = pObj->SerializeData_Prototype();
+		Data.Pushback_Member("Components", CompData);
+	}
 
 	return Data;
 }
@@ -207,6 +202,7 @@ FSerialData CGameObject::SerializeData()
 	FSerialData Data;
 
 	Data.Add_MemberString("Name", ConvertToString(m_strName));
+	Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
 	Data.Add_Member("StateFlag", m_iStateFlag);
 
 	Data.Add_Member("PriorityTick", m_fPriority[ECast(EGObjTickPriority::Tick)]);
@@ -227,7 +223,25 @@ FSerialData CGameObject::SerializeData()
 	Data.Add_Member("ScaleY", vScale.y);
 	Data.Add_Member("ScaleZ", vScale.z);
 
+	for (auto& pObj : m_vecComponents)
+	{
+		FSerialData CompData = pObj->SerializeData();
+		Data.Pushback_Member("Components", CompData);
+	}
+
 	return Data;
+}
+
+void CGameObject::Free()
+{
+	for (auto iter = m_vecComponents.begin(); iter != m_vecComponents.end(); ++iter)
+	{
+		Safe_Release((*iter));
+	}
+	m_vecComponents.clear();
+
+	Release_Transform();
+	Safe_Release(m_pPipelineComp);
 }
 
 void CGameObject::Delete_Tag(const EGObjTag eTagType, const wstring& strTag)
@@ -250,20 +264,20 @@ HRESULT CGameObject::Add_Component(const wstring& strName, CGameObjectComp* pCom
 	if (nullptr == pComponent)
 		return E_FAIL;
 
-	auto iter = find_if(m_vecComponent.begin(), m_vecComponent.end(), 
+	auto iter = find_if(m_vecComponents.begin(), m_vecComponents.end(), 
 		[&strName](CGameObjectComp* pComp) {
 			return pComp->Get_Name() == strName;
 		});
 
 	// 이름 중복시 추가하지 않음, 추후 이름변경으로 추가하도록 변경
-	if (iter != m_vecComponent.end())
+	if (iter != m_vecComponents.end())
 	{
 		Safe_Release(pComponent);
 		return E_FAIL;
 	}
 
 	// 완료시 벡터에 컴포넌트 추가
-	m_vecComponent.push_back(pComponent);
+	m_vecComponents.push_back(pComponent);
 	pComponent->Set_OwnerObject(this);
 	pComponent->Set_Name(strName);
 

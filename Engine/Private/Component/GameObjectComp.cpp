@@ -19,6 +19,44 @@ HRESULT CGameObjectComp::Initialize_Prototype(void* Arg)
     return S_OK;
 }
 
+HRESULT CGameObjectComp::Initialize_Prototype(FSerialData& InputData)
+{
+    string strPrototypeName = "";
+    InputData.Get_Data("ProtoName", strPrototypeName);
+    m_strPrototypeName = ConvertToWstring(strPrototypeName);
+
+    return S_OK;
+}
+
+HRESULT CGameObjectComp::Initialize(FSerialData& InputData)
+{
+    string strPrototypeName = "";
+    InputData.Get_Data("ProtoName", strPrototypeName);
+    m_strPrototypeName = ConvertToWstring(strPrototypeName);
+
+    return S_OK;
+}
+
+FSerialData CGameObjectComp::SerializeData_Prototype()
+{
+    FSerialData Data;
+
+    Data.Add_Member("ComponentID", 0U);
+    Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
+
+    return Data;
+}
+
+FSerialData CGameObjectComp::SerializeData()
+{
+    FSerialData Data;
+
+    Data.Add_Member("ComponentID", 0U);
+    Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
+
+    return Data;
+}
+
 void CGameObjectComp::Free()
 {
     SUPER::Free();
@@ -28,22 +66,6 @@ void CGameObjectComp::Free()
     m_mapPrimComponent.clear();
 
     Safe_Release(m_pDeviceComp);
-}
-
-FSerialData CGameObjectComp::SerializeData_Prototype()
-{
-    FSerialData Data;
-
-    return Data;
-}
-
-FSerialData CGameObjectComp::SerializeData()
-{
-    FSerialData Data;
-
-    Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
-
-    return Data;
 }
 
 HRESULT CGameObjectComp::Add_PrimComponent(const wstring& strCompKey, CGameObjectComp* pComp)

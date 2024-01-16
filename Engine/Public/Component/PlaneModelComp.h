@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component/ModelComponent.h"
+#include "Utility/ClassID.h"
 
 BEGIN(Engine)
 
@@ -20,6 +21,9 @@ class ENGINE_DLL CPlaneModelComp final : public CModelComponent
 	DERIVED_CLASS(CModelComponent, CPlaneModelComp)
 
 public:
+	static const _uint g_ClassID = ECast(EComponentID::PlaneModel);
+
+public:
 	enum MODE { ORTHO, PERSP, MODE_END };
 
 public:
@@ -34,16 +38,26 @@ protected:
 	virtual ~CPlaneModelComp() = default;
 
 public:
-	virtual HRESULT	Initialize_Prototype(void* pArg = nullptr) override;
-	virtual HRESULT Initialize(void* pArg = nullptr) override;
+	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
+	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
 	virtual HRESULT	Render();
 
 public:
-	static CPlaneModelComp* Create();
-	virtual CComponent*		Clone(void* pArg = nullptr);
+	// 프로토타입 제작용 함수
+	virtual FSerialData SerializeData_Prototype();
+	// 클로닝 전용 함수
+	virtual FSerialData SerializeData();
+
+public:
+	static	CPlaneModelComp* Create();
+	static	CPlaneModelComp* Create(FSerialData& InputData);
+	virtual CComponent* Clone(void* Arg = nullptr) override;
+	virtual CComponent* Clone(FSerialData& InputData);
 
 protected:
 	virtual void			Free() override;
@@ -96,6 +110,12 @@ private:
 	_float2 m_vMinUV = {};
 	_float2 m_vMaxUV = { 1.f, 1.f };
 
+};
+
+template <>
+struct TComponentTrait<CPlaneModelComp::g_ClassID>
+{
+	using Class = CPlaneModelComp;
 };
 
 END

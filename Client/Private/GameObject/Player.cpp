@@ -31,45 +31,85 @@ CPlayer::CPlayer(const CPlayer& rhs)
 HRESULT CPlayer::Initialize_Prototype()
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
-    FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
+    
+    FAILED_CHECK_RETURN(Add_Component(L"CameraPivot", m_pCameraPivotComp = CPivotComponent::Create()), E_FAIL);
+    m_pCameraPivotComp->OffsetTransform().Set_Position(0.f, 1.3f, 0.f);
 
+    FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
+    m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
+    m_pModelComp->Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
+    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelAnim.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
+    m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/RockVolnutt.amodel");
     m_pModelComp->Set_Animation(0, 1.f, true);
+
+    FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
+    m_pColliderComp->Transform().Set_Position(0.f, 0.8f, 0.f);
+    m_pColliderComp->Transform().Set_Scale(1.f, 0.8f, 1.f);
+    m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
+    m_pColliderComp->EnterToPhysics(0);
+    m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
+    m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
+        | COLLAYER_ITEM | COLLAYER_OBJECT);
+
+    TeamAgentComp().Set_TeamID(ETEAM_PLAYER);
+
+    /*m_pModelComp->Create_Mask(L"Main", L"Armature", true);
+    m_pModelComp->Create_Mask(L"Head", L"Armature", false);
+    m_pModelComp->Create_Mask(L"Leg", L"Armature", false);
+    m_pModelComp->Create_Mask(L"LeftArm", L"Armature", false);
+    m_pModelComp->Create_Mask(L"RightArm", L"Armature", false);
+
+    m_pModelComp->Active_BoneMask(2, L"bone_000");*/
+
+    CNavigationComponent::TCloneDesc tDesc = { 0 };
+    FAILED_CHECK_RETURN(Add_Component(L"Navigation",
+        m_pNaviComp = Cast<CNavigationComponent*>(GI()->Clone_PrototypeComp(TEXT("Prototype_Component_Navigation"), VPCast(&tDesc)))), E_FAIL);
+
+    FAILED_CHECK_RETURN(Add_Component(L"CloudStation", m_pCloudStationComp = CCloudStationComp::Create()), E_FAIL);
+    m_pCloudStationComp->Open_CloudStation_Session(TEXT("Player"), CCloudStation_Player::Create());
+    m_pCloudStationComp->Connect_CloudStation(TEXT("Player"));
+
+    m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, 10.f, 6.f };
+    m_vAcceleration = { 100.f, g_fGravity, 100.f };
 
     return S_OK;
 }
 
-HRESULT CPlayer::Initialize_Prototype(const _float3 vPos)
+HRESULT CPlayer::Initialize_Prototype(FSerialData& InputData)
 {
-    FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
-    FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
+    FAILED_CHECK_RETURN(__super::Initialize_Prototype(InputData), E_FAIL);
 
-    Transform().Set_Position(vPos);
-    m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, 10.f, 6.f };
-    m_vAcceleration = { 100.f, g_fGravity, 100.f };
+    _uint iNumPrototype = 0;
+    iNumPrototype = InputData.Get_ArraySize("Components");
+    for (_uint i = 0; i < iNumPrototype; i++)
+    {
+        FSerialData ProtoData;
+        InputData.Get_ObjectFromArray("Components", i, ProtoData);
 
-    m_pModelComp->Set_Animation(0, 1.f, true);
+        _uint iComponentID = 0;
+        if (FAILED(ProtoData.Get_Data("ComponentID", iComponentID)))
+            return E_FAIL;
 
-    return S_OK;
-}
+        switch (iComponentID)
+        {
+        case ECast(EComponentID::CommonModel):
+            NULL_CHECK_RETURN(m_pModelComp = CCommonModelComp::Create(ProtoData), E_FAIL);
+            if (FAILED(Add_Component(TEXT("Model"), m_pModelComp)))
+                return E_FAIL;
+            break;
+        case ECast(EComponentID::Collider):
+            NULL_CHECK_RETURN(m_pColliderComp = CColliderComponent::Create(ProtoData), E_FAIL);
+            if (FAILED(Add_Component(TEXT("ColliderComp"), m_pColliderComp)))
+                return E_FAIL;
+            m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
+            m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
+            m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+            m_pColliderComp->EnterToPhysics(0);
+            break;
+        }
+    }
 
-HRESULT CPlayer::Initialize_Prototype(FSerialData& Data)
-{
-    FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
-    FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
-
-    _float3 vPos = {};
-    if (FAILED(Data.Get_Data("PosX", vPos.x)))
-        return E_FAIL;
-    if (FAILED(Data.Get_Data("PosY", vPos.y)))
-        return E_FAIL;
-    if (FAILED(Data.Get_Data("PosZ", vPos.z)))
-        return E_FAIL;
-
-    Transform().Set_Position(vPos);
-    m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, 10.f, 6.f };
-    m_vAcceleration = { 100.f, g_fGravity, 100.f };
-
-    m_pModelComp->Set_Animation(0, 1.f, true);
+    TeamAgentComp().Set_TeamID(ETEAM_PLAYER);
 
     return S_OK;
 }
@@ -79,20 +119,13 @@ HRESULT CPlayer::Initialize(void* Arg)
     FAILED_CHECK_RETURN(__super::Initialize(Arg), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 
-    m_pModelComp->Set_Animation(0, 1.f, true);
-
     return S_OK;
 }
 
-HRESULT CPlayer::Initialize(const _float3 vPos)
+HRESULT CPlayer::Initialize(FSerialData& InputData)
 {
-    FAILED_CHECK_RETURN(Initialize(), E_FAIL);
-
-    Transform().Set_Position(vPos);
-    m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, g_fGravity, 6.f };
-    m_vAcceleration = { 100.f, g_fGravity, 100.f };
-    
-    m_pModelComp->Set_Animation(0, 1.f, true);
+    FAILED_CHECK_RETURN(__super::Initialize(InputData), E_FAIL);
+    FAILED_CHECK_RETURN(Initialize_Component(InputData), E_FAIL);
 
     return S_OK;
 }
@@ -169,24 +202,11 @@ CPlayer* CPlayer::Create()
     return pInstance;
 }
 
-CPlayer* CPlayer::Create(const _float3 vPos)
+CPlayer* CPlayer::Create(FSerialData& InputData)
 {
     ThisClass* pInstance = new ThisClass();
 
-    if (FAILED(pInstance->Initialize_Prototype(vPos)))
-    {
-        MSG_BOX("Player Create Failed");
-        Safe_Release(pInstance);
-    }
-
-    return pInstance;
-}
-
-CPlayer* CPlayer::Create(FSerialData& Data)
-{
-    ThisClass* pInstance = new ThisClass();
-
-    if (FAILED(pInstance->Initialize_Prototype(Data)))
+    if (FAILED(pInstance->Initialize_Prototype(InputData)))
     {
         MSG_BOX("Player Create Failed");
         Safe_Release(pInstance);
@@ -208,6 +228,19 @@ CGameObject* CPlayer::Clone(void* Arg)
     return Cast<CGameObject*>(pInstance);
 }
 
+CGameObject* CPlayer::Clone(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize(InputData)))
+    {
+        MSG_BOX("Player Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return Cast<CGameObject*>(pInstance);
+}
+
 void CPlayer::Free()
 {
     SUPER::Free();
@@ -217,11 +250,23 @@ void CPlayer::Free()
     Safe_Release(m_pPlayerCloud);
 }
 
+FSerialData CPlayer::SerializeData_Prototype()
+{
+    FSerialData Data = SUPER::SerializeData_Prototype();
+
+    Data.Add_Member("ClassID", g_ClassID);
+    Data.Add_Member("HP", m_fHP.fMax);
+    Data.Add_Member("MoveSpeed", m_vMaxMoveSpeed.x);
+    Data.Add_Member("JumpSpeed", m_vMaxMoveSpeed.y);
+
+    return Data;
+}
+
 FSerialData CPlayer::SerializeData()
 {
-    FSerialData Data = __super::SerializeData();
+    FSerialData Data = SUPER::SerializeData();
 
-    Data.Add_Member("ClassID", ECast(ThisClass::g_ClassID));
+    Data.Add_Member("ClassID", g_ClassID);
     Data.Add_Member("HP", m_fHP.fMax);
     Data.Add_Member("MoveSpeed", m_vMaxMoveSpeed.x);
     Data.Add_Member("JumpSpeed", m_vMaxMoveSpeed.y);
@@ -231,45 +276,40 @@ FSerialData CPlayer::SerializeData()
 
 HRESULT CPlayer::Initialize_Component()
 {
-    FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
-    //m_TriBufferComp->Set_StateRender(ECOMP_UPDATE_T::SEMI_AUTO);
-
-    FAILED_CHECK_RETURN(Add_Component(L"CameraPivot", m_pCameraPivotComp = CPivotComponent::Create()), E_FAIL);
-    m_pCameraPivotComp->OffsetTransform().Set_Position(0.f, 1.3f, 0.f);
-
-    m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
-    m_pModelComp->Transform().Set_Scale(_float3(0.1f, 0.1f, 0.1f));
-    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
-    m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/RockVolnutt.amodel");
-
-    /*m_pModelComp->Create_Mask(L"Main", L"Armature", true);
-    m_pModelComp->Create_Mask(L"Head", L"Armature", false);
-    m_pModelComp->Create_Mask(L"Leg", L"Armature", false);
-    m_pModelComp->Create_Mask(L"LeftArm", L"Armature", false);
-    m_pModelComp->Create_Mask(L"RightArm", L"Armature", false);
-
-    m_pModelComp->Active_BoneMask(2, L"bone_000");*/
-
-    CNavigationComponent::TCloneDesc tDesc = { 0 };
-    FAILED_CHECK_RETURN(Add_Component(L"Navigation",
-        m_pNaviComp = Cast<CNavigationComponent*>(GI()->Clone_PrototypeComp(TEXT("Prototype_Component_Navigation"), VPCast(&tDesc)))), E_FAIL);
-
-    FAILED_CHECK_RETURN(Add_Component(L"CloudStation", m_pCloudStationComp = CCloudStationComp::Create()), E_FAIL);
-    m_pCloudStationComp->Open_CloudStation_Session(TEXT("Player"), CCloudStation_Player::Create());
-    m_pCloudStationComp->Connect_CloudStation(TEXT("Player"));
-
-    FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
-    m_pColliderComp->Transform().Set_Position(0.f, 0.8f, 0.f);
-    m_pColliderComp->Transform().Set_Scale(1.f, 0.8f, 1.f);
-    m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
-    m_pColliderComp->EnterToPhysics(0);
-    m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
-    m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
-                                        | COLLAYER_ITEM | COLLAYER_OBJECT);
-
-    TeamAgentComp().Set_TeamID(ETEAM_PLAYER);
-
     GI()->Add_GameObject(CUI_Player::Create());
+
+    return S_OK;
+}
+
+HRESULT CPlayer::Initialize_Component(FSerialData& InputData)
+{
+    _uint iNumPrototype = 0;
+    iNumPrototype = InputData.Get_ArraySize("Components");
+    for (_uint i = 0; i < iNumPrototype; i++)
+    {
+        FSerialData InputProto;
+        InputData.Get_ObjectFromArray("Components", i, InputProto);
+
+        _uint iComponentID = 0;
+        if (FAILED(InputProto.Get_Data("ComponentID", iComponentID)))
+            return E_FAIL;
+
+        string strName = "";
+        if (FAILED(InputProto.Get_Data("ProtoName", strName)))
+            return E_FAIL;
+
+        switch (iComponentID)
+        {
+        case ECast(EComponentID::CommonModel):
+            NULL_CHECK_RETURN(m_pModelComp
+                = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
+            break;
+        case ECast(EComponentID::Collider):
+            NULL_CHECK_RETURN(m_pColliderComp
+                = DynCast<CColliderComponent*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
+            break;
+        }
+    }
 
     return S_OK;
 }
@@ -325,8 +365,6 @@ void CPlayer::Update_ToCloudStation()
         m_pPlayerCloud->Set_HP(m_fHP);
     }
 }
-
-
 
 void CPlayer::Register_State()
 {

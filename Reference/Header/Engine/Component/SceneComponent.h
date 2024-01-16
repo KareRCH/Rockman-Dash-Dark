@@ -24,16 +24,11 @@ public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta);
 	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
 	virtual HRESULT	Render() PURE;
-
-public:
-	virtual CComponent* Clone(void* Arg = nullptr) PURE;
-
-protected:
-	virtual void	Free() override;
 
 protected:
 	// 프로토타입 제작용 함수
@@ -41,6 +36,11 @@ protected:
 	// 클로닝 전용 함수
 	virtual FSerialData SerializeData();
 
+public:
+	virtual CComponent* Clone(void* Arg = nullptr) PURE;
+
+protected:
+	virtual void	Free() override;
 
 #pragma region 씬 컴포넌트 계층
 	// 씬 컴포넌트는 계층관계를 가진다. 자식을 여럿 가질 수 있으며, 그에 대한 기능을 제공한다.

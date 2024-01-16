@@ -9,6 +9,9 @@
 #include "GameObject/ReaverBot_Fingerii.h"
 #include "GameObject/StaticObject.h"
 
+#include "BaseClass/Terrain.h"
+#include "BaseClass/Navigation.h"
+
 
 CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 {
@@ -18,25 +21,38 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 
 	CGameObject* pObj = { nullptr };
 
-	EObjectClassID eID = Cast<EObjectClassID>(iClassID);
+	EObjectID eID = Cast<EObjectID>(iClassID);
+	EObjectIDExt eExtID = Cast<EObjectIDExt>(iClassID);
 	switch (eID)
 	{
-	case EObjectClassID::Player:
-		pObj = TObjectClassTrait<EObjectClassID::Player>::Class::Create(Data);
+	case EObjectID::Terrain:
+		//pObj = TObjectTrait<ECast(EObjectID::Terrain)>::Class::Create(Data);
 		break;
-	case EObjectClassID::Horokko:
-		pObj = TObjectClassTrait<EObjectClassID::Horokko>::Class::Create(Data);
+	case EObjectID::Navigation:
+		//pObj = TObjectTrait<ECast(EObjectID::Navigation)>::Class::Create(Data);
 		break;
-	case EObjectClassID::Fingerii:
-		pObj = TObjectClassTrait<EObjectClassID::Fingerii>::Class::Create(Data);
-		break;
-	case EObjectClassID::Balfura:
-		//pObj = TObjectClassTrait<EObjectClassID::Balfura>::Class::Create(Data);
-		break;
-	case EObjectClassID::StaticObject:
-		pObj = TObjectClassTrait<EObjectClassID::StaticObject>::Class::Create(Data);
+	default:
+		switch (eExtID)
+		{
+		case EObjectIDExt::Player:
+			pObj = TObjectExtTrait<ECast(EObjectIDExt::Player)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::Horokko:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::Horokko)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::Fingerii:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::Fingerii)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::Balfura:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::Balfura)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::StaticObject:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::StaticObject)>::Class::Create(Data);
+			break;
+		}
 		break;
 	}
+	
 
 	return pObj;
 }

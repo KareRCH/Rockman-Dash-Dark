@@ -27,6 +27,7 @@
 #include "Component/Component.h"
 #include "Component/EffectComponent.h"
 #include "Component/RectBufferComp.h"
+#include "Utility/RapidJsonSerial.h"
 
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -981,6 +982,14 @@ HRESULT CGameInstance::Add_CloneObject(const wstring& strPrototypeKey, void* pAr
 		return E_FAIL;
 
 	return m_pObjectMgr->Add_CloneObject(strPrototypeKey, pArg);
+}
+
+HRESULT CGameInstance::Add_CloneObject(FSerialData& InputData)
+{
+	if (nullptr == m_pObjectMgr)
+		return E_FAIL;
+
+	return m_pObjectMgr->Add_CloneObject(InputData);
 }
 
 CGameObject* CGameInstance::Find_PrototypeObject(const wstring& strPrototypeKey)

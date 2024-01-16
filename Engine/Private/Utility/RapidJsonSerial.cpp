@@ -319,6 +319,28 @@ HRESULT FSerialData::Get_Data(const string& strMemberName, _float& tValue)
 	return S_OK;
 }
 
+HRESULT FSerialData::Get_Data(const string& strMemberName, FSerialData& Data)
+{
+	if (m_Doc.HasParseError())
+		return E_FAIL;
+
+	const _char* pMemberName = strMemberName.c_str();
+	Value::MemberIterator iter = m_Doc.FindMember(pMemberName);
+	if (iter == m_Doc.MemberEnd())
+		return E_FAIL;
+
+	Value& ValueData = iter->value;
+	if (ValueData.IsObject())
+	{
+		Value CopyValue(ValueData, m_Doc.GetAllocator());
+		Data.m_Doc.CopyFrom(CopyValue, Data.m_Doc.GetAllocator());
+	}
+	else
+		return E_FAIL;
+
+	return S_OK;
+}
+
 _uint FSerialData::Get_ArraySize(const string& strMemberName)
 {
 	if (m_Doc.HasParseError())

@@ -2,6 +2,7 @@
 
 #include "ModelComponent.h"
 #include "Component/AnimationComponent.h"
+#include "Utility/ClassID.h"
 
 BEGIN(Engine)
 
@@ -17,6 +18,9 @@ BEGIN(Engine)
 class ENGINE_DLL CCommonModelComp final : public CModelComponent
 {
 	DERIVED_CLASS(CModelComponent, CCommonModelComp)
+
+public:
+	static const _uint g_ClassID = ECast(EComponentID::CommonModel);
 
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
@@ -112,6 +116,12 @@ private:
 	class CEffectComponent* m_pEffectComp = { nullptr };
 #pragma endregion
 
+};
+
+template <>
+struct TComponentTrait<CCommonModelComp::g_ClassID>
+{
+	using Class = CCommonModelComp;
 };
 
 END

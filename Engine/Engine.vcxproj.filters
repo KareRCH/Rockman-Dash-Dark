@@ -1037,7 +1037,7 @@
     <None Include="Shader\Runtime\FX_ModelNoAnim.hlsl">
       <Filter>03. Shader\03. Effect</Filter>
     </None>
-    <None Include="Shader\Runtime\FX_ModelTest.hlsl">
+    <None Include="Shader\Runtime\FX_ModelAnim.hlsl">
       <Filter>03. Shader\03. Effect</Filter>
     </None>
     <None Include="Shader\Runtime\FX_Terrain.hlsl">
@@ -1061,6 +1061,7 @@
     <None Include="Shader\Runtime\FX_Deferred.hlsl">
       <Filter>03. Shader\02. DeferredShading</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\RDD-Snipets\CPP.xml">

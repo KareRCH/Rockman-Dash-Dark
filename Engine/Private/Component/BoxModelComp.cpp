@@ -29,12 +29,31 @@ CBoxModelComp::CBoxModelComp(const CBoxModelComp& rhs)
 
 HRESULT CBoxModelComp::Initialize_Prototype(void* Arg)
 {
+    if (FAILED(__super::Initialize_Prototype(Arg)))
+        return E_FAIL;
+
 	return S_OK;
+}
+
+HRESULT CBoxModelComp::Initialize_Prototype(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize_Prototype(InputData)))
+        return E_FAIL;
+
+    return S_OK;
 }
 
 HRESULT CBoxModelComp::Initialize(void* Arg)
 {
 	return S_OK;
+}
+
+HRESULT CBoxModelComp::Initialize(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize(InputData)))
+        return E_FAIL;
+
+    return S_OK;
 }
 
 void CBoxModelComp::Priority_Tick(const _float& fTimeDelta)
@@ -60,13 +79,34 @@ HRESULT CBoxModelComp::Render()
 {
     Bind_ShaderResources();
 
-    m_pEffectComp->Begin(m_vecActivePasses[0]);
+    for (_uint i = 0; i < m_iNumActivePasses; i++)
+    {
+        m_pEffectComp->Begin(m_vecActivePasses[i]);
 
-    m_pVIBufferComp->Bind_Buffer();
+        m_pVIBufferComp->Bind_Buffer();
 
-    m_pVIBufferComp->Render_Buffer();
+        m_pVIBufferComp->Render_Buffer();
+    }
 
 	return S_OK;
+}
+
+FSerialData CBoxModelComp::SerializeData_Prototype()
+{
+    FSerialData Data = SUPER::SerializeData_Prototype();
+
+    Data.Add_Member("ComponentID", g_ClassID);
+
+    return Data;
+}
+
+FSerialData CBoxModelComp::SerializeData()
+{
+    FSerialData Data = SUPER::SerializeData();
+
+    Data.Add_Member("ComponentID", g_ClassID);
+
+    return Data;
 }
 
 CBoxModelComp* CBoxModelComp::Create()
@@ -82,11 +122,37 @@ CBoxModelComp* CBoxModelComp::Create()
     return pInstance;
 }
 
+CBoxModelComp* CBoxModelComp::Create(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize_Prototype(InputData)))
+    {
+        MSG_BOX("CBoxModelComp Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
 CComponent* CBoxModelComp::Clone(void* Arg)
 {
     ThisClass* pInstance = new ThisClass(*this);
 
     if (FAILED(pInstance->Initialize()))
+    {
+        MSG_BOX("CBoxModelComp Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return Cast<CComponent*>(pInstance);
+}
+
+CComponent* CBoxModelComp::Clone(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize(InputData)))
     {
         MSG_BOX("CBoxModelComp Create Failed");
         Safe_Release(pInstance);

@@ -43,6 +43,7 @@ public:
 public:
 	HRESULT				Add_Prototype(const wstring& strTag, const wstring& strPrototypeKey, class CGameObject* pPrototype);
 	HRESULT				Add_CloneObject(const wstring& strPrototypeKey, void* pArg);
+	HRESULT				Add_CloneObject(FSerialData& InputData);
 	class CGameObject*	Find_Prototype(const wstring& strPrototypeKey);
 	void				Clear_Prototypes(const wstring& strContainTag);
 

@@ -327,16 +327,24 @@ void CImGuiWin_MapTool::Save_Level()
     LevelData.Add_MemberString("Name", "GamePlay");
 
     FSerialData PrototypeData;
+    LevelData.Add_Member("Prototypes", PrototypeData);
     for (size_t i = 0; i < vecGameObjects.size(); i++)
     {
-        auto ComponentData = vecGameObjects[i]->SerializeData();
-        PrototypeData.Pushback_Member("Components", ComponentData);
-
         auto ObjData = vecGameObjects[i]->SerializeData();
+
+        _uint iNumComponents = ObjData.Get_ArraySize("Components");
+        for (_uint j = 0; j < iNumComponents; j++)
+        {
+            FSerialData ComponentData;
+            ObjData.Get_ObjectFromArray("Components", j, ComponentData);
+            PrototypeData.Pushback_Member("Components", ComponentData);
+        }
+
         PrototypeData.Pushback_Member("Objects", ObjData);
     }
 
-    LevelData.Add_Member("Prototype", PrototypeData);
+    FSerialData CloneData;
+    LevelData.Add_Member("CloneObjects", CloneData);
 
     for (size_t i = 0; i < vecGameObjects.size(); i++)
     {

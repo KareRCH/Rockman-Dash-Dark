@@ -9,12 +9,31 @@ CCloudStationComp::CCloudStationComp(const CCloudStationComp& rhs)
 
 HRESULT CCloudStationComp::Initialize_Prototype(void* Arg)
 {
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
+
     return S_OK;
+}
+
+HRESULT CCloudStationComp::Initialize_Prototype(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize_Prototype(InputData)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CCloudStationComp::Initialize(void* Arg)
 {
     return S_OK;
+}
+
+HRESULT CCloudStationComp::Initialize(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize(InputData)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 void CCloudStationComp::Priority_Tick(const _float& fTimeDelta)
@@ -52,13 +71,44 @@ HRESULT CCloudStationComp::Render()
 	return S_OK;
 }
 
+FSerialData CCloudStationComp::SerializeData_Prototype()
+{
+	FSerialData Data = SUPER::SerializeData_Prototype();
+
+	Data.Add_Member("ComponentID", g_ClassID);
+
+	return Data;
+}
+
+FSerialData CCloudStationComp::SerializeData()
+{
+	FSerialData Data = SUPER::SerializeData();
+
+	Data.Add_Member("ComponentID", g_ClassID);
+
+	return Data;
+}
+
 CCloudStationComp* CCloudStationComp::Create()
 {
 	ThisClass* pInstance = new ThisClass();
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("BoxBufferComp Create Failed");
+		MSG_BOX("CloudStationComp Create Failed");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CCloudStationComp* CCloudStationComp::Create(FSerialData& InputData)
+{
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize_Prototype(InputData)))
+	{
+		MSG_BOX("CloudStationComp Create Failed");
 		Safe_Release(pInstance);
 	}
 
@@ -71,7 +121,20 @@ CComponent* CCloudStationComp::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("BoxBufferComp Copy Failed");
+		MSG_BOX("CloudStationComp Copy Failed");
+		Safe_Release(pInstance);
+	}
+
+	return Cast<CComponent*>(pInstance);
+}
+
+CComponent* CCloudStationComp::Clone(FSerialData& InputData)
+{
+	ThisClass* pInstance = new ThisClass(*this);
+
+	if (FAILED(pInstance->Initialize(InputData)))
+	{
+		MSG_BOX("CloudStationComp Copy Failed");
 		Safe_Release(pInstance);
 	}
 

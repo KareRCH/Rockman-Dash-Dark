@@ -23,11 +23,27 @@ HRESULT CCharacter_Common::Initialize_Prototype()
 	return S_OK;
 }
 
+HRESULT CCharacter_Common::Initialize_Prototype(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize_Prototype(InputData)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CCharacter_Common::Initialize(void* Arg)
 {
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 	if (FAILED(Initialize_Component()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CCharacter_Common::Initialize(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize(InputData)))
 		return E_FAIL;
 
 	return S_OK;

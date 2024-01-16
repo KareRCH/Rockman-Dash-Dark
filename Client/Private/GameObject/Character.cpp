@@ -17,9 +17,25 @@ HRESULT CCharacter::Initialize_Prototype()
 	return S_OK;
 }
 
+HRESULT CCharacter::Initialize_Prototype(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize_Prototype(InputData)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CCharacter::Initialize(void* Arg)
 {
 	if (FAILED(__super::Initialize()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CCharacter::Initialize(FSerialData& InputData)
+{
+	if (FAILED(__super::Initialize(InputData)))
 		return E_FAIL;
 
 	return S_OK;

@@ -16,7 +16,19 @@ CStaticObject::CStaticObject(const CStaticObject& rhs)
 HRESULT CStaticObject::Initialize_Prototype()
 {
     FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
-    FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
+
+    FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
+    m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
+    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelNoAnim.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
+    m_pModelComp->Bind_Model(CCommonModelComp::TYPE_NONANIM, EModelGroupIndex::Permanent, L"Model/Map/Main/Wall1.amodel");
+
+    FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
+    m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
+    m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
+    m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+    m_pColliderComp->Bind_Collision(ECollisionType::OBB);
+    m_pColliderComp->EnterToPhysics(0);
+    m_pColliderComp->Set_CollisionLayer(COLLAYER_WALL);
 
     return S_OK;
 }
@@ -39,12 +51,12 @@ HRESULT CStaticObject::Initialize_Prototype(FSerialData& InputData)
 
         switch (iComponentID)
         {
-        case 2:
+        case ECast(EComponentID::CommonModel):
             NULL_CHECK_RETURN(m_pModelComp = CCommonModelComp::Create(ProtoData), E_FAIL);
             if (FAILED(Add_Component(TEXT("Model"), m_pModelComp)))
                 return E_FAIL;
             break;
-        case 1:
+        case ECast(EComponentID::Collider):
             NULL_CHECK_RETURN(m_pColliderComp = CColliderComponent::Create(ProtoData), E_FAIL);
             if (FAILED(Add_Component(TEXT("ColliderComp"), m_pColliderComp)))
                 return E_FAIL;
@@ -58,8 +70,6 @@ HRESULT CStaticObject::Initialize_Prototype(FSerialData& InputData)
 
     return S_OK;
 }
-
-
 
 HRESULT CStaticObject::Initialize(void* Arg)
 {
@@ -149,6 +159,19 @@ CGameObject* CStaticObject::Clone(void* Arg)
     return Cast<CGameObject*>(pInstance);
 }
 
+CGameObject* CStaticObject::Clone(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize(InputData)))
+    {
+        MSG_BOX("StaticObject Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return Cast<CGameObject*>(pInstance);
+}
+
 void CStaticObject::Free()
 {
     SUPER::Free();
@@ -158,13 +181,7 @@ FSerialData CStaticObject::SerializeData_Prototype()
 {
     FSerialData Data = SUPER::SerializeData_Prototype();
 
-    Data.Add_Member("ClassID", ECast(EObjectClassID::StaticObject));
-
-    FSerialData ModelData = m_pModelComp->SerializeData_Prototype();
-    Data.Pushback_Member("Components", ModelData);
-
-    FSerialData ColliderData = m_pColliderComp->SerializeData_Prototype();
-    Data.Pushback_Member("Components", ColliderData);
+    Data.Add_Member("ClassID", ECast(EObjectIDExt::StaticObject));
 
     return Data;
 }
@@ -173,32 +190,14 @@ FSerialData CStaticObject::SerializeData()
 {
     FSerialData Data = SUPER::SerializeData();
 
-    Data.Add_Member("ClassID", ECast(EObjectClassID::StaticObject));
-
-    FSerialData ModelData = m_pModelComp->SerializeData();
-    Data.Pushback_Member("Components", ModelData);
-
-    FSerialData ColliderData = m_pColliderComp->SerializeData();
-    Data.Pushback_Member("Components", ColliderData);
+    Data.Add_Member("ClassID", ECast(EObjectIDExt::StaticObject));
 
     return Data;
 }
 
 HRESULT CStaticObject::Initialize_Component()
 {
-    FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
-
-    m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(180.f));
-    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelNoAnim.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
-    m_pModelComp->Bind_Model(CCommonModelComp::TYPE_NONANIM, EModelGroupIndex::Permanent, L"Model/Map/Main/Wall1.amodel");
-
-    FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
-    m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
-    m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
-    m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-    m_pColliderComp->Bind_Collision(ECollisionType::OBB);
-    m_pColliderComp->EnterToPhysics(0);
-    m_pColliderComp->Set_CollisionLayer(COLLAYER_WALL);
+    
 
     return S_OK;
 }
@@ -222,11 +221,11 @@ HRESULT CStaticObject::Initialize_Component(FSerialData& InputData)
 
         switch (iComponentID)
         {
-        case 2:
+        case ECast(EComponentID::CommonModel):
             NULL_CHECK_RETURN(m_pModelComp 
                 = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
             break;
-        case 1:
+        case ECast(EComponentID::Collider):
             NULL_CHECK_RETURN(m_pColliderComp 
                 = DynCast<CColliderComponent*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
             break;

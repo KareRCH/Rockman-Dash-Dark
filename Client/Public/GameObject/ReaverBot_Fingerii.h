@@ -23,6 +23,9 @@ class CReaverBot_Fingerii : public CCharacter_Common
 {
 	DERIVED_CLASS(CCharacter_Common, CReaverBot_Fingerii)
 
+public:
+	static const _uint g_ClassID = ECast(EObjectIDExt::Fingerii);
+
 protected:
 	explicit CReaverBot_Fingerii();
 	explicit CReaverBot_Fingerii(const CReaverBot_Fingerii& rhs);
@@ -30,10 +33,9 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize_Prototype(const _float3 vPos);
-	virtual HRESULT Initialize_Prototype(FSerialData& Data);
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
-	virtual HRESULT Initialize(const _float3 vPos);
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;
@@ -41,18 +43,20 @@ public:
 
 public:
 	static CReaverBot_Fingerii* Create();
-	static CReaverBot_Fingerii* Create(const _float3 vPos);
-	static CReaverBot_Fingerii* Create(FSerialData& Data);
+	static CReaverBot_Fingerii* Create(FSerialData& InputData);
 	virtual CGameObject* Clone(void* Arg = nullptr);
+	virtual CGameObject* Clone(FSerialData& InputData);
 
 protected:
 	virtual void	Free() override;
 
 public:
+	virtual FSerialData SerializeData_Prototype() override;
 	virtual FSerialData SerializeData() override;
 
 private:
 	HRESULT	Initialize_Component();
+	HRESULT	Initialize_Component(FSerialData& InputData);
 
 public:		// 충돌 이벤트
 	virtual void OnCollision(CGameObject* pDst, const FContact* pContact);
@@ -133,7 +137,7 @@ private:
 };
 
 template <>
-struct TObjectClassTrait<EObjectClassID::Fingerii>
+struct TObjectExtTrait<CReaverBot_Fingerii::g_ClassID>
 {
 	using Class = CReaverBot_Fingerii;
 };

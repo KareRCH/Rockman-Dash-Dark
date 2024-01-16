@@ -91,6 +91,9 @@
     <Filter Include="02. GameObject\07. StaticObject">
       <UniqueIdentifier>{eebd1ba1-1074-40f0-a1b9-9c224a4827fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\08. Item">
+      <UniqueIdentifier>{a7d4ad85-6fa6-40cb-b508-de826d443d68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -156,35 +159,35 @@
     <ClInclude Include="Public\GameObject\Weapon_Buster.h">
       <Filter>02. GameObject\04. Characters\01. Player\01. Buster</Filter>
     </ClInclude>
-    <ClInclude Include="Public\GameObject\Character.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\GameObject\Character_Common.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\GameObject\Effect_Common.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\GameObject\ReaverBot_Balfura.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\GameObject\Item_Deflector.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Level\Level_Parsed.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\GameObject\GameObjectFactory.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Public\GameObject\ReaverBot_Fingerii.h">
       <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\ReaverBot_Balfura.h">
+      <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Character_Common.h">
+      <Filter>02. GameObject\04. Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Character.h">
+      <Filter>02. GameObject\04. Characters</Filter>
+    </ClInclude>
     <ClInclude Include="Public\GameObject\UI_Lockon.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. GameObject\06. UI</Filter>
     </ClInclude>
     <ClInclude Include="Public\GameObject\StaticObject.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. GameObject\07. StaticObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Level\Level_Parsed.h">
+      <Filter>01. Level\04. Parsed</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Effect_Common.h">
+      <Filter>02. GameObject\04. Characters\00. Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Item_Deflector.h">
+      <Filter>02. GameObject\08. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\GameObjectFactory.h">
+      <Filter>02. GameObject\00. Factory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -239,35 +242,35 @@
     <ClCompile Include="Private\GameObject\Weapon_Buster.cpp">
       <Filter>02. GameObject\04. Characters\01. Player\01. Buster</Filter>
     </ClCompile>
-    <ClCompile Include="Private\GameObject\Character.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\GameObject\Character_Common.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\GameObject\Effect_Common.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\GameObject\ReaverBot_Balfura.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\GameObject\Item_Deflector.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Level\Level_Parsed.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\GameObject\GameObjectFactory.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Private\GameObject\ReaverBot_Fingerii.cpp">
       <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
     </ClCompile>
+    <ClCompile Include="Private\GameObject\ReaverBot_Balfura.cpp">
+      <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Character_Common.cpp">
+      <Filter>02. GameObject\04. Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Character.cpp">
+      <Filter>02. GameObject\04. Characters</Filter>
+    </ClCompile>
     <ClCompile Include="Private\GameObject\UI_Lockon.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. GameObject\06. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Level\Level_Parsed.cpp">
+      <Filter>01. Level\04. Parsed</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\StaticObject.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. GameObject\07. StaticObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Effect_Common.cpp">
+      <Filter>02. GameObject\04. Characters\00. Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Item_Deflector.cpp">
+      <Filter>02. GameObject\08. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\GameObjectFactory.cpp">
+      <Filter>02. GameObject\00. Factory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,7 @@
 #include "Physics/Contact.h"
 
 #include "Utility/DelegateTemplate.h"
+#include "Utility/ClassID.h"
 
 BEGIN(Engine)
 
@@ -22,6 +23,9 @@ class ENGINE_DLL CColliderComponent : public CSceneComponent
 {
 	DERIVED_CLASS(CSceneComponent, CColliderComponent)
 
+public:
+	static const _uint g_ClassID = ECast(EComponentID::Collider);
+
 protected:
 	explicit CColliderComponent();
 	explicit CColliderComponent(const CColliderComponent& rhs);
@@ -29,7 +33,6 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype(void* Arg = nullptr) override { return S_OK; }
-	virtual HRESULT Initialize_Prototype(ECollisionType eType);
 	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	PRIVATE virtual HRESULT Initialize(void* Arg = nullptr) { return S_OK; }
 	PUBLIC	virtual HRESULT Initialize(ECollisionType eType);
@@ -41,9 +44,9 @@ public:
 
 public:
 	static	CColliderComponent* Create();
-	static	CColliderComponent*	Create(ECollisionType eType);
 	static	CColliderComponent* Create(FSerialData& InputData);
 	virtual CComponent*			Clone(void* Arg = nullptr) override;
+	virtual CComponent*			Clone(FSerialData& InputData);
 
 protected:
 	virtual void				Free();
@@ -131,6 +134,12 @@ protected:
 	_uint	m_iCollisionLayer_Flag = { 0 };		// 콜리전 레이어, 충돌체가 존재하는 층
 	_uint	m_iCollisionMask_Flag = { 0 };		// 콜리전 마스크, 충돌체가 충돌하고 싶어하는 층
 	
+};
+
+template <>
+struct TComponentTrait<CColliderComponent::g_ClassID>
+{
+	using Class = CColliderComponent;
 };
 
 END

@@ -22,10 +22,10 @@ protected:
 	virtual ~CLoader() = default;
 
 public:
-	HRESULT Initialize(LEVEL eNextLevelID);
+	HRESULT Initialize(LEVEL eNextLevelID, const wstring& strParsedLevelDataPath);
 
 public:
-	static CLoader* Create(LEVEL eNextLevelID);
+	static CLoader* Create(LEVEL eNextLevelID, const wstring& strParsedLevelDataPath);
 protected:
 	virtual void	Free() override;
 
@@ -51,7 +51,7 @@ private:
 	LEVEL	m_eNextLevelID = { LEVEL_END };
 	_tchar	m_szLoadingText[MAX_PATH] = TEXT("");
 	_bool	m_bIsFinished = { false };
-
+	wstring m_strParsedLevelDataPath = TEXT("");
 
 };
 

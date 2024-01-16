@@ -2,7 +2,7 @@
 
 
 #include "Component/PrimitiveComponent.h"
-
+#include "Utility/ClassID.h"
 
 BEGIN(Engine)
 
@@ -18,6 +18,9 @@ class ENGINE_DLL CNavigationComponent final : public CPrimitiveComponent
 	DERIVED_CLASS(CPrimitiveComponent, CNavigationComponent)
 
 public:
+	static const _uint g_ClassID = ECast(EComponentID::Navigation);
+
+public:
 	struct TCloneDesc
 	{
 		_uint iCurrentInex;
@@ -31,16 +34,26 @@ protected:
 public:
 	virtual HRESULT	Initialize_Prototype(void* Arg = nullptr) override;
 	virtual HRESULT	Initialize_Prototype(const wstring& strNavigationFilePath);
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;
 	virtual HRESULT	Render() override;
 
 public:
+	// 프로토타입 제작용 함수
+	virtual FSerialData SerializeData_Prototype();
+	// 클로닝 전용 함수
+	virtual FSerialData SerializeData();
+
+public:
 	static CNavigationComponent*	Create();
 	static CNavigationComponent*	Create(const wstring& strNavigationFilePath);
+	static	CNavigationComponent*	Create(FSerialData& InputData);
 	virtual CComponent*				Clone(void* Arg = nullptr) override;
+	virtual CComponent*				Clone(FSerialData& InputData);
 
 protected:
 	virtual void					Free() override;
@@ -66,6 +79,12 @@ private:
 	class CPipelineComp* m_pPipelineComp = { nullptr };
 #endif // _DEBUG
 
+};
+
+template <>
+struct TComponentTrait<CNavigationComponent::g_ClassID>
+{
+	using Class = CNavigationComponent;
 };
 
 END
