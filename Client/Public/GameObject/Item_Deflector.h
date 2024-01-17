@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Define.h"
-#include "BaseClass/CollisionObject.h"
+#include "GameObject/Character_Common.h"
 #include "GameObject/GameObjectFactory.h"
 
 

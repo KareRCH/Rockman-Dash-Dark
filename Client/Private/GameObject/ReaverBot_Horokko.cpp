@@ -69,17 +69,21 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype(FSerialData& InputData)
 		if (FAILED(ProtoData.Get_Data("ComponentID", iComponentID)))
 			return E_FAIL;
 
+		string strName = "";
+		if (FAILED(ProtoData.Get_Data("Name", strName)))
+			return E_FAIL;
+
 		switch (iComponentID)
 		{
 		case ECast(EComponentID::CommonModel):
 			NULL_CHECK_RETURN(m_pModelComp = CCommonModelComp::Create(ProtoData), E_FAIL);
-			if (FAILED(Add_Component(TEXT("Model"), m_pModelComp)))
+			if (FAILED(Add_Component(ConvertToWstring(strName), m_pModelComp)))
 				return E_FAIL;
 			m_pModelComp->Set_Animation(0, 1.f, true);
 			break;
 		case ECast(EComponentID::Collider):
 			NULL_CHECK_RETURN(m_pColliderComp = CColliderComponent::Create(ProtoData), E_FAIL);
-			if (FAILED(Add_Component(TEXT("ColliderComp"), m_pColliderComp)))
+			if (FAILED(Add_Component(ConvertToWstring(strName), m_pColliderComp)))
 				return E_FAIL;
 			m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
 			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));

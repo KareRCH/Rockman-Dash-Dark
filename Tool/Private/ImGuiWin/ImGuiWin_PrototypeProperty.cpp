@@ -125,7 +125,8 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
     strProp = "##ProtoName" + strName;
     strcpy_s(szName, strProp.c_str());
     ImGui::SetNextItemWidth(150.f);
-    if (ImGui::InputText(szName, szProtoName, sizeof szProtoName, ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputText(szName, szProtoName, sizeof szProtoName, ImGuiInputTextFlags_EnterReturnsTrue)
+        || ImGui::IsItemDeactivatedAfterEdit())
     {
         m_pGameObject->Set_ProtoName(ConvertToWstring(szProtoName));
     }
@@ -136,35 +137,32 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
     ImGui::Button("X##ProtoPosX");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(50.f);
-    if (ImGui::InputFloat("##ProtoPosX", &vPos.x, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputFloat("##ProtoPosX", &vPos.x, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+        || ImGui::IsItemDeactivated())
     {
         m_pGameObject->Transform().Set_PositionX(vPos.x);
     }
-    if (ImGui::IsItemActive())
-        ImGui::SetKeyboardFocusHere(-1);
     ImGui::SameLine();
 
     ImGui::Button("Y##ProtoPosY");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(50.f);
-    if (ImGui::InputFloat("##ProtoPosY", &vPos.y, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputFloat("##ProtoPosY", &vPos.y, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+        || ImGui::IsItemDeactivated())
     {
         m_pGameObject->Transform().Set_PositionY(vPos.y);
     }
-    if (ImGui::IsItemActive())
-        ImGui::SetKeyboardFocusHere(-1);
     ImGui::SameLine();
 
     ImGui::Button("Z##ProtoPosZ");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(50.f);
-    if (ImGui::InputFloat("##ProtoPosZ", &vPos.z, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputFloat("##ProtoPosZ", &vPos.z, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+        || ImGui::IsItemDeactivated())
     {
         m_pGameObject->Transform().Set_PositionZ(vPos.z);
     }
-    if (ImGui::IsItemActive())
-        ImGui::SetKeyboardFocusHere(-1);
-
+    
 
 
 
@@ -174,34 +172,31 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
     ImGui::Button("X##ProtoRotX");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(50.f);
-    if (ImGui::InputFloat("##ProtoRotX", &vRot.x, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputFloat("##ProtoRotX", &vRot.x, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+        || ImGui::IsItemDeactivated())
     {
         m_pGameObject->Transform().Set_RotationFixedX(XMConvertToRadians(vRot.x));
     }
-    if (ImGui::IsItemActive())
-        ImGui::SetKeyboardFocusHere(-1);
     ImGui::SameLine();
 
     ImGui::Button("Y##ProtoRotY");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(50.f);
-    if (ImGui::InputFloat("##ProtoRotY", &vRot.y, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputFloat("##ProtoRotY", &vRot.y, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+        || ImGui::IsItemDeactivated())
     {
         m_pGameObject->Transform().Set_RotationFixedY(XMConvertToRadians(vRot.y));
     }
-    if (ImGui::IsItemActive())
-        ImGui::SetKeyboardFocusHere(-1);
     ImGui::SameLine();
 
     ImGui::Button("Z##ProtoRotZ");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(50.f);
-    if (ImGui::InputFloat("##ProtoRotZ", &vRot.z, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputFloat("##ProtoRotZ", &vRot.z, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+        || ImGui::IsItemDeactivated())
     {
         m_pGameObject->Transform().Set_RotationFixedZ(XMConvertToRadians(vRot.z));
     }
-    if (ImGui::IsItemActive())
-        ImGui::SetKeyboardFocusHere(-1);
 
 
 
@@ -211,34 +206,53 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
     ImGui::Button("X##ProtoScaleX");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(50.f);
-    if (ImGui::InputFloat("##ProtoScaleX", &vScale.x, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputFloat("##ProtoScaleX", &vScale.x, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+        || ImGui::IsItemDeactivated())
     {
         m_pGameObject->Transform().Set_ScaleX(vScale.x);
     }
-    if (ImGui::IsItemActive())
-        ImGui::SetKeyboardFocusHere(-1);
     ImGui::SameLine();
 
     ImGui::Button("Y##ProtoScaleY");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(50.f);
-    if (ImGui::InputFloat("##ProtoScaleY", &vScale.y, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputFloat("##ProtoScaleY", &vScale.y, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+        || ImGui::IsItemDeactivated())
     {
         m_pGameObject->Transform().Set_ScaleY(vScale.y);
     }
-    if (ImGui::IsItemActive())
-        ImGui::SetKeyboardFocusHere(-1);
     ImGui::SameLine();
 
     ImGui::Button("Z##ProtoScaleZ");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(50.f);
-    if (ImGui::InputFloat("##ProtoScaleZ", &vScale.z, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputFloat("##ProtoScaleZ", &vScale.z, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+        || !ImGui::IsItemDeactivated())
     {
         m_pGameObject->Transform().Set_ScaleZ(vScale.z);
     }
-    if (ImGui::IsItemActive())
-        ImGui::SetKeyboardFocusHere(-1);
+
+
+    _float fPriority = m_pGameObject->Get_Priority(ECast(EGObjTickPriority::Tick));
+    ImGui::Button("TickPriority##ProtoPriorityTick");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(50.f);
+    if (ImGui::InputFloat("##ProtoPriorityTick",
+        &fPriority, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        m_pGameObject->Set_Priority(ECast(EGObjTickPriority::Tick), fPriority);
+    }
+
+    fPriority = m_pGameObject->Get_Priority(ECast(EGObjTickPriority::Render));
+    ImGui::Button("RenderPriority##ProtoPriorityRender");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(50.f);
+    if (ImGui::InputFloat("##ProtoPriorityRender",
+        &fPriority, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        m_pGameObject->Set_Priority(ECast(EGObjTickPriority::Render), fPriority);
+    }
+
 }
 
 void CImGuiWin_PrototypeProperty::Layout_SceneCompProperty(CSceneComponent* pComp)

@@ -101,6 +101,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 GI()->Regist_RenderTarget(1);
                 GI()->Bind_RenderTargetsOnDevice();
                 GI()->Set_SystemViewport(1, {0.f, 0.f, (_float)g_iResizeWidth , (_float)g_iResizeHeight, 0.f, 1.f });
+                GI()->Resize_RenderTargets(g_iResizeWidth, g_iResizeHeight);
                 g_iResizeWidth = g_iResizeHeight = 0;
             }
 

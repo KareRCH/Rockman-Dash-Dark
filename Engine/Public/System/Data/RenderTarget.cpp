@@ -102,5 +102,41 @@ HRESULT CRenderTarget::Render_Debug(CEffectComponent* pEffect, CVIBufferComp* pV
 
 	return pVIBuffer->Render_Buffer();
 }
+HRESULT CRenderTarget::Resize_RenderTarget(_uint iResizeWidth, _uint iResizeHeight)
+{
+	D3D11_TEXTURE2D_DESC Desc = {};
+	m_pTexture2D->GetDesc(&Desc);
+	Desc.Width = iResizeWidth;
+	Desc.Height = iResizeHeight;
+
+	D3D11_RENDER_TARGET_VIEW_DESC RTVDesc = {};
+	m_pRTV->GetDesc(&RTVDesc);
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	m_pSRV->GetDesc(&SRVDesc);
+
+	ComPtr<ID3D11Texture2D> pTexture = { nullptr };
+	if (FAILED(m_pDevice->CreateTexture2D(&Desc, nullptr, pTexture.GetAddressOf())))
+	{
+		return E_FAIL;
+	}
+
+	ComPtr<ID3D11ShaderResourceView> pSRV = { nullptr };
+	if (FAILED(m_pDevice->CreateShaderResourceView(pTexture.Get(), &SRVDesc, pSRV.GetAddressOf())))
+	{
+		return E_FAIL;
+	}
+
+	ComPtr<ID3D11RenderTargetView> pRTV = { nullptr };
+	if (FAILED(m_pDevice->CreateRenderTargetView(pTexture.Get(), &RTVDesc, pRTV.GetAddressOf())))
+	{
+		return E_FAIL;
+	}
+
+	m_pTexture2D = pTexture;
+	m_pRTV = pRTV;
+	m_pSRV = pSRV;
+
+	return S_OK;
+}
 #endif // _DEBUG
 

@@ -2,6 +2,7 @@
 
 #include "Client_Define.h"
 #include "GameObject/Character_Common.h"
+#include "GameObject/GameObjectFactory.h"
 
 BEGIN(Engine)
 
@@ -14,6 +15,9 @@ BEGIN(Client)
 class CItemChest : public CCharacter_Common
 {
 	DERIVED_CLASS(CCharacter_Common, CItemChest)
+
+public:
+	static const _uint g_ClassID = ECast(EObjectIDExt::ItemChest);
 
 protected:
 	explicit CItemChest();
@@ -53,6 +57,12 @@ private:
 
 private:
 	_int			m_iTest = 0;
+};
+
+template <>
+struct TObjectExtTrait<CItemChest::g_ClassID>
+{
+	using Class = CItemChest;
 };
 
 END

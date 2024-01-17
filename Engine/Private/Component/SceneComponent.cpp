@@ -139,7 +139,7 @@ FSerialData CSceneComponent::SerializeData_Prototype()
 	Data.Add_Member("PosY", vPos.y);
 	Data.Add_Member("PosZ", vPos.z);
 
-	_float3 vRot = Transform().Get_RotationEulerFloat3();
+	_float3 vRot = Transform().Get_RotationFixedFloat3();
 	Data.Add_Member("RotX", XMConvertToDegrees(vRot.x));
 	Data.Add_Member("RotY", XMConvertToDegrees(vRot.y));
 	Data.Add_Member("RotZ", XMConvertToDegrees(vRot.z));
@@ -161,7 +161,7 @@ FSerialData CSceneComponent::SerializeData()
 	Data.Add_Member("PosY", vPos.y);
 	Data.Add_Member("PosZ", vPos.z);
 
-	_float3 vRot = Transform().Get_RotationEulerFloat3();
+	_float3 vRot = Transform().Get_RotationFixedFloat3();
 	Data.Add_Member("RotX", XMConvertToDegrees(vRot.x));
 	Data.Add_Member("RotY", XMConvertToDegrees(vRot.y));
 	Data.Add_Member("RotZ", XMConvertToDegrees(vRot.z));

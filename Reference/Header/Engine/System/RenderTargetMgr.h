@@ -44,6 +44,7 @@ private:
 public:
 	HRESULT Add_RenderTarget(const wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 vClearColor);
 	HRESULT Add_MRT(const wstring& strMRTTag, const wstring& strTargetTag);
+	HRESULT Resize_RenderTargets(_uint iResizeWidth, _uint iResizeHeight);
 
 private:
 	class CRenderTarget* Find_RenderTarget(const wstring& strTargetTag);

@@ -38,6 +38,7 @@ private:
 
 public:
 	ID3D11RenderTargetView* Get_RTV() const { return m_pRTV.Get(); }
+	HRESULT Resize_RenderTarget(_uint iResizeWidth, _uint iResizeHeight);
 
 private:
 	ComPtr<ID3D11Texture2D>	m_pTexture2D = { nullptr };

@@ -20,10 +20,14 @@ HRESULT CSkyBox::Initialize_Prototype()
     if (FAILED(Initialize_Component()))
         return E_FAIL;
 
-    TurnOn_State(EGObjectState::Render);            // 렌더링 유무, Tick은 작동함, 주의ㅋ
     Set_RenderGroup(ERenderGroup::Priority);
 
     return S_OK;
+}
+
+HRESULT CSkyBox::Initialize_Prototype(FSerialData& InputData)
+{
+    return E_NOTIMPL;
 }
 
 HRESULT CSkyBox::Initialize(void* Arg)
@@ -33,6 +37,11 @@ HRESULT CSkyBox::Initialize(void* Arg)
 
 
     return S_OK;
+}
+
+HRESULT CSkyBox::Initialize(FSerialData& InputData)
+{
+    return E_NOTIMPL;
 }
 
 void CSkyBox::Priority_Tick(const _float& fTimeDelta)
@@ -71,7 +80,20 @@ CSkyBox* CSkyBox::Create()
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("CBoxModelComp Create Failed");
+        MSG_BOX("CSkyBox Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
+CSkyBox* CSkyBox::Create(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize_Prototype(InputData)))
+    {
+        MSG_BOX("CSkyBox Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -84,7 +106,20 @@ CGameObject* CSkyBox::Clone(void* Arg)
 
     if (FAILED(pInstance->Initialize()))
     {
-        MSG_BOX("CBoxModelComp Create Failed");
+        MSG_BOX("CSkyBox Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return Cast<CGameObject*>(pInstance);
+}
+
+CGameObject* CSkyBox::Clone(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize(InputData)))
+    {
+        MSG_BOX("CSkyBox Create Failed");
         Safe_Release(pInstance);
     }
 
@@ -96,9 +131,22 @@ void CSkyBox::Free()
     SUPER::Free();
 }
 
+FSerialData CSkyBox::SerializeData_Prototype()
+{
+    FSerialData Data = SUPER::SerializeData_Prototype();
+
+    Data.Add_Member("ClassID", g_ClassID);
+
+    return Data;
+}
+
 FSerialData CSkyBox::SerializeData()
 {
-    return FSerialData();
+    FSerialData Data = SUPER::SerializeData();
+
+    Data.Add_Member("ClassID", g_ClassID);
+
+    return Data;
 }
 
 HRESULT CSkyBox::Initialize_Component()
@@ -108,4 +156,9 @@ HRESULT CSkyBox::Initialize_Component()
         return E_FAIL;
 
     return S_OK;
+}
+
+HRESULT CSkyBox::Initialize_Component(FSerialData& InputData)
+{
+    return E_NOTIMPL;
 }

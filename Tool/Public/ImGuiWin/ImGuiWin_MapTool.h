@@ -44,7 +44,8 @@ public:
 	void Scale_PickedObjects(const _float& fTimeDelta);
 	void Escape_MovePickedObjects();
 
-	void Save_Level();
+	void Save_Level(const wstring& strSavePath);
+	void Load_Level(const wstring& strLoadPath);
 
 public:
 	enum class EAction { CancelMove, ConfirmMove };

@@ -70,6 +70,7 @@ public:
 	void		Set_Dead() { m_iStateFlag |= ECast(EGObjectState::Dead); }
 
 	_float		Get_Priority(_uint iIndex) const { return m_fPriority[iIndex]; }
+	void		Set_Priority(_uint iIndex, _float fValue) { m_fPriority[iIndex] = fValue; }
 
 	void		TurnOn_State(const EGObjectState value) { m_iStateFlag |= ECast(value); }
 	void		TurnOff_State(const EGObjectState value) { m_iStateFlag &= ~ECast(value); }
