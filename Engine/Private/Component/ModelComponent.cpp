@@ -52,7 +52,7 @@ HRESULT CModelComponent::Initialize(void* Arg)
 
 HRESULT CModelComponent::Initialize(FSerialData& InputData)
 {
-	if (FAILED(__super::Initialize_Prototype(InputData)))
+	if (FAILED(__super::Initialize(InputData)))
 		return E_FAIL;
 
 	Reset_ActivePass();

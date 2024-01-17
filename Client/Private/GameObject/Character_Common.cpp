@@ -8,6 +8,7 @@ CCharacter_Common::CCharacter_Common()
 
 CCharacter_Common::CCharacter_Common(const CCharacter_Common& rhs)
 	: Base(rhs)
+	, m_fHP(rhs.m_fHP)
 {
 	FAILED_CHECK_RETURN(Add_Component(TEXT("TeamAgentComp"), 
 		m_pTeamAgentComp = DynCast<CTeamAgentComp*>(rhs.m_pTeamAgentComp->Clone())), );

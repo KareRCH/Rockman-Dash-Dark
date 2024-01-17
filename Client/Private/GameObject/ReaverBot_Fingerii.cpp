@@ -24,7 +24,6 @@ CReaverBot_Fingerii::CReaverBot_Fingerii()
 CReaverBot_Fingerii::CReaverBot_Fingerii(const CReaverBot_Fingerii& rhs)
 	: Base(rhs)
 {
-	NULL_CHECK(m_pModelComp = DynCast<CCommonModelComp*>(rhs.m_pModelComp->Clone()));
 	Register_State();
 	m_RandomNumber = mt19937_64(m_RandomDevice());
 }
@@ -70,16 +69,21 @@ HRESULT CReaverBot_Fingerii::Initialize_Prototype(FSerialData& InputData)
 		if (FAILED(ProtoData.Get_Data("ComponentID", iComponentID)))
 			return E_FAIL;
 
+		string strName = "";
+		if (FAILED(ProtoData.Get_Data("Name", strName)))
+			return E_FAIL;
+
 		switch (iComponentID)
 		{
 		case ECast(EComponentID::CommonModel):
 			NULL_CHECK_RETURN(m_pModelComp = CCommonModelComp::Create(ProtoData), E_FAIL);
-			if (FAILED(Add_Component(TEXT("Model"), m_pModelComp)))
+			if (FAILED(Add_Component(ConvertToWstring(strName), m_pModelComp)))
 				return E_FAIL;
+			m_pModelComp->Set_Animation(0, 1.f, true);
 			break;
 		case ECast(EComponentID::Collider):
 			NULL_CHECK_RETURN(m_pColliderComp = CColliderComponent::Create(ProtoData), E_FAIL);
-			if (FAILED(Add_Component(TEXT("ColliderComp"), m_pColliderComp)))
+			if (FAILED(Add_Component(ConvertToWstring(strName), m_pColliderComp)))
 				return E_FAIL;
 			m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
 			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
@@ -139,7 +143,6 @@ void CReaverBot_Fingerii::Late_Tick(const _float& fTimeDelta)
 
 	m_pModelComp->Add_AnimTime(fTimeDelta);
 	m_pModelComp->Invalidate_Animation();
-	m_pModelComp->Invalidate_BoneTransforms();
 
 	m_pModelComp->Late_Tick(fTimeDelta);
 }
@@ -236,8 +239,6 @@ FSerialData CReaverBot_Fingerii::SerializeData()
 
 HRESULT CReaverBot_Fingerii::Initialize_Component()
 {
-	
-
 	return S_OK;
 }
 
@@ -254,19 +255,28 @@ HRESULT CReaverBot_Fingerii::Initialize_Component(FSerialData& InputData)
 		if (FAILED(InputProto.Get_Data("ComponentID", iComponentID)))
 			return E_FAIL;
 
+		string strProtoName = "";
+		if (FAILED(InputProto.Get_Data("ProtoName", strProtoName)))
+			return E_FAIL;
+
 		string strName = "";
-		if (FAILED(InputProto.Get_Data("ProtoName", strName)))
+		if (FAILED(InputProto.Get_Data("Name", strName)))
 			return E_FAIL;
 
 		switch (iComponentID)
 		{
 		case ECast(EComponentID::CommonModel):
-			NULL_CHECK_RETURN(m_pModelComp
-				= DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
+			FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
+				m_pModelComp = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
+			m_pModelComp->Set_Animation(0, 1.f, true);
 			break;
 		case ECast(EComponentID::Collider):
-			NULL_CHECK_RETURN(m_pColliderComp
-				= DynCast<CColliderComponent*>(GI()->Clone_PrototypeComp(ConvertToWstring(strName), VPCast(&InputProto))), E_FAIL);
+			FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
+				m_pColliderComp = DynCast<CColliderComponent*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
+			m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
+			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
+			m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+			m_pColliderComp->EnterToPhysics(0);
 			break;
 		}
 	}

@@ -15,6 +15,10 @@ CAnimationComponent::CAnimationComponent(const CAnimationComponent& rhs)
 	: Base(rhs)
 	, m_pBoneGroup(rhs.m_pBoneGroup)
 	, m_pAnimGroup(rhs.m_pAnimGroup)
+	, m_CurAnim(rhs.m_CurAnim)
+	, m_PrevAnim(rhs.m_PrevAnim)
+	, m_fTransitionGauge(rhs.m_fTransitionGauge)
+	, m_fTransitionSpeed(rhs.m_fTransitionSpeed)
 {
 	Safe_AddRef(m_pBoneGroup);
 	Safe_AddRef(m_pAnimGroup);
@@ -71,6 +75,9 @@ HRESULT CAnimationComponent::Bind_BoneGroup(CBoneGroup* pBoneGroup)
 {
 	if (pBoneGroup == nullptr)
 		return E_FAIL;
+
+	if (nullptr != m_pBoneGroup)
+		Safe_Release(m_pBoneGroup);
 
 	m_pBoneGroup = pBoneGroup;
 

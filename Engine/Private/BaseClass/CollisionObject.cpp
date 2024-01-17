@@ -8,8 +8,9 @@ CCollisionObject::CCollisionObject()
 }
 
 CCollisionObject::CCollisionObject(const CCollisionObject& rhs)
+	: Base(rhs)
 {
-	NULL_CHECK(m_pColliderComp = DynCast<CColliderComponent*>(m_pColliderComp->Clone()));
+	//NULL_CHECK(m_pColliderComp = DynCast<CColliderComponent*>(m_pColliderComp->Clone()));
 }
 
 HRESULT CCollisionObject::Initialize_Prototype()

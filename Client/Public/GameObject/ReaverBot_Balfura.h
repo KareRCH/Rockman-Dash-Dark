@@ -38,7 +38,6 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
-	// 
 	virtual FSerialData SerializeData_Prototype() override;
 	virtual FSerialData SerializeData() override;
 

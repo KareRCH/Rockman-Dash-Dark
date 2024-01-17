@@ -22,8 +22,11 @@ HRESULT CGameObjectComp::Initialize_Prototype(void* Arg)
 HRESULT CGameObjectComp::Initialize_Prototype(FSerialData& InputData)
 {
     string strPrototypeName = "";
+
     InputData.Get_Data("ProtoName", strPrototypeName);
     m_strPrototypeName = ConvertToWstring(strPrototypeName);
+    InputData.Get_Data("Name", strPrototypeName);
+    Set_Name(ConvertToWstring(strPrototypeName));
 
     return S_OK;
 }
@@ -31,8 +34,11 @@ HRESULT CGameObjectComp::Initialize_Prototype(FSerialData& InputData)
 HRESULT CGameObjectComp::Initialize(FSerialData& InputData)
 {
     string strPrototypeName = "";
+
     InputData.Get_Data("ProtoName", strPrototypeName);
     m_strPrototypeName = ConvertToWstring(strPrototypeName);
+    InputData.Get_Data("Name", strPrototypeName);
+    Set_Name(ConvertToWstring(strPrototypeName));
 
     return S_OK;
 }
@@ -42,6 +48,7 @@ FSerialData CGameObjectComp::SerializeData_Prototype()
     FSerialData Data;
 
     Data.Add_Member("ComponentID", 0U);
+    Data.Add_MemberString("Name", ConvertToString(Get_Name()));
     Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
 
     return Data;
@@ -52,6 +59,7 @@ FSerialData CGameObjectComp::SerializeData()
     FSerialData Data;
 
     Data.Add_Member("ComponentID", 0U);
+    Data.Add_MemberString("Name", ConvertToString(Get_Name()));
     Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
 
     return Data;

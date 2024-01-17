@@ -16,7 +16,11 @@ enum class EObjectIDExt : _uint
 	Horokko,
 	Fingerii,
 	Balfura,
-	StaticObject
+	StaticObject,
+	DynamicCamera,
+	Item_Deflector,
+	ItemChest,
+	SkyBox,
 };
 
 template <_uint T>

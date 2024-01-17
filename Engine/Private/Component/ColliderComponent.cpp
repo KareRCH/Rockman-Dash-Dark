@@ -11,6 +11,8 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     : Base(rhs)
     , m_iCollisionLayer_Flag(rhs.m_iCollisionLayer_Flag)
     , m_iCollisionMask_Flag(rhs.m_iCollisionMask_Flag)
+    , m_pEffect(rhs.m_pEffect)
+    , m_pBatch(rhs.m_pBatch)
 {
     // 충돌체 깊은 복사
     switch (rhs.m_pCollisionShape->Get_Type())
@@ -150,34 +152,6 @@ FSerialData CColliderComponent::SerializeData_Prototype()
     FSerialData Data = SUPER::SerializeData_Prototype();
 
     Data.Add_Member("ComponentID", g_ClassID);
-
-    switch (m_pCollisionShape->Get_Type())
-    {
-    case ECollisionType::Sphere:
-        Data.Add_MemberString("ProtoName", "Prototype_Collider_Sphere");
-        break;
-    case ECollisionType::Box:
-        Data.Add_MemberString("ProtoName", "Prototype_Collider_Box");
-        break;
-    case ECollisionType::Capsule:
-        Data.Add_MemberString("ProtoName", "Prototype_Collider_Capsule");
-        break;
-    case ECollisionType::Plane:
-        Data.Add_MemberString("ProtoName", "Prototype_Collider_Plane");
-        break;
-    case ECollisionType::Line:
-        Data.Add_MemberString("ProtoName", "Prototype_Collider_Line");
-        break;
-    case ECollisionType::Ray:
-        Data.Add_MemberString("ProtoName", "Prototype_Collider_Ray");
-        break;
-    case ECollisionType::Triangle:
-        Data.Add_MemberString("ProtoName", "Prototype_Collider_Triangle");
-        break;
-    case ECollisionType::OBB:
-        Data.Add_MemberString("ProtoName", "Prototype_Collider_OBB");
-        break;
-    }
     Data.Add_Member("CollisionType", ECast(m_pCollisionShape->Get_Type()));
 
     return Data;
@@ -291,6 +265,8 @@ HRESULT CColliderComponent::Initialize(ECollisionType eType)
 
 HRESULT CColliderComponent::Initialize(FSerialData& InputData)
 {
+    if (FAILED(__super::Initialize(InputData)))
+        return E_FAIL;
 
     return S_OK;
 }

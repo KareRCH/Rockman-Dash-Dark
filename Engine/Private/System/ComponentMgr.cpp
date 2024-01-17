@@ -1,6 +1,7 @@
 #include "System/ComponentMgr.h"
 
 #include "Component/Component.h"
+#include "Utility/RapidJsonSerial.h"
 
 HRESULT CComponentMgr::Initialize()
 {
@@ -62,6 +63,22 @@ CComponent* CComponentMgr::Clone_Prototype(const wstring& strProtoKey, void* pAr
     if (nullptr == pComponent)
         return nullptr;
     
+    return pComponent;
+}
+
+CComponent* CComponentMgr::Clone_Prototype(const wstring& strProtoKey, FSerialData& InputData)
+{
+    // 프로토타입이될 인스턴스를 찾아 복사한 인스턴스를 반환한다.
+    CComponent* pPrototype = Find_Prototype(strProtoKey);
+
+    if (nullptr == pPrototype)
+        return nullptr;
+
+    CComponent* pComponent = pPrototype->Clone(InputData);
+
+    if (nullptr == pComponent)
+        return nullptr;
+
     return pComponent;
 }
 

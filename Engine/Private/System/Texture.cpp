@@ -93,6 +93,7 @@ HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const _uint iNumTex
 		file.close();
 	}
 
+	CoUninitialize();
 	HRESULT hr = S_OK;
 	hr = CoInitialize(nullptr);
 	if (FAILED(hr))
