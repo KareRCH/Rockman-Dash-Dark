@@ -273,7 +273,7 @@ public:
 		_matrix matRotZ = XMMatrixRotationZ(vRot.z);
 		_matrix matTranslate = XMMatrixTranslationFromVector(Get_PositionVector());
 
-		XMStoreFloat4x4(&m_matTransform, matScale * matRotZ * matRotY * matRotX * matTranslate);
+		XMStoreFloat4x4(&m_matTransform, matScale * matRotZ * matRotX * matRotY * matTranslate);
 		m_vRotation = vRot;
 	}
 	void Set_RotationFixedX(const _float fX)

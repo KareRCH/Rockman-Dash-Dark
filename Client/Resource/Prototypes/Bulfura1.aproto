@@ -1,6 +1,6 @@
 {
     "Name": "ReaverBot_Balfura",
-    "ProtoName": "7",
+    "ProtoName": "Balfura1",
     "ClassID": 10003,
     "StateFlag": 52,
     "PriorityTick": 0.0,
@@ -16,9 +16,14 @@
     "ScaleZ": 1.0,
     "Components": [
         {
+            "ComponentID": 9,
+            "Name": "TeamAgentComp",
+            "ProtoName": ""
+        },
+        {
             "ComponentID": 2,
             "Name": "Model",
-            "ProtoName": "1",
+            "ProtoName": "BalfuraModel",
             "PosX": 0.0,
             "PosY": 0.0,
             "PosZ": 0.0,
@@ -40,7 +45,7 @@
         {
             "ComponentID": 1,
             "Name": "ColliderComp",
-            "ProtoName": "Prototype_Collider_OBB",
+            "ProtoName": "BalfuraCollider",
             "PosX": 0.0,
             "PosY": 0.0,
             "PosZ": 0.0,

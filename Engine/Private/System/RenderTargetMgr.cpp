@@ -146,6 +146,16 @@ HRESULT CRenderTargetMgr::Add_MRT(const wstring& strMRTTag, const wstring& strTa
 	return S_OK;
 }
 
+HRESULT CRenderTargetMgr::Resize_RenderTargets(_uint iResizeWidth, _uint iResizeHeight)
+{
+	for (auto iter = m_RenderTargets.begin(); iter != m_RenderTargets.end(); ++iter)
+	{
+		(*iter).second->Resize_RenderTarget(iResizeWidth, iResizeHeight);
+	}
+
+	return S_OK;
+}
+
 CRenderTarget* CRenderTargetMgr::Find_RenderTarget(const wstring& strTargetTag)
 {
 	auto	iter = m_RenderTargets.find(strTargetTag);

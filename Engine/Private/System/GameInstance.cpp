@@ -1364,6 +1364,14 @@ HRESULT CGameInstance::Bind_RenderTarget_ShaderResource(const wstring& strTarget
 	return m_pRenderTargetMgr->Bind_ShaderResource(strTargetTag, pEffect, pConstantName);
 }
 
+HRESULT CGameInstance::Resize_RenderTargets(_uint iResizeWidth, _uint iResizeHeight)
+{
+	if (nullptr == m_pRenderTargetMgr)
+		return E_FAIL;
+
+	return m_pRenderTargetMgr->Resize_RenderTargets(iResizeWidth, iResizeHeight);
+}
+
 
 
 #ifdef _DEBUG

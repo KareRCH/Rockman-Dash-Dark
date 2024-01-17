@@ -95,6 +95,8 @@ HRESULT CMainApp::Initialize()
 
 	m_pGI->Open_Level(0, CLevel_MapTool::Create());
 
+	m_pGI->Toggle_Deferred();
+
 	return S_OK;
 }
 

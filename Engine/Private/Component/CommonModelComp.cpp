@@ -31,9 +31,12 @@ CCommonModelComp::CCommonModelComp(const CCommonModelComp& rhs)
 		Safe_AddRef(m_pMaterialComps[i]);
 	}
 	
-	NULL_CHECK(m_pSkeletalComp = Cast<CSkeletalComponent*>(rhs.m_pSkeletalComp->Clone()));
-	NULL_CHECK(m_pAnimationComp = Cast<CAnimationComponent*>(rhs.m_pAnimationComp->Clone()));
-	m_pAnimationComp->Bind_BoneGroup(m_pSkeletalComp->Get_BoneGroup());
+	if (m_eModelType == TYPE_ANIM)
+	{
+		NULL_CHECK(m_pSkeletalComp = Cast<CSkeletalComponent*>(rhs.m_pSkeletalComp->Clone()));
+		NULL_CHECK(m_pAnimationComp = Cast<CAnimationComponent*>(rhs.m_pAnimationComp->Clone()));
+		m_pAnimationComp->Bind_BoneGroup(m_pSkeletalComp->Get_BoneGroup());
+	}
 }
 
 HRESULT CCommonModelComp::Initialize_Prototype(void* Arg)
