@@ -1,6 +1,7 @@
 {
     "Name": "ReaverBot_Fingerii",
-    "ProtoName": "",
+    "ProtoName": "Fingerii1",
+    "ClassID": 10002,
     "StateFlag": 52,
     "PriorityTick": 0.0,
     "PriorityRender": 0.0,
@@ -16,11 +17,13 @@
     "Components": [
         {
             "ComponentID": 9,
+            "Name": "TeamAgentComp",
             "ProtoName": ""
         },
         {
             "ComponentID": 2,
-            "ProtoName": "",
+            "Name": "Model",
+            "ProtoName": "FingeriiModel",
             "PosX": 0.0,
             "PosY": 0.0,
             "PosZ": 0.0,
@@ -41,9 +44,10 @@
         },
         {
             "ComponentID": 1,
-            "ProtoName": "",
+            "Name": "ColliderComp",
+            "ProtoName": "FingeriiColliderComp",
             "PosX": 0.0,
-            "PosY": 2.0,
+            "PosY": 2.5999999046325684,
             "PosZ": 0.0,
             "RotX": -0.0,
             "RotY": 0.0,
@@ -52,10 +56,9 @@
             "ScaleY": 4.0,
             "ScaleZ": 1.2000000476837158,
             "CollisionType": 2,
-            "CollisionLayer": 1,
-            "CollisionMask": 55
+            "CollisionLayer": 0,
+            "CollisionMask": 0
         }
     ],
-    "ClassID": 10002,
     "HP": 10.0
 }

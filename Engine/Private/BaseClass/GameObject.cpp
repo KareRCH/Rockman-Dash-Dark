@@ -100,6 +100,11 @@ HRESULT CGameObject::Initialize(void* Arg)
 
 HRESULT CGameObject::Initialize(FSerialData& InputData)
 {
+	string strName = "";
+	if (FAILED(InputData.Get_Data("Name", strName)))
+		return E_FAIL;
+	m_strName = ConvertToWstring(strName);
+
 	_float3 vPos = {}, vRot = {}, vScale = {};
 	if (FAILED(InputData.Get_Data("PosX", vPos.x)))
 		return E_FAIL;

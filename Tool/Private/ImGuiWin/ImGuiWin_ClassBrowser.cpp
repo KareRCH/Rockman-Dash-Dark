@@ -11,6 +11,7 @@
 #include "GameObject/ReaverBot_Balfura.h"
 #include "GameObject/ReaverBot_Fingerii.h"
 #include "GameObject/ReaverBot_Horokko.h"
+#include "GameObject/DynamicCamera.h"
 
 HRESULT CImGuiWin_ClassBrowser::Initialize()
 {
@@ -95,7 +96,7 @@ void CImGuiWin_ClassBrowser::Layout_Browser(const _float& fTimeDelta)
         {
             m_iSelected_Object = iIndex;
         }
-        if (ImGui::Selectable(u8"7. Balfura1", (m_iSelected_Object == ++iIndex), eFlag))
+        if (ImGui::Selectable(u8"7. DynamicCamera", (m_iSelected_Object == ++iIndex), eFlag))
         {
             m_iSelected_Object = iIndex;
         }
@@ -145,6 +146,9 @@ void CImGuiWin_ClassBrowser::Create_Object()
         break;
     case 6:
         GI()->Add_GameObject(m_pGameObject = CItemChest::Create());
+        break;
+    case 7:
+        GI()->Add_GameObject(m_pGameObject = CDynamicCamera::Create());
         break;
     }
 

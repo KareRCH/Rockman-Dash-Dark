@@ -255,6 +255,7 @@ public:		// 컴포넌트 매니저
 	HRESULT				Initialize_ComponentMgr();
 	HRESULT				Add_PrototypeComp(const wstring& strTag, const wstring& strProtoKey, class CComponent* pPrototype);
 	class CComponent*	Clone_PrototypeComp(const wstring& strProtoKey, void* pArg = nullptr);
+	CComponent*			Clone_PrototypeComp(const wstring& strProtoKey, FSerialData& InputData);
 	class CComponent*	Reference_PrototypeComp(const wstring& strProtoKey);
 	void				Clear_PrototypeComps(const wstring& strContainTag);
 #pragma endregion

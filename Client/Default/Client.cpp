@@ -97,13 +97,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            if (GI() && g_iResizeWidth != 0 && g_iResizeHeight != 0)
+            /*if (GI() && g_iResizeWidth != 0 && g_iResizeHeight != 0)
             {
                 GI()->Resize_SwapChain(g_iResizeWidth, g_iResizeHeight);
                 GI()->Regist_RenderTarget(0);
                 GI()->Regist_RenderTarget(1);
                 GI()->Bind_RenderTargetsOnDevice();
-            }
+            }*/
 
             ::GameInstance()->Tick_Timer(L"Timer_Immediate");
 

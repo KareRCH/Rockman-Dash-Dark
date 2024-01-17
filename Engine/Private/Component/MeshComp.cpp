@@ -6,7 +6,9 @@
 
 CMeshComp::CMeshComp(const CMeshComp& rhs)
     : Base(rhs)
+	, m_pMeshData(rhs.m_pMeshData)
 {
+	Safe_AddRef(m_pMeshData);
 }
 
 HRESULT CMeshComp::Initialize_Prototype(void* Arg)

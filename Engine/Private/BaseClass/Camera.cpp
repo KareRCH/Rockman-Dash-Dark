@@ -25,9 +25,23 @@ HRESULT CCamera::Initialize_Prototype()
     return S_OK;
 }
 
+HRESULT CCamera::Initialize_Prototype(FSerialData& InputData)
+{
+    FAILED_CHECK_RETURN(__super::Initialize_Prototype(InputData), E_FAIL);
+
+    return S_OK;
+}
+
 HRESULT CCamera::Initialize(void* Arg)
 {
     FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
+
+    return S_OK;
+}
+
+HRESULT CCamera::Initialize(FSerialData& InputData)
+{
+    FAILED_CHECK_RETURN(__super::Initialize(InputData), E_FAIL);
 
     return S_OK;
 }

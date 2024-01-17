@@ -11,6 +11,8 @@ CComponent::CComponent()
 CComponent::CComponent(const CComponent& rhs)
 	: m_bIsCloned(true)
 {
+	NULL_CHECK(m_pGI = rhs.m_pGI);
+	Safe_AddRef(m_pGI);
 }
 
 void CComponent::Free()

@@ -15,11 +15,25 @@ CCommonModelComp::CCommonModelComp()
 CCommonModelComp::CCommonModelComp(const CCommonModelComp& rhs)
     : Base(rhs)
 	, m_pEffectComp(rhs.m_pEffectComp)
-	, m_pAnimationComp(rhs.m_pAnimationComp)
 	, m_pMeshComps(rhs.m_pMeshComps)
 	, m_pMaterialComps(rhs.m_pMaterialComps)
+	, m_iNumMeshes(rhs.m_iNumMeshes)
+	, m_iNumMaterials(rhs.m_iNumMaterials)
+	, m_eModelType(rhs.m_eModelType)
 {
+	Safe_AddRef(m_pEffectComp);
+	for (_uint i = 0; i < m_iNumMeshes; i++)
+	{
+		Safe_AddRef(m_pMeshComps[i]);
+	}
+	for (_uint i = 0; i < m_iNumMaterials; i++)
+	{
+		Safe_AddRef(m_pMaterialComps[i]);
+	}
+	
 	NULL_CHECK(m_pSkeletalComp = Cast<CSkeletalComponent*>(rhs.m_pSkeletalComp->Clone()));
+	NULL_CHECK(m_pAnimationComp = Cast<CAnimationComponent*>(rhs.m_pAnimationComp->Clone()));
+	m_pAnimationComp->Bind_BoneGroup(m_pSkeletalComp->Get_BoneGroup());
 }
 
 HRESULT CCommonModelComp::Initialize_Prototype(void* Arg)
@@ -74,10 +88,8 @@ HRESULT CCommonModelComp::Initialize(void* Arg)
 
 HRESULT CCommonModelComp::Initialize(FSerialData& InputData)
 {
-	//if (FAILED(__super::Initialize(InputData)))
-		//return E_FAIL;
-
-	
+	if (FAILED(__super::Initialize(InputData)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -194,8 +206,7 @@ FSerialData CCommonModelComp::SerializeData_Prototype()
 {
 	FSerialData Data = SUPER::SerializeData_Prototype();
 
-	Data.Add_Member("ComponentID", 2);
-	Data.Add_MemberString("ProtoName", ConvertToString(m_strPrototypeName));
+	Data.Add_Member("ComponentID", g_ClassID);
 	Data.Add_Member("ModelType", Cast<_uint>(m_eModelType));
 	Data.Add_MemberString("ModelPath", ConvertToString(m_strModelPath));
 	Data.Add_MemberString("EffectPath", ConvertToString(m_strEffectPath));
@@ -207,7 +218,7 @@ FSerialData CCommonModelComp::SerializeData()
 {
 	FSerialData Data = SUPER::SerializeData();
 
-	Data.Add_Member("ComponentID", 2);
+	Data.Add_Member("ComponentID", g_ClassID);
 	Data.Add_Member("ModelType", Cast<_uint>(m_eModelType));
 	Data.Add_MemberString("ModelPath", ConvertToString(m_strModelPath));
 	Data.Add_MemberString("EffectPath", ConvertToString(m_strEffectPath));

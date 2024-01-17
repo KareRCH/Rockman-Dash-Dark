@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Define.h"
-#include "BaseClass/GameObject.h"
+#include "GameObject/Character_Common.h"
 
 BEGIN(Engine)
 
@@ -11,9 +11,9 @@ END
 
 BEGIN(Client)
 
-class CItemChest : public Engine::CGameObject
+class CItemChest : public CCharacter_Common
 {
-	DERIVED_CLASS(CGameObject, CItemChest)
+	DERIVED_CLASS(CCharacter_Common, CItemChest)
 
 protected:
 	explicit CItemChest();
@@ -22,26 +22,30 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize_Prototype(const _float3 vPos);
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
-	virtual HRESULT Initialize(const _float3 vPos);
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;
 	virtual HRESULT	Render() override;
 
 public:
-	static CItemChest* Create();
-	static CItemChest* Create(const _float3 vPos);
-	CGameObject* Clone(void* Arg = nullptr);
+	static	CItemChest* Create();
+	static	CItemChest* Create(FSerialData& InputData);
+	virtual CGameObject* Clone(void* Arg = nullptr);
+	virtual CGameObject* Clone(FSerialData& InputData);
 
 protected:
 	virtual void	Free() override;
 
 private:
 	HRESULT	Initialize_Component();
+	// 시리얼 데이터로 초기화시 사용
+	HRESULT	Initialize_Component(FSerialData& InputData);
 
 public:
+	virtual FSerialData SerializeData_Prototype() override;
 	virtual FSerialData SerializeData() override;
 
 private:

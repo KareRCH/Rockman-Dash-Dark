@@ -6,7 +6,6 @@
 
 CSkeletalComponent::CSkeletalComponent(const CSkeletalComponent& rhs)
     : Base(rhs)
-    , m_pBoneGroup(rhs.m_pBoneGroup)
 {
     m_pBoneGroup = rhs.m_pBoneGroup->Clone();
 }

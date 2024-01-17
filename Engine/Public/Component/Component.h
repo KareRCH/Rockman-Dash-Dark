@@ -2,6 +2,7 @@
 
 #include "Base.h"
 #include "System/GameInstance.h"
+#include "Utility/RapidJsonSerial.h"
 
 BEGIN(Engine)
 
@@ -24,6 +25,7 @@ public:
 
 public:
 	virtual CComponent* Clone(void* Arg = nullptr) PURE;
+	virtual CComponent* Clone(FSerialData& InputData) { return nullptr; };
 
 protected:
 	virtual void		Free();

@@ -1226,6 +1226,14 @@ CComponent* CGameInstance::Clone_PrototypeComp(const wstring& strProtoKey, void*
 	return m_pComponentMgr->Clone_Prototype(strProtoKey, pArg);
 }
 
+CComponent* CGameInstance::Clone_PrototypeComp(const wstring& strProtoKey, FSerialData& InputData)
+{
+	if (nullptr == m_pComponentMgr)
+		return nullptr;
+
+	return m_pComponentMgr->Clone_Prototype(strProtoKey, InputData);
+}
+
 CComponent* CGameInstance::Reference_PrototypeComp(const wstring& strProtoKey)
 {
 	if (nullptr == m_pComponentMgr)

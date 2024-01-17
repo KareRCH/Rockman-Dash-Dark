@@ -44,6 +44,14 @@ HRESULT CDynamicCamera::Initialize_Prototype()
     return S_OK;
 }
 
+HRESULT CDynamicCamera::Initialize_Prototype(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize_Prototype(InputData)))
+        return E_FAIL;
+
+    return S_OK;
+}
+
 HRESULT CDynamicCamera::Initialize(void* Arg)
 {
     FAILED_CHECK_RETURN(__super::Initialize(), E_FAIL);
@@ -51,7 +59,13 @@ HRESULT CDynamicCamera::Initialize(void* Arg)
     return S_OK;
 }
 
+HRESULT CDynamicCamera::Initialize(FSerialData& InputData)
+{
+    if (FAILED(__super::Initialize(InputData)))
+        return E_FAIL;
 
+    return S_OK;
+}
 
 void CDynamicCamera::Priority_Tick(const _float& fTimeDelta)
 {
@@ -137,6 +151,19 @@ CDynamicCamera* CDynamicCamera::Create()
     return pInstance;
 }
 
+CDynamicCamera* CDynamicCamera::Create(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass();
+
+    if (FAILED(pInstance->Initialize_Prototype(InputData)))
+    {
+        MSG_BOX("DynamicCamera Create Failed");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
 CGameObject* CDynamicCamera::Clone(void* Arg)
 {
     ThisClass* pInstance = new ThisClass(*this);
@@ -147,7 +174,18 @@ CGameObject* CDynamicCamera::Clone(void* Arg)
         Safe_Release(pInstance);
     }
 
-    /* Arg Ã³¸® */
+    return Cast<CGameObject*>(pInstance);
+}
+
+CGameObject* CDynamicCamera::Clone(FSerialData& InputData)
+{
+    ThisClass* pInstance = new ThisClass(*this);
+
+    if (FAILED(pInstance->Initialize(InputData)))
+    {
+        MSG_BOX("DynamicCamera Create Failed");
+        Safe_Release(pInstance);
+    }
 
     return Cast<CGameObject*>(pInstance);
 }
@@ -159,7 +197,16 @@ void CDynamicCamera::Free()
     Safe_Release(m_pTarget);
 }
 
+FSerialData CDynamicCamera::SerializeData_Prototype()
+{
+    FSerialData Data = SUPER::SerializeData_Prototype();
+
+    return Data;
+}
+
 FSerialData CDynamicCamera::SerializeData()
 {
-    return FSerialData();
+    FSerialData Data = SUPER::SerializeData();
+
+    return Data;
 }

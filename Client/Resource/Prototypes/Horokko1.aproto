@@ -1,6 +1,7 @@
 {
     "Name": "ReaverBot_Horokko",
-    "ProtoName": "",
+    "ProtoName": "Horokko1",
+    "ClassID": 10001,
     "StateFlag": 52,
     "PriorityTick": 0.0,
     "PriorityRender": 0.0,
@@ -16,11 +17,13 @@
     "Components": [
         {
             "ComponentID": 9,
+            "Name": "TeamAgentComp",
             "ProtoName": ""
         },
         {
             "ComponentID": 2,
-            "ProtoName": "",
+            "Name": "Model",
+            "ProtoName": "HorokkoModel",
             "PosX": 0.0,
             "PosY": 0.0,
             "PosZ": 0.0,
@@ -41,7 +44,8 @@
         },
         {
             "ComponentID": 1,
-            "ProtoName": "Prototype_Collider_Capsule",
+            "Name": "ColliderComp",
+            "ProtoName": "HorokkoCollider",
             "PosX": 0.0,
             "PosY": 0.5,
             "PosZ": 0.0,
@@ -54,6 +58,5 @@
             "CollisionType": 2
         }
     ],
-    "ClassID": 10001,
     "HP": 10.0
 }
