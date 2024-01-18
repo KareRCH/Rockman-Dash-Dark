@@ -143,6 +143,12 @@ HRESULT CPlayer::Initialize(FSerialData& InputData)
     FAILED_CHECK_RETURN(__super::Initialize(InputData), E_FAIL);
     FAILED_CHECK_RETURN(Initialize_Component(InputData), E_FAIL);
 
+    _float2 vSpeed = {};
+    InputData.Get_Data("MoveSpeed", vSpeed.x);
+    InputData.Get_Data("JumpSpeed", vSpeed.y);
+    m_vMoveSpeed = m_vMaxMoveSpeed = { vSpeed.x, vSpeed.y, vSpeed.x };
+    m_vAcceleration = { 100.f, g_fGravity, 100.f };
+
     return S_OK;
 }
 
@@ -349,10 +355,11 @@ HRESULT CPlayer::Initialize_Component(FSerialData& InputData)
     FAILED_CHECK_RETURN(Add_Component(L"Navigation",
         m_pNaviComp = Cast<CNavigationComponent*>(GI()->Clone_PrototypeComp(TEXT("Prototype_Component_Navigation"), VPCast(&tDesc)))), E_FAIL);
 
+    GI()->Add_GameObject(CUI_Player::Create());
 
     TeamAgentComp().Set_TeamID(ETEAM_PLAYER);
 
-    return E_FAIL;
+    return S_OK;
 }
 
 void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)

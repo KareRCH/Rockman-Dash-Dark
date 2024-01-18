@@ -423,12 +423,32 @@ void CImGuiWin_MapTool::Save_Level(const wstring& strSavePath)
     {
         auto ObjData = vecGameObjects[i]->SerializeData_Prototype();
 
+        string strProtoName;
+        if (FAILED(ObjData.Get_Data("ProtoName", strProtoName)))
+            return;
+
+        if (strProtoName.empty())
+        {
+            MSG_BOX("프로토 이름이 비어있음");
+            return;
+        }
+
         _uint iNumComponents = ObjData.Get_ArraySize("Components");
         for (_uint j = 0; j < iNumComponents; j++)
         {
             FSerialData ComponentData;
             ObjData.Get_ObjectFromArray("Components", j, ComponentData);
             PrototypeData.Pushback_Member("Components", ComponentData);
+
+            string strCompProtoName;
+            if (FAILED(ComponentData.Get_Data("ProtoName", strCompProtoName)))
+                return;
+
+            if (strCompProtoName.empty())
+            {
+                MSG_BOX("프로토 이름이 비어있음");
+                return;
+            }
         }
 
         PrototypeData.Pushback_Member("Objects", ObjData);

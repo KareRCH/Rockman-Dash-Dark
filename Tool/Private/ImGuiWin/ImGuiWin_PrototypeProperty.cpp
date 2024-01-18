@@ -71,11 +71,13 @@ void CImGuiWin_PrototypeProperty::Layout_Property()
     for (_uint i = 0; i < iNumComponents; i++)
     {
         // 상위 컴포넌트 설정
-        auto pSceneComp = m_pGameObject->Get_Component<CSceneComponent>(i);
-        if (nullptr != pSceneComp)
+        auto pGameObjectComp = m_pGameObject->Get_Component<CGameObjectComp>(i);
+        if (nullptr != pGameObjectComp)
         {
             ImGui::Separator();
-            Layout_SceneCompProperty(pSceneComp);
+            ImGui::Separator();
+            ImGui::Separator();
+            Layout_GameObjectCompProperty(pGameObjectComp);
         }
     }
 }
@@ -255,21 +257,12 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
 
 }
 
-void CImGuiWin_PrototypeProperty::Layout_SceneCompProperty(CSceneComponent* pComp)
+void CImGuiWin_PrototypeProperty::Layout_GameObjectCompProperty(CGameObjectComp* pComp)
 {
-    _float3 vPos = {}, vRot = {}, vScale = {};
-
-    vPos = pComp->Transform().Get_PositionFloat3();
-    vRot = pComp->Transform().Get_RotationFixedFloat3();
-    vRot.x = XMConvertToDegrees(vRot.x);
-    vRot.y = XMConvertToDegrees(vRot.y);
-    vRot.z = XMConvertToDegrees(vRot.z);
-    vScale = pComp->Transform().Get_ScaleFloat3();
     string strName = ConvertToString(pComp->Get_Name());
     string strProp = "";
     _char szName[MAX_PATH];
 
-    
     ImGui::Button(u8"이름");
     ImGui::SameLine();
     strcpy_s(szName, strName.c_str());
@@ -287,6 +280,29 @@ void CImGuiWin_PrototypeProperty::Layout_SceneCompProperty(CSceneComponent* pCom
     {
         pComp->Set_ProtoName(ConvertToWstring(szProtoName));
     }
+
+    // 상위 컴포넌트 설정
+    auto pSceneComp = DynCast<CSceneComponent*>(pComp);
+    if (nullptr != pSceneComp)
+    {
+        ImGui::Separator();
+        Layout_SceneCompProperty(pSceneComp);
+    }
+}
+
+void CImGuiWin_PrototypeProperty::Layout_SceneCompProperty(CSceneComponent* pComp)
+{
+    _float3 vPos = {}, vRot = {}, vScale = {};
+
+    vPos = pComp->Transform().Get_PositionFloat3();
+    vRot = pComp->Transform().Get_RotationFixedFloat3();
+    vRot.x = XMConvertToDegrees(vRot.x);
+    vRot.y = XMConvertToDegrees(vRot.y);
+    vRot.z = XMConvertToDegrees(vRot.z);
+    vScale = pComp->Transform().Get_ScaleFloat3();
+    string strName = ConvertToString(pComp->Get_Name());
+    string strProp = "";
+    _char szName[MAX_PATH];
 
     ImGui::Text(u8"위치");
     ImGui::Button("X##ProtoPosX");

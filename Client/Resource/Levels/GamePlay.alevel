@@ -1,17 +1,413 @@
 {
     "Name": "GamePlay",
     "Prototypes": {
+        "Components": [
+            {
+                "ComponentID": 4,
+                "Name": "TerrainModelComp",
+                "ProtoName": "TerrainModel",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "MaxWidth": 100,
+                "HeightMapPath": "TestHeight.png",
+                "DiffuseTexture1": "Textures\\RockmanDash2\\Terrain.png",
+                "MaskTexture1": ""
+            },
+            {
+                "ComponentID": 9,
+                "Name": "TeamAgentComp",
+                "ProtoName": "PlayerTeamAgent"
+            },
+            {
+                "ComponentID": 0,
+                "Name": "CameraPivot",
+                "ProtoName": "PlayerCamPivot",
+                "PosX": 0.0,
+                "PosY": 1.2999999523162842,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "PlayerModel",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.10000000149011612,
+                "ScaleY": 0.10000000149011612,
+                "ScaleZ": 0.10000000149011612,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 1,
+                "ModelPath": "Model/Character/RockVolnutt/RockVolnutt.amodel",
+                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "PlayerCollider",
+                "PosX": 0.0,
+                "PosY": 0.6499999761581421,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.5,
+                "ScaleY": 0.800000011920929,
+                "ScaleZ": 0.5,
+                "CollisionType": 2,
+                "CollisionLayer": 1,
+                "CollisionMask": 61
+            },
+            {
+                "ComponentID": 8,
+                "Name": "CloudStation",
+                "ProtoName": "PlayerCloud"
+            },
+            {
+                "ComponentID": 9,
+                "Name": "TeamAgentComp",
+                "ProtoName": "EnemyTeamAgent"
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "HorokkoModel",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.07999999821186066,
+                "ScaleY": 0.07999999821186066,
+                "ScaleZ": 0.07999999821186066,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 1,
+                "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
+                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "HorokkoCollider",
+                "PosX": 0.0,
+                "PosY": 0.5,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.800000011920929,
+                "ScaleY": 0.25,
+                "ScaleZ": 0.800000011920929,
+                "CollisionType": 2,
+                "CollisionLayer": 1,
+                "CollisionMask": 55
+            },
+            {
+                "ComponentID": 9,
+                "Name": "TeamAgentComp",
+                "ProtoName": "EnemyTeamAgent"
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "HorokkoModel",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.07999999821186066,
+                "ScaleY": 0.07999999821186066,
+                "ScaleZ": 0.07999999821186066,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 1,
+                "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
+                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "HorokkoCollider",
+                "PosX": 0.0,
+                "PosY": 0.5,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.800000011920929,
+                "ScaleY": 0.25,
+                "ScaleZ": 0.800000011920929,
+                "CollisionType": 2,
+                "CollisionLayer": 1,
+                "CollisionMask": 55
+            },
+            {
+                "ComponentID": 9,
+                "Name": "TeamAgentComp",
+                "ProtoName": "EnemyTeamAgent"
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "FingeriiModel",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.20000000298023224,
+                "ScaleY": 0.20000000298023224,
+                "ScaleZ": 0.20000000298023224,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 1,
+                "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
+                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "FingeriiCollider",
+                "PosX": 0.0,
+                "PosY": 2.5999999046325684,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.2000000476837158,
+                "ScaleY": 4.0,
+                "ScaleZ": 1.2000000476837158,
+                "CollisionType": 2,
+                "CollisionLayer": 1,
+                "CollisionMask": 55
+            },
+            {
+                "ComponentID": 9,
+                "Name": "TeamAgentComp",
+                "ProtoName": "EnemyTeamAgent"
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "FingeriiModel",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.20000000298023224,
+                "ScaleY": 0.20000000298023224,
+                "ScaleZ": 0.20000000298023224,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 1,
+                "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
+                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "FingeriiCollider",
+                "PosX": 0.0,
+                "PosY": 2.5999999046325684,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.2000000476837158,
+                "ScaleY": 4.0,
+                "ScaleZ": 1.2000000476837158,
+                "CollisionType": 2,
+                "CollisionLayer": 1,
+                "CollisionMask": 55
+            },
+            {
+                "ComponentID": 9,
+                "Name": "TeamAgentComp",
+                "ProtoName": "BalfuraTeamAgent"
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "BalfuraModel",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.3199999928474426,
+                "ScaleY": 0.3199999928474426,
+                "ScaleZ": 0.3199999928474426,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 1,
+                "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
+                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "BalfuraCollider",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "CollisionType": 7,
+                "CollisionLayer": 1,
+                "CollisionMask": 55
+            },
+            {
+                "ComponentID": 9,
+                "Name": "TeamAgentComp",
+                "ProtoName": "BalfuraTeamAgent"
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "BalfuraModel",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.3199999928474426,
+                "ScaleY": 0.3199999928474426,
+                "ScaleZ": 0.3199999928474426,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 1,
+                "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
+                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "BalfuraCollider",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "CollisionType": 7,
+                "CollisionLayer": 1,
+                "CollisionMask": 55
+            },
+            {
+                "ComponentID": 9,
+                "Name": "TeamAgentComp",
+                "ProtoName": "BalfuraTeamAgent"
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "BalfuraModel",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.3199999928474426,
+                "ScaleY": 0.3199999928474426,
+                "ScaleZ": 0.3199999928474426,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 1,
+                "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
+                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "BalfuraCollider",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "CollisionType": 7,
+                "CollisionLayer": 1,
+                "CollisionMask": 55
+            }
+        ],
         "Objects": [
             {
-                "Name": "ReaverBot_Balfura",
-                "ProtoName": "Balfura1",
-                "ClassID": 10003,
-                "StateFlag": 52,
+                "Name": "Terrain",
+                "ProtoName": "Terrain1",
+                "ClassID": 0,
+                "StateFlag": 60,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 9.927131652832031,
+                "PosX": 0.0,
                 "PosY": 0.0,
-                "PosZ": 12.699885368347168,
+                "PosZ": 0.0,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -20,312 +416,40 @@
                 "ScaleZ": 1.0,
                 "Components": [
                     {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": ""
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "BalfuraModel",
+                        "ComponentID": 4,
+                        "Name": "TerrainModelComp",
+                        "ProtoName": "TerrainModel",
                         "PosX": 0.0,
                         "PosY": 0.0,
                         "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
-                        "ScaleX": 0.3199999928474426,
-                        "ScaleY": 0.3199999928474426,
-                        "ScaleZ": 0.3199999928474426,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "BalfuraCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": -0.0,
-                        "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
-                        "CollisionType": 7,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
-                    }
-                ],
-                "HP": 100.0
-            },
-            {
-                "Name": "ReaverBot_Balfura0",
-                "ProtoName": "Balfura1",
-                "ClassID": 10003,
-                "StateFlag": 52,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 10.863679885864258,
-                "PosY": 0.0,
-                "PosZ": 5.7004570960998535,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": ""
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "BalfuraModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
-                        "ScaleX": 0.3199999928474426,
-                        "ScaleY": 0.3199999928474426,
-                        "ScaleZ": 0.3199999928474426,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "BalfuraCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": -0.0,
-                        "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
-                        "CollisionType": 7,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
-                    }
-                ],
-                "HP": 100.0
-            },
-            {
-                "Name": "ReaverBot_Fingerii",
-                "ProtoName": "Fingerii1",
-                "ClassID": 10002,
-                "StateFlag": 52,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 4.996894359588623,
-                "PosY": 0.0,
-                "PosZ": 9.7174072265625,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": ""
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "FingeriiModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
-                        "ScaleX": 0.20000000298023224,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 0.20000000298023224,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "FingeriiColliderComp",
-                        "PosX": 0.0,
-                        "PosY": 2.5999999046325684,
-                        "PosZ": 0.0,
-                        "RotX": -0.0,
-                        "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.2000000476837158,
-                        "ScaleY": 4.0,
-                        "ScaleZ": 1.2000000476837158,
-                        "CollisionType": 2,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
-                    }
-                ],
-                "HP": 10.0
-            },
-            {
-                "Name": "ReaverBot_Fingerii0",
-                "ProtoName": "Fingerii1",
-                "ClassID": 10002,
-                "StateFlag": 52,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 8.15411376953125,
-                "PosY": 0.0,
-                "PosZ": 7.612094402313232,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": ""
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "FingeriiModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
-                        "ScaleX": 0.20000000298023224,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 0.20000000298023224,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "FingeriiColliderComp",
-                        "PosX": 0.0,
-                        "PosY": 2.5999999046325684,
-                        "PosZ": 0.0,
-                        "RotX": -0.0,
-                        "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.2000000476837158,
-                        "ScaleY": 4.0,
-                        "ScaleZ": 1.2000000476837158,
-                        "CollisionType": 2,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
-                    }
-                ],
-                "HP": 10.0
-            },
-            {
-                "Name": "StaticObject",
-                "ProtoName": "CornerWall1",
-                "ClassID": 10004,
-                "StateFlag": 52,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 3.1112990379333496,
-                "PosY": 0.0,
-                "PosZ": 15.601849555969238,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "CornerWall1Model",
-                        "PosX": 0.0,
-                        "PosY": 3.0,
-                        "PosZ": 0.0,
-                        "RotX": 90.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 0,
-                        "ModelPath": "Model\\Map\\Main\\Wall-Corner.amodel",
-                        "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "CornerWall1Collider",
-                        "PosX": -0.5,
-                        "PosY": 3.0,
-                        "PosZ": 0.5,
                         "RotX": 0.0,
-                        "RotY": -45.0,
+                        "RotY": 0.0,
                         "RotZ": 0.0,
-                        "ScaleX": 6.0,
-                        "ScaleY": 6.0,
-                        "ScaleZ": 0.10000000149011612,
-                        "CollisionType": 7,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "MaxWidth": 100,
+                        "HeightMapPath": "TestHeight.png",
+                        "DiffuseTexture1": "Textures\\RockmanDash2\\Terrain.png",
+                        "MaskTexture1": ""
                     }
                 ]
             },
             {
-                "Name": "StaticObject0",
-                "ProtoName": "CornerWall1",
-                "ClassID": 10004,
+                "Name": "Player",
+                "ProtoName": "Player",
+                "ClassID": 10000,
                 "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 13.150162696838379,
+                "PosX": 19.492820739746094,
                 "PosY": 0.0,
-                "PosZ": 5.167985916137695,
+                "PosZ": 19.304031372070313,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -334,45 +458,72 @@
                 "ScaleZ": 1.0,
                 "Components": [
                     {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "CornerWall1Model",
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "PlayerTeamAgent"
+                    },
+                    {
+                        "ComponentID": 0,
+                        "Name": "CameraPivot",
+                        "ProtoName": "PlayerCamPivot",
                         "PosX": 0.0,
-                        "PosY": 3.0,
+                        "PosY": 1.2999999523162842,
                         "PosZ": 0.0,
-                        "RotX": 90.0,
-                        "RotY": 180.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
                         "RotZ": 0.0,
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
+                        "ScaleZ": 1.0
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "PlayerModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.10000000149011612,
+                        "ScaleY": 0.10000000149011612,
+                        "ScaleZ": 0.10000000149011612,
                         "ActivePasses": [
                             {
                                 "PassNum": 0
                             }
                         ],
-                        "ModelType": 0,
-                        "ModelPath": "Model\\Map\\Main\\Wall-Corner.amodel",
-                        "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/RockVolnutt/RockVolnutt.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
                     },
                     {
                         "ComponentID": 1,
                         "Name": "ColliderComp",
-                        "ProtoName": "CornerWall1Collider",
-                        "PosX": -0.5,
-                        "PosY": 3.0,
-                        "PosZ": 0.5,
+                        "ProtoName": "PlayerCollider",
+                        "PosX": 0.0,
+                        "PosY": 0.6499999761581421,
+                        "PosZ": 0.0,
                         "RotX": 0.0,
-                        "RotY": -45.0,
+                        "RotY": 0.0,
                         "RotZ": 0.0,
-                        "ScaleX": 6.0,
-                        "ScaleY": 6.0,
-                        "ScaleZ": 0.10000000149011612,
-                        "CollisionType": 7,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
+                        "ScaleX": 0.5,
+                        "ScaleY": 0.800000011920929,
+                        "ScaleZ": 0.5,
+                        "CollisionType": 2,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 61
+                    },
+                    {
+                        "ComponentID": 8,
+                        "Name": "CloudStation",
+                        "ProtoName": "PlayerCloud"
                     }
-                ]
+                ],
+                "HP": 100.0,
+                "MoveSpeed": 6.0,
+                "JumpSpeed": 10.0
             },
             {
                 "Name": "ReaverBot_Horokko",
@@ -381,9 +532,9 @@
                 "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 6.833742618560791,
+                "PosX": 23.543617248535156,
                 "PosY": 0.0,
-                "PosZ": 9.127412796020508,
+                "PosZ": 19.654850006103516,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -394,7 +545,7 @@
                     {
                         "ComponentID": 9,
                         "Name": "TeamAgentComp",
-                        "ProtoName": ""
+                        "ProtoName": "EnemyTeamAgent"
                     },
                     {
                         "ComponentID": 2,
@@ -403,9 +554,9 @@
                         "PosX": 0.0,
                         "PosY": 0.0,
                         "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
                         "ScaleX": 0.07999999821186066,
                         "ScaleY": 0.07999999821186066,
                         "ScaleZ": 0.07999999821186066,
@@ -425,15 +576,15 @@
                         "PosX": 0.0,
                         "PosY": 0.5,
                         "PosZ": 0.0,
-                        "RotX": -0.0,
+                        "RotX": 0.0,
                         "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 1.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.800000011920929,
+                        "ScaleY": 0.25,
+                        "ScaleZ": 0.800000011920929,
                         "CollisionType": 2,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
                     }
                 ],
                 "HP": 10.0
@@ -445,9 +596,9 @@
                 "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 3.511186361312866,
+                "PosX": 15.117941856384277,
                 "PosY": 0.0,
-                "PosZ": 12.848855972290039,
+                "PosZ": 20.582883834838867,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -458,7 +609,7 @@
                     {
                         "ComponentID": 9,
                         "Name": "TeamAgentComp",
-                        "ProtoName": ""
+                        "ProtoName": "EnemyTeamAgent"
                     },
                     {
                         "ComponentID": 2,
@@ -467,9 +618,9 @@
                         "PosX": 0.0,
                         "PosY": 0.0,
                         "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
                         "ScaleX": 0.07999999821186066,
                         "ScaleY": 0.07999999821186066,
                         "ScaleZ": 0.07999999821186066,
@@ -489,29 +640,29 @@
                         "PosX": 0.0,
                         "PosY": 0.5,
                         "PosZ": 0.0,
-                        "RotX": -0.0,
+                        "RotX": 0.0,
                         "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 1.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.800000011920929,
+                        "ScaleY": 0.25,
+                        "ScaleZ": 0.800000011920929,
                         "CollisionType": 2,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
                     }
                 ],
                 "HP": 10.0
             },
             {
-                "Name": "ReaverBot_Horokko1",
-                "ProtoName": "Horokko1",
-                "ClassID": 10001,
+                "Name": "ReaverBot_Fingerii",
+                "ProtoName": "Fingerii1",
+                "ClassID": 10002,
                 "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 12.345595359802246,
+                "PosX": 18.32813835144043,
                 "PosY": 0.0,
-                "PosZ": 13.9649019241333,
+                "PosZ": 23.07455825805664,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -522,452 +673,320 @@
                     {
                         "ComponentID": 9,
                         "Name": "TeamAgentComp",
-                        "ProtoName": ""
+                        "ProtoName": "EnemyTeamAgent"
                     },
                     {
                         "ComponentID": 2,
                         "Name": "Model",
-                        "ProtoName": "HorokkoModel",
+                        "ProtoName": "FingeriiModel",
                         "PosX": 0.0,
                         "PosY": 0.0,
                         "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
-                        "ScaleX": 0.07999999821186066,
-                        "ScaleY": 0.07999999821186066,
-                        "ScaleZ": 0.07999999821186066,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.20000000298023224,
+                        "ScaleY": 0.20000000298023224,
+                        "ScaleZ": 0.20000000298023224,
                         "ActivePasses": [
                             {
                                 "PassNum": 0
                             }
                         ],
                         "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
+                        "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
                         "EffectPath": "Runtime/FX_ModelAnim.hlsl"
                     },
                     {
                         "ComponentID": 1,
                         "Name": "ColliderComp",
-                        "ProtoName": "HorokkoCollider",
+                        "ProtoName": "FingeriiCollider",
                         "PosX": 0.0,
-                        "PosY": 0.5,
+                        "PosY": 2.5999999046325684,
                         "PosZ": 0.0,
-                        "RotX": -0.0,
+                        "RotX": 0.0,
                         "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 1.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.2000000476837158,
+                        "ScaleY": 4.0,
+                        "ScaleZ": 1.2000000476837158,
                         "CollisionType": 2,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
                     }
                 ],
                 "HP": 10.0
-            }
-        ],
-        "Components": [
-            {
-                "ComponentID": 9,
-                "Name": "TeamAgentComp",
-                "ProtoName": ""
             },
             {
-                "ComponentID": 2,
-                "Name": "Model",
-                "ProtoName": "BalfuraModel",
-                "PosX": 0.0,
+                "Name": "ReaverBot_Fingerii0",
+                "ProtoName": "Fingerii1",
+                "ClassID": 10002,
+                "StateFlag": 52,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 23.41488265991211,
                 "PosY": 0.0,
-                "PosZ": 0.0,
-                "RotX": 180.0,
-                "RotY": 0.0,
-                "RotZ": 180.0,
-                "ScaleX": 0.3199999928474426,
-                "ScaleY": 0.3199999928474426,
-                "ScaleZ": 0.3199999928474426,
-                "ActivePasses": [
-                    {
-                        "PassNum": 0
-                    }
-                ],
-                "ModelType": 1,
-                "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
-                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-            },
-            {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "BalfuraCollider",
-                "PosX": 0.0,
-                "PosY": 0.0,
-                "PosZ": 0.0,
-                "RotX": -0.0,
-                "RotY": 0.0,
-                "RotZ": -0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "CollisionType": 7,
-                "CollisionLayer": 0,
-                "CollisionMask": 0
-            },
-            {
-                "ComponentID": 9,
-                "Name": "TeamAgentComp",
-                "ProtoName": ""
-            },
-            {
-                "ComponentID": 2,
-                "Name": "Model",
-                "ProtoName": "BalfuraModel",
-                "PosX": 0.0,
-                "PosY": 0.0,
-                "PosZ": 0.0,
-                "RotX": 180.0,
-                "RotY": 0.0,
-                "RotZ": 180.0,
-                "ScaleX": 0.3199999928474426,
-                "ScaleY": 0.3199999928474426,
-                "ScaleZ": 0.3199999928474426,
-                "ActivePasses": [
-                    {
-                        "PassNum": 0
-                    }
-                ],
-                "ModelType": 1,
-                "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
-                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-            },
-            {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "BalfuraCollider",
-                "PosX": 0.0,
-                "PosY": 0.0,
-                "PosZ": 0.0,
-                "RotX": -0.0,
-                "RotY": 0.0,
-                "RotZ": -0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "CollisionType": 7,
-                "CollisionLayer": 0,
-                "CollisionMask": 0
-            },
-            {
-                "ComponentID": 9,
-                "Name": "TeamAgentComp",
-                "ProtoName": ""
-            },
-            {
-                "ComponentID": 2,
-                "Name": "Model",
-                "ProtoName": "FingeriiModel",
-                "PosX": 0.0,
-                "PosY": 0.0,
-                "PosZ": 0.0,
-                "RotX": 180.0,
-                "RotY": 0.0,
-                "RotZ": 180.0,
-                "ScaleX": 0.20000000298023224,
-                "ScaleY": 0.20000000298023224,
-                "ScaleZ": 0.20000000298023224,
-                "ActivePasses": [
-                    {
-                        "PassNum": 0
-                    }
-                ],
-                "ModelType": 1,
-                "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
-                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-            },
-            {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "FingeriiColliderComp",
-                "PosX": 0.0,
-                "PosY": 2.5999999046325684,
-                "PosZ": 0.0,
-                "RotX": -0.0,
-                "RotY": 0.0,
-                "RotZ": -0.0,
-                "ScaleX": 1.2000000476837158,
-                "ScaleY": 4.0,
-                "ScaleZ": 1.2000000476837158,
-                "CollisionType": 2,
-                "CollisionLayer": 0,
-                "CollisionMask": 0
-            },
-            {
-                "ComponentID": 9,
-                "Name": "TeamAgentComp",
-                "ProtoName": ""
-            },
-            {
-                "ComponentID": 2,
-                "Name": "Model",
-                "ProtoName": "FingeriiModel",
-                "PosX": 0.0,
-                "PosY": 0.0,
-                "PosZ": 0.0,
-                "RotX": 180.0,
-                "RotY": 0.0,
-                "RotZ": 180.0,
-                "ScaleX": 0.20000000298023224,
-                "ScaleY": 0.20000000298023224,
-                "ScaleZ": 0.20000000298023224,
-                "ActivePasses": [
-                    {
-                        "PassNum": 0
-                    }
-                ],
-                "ModelType": 1,
-                "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
-                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-            },
-            {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "FingeriiColliderComp",
-                "PosX": 0.0,
-                "PosY": 2.5999999046325684,
-                "PosZ": 0.0,
-                "RotX": -0.0,
-                "RotY": 0.0,
-                "RotZ": -0.0,
-                "ScaleX": 1.2000000476837158,
-                "ScaleY": 4.0,
-                "ScaleZ": 1.2000000476837158,
-                "CollisionType": 2,
-                "CollisionLayer": 0,
-                "CollisionMask": 0
-            },
-            {
-                "ComponentID": 2,
-                "Name": "Model",
-                "ProtoName": "CornerWall1Model",
-                "PosX": 0.0,
-                "PosY": 3.0,
-                "PosZ": 0.0,
-                "RotX": 90.0,
-                "RotY": 180.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "ActivePasses": [
-                    {
-                        "PassNum": 0
-                    }
-                ],
-                "ModelType": 0,
-                "ModelPath": "Model\\Map\\Main\\Wall-Corner.amodel",
-                "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
-            },
-            {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "CornerWall1Collider",
-                "PosX": -0.5,
-                "PosY": 3.0,
-                "PosZ": 0.5,
+                "PosZ": 24.24924659729004,
                 "RotX": 0.0,
-                "RotY": -45.0,
-                "RotZ": 0.0,
-                "ScaleX": 6.0,
-                "ScaleY": 6.0,
-                "ScaleZ": 0.10000000149011612,
-                "CollisionType": 7,
-                "CollisionLayer": 0,
-                "CollisionMask": 0
-            },
-            {
-                "ComponentID": 2,
-                "Name": "Model",
-                "ProtoName": "CornerWall1Model",
-                "PosX": 0.0,
-                "PosY": 3.0,
-                "PosZ": 0.0,
-                "RotX": 90.0,
-                "RotY": 180.0,
+                "RotY": 0.0,
                 "RotZ": 0.0,
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
                 "ScaleZ": 1.0,
-                "ActivePasses": [
+                "Components": [
                     {
-                        "PassNum": 0
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "EnemyTeamAgent"
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "FingeriiModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.20000000298023224,
+                        "ScaleY": 0.20000000298023224,
+                        "ScaleZ": 0.20000000298023224,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "FingeriiCollider",
+                        "PosX": 0.0,
+                        "PosY": 2.5999999046325684,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.2000000476837158,
+                        "ScaleY": 4.0,
+                        "ScaleZ": 1.2000000476837158,
+                        "CollisionType": 2,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
                     }
                 ],
-                "ModelType": 0,
-                "ModelPath": "Model\\Map\\Main\\Wall-Corner.amodel",
-                "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
+                "HP": 10.0
             },
             {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "CornerWall1Collider",
-                "PosX": -0.5,
-                "PosY": 3.0,
-                "PosZ": 0.5,
+                "Name": "ReaverBot_Balfura0",
+                "ProtoName": "Balfura1",
+                "ClassID": 10003,
+                "StateFlag": 52,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 17.654029846191406,
+                "PosY": 0.0,
+                "PosZ": 16.69431495666504,
                 "RotX": 0.0,
-                "RotY": -45.0,
+                "RotY": 0.0,
                 "RotZ": 0.0,
-                "ScaleX": 6.0,
-                "ScaleY": 6.0,
-                "ScaleZ": 0.10000000149011612,
-                "CollisionType": 7,
-                "CollisionLayer": 0,
-                "CollisionMask": 0
-            },
-            {
-                "ComponentID": 9,
-                "Name": "TeamAgentComp",
-                "ProtoName": ""
-            },
-            {
-                "ComponentID": 2,
-                "Name": "Model",
-                "ProtoName": "HorokkoModel",
-                "PosX": 0.0,
-                "PosY": 0.0,
-                "PosZ": 0.0,
-                "RotX": 180.0,
-                "RotY": 0.0,
-                "RotZ": 180.0,
-                "ScaleX": 0.07999999821186066,
-                "ScaleY": 0.07999999821186066,
-                "ScaleZ": 0.07999999821186066,
-                "ActivePasses": [
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
                     {
-                        "PassNum": 0
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "BalfuraTeamAgent"
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "BalfuraModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.3199999928474426,
+                        "ScaleY": 0.3199999928474426,
+                        "ScaleZ": 0.3199999928474426,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "BalfuraCollider",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "CollisionType": 7,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
                     }
                 ],
-                "ModelType": 1,
-                "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
-                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                "HP": 100.0
             },
             {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "HorokkoCollider",
-                "PosX": 0.0,
-                "PosY": 0.5,
-                "PosZ": 0.0,
-                "RotX": -0.0,
-                "RotY": 0.0,
-                "RotZ": -0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 0.20000000298023224,
-                "ScaleZ": 1.0,
-                "CollisionType": 2,
-                "CollisionLayer": 0,
-                "CollisionMask": 0
-            },
-            {
-                "ComponentID": 9,
-                "Name": "TeamAgentComp",
-                "ProtoName": ""
-            },
-            {
-                "ComponentID": 2,
-                "Name": "Model",
-                "ProtoName": "HorokkoModel",
-                "PosX": 0.0,
+                "Name": "ReaverBot_Balfura1",
+                "ProtoName": "Balfura1",
+                "ClassID": 10003,
+                "StateFlag": 52,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 20.93423843383789,
                 "PosY": 0.0,
-                "PosZ": 0.0,
-                "RotX": 180.0,
+                "PosZ": 16.523876190185547,
+                "RotX": 0.0,
                 "RotY": 0.0,
-                "RotZ": 180.0,
-                "ScaleX": 0.07999999821186066,
-                "ScaleY": 0.07999999821186066,
-                "ScaleZ": 0.07999999821186066,
-                "ActivePasses": [
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
                     {
-                        "PassNum": 0
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "BalfuraTeamAgent"
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "BalfuraModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.3199999928474426,
+                        "ScaleY": 0.3199999928474426,
+                        "ScaleZ": 0.3199999928474426,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "BalfuraCollider",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "CollisionType": 7,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
                     }
                 ],
-                "ModelType": 1,
-                "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
-                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                "HP": 100.0
             },
             {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "HorokkoCollider",
-                "PosX": 0.0,
-                "PosY": 0.5,
-                "PosZ": 0.0,
-                "RotX": -0.0,
-                "RotY": 0.0,
-                "RotZ": -0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 0.20000000298023224,
-                "ScaleZ": 1.0,
-                "CollisionType": 2,
-                "CollisionLayer": 0,
-                "CollisionMask": 0
-            },
-            {
-                "ComponentID": 9,
-                "Name": "TeamAgentComp",
-                "ProtoName": ""
-            },
-            {
-                "ComponentID": 2,
-                "Name": "Model",
-                "ProtoName": "HorokkoModel",
-                "PosX": 0.0,
+                "Name": "ReaverBot_Balfura2",
+                "ProtoName": "Balfura1",
+                "ClassID": 10003,
+                "StateFlag": 52,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 12.94348430633545,
                 "PosY": 0.0,
-                "PosZ": 0.0,
-                "RotX": 180.0,
+                "PosZ": 22.61118507385254,
+                "RotX": 0.0,
                 "RotY": 0.0,
-                "RotZ": 180.0,
-                "ScaleX": 0.07999999821186066,
-                "ScaleY": 0.07999999821186066,
-                "ScaleZ": 0.07999999821186066,
-                "ActivePasses": [
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
                     {
-                        "PassNum": 0
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "BalfuraTeamAgent"
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "BalfuraModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.3199999928474426,
+                        "ScaleY": 0.3199999928474426,
+                        "ScaleZ": 0.3199999928474426,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "BalfuraCollider",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "CollisionType": 7,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
                     }
                 ],
-                "ModelType": 1,
-                "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
-                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-            },
-            {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "HorokkoCollider",
-                "PosX": 0.0,
-                "PosY": 0.5,
-                "PosZ": 0.0,
-                "RotX": -0.0,
-                "RotY": 0.0,
-                "RotZ": -0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 0.20000000298023224,
-                "ScaleZ": 1.0,
-                "CollisionType": 2,
-                "CollisionLayer": 0,
-                "CollisionMask": 0
+                "HP": 100.0
             }
         ]
     },
     "CloneObjects": {
         "Objects": [
             {
-                "Name": "ReaverBot_Balfura",
-                "ProtoName": "Balfura1",
-                "ClassID": 10003,
-                "StateFlag": 52,
+                "Name": "Terrain",
+                "ProtoName": "Terrain1",
+                "ClassID": 0,
+                "StateFlag": 60,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 9.927131652832031,
+                "PosX": 0.0,
                 "PosY": 0.0,
-                "PosZ": 12.699885368347168,
+                "PosZ": 0.0,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -976,312 +995,40 @@
                 "ScaleZ": 1.0,
                 "Components": [
                     {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": ""
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "BalfuraModel",
+                        "ComponentID": 4,
+                        "Name": "TerrainModelComp",
+                        "ProtoName": "TerrainModel",
                         "PosX": 0.0,
                         "PosY": 0.0,
                         "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
-                        "ScaleX": 0.3199999928474426,
-                        "ScaleY": 0.3199999928474426,
-                        "ScaleZ": 0.3199999928474426,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "BalfuraCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": -0.0,
-                        "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
-                        "CollisionType": 7,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
-                    }
-                ],
-                "HP": 100.0
-            },
-            {
-                "Name": "ReaverBot_Balfura0",
-                "ProtoName": "Balfura1",
-                "ClassID": 10003,
-                "StateFlag": 52,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 10.863679885864258,
-                "PosY": 0.0,
-                "PosZ": 5.7004570960998535,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": ""
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "BalfuraModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
-                        "ScaleX": 0.3199999928474426,
-                        "ScaleY": 0.3199999928474426,
-                        "ScaleZ": 0.3199999928474426,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "BalfuraCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": -0.0,
-                        "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
-                        "CollisionType": 7,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
-                    }
-                ],
-                "HP": 100.0
-            },
-            {
-                "Name": "ReaverBot_Fingerii",
-                "ProtoName": "Fingerii1",
-                "ClassID": 10002,
-                "StateFlag": 52,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 4.996894359588623,
-                "PosY": 0.0,
-                "PosZ": 9.7174072265625,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": ""
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "FingeriiModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
-                        "ScaleX": 0.20000000298023224,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 0.20000000298023224,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "FingeriiColliderComp",
-                        "PosX": 0.0,
-                        "PosY": 2.5999999046325684,
-                        "PosZ": 0.0,
-                        "RotX": -0.0,
-                        "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.2000000476837158,
-                        "ScaleY": 4.0,
-                        "ScaleZ": 1.2000000476837158,
-                        "CollisionType": 2,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
-                    }
-                ],
-                "HP": 10.0
-            },
-            {
-                "Name": "ReaverBot_Fingerii0",
-                "ProtoName": "Fingerii1",
-                "ClassID": 10002,
-                "StateFlag": 52,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 8.15411376953125,
-                "PosY": 0.0,
-                "PosZ": 7.612094402313232,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": ""
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "FingeriiModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
-                        "ScaleX": 0.20000000298023224,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 0.20000000298023224,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "FingeriiColliderComp",
-                        "PosX": 0.0,
-                        "PosY": 2.5999999046325684,
-                        "PosZ": 0.0,
-                        "RotX": -0.0,
-                        "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.2000000476837158,
-                        "ScaleY": 4.0,
-                        "ScaleZ": 1.2000000476837158,
-                        "CollisionType": 2,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
-                    }
-                ],
-                "HP": 10.0
-            },
-            {
-                "Name": "StaticObject",
-                "ProtoName": "CornerWall1",
-                "ClassID": 10004,
-                "StateFlag": 52,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 3.1112990379333496,
-                "PosY": 0.0,
-                "PosZ": 15.601849555969238,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "CornerWall1Model",
-                        "PosX": 0.0,
-                        "PosY": 3.0,
-                        "PosZ": 0.0,
-                        "RotX": 90.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 0,
-                        "ModelPath": "Model\\Map\\Main\\Wall-Corner.amodel",
-                        "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "CornerWall1Collider",
-                        "PosX": -0.5,
-                        "PosY": 3.0,
-                        "PosZ": 0.5,
                         "RotX": 0.0,
-                        "RotY": -45.0,
+                        "RotY": 0.0,
                         "RotZ": 0.0,
-                        "ScaleX": 6.0,
-                        "ScaleY": 6.0,
-                        "ScaleZ": 0.10000000149011612,
-                        "CollisionType": 7,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "MaxWidth": 100,
+                        "HeightMapPath": "TestHeight.png",
+                        "DiffuseTexture1": "Textures\\RockmanDash2\\Terrain.png",
+                        "MaskTexture1": ""
                     }
                 ]
             },
             {
-                "Name": "StaticObject0",
-                "ProtoName": "CornerWall1",
-                "ClassID": 10004,
+                "Name": "Player",
+                "ProtoName": "Player",
+                "ClassID": 10000,
                 "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 13.150162696838379,
+                "PosX": 19.492820739746094,
                 "PosY": 0.0,
-                "PosZ": 5.167985916137695,
+                "PosZ": 19.304031372070313,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -1290,45 +1037,72 @@
                 "ScaleZ": 1.0,
                 "Components": [
                     {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "CornerWall1Model",
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "PlayerTeamAgent"
+                    },
+                    {
+                        "ComponentID": 0,
+                        "Name": "CameraPivot",
+                        "ProtoName": "PlayerCamPivot",
                         "PosX": 0.0,
-                        "PosY": 3.0,
+                        "PosY": 1.2999999523162842,
                         "PosZ": 0.0,
-                        "RotX": 90.0,
-                        "RotY": 180.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
                         "RotZ": 0.0,
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
+                        "ScaleZ": 1.0
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "PlayerModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.10000000149011612,
+                        "ScaleY": 0.10000000149011612,
+                        "ScaleZ": 0.10000000149011612,
                         "ActivePasses": [
                             {
                                 "PassNum": 0
                             }
                         ],
-                        "ModelType": 0,
-                        "ModelPath": "Model\\Map\\Main\\Wall-Corner.amodel",
-                        "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/RockVolnutt/RockVolnutt.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
                     },
                     {
                         "ComponentID": 1,
                         "Name": "ColliderComp",
-                        "ProtoName": "CornerWall1Collider",
-                        "PosX": -0.5,
-                        "PosY": 3.0,
-                        "PosZ": 0.5,
+                        "ProtoName": "PlayerCollider",
+                        "PosX": 0.0,
+                        "PosY": 0.6499999761581421,
+                        "PosZ": 0.0,
                         "RotX": 0.0,
-                        "RotY": -45.0,
+                        "RotY": 0.0,
                         "RotZ": 0.0,
-                        "ScaleX": 6.0,
-                        "ScaleY": 6.0,
-                        "ScaleZ": 0.10000000149011612,
-                        "CollisionType": 7,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
+                        "ScaleX": 0.5,
+                        "ScaleY": 0.800000011920929,
+                        "ScaleZ": 0.5,
+                        "CollisionType": 2,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 61
+                    },
+                    {
+                        "ComponentID": 8,
+                        "Name": "CloudStation",
+                        "ProtoName": "PlayerCloud"
                     }
-                ]
+                ],
+                "HP": 100.0,
+                "MoveSpeed": 6.0,
+                "JumpSpeed": 10.0
             },
             {
                 "Name": "ReaverBot_Horokko",
@@ -1337,9 +1111,9 @@
                 "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 6.833742618560791,
+                "PosX": 23.543617248535156,
                 "PosY": 0.0,
-                "PosZ": 9.127412796020508,
+                "PosZ": 19.654850006103516,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -1350,7 +1124,7 @@
                     {
                         "ComponentID": 9,
                         "Name": "TeamAgentComp",
-                        "ProtoName": ""
+                        "ProtoName": "EnemyTeamAgent"
                     },
                     {
                         "ComponentID": 2,
@@ -1359,9 +1133,9 @@
                         "PosX": 0.0,
                         "PosY": 0.0,
                         "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
                         "ScaleX": 0.07999999821186066,
                         "ScaleY": 0.07999999821186066,
                         "ScaleZ": 0.07999999821186066,
@@ -1381,15 +1155,15 @@
                         "PosX": 0.0,
                         "PosY": 0.5,
                         "PosZ": 0.0,
-                        "RotX": -0.0,
+                        "RotX": 0.0,
                         "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 1.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.800000011920929,
+                        "ScaleY": 0.25,
+                        "ScaleZ": 0.800000011920929,
                         "CollisionType": 2,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
                     }
                 ],
                 "HP": 10.0
@@ -1401,9 +1175,9 @@
                 "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 3.511186361312866,
+                "PosX": 15.117941856384277,
                 "PosY": 0.0,
-                "PosZ": 12.848855972290039,
+                "PosZ": 20.582883834838867,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -1414,7 +1188,7 @@
                     {
                         "ComponentID": 9,
                         "Name": "TeamAgentComp",
-                        "ProtoName": ""
+                        "ProtoName": "EnemyTeamAgent"
                     },
                     {
                         "ComponentID": 2,
@@ -1423,9 +1197,9 @@
                         "PosX": 0.0,
                         "PosY": 0.0,
                         "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
                         "ScaleX": 0.07999999821186066,
                         "ScaleY": 0.07999999821186066,
                         "ScaleZ": 0.07999999821186066,
@@ -1445,29 +1219,29 @@
                         "PosX": 0.0,
                         "PosY": 0.5,
                         "PosZ": 0.0,
-                        "RotX": -0.0,
+                        "RotX": 0.0,
                         "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 1.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.800000011920929,
+                        "ScaleY": 0.25,
+                        "ScaleZ": 0.800000011920929,
                         "CollisionType": 2,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
                     }
                 ],
                 "HP": 10.0
             },
             {
-                "Name": "ReaverBot_Horokko1",
-                "ProtoName": "Horokko1",
-                "ClassID": 10001,
+                "Name": "ReaverBot_Fingerii",
+                "ProtoName": "Fingerii1",
+                "ClassID": 10002,
                 "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 12.345595359802246,
+                "PosX": 18.32813835144043,
                 "PosY": 0.0,
-                "PosZ": 13.9649019241333,
+                "PosZ": 23.07455825805664,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -1478,49 +1252,305 @@
                     {
                         "ComponentID": 9,
                         "Name": "TeamAgentComp",
-                        "ProtoName": ""
+                        "ProtoName": "EnemyTeamAgent"
                     },
                     {
                         "ComponentID": 2,
                         "Name": "Model",
-                        "ProtoName": "HorokkoModel",
+                        "ProtoName": "FingeriiModel",
                         "PosX": 0.0,
                         "PosY": 0.0,
                         "PosZ": 0.0,
-                        "RotX": 180.0,
-                        "RotY": 0.0,
-                        "RotZ": 180.0,
-                        "ScaleX": 0.07999999821186066,
-                        "ScaleY": 0.07999999821186066,
-                        "ScaleZ": 0.07999999821186066,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.20000000298023224,
+                        "ScaleY": 0.20000000298023224,
+                        "ScaleZ": 0.20000000298023224,
                         "ActivePasses": [
                             {
                                 "PassNum": 0
                             }
                         ],
                         "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
+                        "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
                         "EffectPath": "Runtime/FX_ModelAnim.hlsl"
                     },
                     {
                         "ComponentID": 1,
                         "Name": "ColliderComp",
-                        "ProtoName": "HorokkoCollider",
+                        "ProtoName": "FingeriiCollider",
                         "PosX": 0.0,
-                        "PosY": 0.5,
+                        "PosY": 2.5999999046325684,
                         "PosZ": 0.0,
-                        "RotX": -0.0,
+                        "RotX": 0.0,
                         "RotY": 0.0,
-                        "RotZ": -0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 1.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.2000000476837158,
+                        "ScaleY": 4.0,
+                        "ScaleZ": 1.2000000476837158,
                         "CollisionType": 2,
-                        "CollisionLayer": 0,
-                        "CollisionMask": 0
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
                     }
                 ],
                 "HP": 10.0
+            },
+            {
+                "Name": "ReaverBot_Fingerii0",
+                "ProtoName": "Fingerii1",
+                "ClassID": 10002,
+                "StateFlag": 52,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 23.41488265991211,
+                "PosY": 0.0,
+                "PosZ": 24.24924659729004,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
+                    {
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "EnemyTeamAgent"
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "FingeriiModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.20000000298023224,
+                        "ScaleY": 0.20000000298023224,
+                        "ScaleZ": 0.20000000298023224,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/Reaverbots/Fingerii/Fingerii.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "FingeriiCollider",
+                        "PosX": 0.0,
+                        "PosY": 2.5999999046325684,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.2000000476837158,
+                        "ScaleY": 4.0,
+                        "ScaleZ": 1.2000000476837158,
+                        "CollisionType": 2,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
+                    }
+                ],
+                "HP": 10.0
+            },
+            {
+                "Name": "ReaverBot_Balfura0",
+                "ProtoName": "Balfura1",
+                "ClassID": 10003,
+                "StateFlag": 52,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 17.654029846191406,
+                "PosY": 0.0,
+                "PosZ": 16.69431495666504,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
+                    {
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "BalfuraTeamAgent"
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "BalfuraModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.3199999928474426,
+                        "ScaleY": 0.3199999928474426,
+                        "ScaleZ": 0.3199999928474426,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "BalfuraCollider",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "CollisionType": 7,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
+                    }
+                ],
+                "HP": 100.0
+            },
+            {
+                "Name": "ReaverBot_Balfura1",
+                "ProtoName": "Balfura1",
+                "ClassID": 10003,
+                "StateFlag": 52,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 20.93423843383789,
+                "PosY": 0.0,
+                "PosZ": 16.523876190185547,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
+                    {
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "BalfuraTeamAgent"
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "BalfuraModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.3199999928474426,
+                        "ScaleY": 0.3199999928474426,
+                        "ScaleZ": 0.3199999928474426,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "BalfuraCollider",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "CollisionType": 7,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
+                    }
+                ],
+                "HP": 100.0
+            },
+            {
+                "Name": "ReaverBot_Balfura2",
+                "ProtoName": "Balfura1",
+                "ClassID": 10003,
+                "StateFlag": 52,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 12.94348430633545,
+                "PosY": 0.0,
+                "PosZ": 22.61118507385254,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
+                    {
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "BalfuraTeamAgent"
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "BalfuraModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.3199999928474426,
+                        "ScaleY": 0.3199999928474426,
+                        "ScaleZ": 0.3199999928474426,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "BalfuraCollider",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "CollisionType": 7,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
+                    }
+                ],
+                "HP": 100.0
             }
         ]
     }

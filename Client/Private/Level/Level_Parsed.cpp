@@ -18,6 +18,7 @@
 #include "GameObject/ReaverBot_Balfura.h"
 #include "GameObject/ReaverBot_Fingerii.h"
 #include "GameObject/StaticObject.h"
+#include "GameObject/Player.h"
 
 CLevel_Parsed::CLevel_Parsed()
 {
@@ -96,7 +97,7 @@ HRESULT CLevel_Parsed::Ready_Objects(FSerialData& Data)
 		GI()->Add_CloneObject(ObjectData);
 	}
 
-
+	//GI()->Add_GameObject(CPlayer::Create());
 	GI()->Add_GameObject(CDynamicCamera::Create());
 
 	/*CTerrain* pTerrain = { nullptr };

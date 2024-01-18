@@ -13,6 +13,7 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     , m_iCollisionMask_Flag(rhs.m_iCollisionMask_Flag)
     , m_pEffect(rhs.m_pEffect)
     , m_pBatch(rhs.m_pBatch)
+    , m_pInputLayout(rhs.m_pInputLayout)
 {
     // 충돌체 깊은 복사
     switch (rhs.m_pCollisionShape->Get_Type())
@@ -67,6 +68,9 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
         break;
     }
     }
+
+    m_pCollisionShape->Set_CollisionLayer(m_iCollisionLayer_Flag);
+    m_pCollisionShape->Set_CollisionMask(m_iCollisionMask_Flag);
 
     // 충돌체 소유자 설정
     m_pCollisionShape->Set_Owner(this);
@@ -123,7 +127,7 @@ CComponent* CColliderComponent::Clone(FSerialData& InputData)
 
     if (FAILED(pInstance->Initialize(InputData)))
     {
-        MSG_BOX("ColliderBufferComp Copy Failed");
+        MSG_BOX("ColliderComp Copy Failed");
         Engine::Safe_Release(pInstance);
     }
 
@@ -153,6 +157,8 @@ FSerialData CColliderComponent::SerializeData_Prototype()
 
     Data.Add_Member("ComponentID", g_ClassID);
     Data.Add_Member("CollisionType", ECast(m_pCollisionShape->Get_Type()));
+    Data.Add_Member("CollisionLayer", m_iCollisionLayer_Flag);
+    Data.Add_Member("CollisionMask", m_iCollisionMask_Flag);
 
     return Data;
 }
@@ -246,6 +252,16 @@ HRESULT CColliderComponent::Initialize_Prototype(FSerialData& InputData)
     if (FAILED(Bind_Collision(Cast<ECollisionType>(iCollisionType))))
         return E_FAIL;
 
+    _uint iCollisionLayer = 0;
+    if (FAILED(InputData.Get_Data("CollisionLayer", iCollisionLayer)))
+        return E_FAIL;
+    m_iCollisionLayer_Flag = iCollisionLayer;
+
+    _uint iCollisionMask = 0;
+    if (FAILED(InputData.Get_Data("CollisionMask", iCollisionMask)))
+        return E_FAIL;
+    m_iCollisionMask_Flag = iCollisionMask;
+
     return S_OK;
 }
 
@@ -267,6 +283,16 @@ HRESULT CColliderComponent::Initialize(FSerialData& InputData)
 {
     if (FAILED(__super::Initialize(InputData)))
         return E_FAIL;
+
+    _uint iCollisionLayer = 0;
+    if (FAILED(InputData.Get_Data("CollisionLayer", iCollisionLayer)))
+        return E_FAIL;
+    m_iCollisionLayer_Flag = iCollisionLayer;
+
+    _uint iCollisionMask = 0;
+    if (FAILED(InputData.Get_Data("CollisionMask", iCollisionMask)))
+        return E_FAIL;
+    m_iCollisionMask_Flag = iCollisionMask;
 
     return S_OK;
 }

@@ -18,7 +18,7 @@
         {
             "ComponentID": 9,
             "Name": "TeamAgentComp",
-            "ProtoName": ""
+            "ProtoName": "EnemyTeamAgent"
         },
         {
             "ComponentID": 2,
@@ -27,9 +27,9 @@
             "PosX": 0.0,
             "PosY": 0.0,
             "PosZ": 0.0,
-            "RotX": 180.0,
-            "RotY": 0.0,
-            "RotZ": 180.0,
+            "RotX": 0.0,
+            "RotY": 180.0,
+            "RotZ": 0.0,
             "ScaleX": 0.07999999821186066,
             "ScaleY": 0.07999999821186066,
             "ScaleZ": 0.07999999821186066,
@@ -49,13 +49,15 @@
             "PosX": 0.0,
             "PosY": 0.5,
             "PosZ": 0.0,
-            "RotX": -0.0,
+            "RotX": 0.0,
             "RotY": 0.0,
-            "RotZ": -0.0,
-            "ScaleX": 1.0,
-            "ScaleY": 0.20000000298023224,
-            "ScaleZ": 1.0,
-            "CollisionType": 2
+            "RotZ": 0.0,
+            "ScaleX": 0.800000011920929,
+            "ScaleY": 0.25,
+            "ScaleZ": 0.800000011920929,
+            "CollisionType": 2,
+            "CollisionLayer": 1,
+            "CollisionMask": 55
         }
     ],
     "HP": 10.0

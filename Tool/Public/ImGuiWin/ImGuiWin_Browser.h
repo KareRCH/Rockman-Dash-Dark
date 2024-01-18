@@ -50,6 +50,7 @@ public:
 
 	void Handle_TerrainBrushModeSelected(_bool bIsEdit);
 	void Handle_PlacePicked(_float3 vPickedWorldPos);
+	void Place_Origin();
 
 	// 외부에서 브로드 캐스트 델리게이트에 리스너추가
 	void Add_PlaceModeSelectedListener(const PlaceModeSelectedDelegate& Listener) { OnPlaceModeSelected.Add(Listener); }
