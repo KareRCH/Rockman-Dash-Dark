@@ -3,6 +3,7 @@
 #include "ImGuiWin/ImGuiWin_MapTool.h"
 #include "ImGuiWin/ImGuiWin_Viewer.h"
 #include "ImGuiWin/ImGuiWin_Terrain.h"
+#include "ImGuiWin/ImGuiWin_Property.h"
 
 #include "GameObject/Player.h"
 #include "GameObject/ReaverBot_Horokko.h"
@@ -183,18 +184,17 @@ void CImGuiWin_Browser::Handle_PlacePicked(_float3 vPickedWorldPos)
 
 	CGameObject* pAddedObject = { nullptr };
 	GI()->Add_GameObject(pAddedObject = CGameObjectFactory::Create(Data));
-	/*switch (m_iSelected_Object)
-	{
-	case 0:
-		GI()->Add_GameObject(pAddedObject = CPlayer::Create(vPickedWorldPos));
-		break;
-	}*/
 
 	if (pAddedObject == nullptr)
 		return;
 
 	pAddedObject->TurnOff_State(EGObjectState::Tick);
 
-	
+	CImGuiWin_Property* pWinProperty = { nullptr };
+	m_pParentWin->Find_Child<CImGuiWin_Property>(&pWinProperty);
+
+	if (pWinProperty)
+		pWinProperty->Set_GameObject(pAddedObject);
+
 	OnObjectPlaced.Broadcast(pAddedObject);
 }

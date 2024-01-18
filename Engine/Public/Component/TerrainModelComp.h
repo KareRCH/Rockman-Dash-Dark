@@ -98,6 +98,8 @@ public:
 
 private:
 	CTextureComponent* m_pTextureComps[TYPE_END] = {nullptr};
+	wstring m_strDiffuseTexture = TEXT("");
+	wstring m_strMaskTexture = TEXT("");
 	
 #pragma endregion
 

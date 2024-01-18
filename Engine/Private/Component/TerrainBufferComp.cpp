@@ -62,6 +62,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_HeightMap tInit)
         m_pIB.Reset();
     }
 
+    CoUninitialize();
     if (FAILED(CoInitialize(nullptr)))
         return E_FAIL;
 
@@ -72,25 +73,7 @@ HRESULT CTerrainBufferComp::Create_Buffer(const FTerrainBufInit_HeightMap tInit)
         return E_FAIL;
     CoUninitialize();
 
-    /*_ulong dwByte = 0;
-    HANDLE		hFile = CreateFile((strMainPath + tInit.strHeightMapFilePath).c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-
-    if (0 == hFile)
-        return E_FAIL;
-
-    BITMAPFILEHEADER		fh;
-    if (!ReadFile(hFile, &fh, sizeof fh, &dwByte, nullptr))
-        return E_FAIL;
-
-    BITMAPINFOHEADER		ih;
-    if (!ReadFile(hFile, &ih, sizeof ih, &dwByte, nullptr))
-        return E_FAIL;
-
-    _uint* pPixel = new _uint[Cast<_uint>(ih.biWidth * ih.biHeight)];
-    if (!ReadFile(hFile, pPixel, sizeof(_uint) * ih.biWidth * ih.biHeight, &dwByte, nullptr))
-        return E_FAIL;
-
-    CloseHandle(hFile);*/
+    m_strHeightMapPath = tInit.strHeightMapFilePath;
 
     const DirectX::Image* img = imageScratch.GetImages();
     const size_t imageSize = tMetaData.width * tMetaData.height * sizeof(_float);

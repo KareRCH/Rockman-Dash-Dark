@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameObject.h"
+#include "BaseClass/GameObject.h"
 #include "Component/TerrainModelComp.h"
 
 #include "Utility/ClassID.h"
@@ -32,14 +32,16 @@ public:
 	};
 
 protected:
-	explicit CTerrain() = default;
+	explicit CTerrain();
 	explicit CTerrain(const CTerrain& rhs);
 	virtual ~CTerrain() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize_Prototype(const FInitTerrain& tInit);
+	virtual HRESULT Initialize_Prototype(FSerialData& InputData);
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
+	virtual HRESULT Initialize(FSerialData& InputData);
 	virtual void	Priority_Tick(const _float& fTimeDelta) override;
 	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;
@@ -48,16 +50,22 @@ public:
 public:
 	static CTerrain* Create();
 	static CTerrain* Create(const FInitTerrain& tInit);
+	static CTerrain* Create(FSerialData& InputData);
 	virtual CGameObject* Clone(void* Arg = nullptr) override;
+	virtual CGameObject* Clone(FSerialData& InputData);
 
 protected:
 	virtual void	Free() override;
 
+public:
+	virtual FSerialData SerializeData_Prototype() override;
 	virtual FSerialData SerializeData() override;
 
 private:
 	HRESULT	Initialize_Component();
 	HRESULT	Initialize_Component(const FInitTerrain& tInit);
+	HRESULT	Initialize_Component(FSerialData& InputData);
+
 
 
 public:

@@ -35,15 +35,19 @@ private:
 public:
 	void Layout_ObjectList(const _float& fTimeDelta);
 
+public:
+	void Pushback_GameObject(CGameObject* pObj);
+	void Reset_GameObjectList();
+
 private:
 	void Handle_ObjectPlaced(CGameObject* pObj);
 
 	void Link_ToBrowser();
 
 private:
-	_bool					m_bIsLinkedToBrowser = false;
+	_bool						m_bIsLinkedToBrowser = false;
 	vector<class CGameObject*>	m_vecGameObjects;
-	_int					m_iSelected_GameObject = -1;
+	_int						m_iSelected_GameObject = -1;
 
 };
 

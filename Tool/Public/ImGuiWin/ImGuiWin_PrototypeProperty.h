@@ -46,7 +46,7 @@ public:
 
 private:
 	_bool			m_bChanged_GameObject = { false };
-	CGameObject* m_pGameObject = { nullptr };
+	CGameObject*	m_pGameObject = { nullptr };
 
 };
 

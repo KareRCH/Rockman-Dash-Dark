@@ -99,13 +99,13 @@ HRESULT CLevel_Parsed::Ready_Objects(FSerialData& Data)
 
 	GI()->Add_GameObject(CDynamicCamera::Create());
 
-	CTerrain* pTerrain = { nullptr };
+	/*CTerrain* pTerrain = { nullptr };
 	GI()->Add_GameObject(pTerrain = CTerrain::Create());
 	CTerrain::FInitTerrain tInit = {};
 	tInit.strHeightMapPath = TEXT("TestHeight.png");
 	tInit.iMaxWidth = 100;
 	pTerrain->Create_TerrainByHeightMap(tInit);
-	pTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"))->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/RockmanDash2/Terrain.png"), 1);
+	pTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"))->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/RockmanDash2/Terrain.png"), 1);*/
 
 	CSkyBox* pSkyBox = { nullptr };
 	GI()->Add_GameObject(pSkyBox = CSkyBox::Create());

@@ -4,6 +4,7 @@
 #include "ImGuiWin/ImGuiWin_Viewer.h"
 #include "ImGuiWin/ImGuiWin_Terrain.h"
 #include "ImGuiWin/ImGuiWin_Browser.h"
+#include "ImGuiWin/ImGuiWin_Property.h"
 
 #include "BaseClass/GameObject.h"
 
@@ -64,11 +65,29 @@ void CImGuiWin_Hierarchi::Layout_ObjectList(const _float& fTimeDelta)
 			if (ImGui::Selectable(strName.c_str(), m_iSelected_GameObject == i))
 			{
 				m_iSelected_GameObject = i;
+				CImGuiWin_Property* pWinProperty = { nullptr };
+				m_pParentWin->Find_Child<CImGuiWin_Property>(&pWinProperty);
+
+				if (pWinProperty)
+					pWinProperty->Set_GameObject(m_vecGameObjects[i]);
 			}
 		}
 
 		ImGui::EndListBox();
 	}	
+}
+
+void CImGuiWin_Hierarchi::Pushback_GameObject(CGameObject* pObj)
+{
+	if (nullptr == pObj)
+		return;
+
+	m_vecGameObjects.push_back(pObj);
+}
+
+void CImGuiWin_Hierarchi::Reset_GameObjectList()
+{
+	m_vecGameObjects.clear();
 }
 
 void CImGuiWin_Hierarchi::Handle_ObjectPlaced(CGameObject* pObj)
