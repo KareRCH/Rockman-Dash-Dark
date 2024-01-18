@@ -29,6 +29,33 @@ HRESULT CCharacter_Common::Initialize_Prototype(FSerialData& InputData)
 	if (FAILED(__super::Initialize_Prototype(InputData)))
 		return E_FAIL;
 
+    _uint iNumPrototype = 0;
+    iNumPrototype = InputData.Get_ArraySize("Components");
+    for (_uint i = 0; i < iNumPrototype; i++)
+    {
+        FSerialData ProtoData;
+        InputData.Get_ObjectFromArray("Components", i, ProtoData);
+
+        _uint iComponentID = 0;
+        if (FAILED(ProtoData.Get_Data("ComponentID", iComponentID)))
+            return E_FAIL;
+
+        string strName = "";
+        if (FAILED(ProtoData.Get_Data("Name", strName)))
+            return E_FAIL;
+
+        string strProtoName = "";
+        if (FAILED(ProtoData.Get_Data("ProtoName", strProtoName)))
+            return E_FAIL;
+
+        switch (iComponentID)
+        {
+        case ECast(EComponentID::TeamAgent):
+            TeamAgentComp().Set_ProtoName(ConvertToWstring(strProtoName));
+            break;
+        }
+    }
+
 	return S_OK;
 }
 

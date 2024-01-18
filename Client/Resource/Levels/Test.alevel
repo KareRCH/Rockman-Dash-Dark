@@ -20,7 +20,7 @@
                         "PassNum": 0
                     }
                 ],
-                "MaxWidth": 0.0,
+                "MaxWidth": 100,
                 "HeightMapPath": "TestHeight.png",
                 "DiffuseTexture1": "Textures\\RockmanDash2\\Terrain.png",
                 "MaskTexture1": ""
@@ -62,7 +62,7 @@
                                 "PassNum": 0
                             }
                         ],
-                        "MaxWidth": 0.0,
+                        "MaxWidth": 100,
                         "HeightMapPath": "TestHeight.png",
                         "DiffuseTexture1": "Textures\\RockmanDash2\\Terrain.png",
                         "MaskTexture1": ""
@@ -108,7 +108,7 @@
                                 "PassNum": 0
                             }
                         ],
-                        "MaxWidth": 0.0,
+                        "MaxWidth": 100,
                         "HeightMapPath": "TestHeight.png",
                         "DiffuseTexture1": "Textures\\RockmanDash2\\Terrain.png",
                         "MaskTexture1": ""

@@ -154,14 +154,12 @@ FSerialData CWeapon_Buster::SerializeData()
 HRESULT CWeapon_Buster::Initialize_Component()
 {
 	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
-
 	m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(90.f));
 	m_pModelComp->Transform().Set_Scale(_float3(0.3f, 0.3f, 0.3f));
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelNoAnim.hlsl", SHADER_VTX_MODEL::Elements, SHADER_VTX_MODEL::iNumElements);
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_NONANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Buster/Buster.amodel");
 
-	if (nullptr == m_pColliderComp)
-		return E_FAIL;
+	FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
 	m_pColliderComp->Bind_Collision(ECollisionType::Sphere);
 	m_pColliderComp->EnterToPhysics(0);
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);

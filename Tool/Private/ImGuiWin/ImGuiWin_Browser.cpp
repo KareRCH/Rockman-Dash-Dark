@@ -79,7 +79,7 @@ void CImGuiWin_Browser::Layout_Object(const _float& fTimeDelta)
 	{
 		WIN32_FIND_DATA findFileData;
 		HANDLE hFind = FindFirstFile((GI()->Get_MainPath() + TEXT("Resource/Prototypes/*.aproto")).c_str(), &findFileData);
-
+		
 		if (hFind == INVALID_HANDLE_VALUE) {
 			std::cerr << "파일찾기 에러" << std::endl;
 		}
@@ -98,6 +98,12 @@ void CImGuiWin_Browser::Layout_Object(const _float& fTimeDelta)
 		}
 
 		FindClose(hFind);
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button(u8"원점에 생성하기"))
+	{
+		Place_Origin();
 	}
 
 	if (ImGui::BeginListBox(u8"##오브젝트"))
@@ -181,6 +187,37 @@ void CImGuiWin_Browser::Handle_PlacePicked(_float3 vPickedWorldPos)
 	Data.Add_Member("PosX", vPickedWorldPos.x);
 	Data.Add_Member("PosY", vPickedWorldPos.y);
 	Data.Add_Member("PosZ", vPickedWorldPos.z);
+
+	CGameObject* pAddedObject = { nullptr };
+	GI()->Add_GameObject(pAddedObject = CGameObjectFactory::Create(Data));
+
+	if (pAddedObject == nullptr)
+		return;
+
+	pAddedObject->TurnOff_State(EGObjectState::Tick);
+
+	CImGuiWin_Property* pWinProperty = { nullptr };
+	m_pParentWin->Find_Child<CImGuiWin_Property>(&pWinProperty);
+
+	if (pWinProperty)
+		pWinProperty->Set_GameObject(pAddedObject);
+
+	OnObjectPlaced.Broadcast(pAddedObject);
+}
+
+void CImGuiWin_Browser::Place_Origin()
+{
+	if (m_iSelected_Object == -1)
+		return;
+
+	GI()->Set_LevelTag(TEXT("MapTool"));
+
+	FSerialData Data;
+	Data.Load_Data(GI()->Get_MainPath() + g_PrototypePath + ConvertToWstring(m_vecPrototypeNames[m_iSelected_Object]));
+
+	Data.Add_Member("PosX", 0.f);
+	Data.Add_Member("PosY", 0.f);
+	Data.Add_Member("PosZ", 0.f);
 
 	CGameObject* pAddedObject = { nullptr };
 	GI()->Add_GameObject(pAddedObject = CGameObjectFactory::Create(Data));

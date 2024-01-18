@@ -33,6 +33,7 @@ private:
 private:
 	void Layout_Property();
 	void Layout_GameObjectProperty();
+	void Layout_GameObjectCompProperty(CGameObjectComp* pComp);
 	void Layout_SceneCompProperty(CSceneComponent* pComp);
 	void Layout_CommonModelCompProperty(CCommonModelComp* pComp);
 	void Layout_ColliderCompProperty(CColliderComponent* pComp);

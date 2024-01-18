@@ -60,6 +60,8 @@ HRESULT CTerrainModelComp::Initialize_Prototype(FSerialData& InputData)
         return E_FAIL;
     Bind_Texture(CTerrainModelComp::TYPE_MASK, m_strMaskTexture, 1);
 
+    Bind_Effect(TEXT("Runtime/FX_Terrain.hlsl"), SHADER_VTX_NORM::Elements, SHADER_VTX_NORM::iNumElements);
+
     return S_OK;
 }
 
@@ -221,8 +223,8 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
         return E_FAIL;
     /*if (FAILED(m_pTextureComps[TYPE_MASK]->Bind_SRVToEffect(m_pEffectComp, "g_MaskTexture", 0)))
         return E_FAIL;*/
-    if (FAILED(m_pTextureComps[TYPE_BRUSH]->Bind_SRVToEffect(m_pEffectComp, "g_BrushTexture", 0)))
-        return E_FAIL;
+    /*if (FAILED(m_pTextureComps[TYPE_BRUSH]->Bind_SRVToEffect(m_pEffectComp, "g_BrushTexture", 0)))
+        return E_FAIL;*/
     if (FAILED(m_pEffectComp->Bind_RawValue("g_vCamPosition", &(vTemp = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
         return E_FAIL;
     // 클라이언트에서 하면 안될거임. 셰이더 코드에서 TOOL이 정의 되어있지 않으면 사용 못함.

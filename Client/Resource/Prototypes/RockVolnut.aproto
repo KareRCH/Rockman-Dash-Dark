@@ -18,14 +18,14 @@
         {
             "ComponentID": 9,
             "Name": "TeamAgentComp",
-            "ProtoName": ""
+            "ProtoName": "PlayerTeamAgent"
         },
         {
             "ComponentID": 0,
             "Name": "CameraPivot",
-            "ProtoName": "PlayerCameraPivot",
+            "ProtoName": "PlayerCamPivot",
             "PosX": 0.0,
-            "PosY": 0.0,
+            "PosY": 1.2999999523162842,
             "PosZ": 0.0,
             "RotX": 0.0,
             "RotY": 0.0,
@@ -61,28 +61,25 @@
             "Name": "ColliderComp",
             "ProtoName": "PlayerCollider",
             "PosX": 0.0,
-            "PosY": 0.800000011920929,
+            "PosY": 0.6499999761581421,
             "PosZ": 0.0,
             "RotX": 0.0,
             "RotY": 0.0,
             "RotZ": 0.0,
-            "ScaleX": 1.0,
+            "ScaleX": 0.5,
             "ScaleY": 0.800000011920929,
-            "ScaleZ": 1.0,
-            "CollisionType": 2
-        },
-        {
-            "ComponentID": 7,
-            "Name": "Navigation",
-            "ProtoName": ""
+            "ScaleZ": 0.5,
+            "CollisionType": 2,
+            "CollisionLayer": 1,
+            "CollisionMask": 61
         },
         {
             "ComponentID": 8,
             "Name": "CloudStation",
-            "ProtoName": ""
+            "ProtoName": "PlayerCloud"
         }
     ],
     "HP": 100.0,
-    "MoveSpeed": 6.0,
-    "JumpSpeed": 10.0
+    "MoveSpeed": 0.0,
+    "JumpSpeed": 0.0
 }
