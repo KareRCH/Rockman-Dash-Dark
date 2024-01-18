@@ -2,8 +2,11 @@
 
 #include "ImGuiWin/ImGuiWin_Viewer.h"
 #include "ImGuiWin/ImGuiWin_Browser.h"
+#include "ImGuiWin/ImGuiWin_Property.h"
+#include "ImGuiWin/ImGuiWin_Hierarchi.h"
 #include "System/GameInstance.h"
 #include "BaseClass/Terrain.h"
+#include "ImGuiFileDialog.h"
 
 #include "DirectXTex.h"
 
@@ -204,6 +207,18 @@ void CImGuiWin_Terrain::Layout_TerrainCreate(const _float& fTimeDelta)
 		CTerrainModelComp* pTerrainModel = m_pPickedTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"));
 		pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, TEXT("Textures/Study/Terrain/Grass_1.dds"), 1);
 		pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_BRUSH, TEXT("Textures/Tool/Brushes/RoundHeightBrush.png"), 1);
+
+		CImGuiWin_Hierarchi* pWinHierarchi = { nullptr };
+		m_pParentWin->Find_Child<CImGuiWin_Hierarchi>(&pWinHierarchi);
+
+		if (pWinHierarchi)
+			pWinHierarchi->Pushback_GameObject(m_pPickedTerrain);
+
+		CImGuiWin_Property* pWinProperty = { nullptr };
+		m_pParentWin->Find_Child<CImGuiWin_Property>(&pWinProperty);
+
+		if (pWinProperty)
+			pWinProperty->Set_GameObject(m_pPickedTerrain);
 	}
 }
 
@@ -265,6 +280,65 @@ void CImGuiWin_Terrain::Layout_TerrainEdit(const _float& fTimeDelta)
 	ImGui::PopItemWidth();
 
 
+	ImGui::Text(u8"디퓨즈 텍스처");
+	if (ImGui::Button(u8"디퓨즈 텍스처 로드"))
+	{
+		ImGuiFileDialog::Instance()->OpenDialog("DiffuseLoad", "Load Diffuse", ".png,.dds", "../Client/Resource/Textures/");
+	}
+
+	if (ImGuiFileDialog::Instance()->Display("DiffuseLoad"))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+			std::string filter = ImGuiFileDialog::Instance()->GetCurrentFilter();
+			// here convert from string because a string was passed as a userDatas, but it can be what you want
+			std::string userDatas;
+			if (ImGuiFileDialog::Instance()->GetUserDatas())
+				userDatas = std::string((const char*)ImGuiFileDialog::Instance()->GetUserDatas());
+			auto selection = ImGuiFileDialog::Instance()->GetSelection(); // multiselection
+
+			// action
+			size_t iMainPathCut = filePathName.find("Textures\\");
+			string newPath = filePathName.substr(iMainPathCut);
+
+			CTerrainModelComp* pTerrainModel = m_pPickedTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"));
+			pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, ConvertToWstring(newPath), 1);
+		}
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+
+	ImGui::Text(u8"마스크 텍스처");
+	if (ImGui::Button(u8"마스크 텍스처 로드"))
+	{
+		ImGuiFileDialog::Instance()->OpenDialog("MaskLoad", "Load Mask", ".png,.dds", "../Client/Resource/Textures/");
+	}
+
+	if (ImGuiFileDialog::Instance()->Display("MaskLoad"))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+			std::string filter = ImGuiFileDialog::Instance()->GetCurrentFilter();
+			// here convert from string because a string was passed as a userDatas, but it can be what you want
+			std::string userDatas;
+			if (ImGuiFileDialog::Instance()->GetUserDatas())
+				userDatas = std::string((const char*)ImGuiFileDialog::Instance()->GetUserDatas());
+			auto selection = ImGuiFileDialog::Instance()->GetSelection(); // multiselection
+
+			// action
+			size_t iMainPathCut = filePathName.find("Textures\\");
+			string newPath = filePathName.substr(iMainPathCut);
+
+			CTerrainModelComp* pTerrainModel = m_pPickedTerrain->Get_Component<CTerrainModelComp>(TEXT("TerrainModelComp"));
+			pTerrainModel->Bind_Texture(CTerrainModelComp::TYPE_MASK, ConvertToWstring(newPath), 1);
+		}
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
 
 	// 변경 사항을 적용한다.
 	if (bIsChanged)
@@ -311,8 +385,6 @@ void CImGuiWin_Terrain::Layout_TerrainDraw(const _float& fTimeDelta)
 		ImGui::Text(u8"선택된 터레인이 없습니다.");
 		return;
 	}
-
-	
 }
 
 void CImGuiWin_Terrain::Layout_TerrainHeight(const _float& fTimeDelta)

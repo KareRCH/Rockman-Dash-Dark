@@ -26,7 +26,7 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 	switch (eID)
 	{
 	case EObjectID::Terrain:
-		//pObj = TObjectTrait<ECast(EObjectID::Terrain)>::Class::Create(Data);
+		pObj = TObjectTrait<ECast(EObjectID::Terrain)>::Class::Create(Data);
 		break;
 	case EObjectID::Navigation:
 		//pObj = TObjectTrait<ECast(EObjectID::Navigation)>::Class::Create(Data);

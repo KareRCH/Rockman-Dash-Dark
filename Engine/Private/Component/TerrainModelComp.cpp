@@ -17,6 +17,11 @@ CTerrainModelComp::CTerrainModelComp(const CTerrainModelComp& rhs)
 {
     Safe_AddRef(m_pEffectComp);
     Safe_AddRef(m_pTerrainBufferComp);
+    for (_uint i = 0; i < TYPE_END; i++)
+    {
+        NULL_CHECK(m_pTextureComps[i] = rhs.m_pTextureComps[i]);
+        Safe_AddRef(m_pTextureComps[i]);
+    }
 }
 
 HRESULT CTerrainModelComp::Initialize_Prototype(void* Arg)
@@ -30,6 +35,30 @@ HRESULT CTerrainModelComp::Initialize_Prototype(FSerialData& InputData)
 {
     if (FAILED(__super::Initialize_Prototype(InputData)))
         return E_FAIL;
+
+    _uint iMaxWidth = 0;
+    InputData.Get_Data("MaxWidth", iMaxWidth);
+
+    string strHeightMapPath = "";
+    InputData.Get_Data("HeightMapPath", strHeightMapPath);
+
+    FTerrainBufInit_HeightMap tInit = {};
+    tInit.iMaxWidth = iMaxWidth;
+    tInit.strHeightMapFilePath = ConvertToWstring(strHeightMapPath);
+    if (FAILED(m_pTerrainBufferComp->Create_Buffer(tInit)))
+        return E_FAIL;
+
+    string strDiffuseTexture;
+    InputData.Get_Data("DiffuseTexture1", strDiffuseTexture);
+    m_strDiffuseTexture = ConvertToWstring(strDiffuseTexture);
+
+    string strMaskTexture;
+    InputData.Get_Data("MaskTexture1", strMaskTexture);
+    m_strMaskTexture = ConvertToWstring(strMaskTexture);
+
+    if (FAILED(Bind_Texture(CTerrainModelComp::TYPE_DIFFUSE, m_strDiffuseTexture, 1)))
+        return E_FAIL;
+    Bind_Texture(CTerrainModelComp::TYPE_MASK, m_strMaskTexture, 1);
 
     return S_OK;
 }
@@ -83,6 +112,11 @@ FSerialData CTerrainModelComp::SerializeData_Prototype()
     FSerialData Data = SUPER::SerializeData_Prototype();
 
     Data.Add_Member("ComponentID", g_ClassID);
+
+    Data.Add_Member("MaxWidth", m_pTerrainBufferComp->Get_MaxWidth());
+    Data.Add_MemberString("HeightMapPath", ConvertToString(m_pTerrainBufferComp->Get_HeightMapPath()));
+    Data.Add_MemberString("DiffuseTexture1", ConvertToString(m_strDiffuseTexture));
+    Data.Add_MemberString("MaskTexture1", ConvertToString(m_strMaskTexture));
 
     return Data;
 }
@@ -155,9 +189,7 @@ void CTerrainModelComp::Free()
     Safe_Release(m_pEffectComp);
     Safe_Release(m_pTerrainBufferComp);
     for (size_t i = 0; i < TYPE_END; i++)
-    {
         Safe_Release(m_pTextureComps[i]);
-    }
 }
 
 HRESULT CTerrainModelComp::IsRender_Ready()
@@ -179,7 +211,7 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
     _float4x4 matTemp = {};
     _float4 vTemp = {};
 
-    if (FAILED(Transform().Bind_TransformToEffect(m_pEffectComp, "g_WorldMatrix")))
+    if (FAILED(m_pEffectComp->Bind_Matrix("g_WorldMatrix", &(matTemp = Calculate_TransformFloat4x4FromParent()))))
         return E_FAIL;
     if (FAILED(m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
         return E_FAIL;
@@ -277,7 +309,20 @@ HRESULT CTerrainModelComp::Bind_Texture(TEXTURE eType, const wstring& strFileNam
     if (!m_pTextureComps[eType])
         return E_FAIL;
 
-    return m_pTextureComps[eType]->Bind_Texture(strFileName, iNumTextures);
+    if (FAILED(m_pTextureComps[eType]->Bind_Texture(strFileName, iNumTextures)))
+        return E_FAIL;
+
+    switch (eType)
+    {
+    case TEXTURE::TYPE_DIFFUSE:
+        m_strDiffuseTexture = strFileName;
+        break;
+    case TEXTURE::TYPE_MASK:
+        m_strMaskTexture = strFileName;
+        break;
+    }
+
+    return S_OK;
 }
 
 HRESULT CTerrainModelComp::Unbind_Texture(TEXTURE eType)

@@ -29,6 +29,22 @@ public:
 
 private:
 	virtual void	Free() override;
+
+private:
+	void Layout_Property();
+	void Layout_GameObjectProperty();
+	void Layout_SceneCompProperty(CSceneComponent* pComp);
+	void Layout_CommonModelCompProperty(CCommonModelComp* pComp);
+	void Layout_ColliderCompProperty(CColliderComponent* pComp);
+
+
+public:
+	void Set_GameObject(CGameObject* pGameObject);
+
+private:
+	_bool			m_bChanged_GameObject = { false };
+	CGameObject*	m_pGameObject = { nullptr };
+
 };
 
 END

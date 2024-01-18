@@ -90,7 +90,7 @@ private:	// 기본 속성
 
 	ERenderGroup		m_eRenderGroup = ERenderGroup::NonBlend;
 
-	_float				m_fPriority[ECast(EGObjTickPriority::Size)];	// 우선도
+	_float				m_fPriority[ECast(EGObjTickPriority::Size)] = {};	// 우선도
 
 	wstring				m_strPrototypeName = TEXT("");					// 프로토타입 이름
 

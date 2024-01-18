@@ -58,10 +58,19 @@ public:
 	const size_t Get_VertexCount() const { return m_viNumTerrainVertices.x * m_viNumTerrainVertices.z; }
 	const _uint Get_VertexCountX() const { return m_viNumTerrainVertices.x; }
 	const _uint Get_VertexCountZ() const { return m_viNumTerrainVertices.z; }
+	const _float Get_MaxWidth() const
+	{
+		if (m_viNumTerrainVertices.x > m_viNumTerrainVertices.z)
+			return m_fInterval * Cast<_float>(m_viNumTerrainVertices.x);
+		else
+			return m_fInterval * Cast<_float>(m_viNumTerrainVertices.z);
+	}
+	const wstring Get_HeightMapPath() const { return m_strHeightMapPath; }
 
 private:
 	_int3	m_viNumTerrainVertices;		// 터레인 점 개수
 	_float	m_fInterval;				// 점간 간격
+	wstring m_strHeightMapPath = TEXT("");
 };
 
 END

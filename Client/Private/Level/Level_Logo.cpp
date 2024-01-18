@@ -25,7 +25,7 @@ void CLevel_Logo::Tick(const _float& fTimeDelta)
 {
 	if (m_pGI->IsKey_Pressed(DIK_RETURN))
 	{
-		if (FAILED(m_pGI->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(LEVEL_PARSED, GI()->Get_TextureMainPath() + TEXT("GamePlay.alevel")))))
+		if (FAILED(m_pGI->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(LEVEL_PARSED, GI()->Get_TextureMainPath() + TEXT("Levels/Test.alevel")))))
 			return;
 	}
 }

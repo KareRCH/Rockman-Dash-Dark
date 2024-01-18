@@ -4,6 +4,7 @@
 #include "BaseClass/GameObject.h"
 #include "GameObject/GameObjectFactory.h"
 #include "ImGuiFileDialog.h"
+#include "ImGuiWin/ImGuiWin_Hierarchi.h"
 
 HRESULT CImGuiWin_MapTool::Initialize()
 {
@@ -394,10 +395,18 @@ void CImGuiWin_MapTool::Load_Level(const wstring& strLoadPath)
 
     // 검증 되었으면 추가한다.
     GI()->Clear_GameObject(TEXT("MapTool"));
+    GI()->Set_LevelTag(TEXT("MapTool"));
+    CImGuiWin_Hierarchi* pWinHierarchi = { nullptr };
+    Find_Child<CImGuiWin_Hierarchi>(&pWinHierarchi);
+    if (pWinHierarchi)
+        pWinHierarchi->Reset_GameObjectList();
     for (auto iter = listLoadedGameObjects.begin(); iter != listLoadedGameObjects.end(); ++iter)
     {
         GI()->Add_GameObject((*iter));
         (*iter)->TurnOff_State(EGObjectState::Tick);
+
+        if (pWinHierarchi)
+            pWinHierarchi->Pushback_GameObject((*iter));
     }
 }
 
@@ -412,7 +421,7 @@ void CImGuiWin_MapTool::Save_Level(const wstring& strSavePath)
     
     for (size_t i = 0; i < vecGameObjects.size(); i++)
     {
-        auto ObjData = vecGameObjects[i]->SerializeData();
+        auto ObjData = vecGameObjects[i]->SerializeData_Prototype();
 
         _uint iNumComponents = ObjData.Get_ArraySize("Components");
         for (_uint j = 0; j < iNumComponents; j++)
