@@ -12,6 +12,7 @@
 #include "GameObject/ReaverBot_Fingerii.h"
 #include "GameObject/ReaverBot_Horokko.h"
 #include "GameObject/DynamicCamera.h"
+#include "GameObject/ReaverBot_HanmuruDoll.h"
 
 HRESULT CImGuiWin_ClassBrowser::Initialize()
 {
@@ -100,6 +101,10 @@ void CImGuiWin_ClassBrowser::Layout_Browser(const _float& fTimeDelta)
         {
             m_iSelected_Object = iIndex;
         }
+        if (ImGui::Selectable(u8"8. HanmuruDoll", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
+        }
 
 		ImGui::EndListBox();
 	}
@@ -149,6 +154,9 @@ void CImGuiWin_ClassBrowser::Create_Object()
         break;
     case 7:
         GI()->Add_GameObject(m_pGameObject = CDynamicCamera::Create());
+        break;
+    case 8:
+        GI()->Add_GameObject(m_pGameObject = CReaverBot_HanmuruDoll::Create());
         break;
     }
 

@@ -73,8 +73,10 @@ void CImGuiWin_Hierarchi::Layout_ObjectList(const _float& fTimeDelta)
 			}
 		}
 
+		Delete_GameObject();
+
 		ImGui::EndListBox();
-	}	
+	}
 }
 
 void CImGuiWin_Hierarchi::Pushback_GameObject(CGameObject* pObj)
@@ -88,6 +90,30 @@ void CImGuiWin_Hierarchi::Pushback_GameObject(CGameObject* pObj)
 void CImGuiWin_Hierarchi::Reset_GameObjectList()
 {
 	m_vecGameObjects.clear();
+}
+
+void CImGuiWin_Hierarchi::Delete_GameObject()
+{
+	if (m_iSelected_GameObject == -1)
+		return;
+
+	if (ImGui::IsKeyPressed(ImGuiKey_Delete))
+	{
+		auto iter = m_vecGameObjects.begin() + m_iSelected_GameObject;
+		if ((*iter) != nullptr)
+		{
+			CImGuiWin_Property* pWinProperty = { nullptr };
+			m_pParentWin->Find_Child<CImGuiWin_Property>(&pWinProperty);
+			if (pWinProperty != nullptr)
+			{
+				pWinProperty->Reset_GameObject();
+			}
+
+			m_vecGameObjects[m_iSelected_GameObject]->Set_Dead();
+			m_iSelected_GameObject = -1;
+			m_vecGameObjects.erase(iter);
+		}
+	}
 }
 
 void CImGuiWin_Hierarchi::Handle_ObjectPlaced(CGameObject* pObj)

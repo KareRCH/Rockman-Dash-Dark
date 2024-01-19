@@ -1,5 +1,8 @@
 #include "GameObject/Character_Common.h"
 
+#include "GameObject/StaticObject.h"
+#include "Physics/Contact.h"
+
 CCharacter_Common::CCharacter_Common()
 {
 	FAILED_CHECK_RETURN(Add_Component(TEXT("TeamAgentComp"), 
@@ -119,7 +122,16 @@ HRESULT CCharacter_Common::Initialize_Component()
 
 void CCharacter_Common::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
-
+	CStaticObject* pSolid = DynCast<CStaticObject*>(pDst);
+	if (nullptr != pSolid)
+	{
+		_float3 vNormal(_float(pContact->vContactNormal.x), _float(pContact->vContactNormal.y), _float(pContact->vContactNormal.z));
+		_vector vSimNormal = {};
+		vSimNormal = XMLoadFloat3(&vNormal);
+		Transform().Set_Position((Transform().Get_PositionVector() - vSimNormal * Cast<_float>(pContact->fPenetration)));
+		if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
+			m_bIsOnGround = true;
+	}
 }
 
 void CCharacter_Common::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)

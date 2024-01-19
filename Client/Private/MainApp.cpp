@@ -99,6 +99,29 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 	m_pGI->Tick_PipelineMgr();
 	m_pGI->Tick_PhysicsMgr(fTimeDelta);
 
+	if (m_pGI->IsKey_Pressed(DIK_F7))
+		m_pGI->Toggle_DebugDraw();
+	if (m_pGI->IsKey_Pressed(DIK_F8))
+	{
+		m_iTestLevel++;
+		if (m_iTestLevel == 0)
+		{
+			Open_Level(LEVEL_PARSED, TEXT("Levels/Level1.alevel"));
+		}
+		else if (m_iTestLevel == 1)
+		{
+			Open_Level(LEVEL_PARSED, TEXT("Levels/Level2.alevel"));
+		}
+		else if (m_iTestLevel == 2)
+		{
+			Open_Level(LEVEL_PARSED, TEXT("Levels/Level3.alevel"));
+		}
+		else if (m_iTestLevel == 3)
+		{
+			Open_Level(LEVEL_PARSED, TEXT("Levels/LevelBoss.alevel"));
+		}
+	}
+
 	return 0;
 }
 
@@ -164,6 +187,19 @@ HRESULT CMainApp::Open_Level(LEVEL eStartLevelID)
 
 	// 로딩 레벨에서 시작, 그 후 선택된 레벨로 로드한다.
 	CLevel* pLevel = CLevel_Loading::Create(eStartLevelID);
+	if (nullptr == pLevel)
+		return E_FAIL;
+
+	return m_pGI->Open_Level(LEVEL_LOADING, pLevel);
+}
+
+HRESULT CMainApp::Open_Level(LEVEL eStartLevelID, const wstring& strLevelPath)
+{
+	if (nullptr == m_pGI)
+		return E_FAIL;
+
+	// 로딩 레벨에서 시작, 그 후 선택된 레벨로 로드한다.
+	CLevel* pLevel = CLevel_Loading::Create(eStartLevelID, GI()->Get_TextureMainPath() + strLevelPath);
 	if (nullptr == pLevel)
 		return E_FAIL;
 

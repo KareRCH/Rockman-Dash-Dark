@@ -1,0 +1,64 @@
+{
+    "Name": "ReaverBot_HanmuruDoll",
+    "ProtoName": "HanmuruDoll1",
+    "ClassID": 10009,
+    "StateFlag": 52,
+    "PriorityTick": 0.0,
+    "PriorityRender": 0.0,
+    "PosX": 0.0,
+    "PosY": 0.0,
+    "PosZ": 0.0,
+    "RotX": 0.0,
+    "RotY": 0.0,
+    "RotZ": 0.0,
+    "ScaleX": 1.0,
+    "ScaleY": 1.0,
+    "ScaleZ": 1.0,
+    "Components": [
+        {
+            "ComponentID": 9,
+            "Name": "TeamAgentComp",
+            "ProtoName": "EnemyTeamAgent"
+        },
+        {
+            "ComponentID": 2,
+            "Name": "Model",
+            "ProtoName": "HanmuruDollModel",
+            "PosX": 0.0,
+            "PosY": 0.0,
+            "PosZ": 0.0,
+            "RotX": 0.0,
+            "RotY": 180.0,
+            "RotZ": 0.0,
+            "ScaleX": 0.10000000149011612,
+            "ScaleY": 0.10000000149011612,
+            "ScaleZ": 0.10000000149011612,
+            "ActivePasses": [
+                {
+                    "PassNum": 0
+                }
+            ],
+            "ModelType": 1,
+            "ModelPath": "Model/Character/Reaverbots/HanmuruDoll/HanmuruDoll.amodel",
+            "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+        },
+        {
+            "ComponentID": 1,
+            "Name": "ColliderComp",
+            "ProtoName": "HanmuruDollCollider",
+            "PosX": 0.0,
+            "PosY": 1.600000023841858,
+            "PosZ": 0.0,
+            "RotX": 0.0,
+            "RotY": 0.0,
+            "RotZ": 0.0,
+            "ScaleX": 2.0,
+            "ScaleY": 1.399999976158142,
+            "ScaleZ": 1.0,
+            "CollisionType": 2,
+            "CollisionLayer": 1,
+            "CollisionMask": 55
+        }
+    ],
+    "HP": 100.0
+}

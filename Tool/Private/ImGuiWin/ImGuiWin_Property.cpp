@@ -445,3 +445,9 @@ void CImGuiWin_Property::Set_GameObject(CGameObject* pGameObject)
 
     m_bChanged_GameObject = true;
 }
+
+void CImGuiWin_Property::Reset_GameObject()
+{
+    Safe_Release(m_pGameObject);
+    m_pGameObject = nullptr;
+}

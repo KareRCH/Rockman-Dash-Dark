@@ -1308,6 +1308,14 @@ void CGameInstance::Toggle_Deferred()
 	m_pRenderMgr->Toggle_Deferred();
 }
 
+void CGameInstance::Toggle_DebugDraw()
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Toggle_DebugDraw();
+}
+
 #pragma endregion
 
 
