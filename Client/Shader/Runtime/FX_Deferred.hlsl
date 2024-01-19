@@ -1,4 +1,4 @@
-#include "Shader_DEfines.hlsli"
+#include "Shader_Defines.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ProjMatrixInv, g_ViewMatrixInv;
@@ -15,11 +15,14 @@ vector g_vMtrlAmbient = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vMtrlSpecular = vector(1.f, 1.f, 1.f, 1.f);
 
 vector g_vCamPosition;
+float g_fFar = 1000.f;
 
 Texture2D g_ShadeTexture;
 Texture2D g_NormalTexture;
 Texture2D g_DepthTexture;
 Texture2D g_SpecularTexture;
+
+float g_fStair = 3.f;
 
 struct VS_IN
 {
@@ -98,7 +101,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     Out.vShade = g_vLightDiffuse * min((max(dot(normalize(g_vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)), 1.f);
 
     vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 1000.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
 
     vector vWorldPos;
 
@@ -182,7 +185,9 @@ PS_OUT PS_MAIN_FINAL(PS_IN In)
         discard;
 
     vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexcoord);
-
+    vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexcoord);
+    
+    vShade = vector(ceil(vShade.xyz * g_fStair), g_fStair) / g_fStair;
     Out.vColor = vDiffuse * vShade;
 
     return Out;

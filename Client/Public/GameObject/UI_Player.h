@@ -54,40 +54,23 @@ private:
 	_bool				m_bIsDisplay = { false };
 	FGauge				m_fDisplayLerp = FGauge(1.f);
 
-private:
-	CPlaneModelComp*	m_pHP_Container_Image = { nullptr };
-	CPlaneModelComp*	m_pHP_Frontbar_Image = { nullptr };
+public:
+	enum TYPE { HP_CONTAINER, HP_FRONT, SUB_CONTAINER, SUB_USAGE, SUB_MAIN, THROW, ENEMY_SPOT, TYPE_END };
 
-	_float3				m_vHP_Container_OriginPos = {};
-	_float3				m_vHP_Frontbar_OriginPos = {};
+private:
+	CPlaneModelComp*	m_pImage[TYPE_END] = {};
+	_float3				m_vOriginPos[TYPE_END] = {};
 
 	FGauge				m_fHP;						// HP
 	FGauge				m_fHP_Delayed;				// HP 지연된 값
 	FDelay				m_fHP_ReduceTime;			// HP 깎기 지연시간
 
 private:
-	CPlaneModelComp*	m_pSubWeapon_Container_Image = { nullptr };
-	CPlaneModelComp*	m_pSubWeapon_Usage_Image = { nullptr };
-	CPlaneModelComp*	m_pSubWeapon_Main_Image = { nullptr };
-
-	_float3				m_vSubWeapon_Container_OriginPos = {};
-	_float3				m_vSubWeapon_Usage_OriginPos = {};
-	_float3				m_vSubWeapon_Main_OriginPos = {};
-
 	FGauge				m_fSubWeapon_Main;			// 실제 잔탄량
 	FGauge				m_fSubWeapon_Usage;			// 현재 사용 가능한 잔탄
 	FGauge				m_fSubWeapon_Usage_Delayed;	// 현재 사용 가능 잔탄 딜레이 처리
 
 private:
-	CPlaneModelComp*	m_pThrowWeapon_Image = { nullptr };
-
-	_float3				m_vThrowWeapon_OriginPos = {};
-
-private:
-	CPlaneModelComp*	m_pEnemySpot_Image = { nullptr };
-
-	_float3				m_vEnemySpot_OriginPos = {};
-
 	_bool				m_bIsEnemySpoted = { false };		// 시야 밖에서 적이 범위 안에 있을 때 활성화
 	FGauge				m_fEnemySpot_Index = FGauge(12.f);	// 애니메이션 재생시 사용됨.
 

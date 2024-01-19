@@ -24,7 +24,7 @@ class CSkyBox final : public CGameObject
 	DERIVED_CLASS(CGameObject, CSkyBox)
 
 public:
-	static const _uint g_ClassID = ECast(EObjectIDExt::Item_Deflector);
+	static const _uint g_ClassID = ECast(EObjectIDExt::SkyBox);
 
 protected:
 	explicit CSkyBox();
@@ -43,9 +43,9 @@ public:
 
 public:
 	static	CSkyBox*		Create();
-	static	CSkyBox* Create(FSerialData& InputData);
-	virtual CGameObject* Clone(void* Arg = nullptr);
-	virtual CGameObject* Clone(FSerialData& InputData);
+	static	CSkyBox*		Create(FSerialData& InputData);
+	virtual CGameObject*	Clone(void* Arg = nullptr);
+	virtual CGameObject*	Clone(FSerialData& InputData);
 
 protected:
 	virtual void	Free() override;
@@ -64,6 +64,10 @@ private:
 
 };
 
-
+template <>
+struct TObjectExtTrait<CSkyBox::g_ClassID>
+{
+	using Class = CSkyBox;
+};
 
 END

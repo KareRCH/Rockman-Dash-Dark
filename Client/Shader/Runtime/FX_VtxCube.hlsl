@@ -1,5 +1,6 @@
-
 #include "Shader_Defines.hlsli"
+
+
 
 cbuffer WVP : register(b0)
 {
@@ -7,12 +8,6 @@ cbuffer WVP : register(b0)
 };
 
 TextureCube		g_Texture;
-
-SamplerState DefaultSampler
-{	
-	Filter = MIN_MAG_MIP_LINEAR;
-};
-
 
 struct VS_IN
 {
@@ -61,7 +56,7 @@ PS_OUT PS_MAIN(VPS_INOUT In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
     //Out.vColor = float4(1.f, 0.f, 0.f, 1.f);
 
 	return Out;

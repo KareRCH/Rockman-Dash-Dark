@@ -202,6 +202,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\Character.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Character_Common.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ComponentFactory.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\DamageCollision.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\DynamicCamera.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Effect_Common.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\GameObjectFactory.cpp" />

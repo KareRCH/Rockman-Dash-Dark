@@ -108,7 +108,7 @@ CCylinderModelComp* CCylinderModelComp::Create()
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("CBoxModelComp Create Failed");
+		MSG_BOX("CCylinderModelComp Create Failed");
 		Safe_Release(pInstance);
 	}
 
@@ -117,7 +117,15 @@ CCylinderModelComp* CCylinderModelComp::Create()
 
 CCylinderModelComp* CCylinderModelComp::Create(FSerialData& InputData)
 {
-	return nullptr;
+	ThisClass* pInstance = new ThisClass();
+
+	if (FAILED(pInstance->Initialize_Prototype(InputData)))
+	{
+		MSG_BOX("CCylinderModelComp Create Failed");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 CComponent* CCylinderModelComp::Clone(void* Arg)
@@ -126,7 +134,7 @@ CComponent* CCylinderModelComp::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("CBoxModelComp Create Failed");
+		MSG_BOX("CCylinderModelComp Create Failed");
 		Safe_Release(pInstance);
 	}
 
@@ -135,7 +143,15 @@ CComponent* CCylinderModelComp::Clone(void* Arg)
 
 CComponent* CCylinderModelComp::Clone(FSerialData& InputData)
 {
-	return nullptr;
+	ThisClass* pInstance = new ThisClass(*this);
+
+	if (FAILED(pInstance->Initialize(InputData)))
+	{
+		MSG_BOX("CCylinderModelComp Create Failed");
+		Safe_Release(pInstance);
+	}
+
+	return Cast<CComponent*>(pInstance);
 }
 
 void CCylinderModelComp::Free()

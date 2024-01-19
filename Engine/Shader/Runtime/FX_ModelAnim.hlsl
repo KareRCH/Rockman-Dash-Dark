@@ -29,6 +29,7 @@ cbuffer BoneBuffer : register(b2)
 };
 
 vector g_vCamPosition = vector(0.f, 0.f, 0.f, 0.f);
+float g_fFar = 1000.f;
 
 // 텍스처
 Texture2D g_texDiffuse;
@@ -37,9 +38,7 @@ sampler DefaultSampler = sampler_state
     Filter = MIN_MAG_MIP_LINEAR;
 };
 
-#ifdef TOOL
 int g_iObjectID = -1;
-#endif
 
 //-------------------------------------------------
 
@@ -58,13 +57,15 @@ struct VPS_INOUT
     float4 vPosition : SV_POSITION0;
     float3 vNormal : NORMAL;
     float2 vTexCoord : TEXCOORD0;
-    float3 vViewDirection : TEXCOORD1;
+    float4 vWorldPos : TEXCOORD1;
+    float4 vProjPos : TEXCOORD2;
 };
 
 struct PS_OUTPUT
 {
-    float4 vColor : SV_TARGET0;
+    float4 vDiffuse : SV_TARGET0;
     float4 vNormal : SV_TARGET1;
+    float4 vDepth : SV_TARGET2;
 };
 
 
@@ -99,13 +100,8 @@ VPS_INOUT VS_MAIN(VS_INPUT input)
     output.vTexCoord = input.vTexCoord;
     
     // 월드 정점 위치 계산
-    float4 worldPosition = mul(float4(input.vPosition.xyz, 1.f), g_matWorld);
-    
-    // Look 벡터 설정
-    output.vViewDirection = g_vCamPosition.xyz - worldPosition.xyz;
-    
-    // 뷰 방향 벡터 표준화
-    output.vViewDirection = normalize(output.vViewDirection);
+    output.vWorldPos = mul(float4(input.vPosition.xyz, 1.f), g_matWorld);
+    output.vProjPos = output.vPosition;
     
     return output;
 }
@@ -114,89 +110,24 @@ VPS_INOUT VS_MAIN(VS_INPUT input)
 
 PS_OUTPUT PS_MAIN(VPS_INOUT input)
 {
-    PS_OUTPUT output;
+    PS_OUTPUT output = (PS_OUTPUT)0;
     
     vector vMtrlDiffuse = g_texDiffuse.Sample(DefaultSampler, input.vTexCoord);
 
     if (vMtrlDiffuse.a < 0.3f)
         discard;
     
-    float fShade = max(dot(normalize(g_vLightDir) * -1.f, normalize(vector(input.vNormal, 1.f))), 0.f);
-
-	/* 스펙큘러가 보여져야하는 영역에서는 1로, 아닌 영역에서는 0으로 정의되는 스펙큘러의 세기가 필요하다. */
-    vector vReflect = reflect(normalize(g_vLightDir), normalize(vector(input.vNormal, 1.f)));
-
-    float fSpecular = pow(max(dot(normalize(vector(input.vViewDirection, 1.f)) * -1.f, normalize(vReflect)), 0.f), 30.f);
-
-    float fStair = 3.f;
-    vector vLight = g_vLightDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
-		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
-    vector vColor = vMtrlDiffuse * vector(ceil(vLight.x * fStair),
-                    ceil(vLight.y * fStair), ceil(vLight.z * fStair), fStair) / fStair;
-    
-    output.vColor = vColor;
-    output.vNormal = float4(input.vNormal, 1.f);
+    output.vDiffuse = vMtrlDiffuse;
+    output.vNormal = vector(input.vNormal * 0.5f + 0.5f, 0.f);
+    output.vDepth = vector(input.vProjPos.z / input.vProjPos.w, input.vProjPos.w / g_fFar, 0.f, (float) g_iObjectID);
     
     return output;
 }
 
 // ----------------------- 툴 전용 --------------------------------
 
-
-
-#ifdef TOOL
-struct PS_OUTPUT_TOOL
-{
-    float4 vColor : SV_TARGET0;
-    float4 vPosAndID : SV_TARGET1;
-};
-
-PS_OUTPUT_TOOL PS_MAIN_TOOL(VPS_INOUT input)
-{
-    PS_OUTPUT_TOOL output = (PS_OUTPUT_TOOL)0;
-    
-    vector vMtrlDiffuse = g_texDiffuse.Sample(DefaultSampler, input.vTexCoord);
-
-    if (vMtrlDiffuse.a < 0.3f)
-        discard;
-
-    float fShade = max(dot(normalize(g_vLightDir) * -1.f, normalize(vector(input.vNormal, 1.f))), 0.f);
-
-	/* 스펙큘러가 보여져야하는 영역에서는 1로, 아닌 영역에서는 0으로 정의되는 스펙큘러의 세기가 필요하다. */
-    vector vReflect = reflect(normalize(g_vLightDir), normalize(vector(input.vNormal, 1.f)));
-
-    float fSpecular = pow(max(dot(normalize(vector(input.vViewDirection, 1.f)) * -1.f, normalize(vReflect)), 0.f), 30.f);
-
-    output.vColor = g_vLightDiffuse * vMtrlDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
-		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
-    
-    output.vNormal = float4(input.vNormal, 1.f);
-    // 야매긴한데 툴 피킹은 오브젝트 ID를 렌더타겟에 저장한다. 위치값도 같이 전달한다.
-    output.vPosAndID = float4(input.vPosition.xyz, float(g_iObjectID));
-    
-    return output;
-}
-#endif
-
-
 technique11 DefaultTechnique
 {
-#ifdef TOOL
-    // 툴에서 피킹용으로 쓰이는 패스
-    pass Tool
-    {
-        SetRasterizerState(RS_Default);
-		SetDepthStencilState(DSS_None, 0);
-		SetBlendState(BS_AlphaBlend_Add, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
-
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        HullShader = NULL;
-        DomainShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_TOOL();
-    }
-#endif
-
     // 기본 패스
     pass Default
     {

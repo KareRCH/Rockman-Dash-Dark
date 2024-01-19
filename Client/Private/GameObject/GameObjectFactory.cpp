@@ -9,6 +9,7 @@
 #include "GameObject/ReaverBot_Fingerii.h"
 #include "GameObject/ReaverBot_HanmuruDoll.h"
 #include "GameObject/StaticObject.h"
+#include "GameObject/SkyBox.h"
 
 #include "BaseClass/Terrain.h"
 #include "BaseClass/Navigation.h"
@@ -52,6 +53,9 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 			break;
 		case EObjectIDExt::HanmuruDoll:
 			pObj = TObjectExtTrait< ECast(EObjectIDExt::HanmuruDoll)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::SkyBox:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::SkyBox)>::Class::Create(Data);
 			break;
 		}
 		break;

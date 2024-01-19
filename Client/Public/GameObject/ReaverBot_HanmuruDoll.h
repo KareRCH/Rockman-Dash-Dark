@@ -102,7 +102,7 @@ private:
 	void ActState_Dead(const _float& fTimeDelta);
 
 public:
-	enum class EState_AI { Idle, Chase, Smash, OverHit, Dead, Escape };
+	enum class EState_AI { Idle, Chase, Smash, WalkAndSmash, WalkAndSmash_LookAt, OverHit, Dead, Escape };
 
 private:		// 약식 상태머신
 	using SState_AI = STATE_SET<EState_AI, void(ThisClass*, const _float&)>;
@@ -116,6 +116,8 @@ private:
 	void AIState_Idle(const _float& fTimeDelta);
 	void AIState_Chase(const _float& fTimeDelta);
 	void AIState_Smash(const _float& fTimeDelta);
+	void AIState_WalkAndSmash(const _float& fTimeDelta);
+	void AIState_WalkAndSmash_LookAt(const _float& fTimeDelta);
 	void AIState_OverHit(const _float& fTimeDelta);
 	void AIState_Dead(const _float& fTimeDelta);
 
