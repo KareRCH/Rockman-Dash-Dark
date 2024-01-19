@@ -6,6 +6,7 @@
 CSkyBox::CSkyBox()
 {
     Set_Name(L"SkyBox");
+    Set_RenderGroup(ERenderGroup::Priority);
 }
 
 CSkyBox::CSkyBox(const CSkyBox& rhs)
@@ -17,17 +18,45 @@ HRESULT CSkyBox::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
-    if (FAILED(Initialize_Component()))
-        return E_FAIL;
 
-    Set_RenderGroup(ERenderGroup::Priority);
+    // 컴포넌트의 기본을 추가
+    if (FAILED(Add_Component(TEXT("ModelComp"), m_pModelComp = CCylinderModelComp::Create())))
+        return E_FAIL;
 
     return S_OK;
 }
 
 HRESULT CSkyBox::Initialize_Prototype(FSerialData& InputData)
 {
-    return E_NOTIMPL;
+    if (FAILED(__super::Initialize_Prototype(InputData)))
+        return E_FAIL;
+
+    _uint iNumPrototype = 0;
+    iNumPrototype = InputData.Get_ArraySize("Components");
+    for (_uint i = 0; i < iNumPrototype; i++)
+    {
+        FSerialData ProtoData;
+        InputData.Get_ObjectFromArray("Components", i, ProtoData);
+
+        _uint iComponentID = 0;
+        if (FAILED(ProtoData.Get_Data("ComponentID", iComponentID)))
+            return E_FAIL;
+
+        string strName = "";
+        if (FAILED(ProtoData.Get_Data("Name", strName)))
+            return E_FAIL;
+
+        switch (iComponentID)
+        {
+        case ECast(EComponentID::CylinderModel):
+            NULL_CHECK_RETURN(m_pModelComp = CCylinderModelComp::Create(ProtoData), E_FAIL);
+            if (FAILED(Add_Component(ConvertToWstring(strName), m_pModelComp)))
+                return E_FAIL;
+            break;
+        }
+    }
+
+    return S_OK;
 }
 
 HRESULT CSkyBox::Initialize(void* Arg)
@@ -41,7 +70,9 @@ HRESULT CSkyBox::Initialize(void* Arg)
 
 HRESULT CSkyBox::Initialize(FSerialData& InputData)
 {
-    return E_NOTIMPL;
+
+
+    return S_OK;
 }
 
 void CSkyBox::Priority_Tick(const _float& fTimeDelta)
@@ -151,14 +182,40 @@ FSerialData CSkyBox::SerializeData()
 
 HRESULT CSkyBox::Initialize_Component()
 {
-    // 컴포넌트의 기본을 추가
-    if (FAILED(Add_Component(TEXT("ModelComp"), m_pModelComp = CCylinderModelComp::Create())))
-        return E_FAIL;
+    
 
     return S_OK;
 }
 
 HRESULT CSkyBox::Initialize_Component(FSerialData& InputData)
 {
-    return E_NOTIMPL;
+    _uint iNumPrototype = 0;
+    iNumPrototype = InputData.Get_ArraySize("Components");
+    for (_uint i = 0; i < iNumPrototype; i++)
+    {
+        FSerialData InputProto;
+        InputData.Get_ObjectFromArray("Components", i, InputProto);
+
+        _uint iComponentID = 0;
+        if (FAILED(InputProto.Get_Data("ComponentID", iComponentID)))
+            return E_FAIL;
+
+        string strProtoName = "";
+        if (FAILED(InputProto.Get_Data("ProtoName", strProtoName)))
+            return E_FAIL;
+
+        string strName = "";
+        if (FAILED(InputProto.Get_Data("Name", strName)))
+            return E_FAIL;
+
+        switch (iComponentID)
+        {
+        case ECast(EComponentID::CylinderModel):
+            FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
+                m_pModelComp = DynCast<CCylinderModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
+            break;
+        }
+    }
+
+    return S_OK;
 }

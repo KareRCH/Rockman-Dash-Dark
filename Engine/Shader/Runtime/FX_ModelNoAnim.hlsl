@@ -21,14 +21,12 @@ cbuffer LightBuffer : register(b1)
 };
 
 vector g_vCamPosition = vector(0.f, 0.f, 0.f, 0.f);
+float g_fFar = 1000.f;
 
 // 텍스처
 Texture2D g_texDiffuse;
-sampler DefaultSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-};
 
+int g_iObjectID = -1;
 
 //-------------------------------------------------
 
@@ -40,25 +38,27 @@ struct VS_INPUT
     float3 vTangent : TANGENT0;
 };
 
-struct PS_INPUT
+struct VPS_INOUT
 {
     float4 vPosition : SV_POSITION0;
     float3 vNormal : NORMAL;
     float2 vTexCoord : TEXCOORD0;
-    float3 vViewDirection : TEXCOORD1;
+    float4 vWorldPos : TEXCOORD1;
+    float4 vProjPos : TEXCOORD2;
 };
 
 struct PS_OUTPUT
 {
-    float4 vColor : SV_TARGET0;
+    float4 vDiffuse : SV_TARGET0;
     float4 vNormal : SV_TARGET1;
+    float4 vDepth : SV_TARGET2;
 };
 
 //-------------------------------------------------
 
-PS_INPUT VS_MAIN(VS_INPUT input)
+VPS_INOUT VS_MAIN(VS_INPUT input)
 {
-    PS_INPUT output = (PS_INPUT) 0;
+    VPS_INOUT output = (VPS_INOUT) 0;
     
     output.vPosition = mul(float4(input.vPosition.xyz, 1.f), g_matWorld);
     output.vPosition = mul(output.vPosition, g_matView);
@@ -70,43 +70,27 @@ PS_INPUT VS_MAIN(VS_INPUT input)
     output.vTexCoord = input.vTexCoord;
     
     // 월드 정점 위치 계산
-    float4 worldPosition = mul(float4(input.vPosition.xyz, 1.f), g_matWorld);
-    
-    // Look 벡터 설정
-    output.vViewDirection = g_vCamPosition.xyz - worldPosition.xyz;
-    
-    // 뷰 방향 벡터 표준화
-    output.vViewDirection = normalize(output.vViewDirection);
+    output.vWorldPos = mul(float4(input.vPosition.xyz, 1.f), g_matWorld);
+    output.vProjPos = output.vPosition;
     
     return output;
 }
 
 //-------------------------------------------------
 
-PS_OUTPUT PS_MAIN(PS_INPUT input)
+PS_OUTPUT PS_MAIN(VPS_INOUT input)
 {
     PS_OUTPUT output;
     
     // 베이스 컬러 세팅
-    float4 vMtrlDiffuse = g_texDiffuse.Sample(DefaultSampler, input.vTexCoord);
+    float4 vMtrlDiffuse = g_texDiffuse.Sample(LinearSampler, input.vTexCoord);
     
     if (vMtrlDiffuse.a < 0.3f)
         discard;
     
-    float fShade = max(dot(normalize(g_vLightDir) * -1.f, normalize(vector(input.vNormal, 1.f))), 0.f);
-    
-    // 정반사 값을 초기화한다.
-    vector vReflect = reflect(normalize(g_vLightDir), normalize(vector(input.vNormal, 1.f)));
-    float fSpecular = pow(max(dot(normalize(vector(input.vViewDirection, 1.f)) * -1.f, normalize(vReflect)), 0.f), 30.f);
-    
-    float fStair = 5.f;
-    vector vLight = g_vLightDiffuse * min((fShade + (g_vLightAmbient * g_vMtrlAmbient)), 1.f)
-		+ (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
-    vector vColor = vMtrlDiffuse * vector(ceil(vLight.x * fStair),
-                    ceil(vLight.y * fStair), ceil(vLight.z * fStair), fStair) / fStair;
-    
-    output.vColor = vColor;
-    output.vNormal = float4(input.vNormal, 1.f);
+    output.vDiffuse = vMtrlDiffuse;
+    output.vNormal = vector(input.vNormal * 0.5f + 0.5f, 0.f);
+    output.vDepth = vector(input.vProjPos.z / input.vProjPos.w, input.vProjPos.w / g_fFar, 0.f, (float) g_iObjectID);
     
     return output;
 }
@@ -124,12 +108,6 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         HullShader = NULL;
         DomainShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN();
-    }
-
-    pass Particle
-    {
-        VertexShader = compile vs_5_0 VS_MAIN();
         PixelShader = compile ps_5_0 PS_MAIN();
     }
 }

@@ -54,11 +54,6 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK_RETURN(m_pGI->Add_Font(TEXT("Default"), TEXT("DungGeunMo-30.spritefont")), E_FAIL);
 
-	GI()->Load_Effect(L"Runtime/FX_ModelTest.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
-	GI()->Load_Effect(L"Runtime/FX_Terrain.hlsl", SHADER_VTX_NORM::Elements, SHADER_VTX_NORM::iNumElements);
-
-	//GI()->Toggle_Deferred();
-
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 60.f), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_Immediate"), E_FAIL);
@@ -68,6 +63,8 @@ HRESULT CMainApp::Initialize()
 	CTeamAgentComp::Add_TeamRelation(ETEAM_ENEMY, ETEAM_PLAYER, ETeamRelation::Hostile);
 
 	FAILED_CHECK_RETURN(Open_Level(LEVEL_LOGO), E_FAIL);
+
+	GI()->Toggle_Deferred();
 
 	/*FSerialData Level;
 	Level.Add_Member("Test", 1);

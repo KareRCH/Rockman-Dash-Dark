@@ -336,6 +336,8 @@ void CReaverBot_HanmuruDoll::Register_State()
     m_State_AI.Add_Func(EState_AI::Idle, &ThisClass::AIState_Idle);
     m_State_AI.Add_Func(EState_AI::Chase, &ThisClass::AIState_Chase);
     m_State_AI.Add_Func(EState_AI::Smash, &ThisClass::AIState_Smash);
+    m_State_AI.Add_Func(EState_AI::WalkAndSmash, &ThisClass::AIState_WalkAndSmash);
+    m_State_AI.Add_Func(EState_AI::WalkAndSmash_LookAt, &ThisClass::AIState_WalkAndSmash_LookAt);
     m_State_AI.Add_Func(EState_AI::OverHit, &ThisClass::AIState_OverHit);
     m_State_AI.Add_Func(EState_AI::Dead, &ThisClass::AIState_Dead);
     m_State_AI.Set_State(EState_AI::Idle);
@@ -356,6 +358,9 @@ void CReaverBot_HanmuruDoll::ActState_Idle(const _float& fTimeDelta)
         // 공격
         if (m_ActionKey.IsAct(EActionKey::Smash))
             m_State_Act.Set_State(EState_Act::Smash);
+        // 워킹 공격
+        if (m_ActionKey.IsAct(EActionKey::WalkAndSmash))
+            m_State_Act.Set_State(EState_Act::WalkAndSmash);
         // 움직임
         if (m_ActionKey.IsAct(EActionKey::MoveForward) || m_ActionKey.IsAct(EActionKey::MoveBackward)
             || m_ActionKey.IsAct(EActionKey::TurnRight) || m_ActionKey.IsAct(EActionKey::TurnLeft)
@@ -383,6 +388,8 @@ void CReaverBot_HanmuruDoll::ActState_Walk(const _float& fTimeDelta)
         // 공격
         if (m_ActionKey.IsAct(EActionKey::Smash))
             m_State_Act.Set_State(EState_Act::Smash);
+        if (m_ActionKey.IsAct(EActionKey::WalkAndSmash))
+            m_State_Act.Set_State(EState_Act::WalkAndSmash);
         // 움직임
         if (!m_ActionKey.IsAct(EActionKey::MoveForward) && !m_ActionKey.IsAct(EActionKey::MoveBackward)
             && !m_ActionKey.IsAct(EActionKey::TurnRight) && !m_ActionKey.IsAct(EActionKey::TurnLeft)
@@ -455,6 +462,8 @@ void CReaverBot_HanmuruDoll::ActState_WalkAndSmash(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
+        m_ActionKey.Act(EActionKey::MoveForward);
+
         Move_Update(fTimeDelta);
 
         // 원상태로 돌아감
@@ -536,7 +545,7 @@ void CReaverBot_HanmuruDoll::AIState_Chase(const _float& fTimeDelta)
 {
     if (m_State_AI.IsState_Entered())
     {
-
+        m_fIdleTime.Readjust(1.f);
     }
 
     if (m_State_AI.Can_Update())
@@ -551,12 +560,38 @@ void CReaverBot_HanmuruDoll::AIState_Chase(const _float& fTimeDelta)
             _float fDistance = XMVectorGetX(
                 XMVector3Length((m_pTarget->Transform().Get_PositionVector() - Transform().Get_PositionVector())));
             _float fFindDistance = 4.f;
+            _float fWalkAndSmashDistance = 5.f;
+            _bool   bIsInverse = false;
             if (m_fHP.Get_Percent() < 0.5f)
-                fFindDistance = 10.f;
-
-            if (fDistance < fFindDistance)
             {
-                m_State_AI.Set_State(EState_AI::Smash);
+                fFindDistance = 10.f;
+                fWalkAndSmashDistance = -5.f;
+                bIsInverse = true;
+            }
+
+            
+            if (!bIsInverse)
+            {
+                if (m_fIdleTime.Increase(fTimeDelta))
+                {
+                    if (fDistance < fFindDistance + fWalkAndSmashDistance)
+                    {
+                        if (fDistance > fFindDistance)
+                            m_State_AI.Set_State(EState_AI::WalkAndSmash);
+                        else
+                            m_State_AI.Set_State(EState_AI::Smash);
+                    }
+                }
+            }
+            else
+            {
+                if (m_fIdleTime.Increase(fTimeDelta))
+                {
+                    if (fDistance < fFindDistance + fWalkAndSmashDistance)
+                        m_State_AI.Set_State(EState_AI::WalkAndSmash_LookAt);
+                    else
+                        m_State_AI.Set_State(EState_AI::Smash);
+                }
             }
         }
     }
@@ -574,12 +609,59 @@ void CReaverBot_HanmuruDoll::AIState_Smash(const _float& fTimeDelta)
         if (m_fHP.Get_Percent() >= 0.5f)
             m_fIdleTime.Readjust(4.f);
         else
-            m_fIdleTime.Readjust(2.f);
+            m_fIdleTime.Readjust(1.f);
         m_ActionKey.Act(EActionKey::Smash);
     }
 
     if (m_State_AI.Can_Update())
     {
+        if (m_fIdleTime.Increase(fTimeDelta))
+        {
+            m_State_AI.Set_State(EState_AI::Idle);
+        }
+    }
+
+    if (m_State_AI.IsState_Exit())
+    {
+
+    }
+}
+
+void CReaverBot_HanmuruDoll::AIState_WalkAndSmash(const _float& fTimeDelta)
+{
+    if (m_State_AI.IsState_Entered())
+    {
+        m_fIdleTime.Readjust(3.f);
+    }
+
+    if (m_State_AI.Can_Update())
+    {
+        m_ActionKey.Act(EActionKey::WalkAndSmash);
+
+        if (m_fIdleTime.Increase(fTimeDelta))
+        {
+            m_State_AI.Set_State(EState_AI::Idle);
+        }
+    }
+
+    if (m_State_AI.IsState_Exit())
+    {
+
+    }
+}
+
+void CReaverBot_HanmuruDoll::AIState_WalkAndSmash_LookAt(const _float& fTimeDelta)
+{
+    if (m_State_AI.IsState_Entered())
+    {
+        m_fIdleTime.Readjust(3.f);
+    }
+
+    if (m_State_AI.Can_Update())
+    {
+        m_ActionKey.Act(EActionKey::WalkAndSmash);
+        m_ActionKey.Act(EActionKey::LookTarget);
+
         if (m_fIdleTime.Increase(fTimeDelta))
         {
             m_State_AI.Set_State(EState_AI::Idle);

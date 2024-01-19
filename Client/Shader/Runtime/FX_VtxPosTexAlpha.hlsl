@@ -19,12 +19,6 @@ float2 g_vMaxUV = float2(1.f, 1.f);
 
 Texture2D g_Texture;
 
-sampler DefaultSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-};
-
-
 /* 정점의 변환(월드변환, 뷰변환, 투영변환.)을 수행한다. */
 /* 정점의 구성정보를 추가, 삭제등의 변경을 수행한다.*/
 
@@ -83,7 +77,7 @@ PS_OUT PS_MAIN(VPS_INOUT In)
         discard;
         
 	/* 첫번째 인자의 방식으로 두번째 인자의 위치에 있는 픽셀의 색을 얻어온다. */
-    vector vSourColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    vector vSourColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
     
     if (vSourColor.a < 0.3f)
         discard;
