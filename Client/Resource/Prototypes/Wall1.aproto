@@ -1,6 +1,6 @@
 {
     "Name": "StaticObject0",
-    "ProtoName": "",
+    "ProtoName": "Wall1",
     "ClassID": 10004,
     "StateFlag": 52,
     "PriorityTick": 0.0,
@@ -18,13 +18,13 @@
         {
             "ComponentID": 2,
             "Name": "Model",
-            "ProtoName": "Wall1",
+            "ProtoName": "Wall1Model",
             "PosX": 0.0,
             "PosY": 3.0,
             "PosZ": 0.0,
             "RotX": 90.0,
-            "RotY": 0.0,
-            "RotZ": 180.0,
+            "RotY": 180.0,
+            "RotZ": 0.0,
             "ScaleX": 1.0,
             "ScaleY": 1.0,
             "ScaleZ": 1.0,
@@ -34,7 +34,7 @@
                 }
             ],
             "ModelType": 0,
-            "ModelPath": "Model/Map/Main/Wall1.amodel",
+            "ModelPath": "Model\\Map\\Main\\Wall1.amodel",
             "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
         },
         {
@@ -44,13 +44,15 @@
             "PosX": 0.0,
             "PosY": 3.0,
             "PosZ": 0.0,
-            "RotX": -0.0,
+            "RotX": 0.0,
             "RotY": 0.0,
-            "RotZ": -0.0,
+            "RotZ": 0.0,
             "ScaleX": 4.0,
             "ScaleY": 6.0,
             "ScaleZ": 0.10000000149011612,
-            "CollisionType": 7
+            "CollisionType": 7,
+            "CollisionLayer": 16,
+            "CollisionMask": 0
         }
     ]
 }

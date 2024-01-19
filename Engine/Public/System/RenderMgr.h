@@ -93,10 +93,12 @@ private:
 	vector<D3D11_VIEWPORT>		m_vecViewport_RT;		// ·»´õ Å¸°Ù ºäÆ÷Æ®
 
 public:
-	void Add_DebugEvent(DelegateDebug DebugEvent) { m_DebugEvent.Add(DebugEvent); }
+	void Add_DebugEvent(DelegateDebug DebugEvent) { if (m_bIsDebugDraw) m_DebugEvent.Add(DebugEvent); }
+	void Toggle_DebugDraw() { m_bIsDebugDraw = !m_bIsDebugDraw; }
 
 private:
 	MultiDeleDebug		m_DebugEvent;
+	_bool				m_bIsDebugDraw = { false };
 
 
 #pragma region ÆÄÀÌÇÁ¶óÀÎ ÄÄÆ÷³ÍÆ®

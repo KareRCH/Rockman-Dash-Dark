@@ -1,5 +1,5 @@
 {
-    "Name": "StaticObject",
+    "Name": "StaticObject0",
     "ProtoName": "BigCeil1",
     "ClassID": 10004,
     "StateFlag": 52,
@@ -48,9 +48,11 @@
             "RotY": 0.0,
             "RotZ": 0.0,
             "ScaleX": 20.0,
-            "ScaleY": 0.009999999776482582,
+            "ScaleY": 0.10000000149011612,
             "ScaleZ": 20.0,
-            "CollisionType": 7
+            "CollisionType": 7,
+            "CollisionLayer": 16,
+            "CollisionMask": 0
         }
     ]
 }

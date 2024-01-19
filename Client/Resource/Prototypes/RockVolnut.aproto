@@ -80,6 +80,6 @@
         }
     ],
     "HP": 100.0,
-    "MoveSpeed": 0.0,
-    "JumpSpeed": 0.0
+    "MoveSpeed": 6.0,
+    "JumpSpeed": 10.0
 }

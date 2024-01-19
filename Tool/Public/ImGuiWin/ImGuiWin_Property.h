@@ -3,6 +3,13 @@
 #include "Tool_Define.h"
 #include "ImGuiWin/ImGuiWin.h"
 
+BEGIN(Engine)
+class CGameObjectComp;
+class CSceneComponent;
+class CCommonModelComp;
+class CColliderComponent;
+END
+
 BEGIN(Tool)
 
 /// <summary>
@@ -41,6 +48,7 @@ private:
 
 public:
 	void Set_GameObject(CGameObject* pGameObject);
+	void Reset_GameObject();
 
 private:
 	_bool			m_bChanged_GameObject = { false };

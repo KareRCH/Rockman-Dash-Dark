@@ -287,6 +287,12 @@
     <ClCompile Include="Private\ImGuiWin\ImGuiWin_PrototypeProperty.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\ComponentFactory.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\ReaverBot_HanmuruDoll.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Include\Tool.rc">

@@ -10,6 +10,7 @@
 
 #include "GameObject/Effect_Common.h"
 #include "GameObject/LoadingScreen.h"
+#include "GameObject/StaticObject.h"
 
 
 CWeapon_Buster::CWeapon_Buster()
@@ -96,7 +97,7 @@ HRESULT CWeapon_Buster::Render()
 	m_pModelComp->Render();
 
 #ifdef _DEBUG
-	m_pColliderComp->Render();
+	GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
 	return S_OK;
@@ -108,7 +109,7 @@ CWeapon_Buster* CWeapon_Buster::Create()
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("CUI_Player Create Failed");
+		MSG_BOX("Weapon_Buster Create Failed");
 		Safe_Release(pInstance);
 	}
 
@@ -121,7 +122,7 @@ CWeapon_Buster* CWeapon_Buster::Create(const _float3 vPos)
 
 	if (FAILED(pInstance->Initialize_Prototype(vPos)))
 	{
-		MSG_BOX("CUI_Player Create Failed");
+		MSG_BOX("Weapon_Buster Create Failed");
 		Safe_Release(pInstance);
 	}
 
@@ -134,7 +135,7 @@ CGameObject* CWeapon_Buster::Clone(void* Arg)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("CUI_Player Create Failed");
+		MSG_BOX("Weapon_Buster Create Failed");
 		Safe_Release(pInstance);
 	}
 
@@ -191,6 +192,13 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 			Create_Effect();
 			Set_Dead();
 		}
+	}
+
+	CStaticObject* pSolid = DynCast<CStaticObject*>(pDst);
+	if (nullptr != pSolid)
+	{
+		Create_Effect();
+		Set_Dead();
 	}
 }
 

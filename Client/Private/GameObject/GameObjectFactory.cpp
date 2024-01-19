@@ -7,6 +7,7 @@
 #include "GameObject/ReaverBot_Horokko.h"
 #include "GameObject/ReaverBot_Balfura.h"
 #include "GameObject/ReaverBot_Fingerii.h"
+#include "GameObject/ReaverBot_HanmuruDoll.h"
 #include "GameObject/StaticObject.h"
 
 #include "BaseClass/Terrain.h"
@@ -48,6 +49,9 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 			break;
 		case EObjectIDExt::StaticObject:
 			pObj = TObjectExtTrait< ECast(EObjectIDExt::StaticObject)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::HanmuruDoll:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::HanmuruDoll)>::Class::Create(Data);
 			break;
 		}
 		break;

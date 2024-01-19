@@ -201,6 +201,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\CloudStation\CloudStation_Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Character.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Character_Common.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\ComponentFactory.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\DynamicCamera.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Effect_Common.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\GameObjectFactory.cpp" />
@@ -210,6 +211,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Balfura.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Fingerii.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\ReaverBot_HanmuruDoll.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Horokko.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\SkyBox.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\StaticObject.cpp" />

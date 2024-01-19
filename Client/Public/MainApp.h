@@ -36,8 +36,13 @@ private:
 	void	Render_FrameRate();
 	HRESULT Open_Level(LEVEL eStartLevelID);
 
+	HRESULT Open_Level(LEVEL eStartLevelID, const wstring& strLevelPath);
+
 private:		// 접근을 최소화하는 함수, 변수
 	CGameInstance* m_pGI = { nullptr };
+
+private:
+	_uint			m_iTestLevel = { 0 };
 
 };
 

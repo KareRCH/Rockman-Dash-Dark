@@ -346,7 +346,8 @@ HRESULT CRenderMgr::Render_Debug()
 	m_pEffect->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
 
 	// 디버그용 렌더 이벤트를 등록하고 실행한뒤 제거한다.
-	m_DebugEvent.Broadcast();
+	if (m_bIsDebugDraw)
+		m_DebugEvent.Broadcast();
 	m_DebugEvent.Clear();
 
 	if (!m_bIsDeferred)

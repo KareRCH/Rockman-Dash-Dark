@@ -9,6 +9,7 @@
 #include "GameObject/UI_Lockon.h"
 #include "GameObject/Weapon_Buster.h"
 #include "GameObject/UI_Player.h"
+#include "GameObject/DamageCollision.h"
 
 #include "CloudStation/CloudStation_Player.h"
 
@@ -48,7 +49,7 @@ HRESULT CPlayer::Initialize_Prototype()
     m_pColliderComp->EnterToPhysics(0);
     m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
     m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
-                                        | COLLAYER_ITEM | COLLAYER_OBJECT);
+                                        | COLLAYER_ITEM | COLLAYER_OBJECT | COLLAYER_ATTACKER);
 
     TeamAgentComp().Set_TeamID(ETEAM_PLAYER);
 
@@ -127,6 +128,12 @@ HRESULT CPlayer::Initialize_Prototype(FSerialData& InputData)
 
     TeamAgentComp().Set_TeamID(ETEAM_PLAYER);
 
+    _float2 vSpeed = {};
+    InputData.Get_Data("MoveSpeed", vSpeed.x);
+    InputData.Get_Data("JumpSpeed", vSpeed.y);
+    m_vMoveSpeed = m_vMaxMoveSpeed = { vSpeed.x, vSpeed.y, vSpeed.x };
+    m_vAcceleration = { 100.f, g_fGravity, 100.f };
+
     return S_OK;
 }
 
@@ -175,7 +182,7 @@ void CPlayer::Tick(const _float& fTimeDelta)
 
     m_fKnockDownDelay.Increase(fTimeDelta);
     // 넉다운 수치 시간당 감소
-    m_fKnockDownValue.Increase(-fTimeDelta * 0.1f);
+    m_fKnockDownValue.Increase(-fTimeDelta);
 
     Lockon_Active(fTimeDelta);
 
@@ -383,6 +390,27 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
                 else
                 {
                     m_State_Act.Set_State(EState_Act::DamagedLight);
+                    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+                }
+                m_fHP.Increase(-5.f);
+            }
+
+            //Create_Effect();
+        }
+    }
+
+    CDamageCollision* pDamageCollision = DynCast<CDamageCollision*>(pDst);
+    if (pDamageCollision)
+    {
+        if (CTeamAgentComp::ERelation::Hostile ==
+            CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pDamageCollision->TeamAgentComp()))
+        {
+            if (m_fKnockDownDelay.IsMax() && !m_bInvisible)
+            {
+                m_fKnockDownDelay.Reset();
+                if (m_fKnockDownValue.Increase(2.5f))
+                {
+                    m_State_Act.Set_State(EState_Act::DamagedHeavy);
                     GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
                 }
                 m_fHP.Increase(-5.f);
@@ -939,7 +967,7 @@ void CPlayer::ActState_EndLaser(const _float& fTimeDelta)
 
 void CPlayer::ShootBuster()
 {
-    _vector vPos = Transform().Get_PositionVector() + XMVectorSet(0.f, 0.5f, 0.f, 0.f);
+    _vector vPos = Transform().Get_PositionVector() + XMVectorSet(0.f, 0.8f, 0.f, 0.f);
     _float3 vfPos = {};
     XMStoreFloat3(&vfPos, vPos);
     auto pBuster = CWeapon_Buster::Create(vfPos);

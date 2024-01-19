@@ -38,6 +38,7 @@ public:
 public:
 	void Pushback_GameObject(CGameObject* pObj);
 	void Reset_GameObjectList();
+	void Delete_GameObject();
 
 private:
 	void Handle_ObjectPlaced(CGameObject* pObj);

@@ -118,6 +118,8 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 	
 	m_pGI->Tick_PhysicsMgr(fTimeDelta);
 
+	
+
 	return 0;
 }
 

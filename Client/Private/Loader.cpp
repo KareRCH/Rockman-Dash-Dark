@@ -140,9 +140,9 @@ HRESULT CLoader::Loading_For_Parsed_Level()
 	GI()->Set_LevelTag(strConvertName);
 
 
-	if (FAILED(GI()->Add_PrototypeComp(strConvertName, TEXT("Prototype_Component_Navigation"),
-		CNavigationComponent::Create(TEXT("Resource/Navigation.dat")))))
-		return E_FAIL;
+	GI()->Add_PrototypeComp(strConvertName, TEXT("Prototype_Component_Navigation"),
+		CNavigationComponent::Create(TEXT("Resource/Navigation.dat")));
+		//return E_FAIL;
 
 	FSerialData PrototypeData;
 	Data.Get_Data("Prototypes", PrototypeData);

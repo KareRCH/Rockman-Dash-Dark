@@ -94,6 +94,9 @@
     <Filter Include="02. GameObject\08. Item">
       <UniqueIdentifier>{a7d4ad85-6fa6-40cb-b508-de826d443d68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. Characters\02. ReaverBots\04. HanmuruDoll">
+      <UniqueIdentifier>{7e3b67d0-10c8-406a-9a73-994a83ee0a04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -192,6 +195,12 @@
     <ClInclude Include="Public\GameObject\ComponentFactory.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\ReaverBot_HanmuruDoll.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\DamageCollision.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -276,6 +285,12 @@
       <Filter>02. GameObject\00. Factory</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\ComponentFactory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\ReaverBot_HanmuruDoll.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\DamageCollision.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

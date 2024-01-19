@@ -299,6 +299,7 @@ public:		// ·»´õ ¸Å´ÏÀú
 	void			Clear_RenderGroup();
 	void			Add_DebugEvent(FastDelegate0<HRESULT> Event);
 	void			Toggle_Deferred();
+	void			Toggle_DebugDraw();
 #pragma endregion
 
 #pragma region ·»´õÅ¸°Ù ¸Å´ÏÀú

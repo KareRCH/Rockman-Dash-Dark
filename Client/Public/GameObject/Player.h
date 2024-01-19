@@ -90,7 +90,6 @@ private:
 	void	Look_Update(const _float& fTimeDelta);
 
 private:
-	_bool		m_bIsOnGround = true;
 	_bool		m_bIsMoving = false;
 
 	_float3		m_vMaxMoveSpeed = {};					// 최대 움직임 속도

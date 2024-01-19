@@ -1,5 +1,5 @@
 {
-    "Name": "StaticObject",
+    "Name": "StaticObject0",
     "ProtoName": "CornerWall1",
     "ClassID": 10004,
     "StateFlag": 52,
@@ -50,7 +50,9 @@
             "ScaleX": 6.0,
             "ScaleY": 6.0,
             "ScaleZ": 0.10000000149011612,
-            "CollisionType": 7
+            "CollisionType": 7,
+            "CollisionLayer": 16,
+            "CollisionMask": 0
         }
     ]
 }
