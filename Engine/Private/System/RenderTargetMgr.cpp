@@ -156,6 +156,15 @@ HRESULT CRenderTargetMgr::Resize_RenderTargets(_uint iResizeWidth, _uint iResize
 	return S_OK;
 }
 
+ID3D11Texture2D* CRenderTargetMgr::Find_RenderTargetTexture2D(const wstring& strTargetTag)
+{
+	CRenderTarget* pRenderTarget = Find_RenderTarget(strTargetTag);
+	if (nullptr == pRenderTarget)
+		return nullptr;
+
+	return pRenderTarget->Get_Texture2D();
+}
+
 CRenderTarget* CRenderTargetMgr::Find_RenderTarget(const wstring& strTargetTag)
 {
 	auto	iter = m_RenderTargets.find(strTargetTag);

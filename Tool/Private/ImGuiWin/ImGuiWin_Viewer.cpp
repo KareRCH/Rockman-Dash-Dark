@@ -2,6 +2,9 @@
 
 #include "ImGuiWin/ImGuiWin_Terrain.h"
 #include "ImGuiWin/ImGuiWin_Browser.h"
+#include "ImGuiWin/ImGuiWin_Property.h"
+#include "ImGuiWin/ImGuiWin_MapTool.h"
+#include "ImGuiWin/ImGuiWin_Hierarchi.h"
 #include "BaseClass/Terrain.h"
 #include "GameObject/ToolCamera.h"
 #include "DirectXTex.h"
@@ -239,26 +242,31 @@ void CImGuiWin_Viewer::Layout_View(const _float& fTimeDelta)
     {
         // 실제 그려져야 하는 출력 공간 설정
         GI()->Set_ResolutionX_MaintainRatio(Cast<_uint>(m_vViewerSize.x));
-        GI()->Set_SystemViewport(0, { 0.f, 0.f, m_vViewerSize.x, m_vViewerSize.x / fResolutionRatio, 0.f, 1.f });
+        //GI()->Set_SystemViewport(0, { 0.f, 0.f, m_vViewerSize.x, m_vViewerSize.x / fResolutionRatio, 0.f, 1.f });
+        //GI()->Set_VeiwportSize((_uint)m_vViewerSize.x, (_uint)m_vViewerSize.x / fResolutionRatio);
         clipSize = { 1.f, (m_vViewerSize.y * fResolutionRatio) / m_vViewerSize.x };
     }
     else
     {
         // 실제 그려져야 하는 출력 공간 설정
         GI()->Set_ResolutionY_MaintainRatio(Cast<_uint>(m_vViewerSize.y));
-        GI()->Set_SystemViewport(0, { 0.f, 0.f, m_vViewerSize.y * fResolutionRatio, m_vViewerSize.y, 0.f, 1.f });
+        //GI()->Set_SystemViewport(0, { 0.f, 0.f, m_vViewerSize.y * fResolutionRatio, m_vViewerSize.y, 0.f, 1.f });
+        //GI()->Set_VeiwportSize((_uint)m_vViewerSize.y * fResolutionRatio, (_uint)m_vViewerSize.y);
         clipSize = { m_vViewerSize.x / (m_vViewerSize.y * fResolutionRatio), 1.f };
     }
+    m_vNoClipViewerSize = { m_vViewerSize.x / clipSize.x, m_vViewerSize.y / clipSize.y };
 
     m_pPrevSRV.Reset();
     if (m_pSRV != nullptr)
         ImGui::Image((void*)m_pSRV.Get(), contentSize, ImVec2(0, 0), clipSize);
     
     // 마우스가 화면 안에 있는지 체크
-    POINT ptMouse = Get_MousePos_Client(g_hWnd);
+    POINT ptMouse = Get_MousePos_Window(g_hWnd);
     ImVec2 vMouse = { Cast<_float>(ptMouse.x), Cast<_float>(ptMouse.y) };
     ImVec2 vItemMin = ImGui::GetWindowContentRegionMin() - ImGui::GetWindowPos();
-    ImRect rcItemRect = { vItemMin + ImGui::GetItemRectMin(), vItemMin + ImGui::GetItemRectMax() };
+    ImRect rcItemRect = { ImGui::GetItemRectMin(), ImGui::GetItemRectMax() };
+    ImVec2 vTest = ImGui::GetItemRectMin();
+    ImVec2 vTestSize = ImGui::GetItemRectSize();
     if (rcItemRect.Min.x < vMouse.x && rcItemRect.Max.x > vMouse.x
         && rcItemRect.Min.y < vMouse.y && rcItemRect.Max.y > vMouse.y)
     {
@@ -378,50 +386,84 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
     {
         CGameObject* pPickedObject = { nullptr };
 
+        D3D11_TEXTURE2D_DESC TextureDesc = {};
         ComPtr<ID3D11Texture2D> pTexture = { nullptr };
-        m_pGI->Copy_RenderTargetViewToTexture_ByViewport(pTexture, 1, 0);
+        pTexture = m_pGI->Find_RenderTargetTexture2D(TEXT("Target_Depth"));
 
         if (pTexture != nullptr)
         {
-            D3D11_TEXTURE2D_DESC Desc = {};
-            pTexture->GetDesc(&Desc);
+            pTexture->GetDesc(&TextureDesc);
 
-            vector<_float4> vecPosAndIDs;
-            vecPosAndIDs.resize(Desc.Width * Desc.Height);
-            size_t iSize = sizeof(_float4) * vecPosAndIDs.size();
-            
-            // 렌더타겟으로부터 얻어온 데이터를 순회해서 찾을 수 있게 한뒤에 필요한 값을 찾아낸다.
+            D3D11_BOX regionBox = {};
+            regionBox.left = Cast<_uint>(m_vMousePosOnViewer.x / m_vNoClipViewerSize.x * TextureDesc.Width);
+            regionBox.top = Cast<_uint>(m_vMousePosOnViewer.y / m_vNoClipViewerSize.y * TextureDesc.Height);
+            regionBox.front = 0;
+            regionBox.right = regionBox.left + 1;
+            regionBox.bottom = regionBox.top + 1;
+            regionBox.back = 1;
+
+            TextureDesc.Width = 1;
+            TextureDesc.Height = 1;
+            TextureDesc.Usage = D3D11_USAGE_STAGING;
+            TextureDesc.BindFlags = 0;
+            TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+            TextureDesc.MiscFlags = 0;
+
+            ComPtr<ID3D11Texture2D> pStagingTexture = { nullptr };
+            if (FAILED(m_pGI->Get_GraphicDev()->CreateTexture2D(&TextureDesc, nullptr, pStagingTexture.GetAddressOf())))
+                return;
+
+            m_pGI->Get_GraphicContext()->
+                CopySubresourceRegion(pStagingTexture.Get(), 0, 0, 0, 0, pTexture.Get(), 0, &regionBox);
+
             D3D11_MAPPED_SUBRESOURCE mappedResource;
-            m_pGI->Get_GraphicContext()->Map(pTexture.Get(), 0, D3D11_MAP_READ, 0, &mappedResource);
-            _float4* sourcData = Cast<_float4*>(mappedResource.pData);
-            _float4* destData = vecPosAndIDs.data();
-            size_t iRowSize = sizeof(_float4) * Desc.Width;
-            _uint iMappedRowPitchByte = mappedResource.RowPitch / sizeof(_float4);
-            for (_uint i = 0; i < Desc.Height; i++)
+            if (SUCCEEDED(m_pGI->Get_GraphicContext()->Map(pStagingTexture.Get(), 0, D3D11_MAP_READ, 0, &mappedResource)))
             {
-                memcpy(destData, sourcData, iRowSize);
-                sourcData += iMappedRowPitchByte;
-                destData += Desc.Width;
-            }
-            m_pGI->Get_GraphicContext()->Unmap(pTexture.Get(), 0);
+                _float4 vPickedData = {};
+                _float4* srcData = Cast<_float4*>(mappedResource.pData);
+                memcpy(&vPickedData, srcData, sizeof(_float4));
 
-            // 정보를 옮겼으면 피킹을 하자
-            _uint iIndex = m_vMousePosOnViewer.x + m_vMousePosOnViewer.y * Desc.Width;
-            _float4 test = vecPosAndIDs[iIndex];
-            
-            _int iObjectID = Cast<_int>(test.w);
-            if (iObjectID != -1)
-            {
-                CGameObject* pObj = m_pGI->Find_GameObjectByID(iObjectID);
-                if (pObj != nullptr)
+                _int iObjectID = Cast<_int>(vPickedData.z);
+                if (iObjectID != -1)
                 {
-                    pPickedObject = pObj;
+                    CGameObject* pObj = m_pGI->Find_GameObjectByID(iObjectID);
+                    if (pObj != nullptr)
+                    {
+                        pPickedObject = pObj;
+                    }
                 }
             }
+            m_pGI->Get_GraphicContext()->Unmap(pStagingTexture.Get(), 0);
         }
         
-        pTexture.Reset();
         OnObjectPicked.Broadcast(pPickedObject);
+
+        // 프로퍼티에 게임 오브젝트 등록
+        CImGuiWin_Property* pWinProperty = { nullptr };
+        m_pParentWin->Find_Child<CImGuiWin_Property>(&pWinProperty);
+        if (pWinProperty)
+            pWinProperty->Set_GameObject(pPickedObject);
+
+        // 맵툴에 게임 오브젝트 등록
+        CImGuiWin_MapTool* pWinMapTool = DynCast<CImGuiWin_MapTool*>(m_pParentWin);
+        if (pWinMapTool)
+        {
+            if (nullptr != pPickedObject)
+            {
+                if (ImGui::IsKeyDown(ImGuiKey_LeftShift))
+                    pWinMapTool->Add_GameObject(pPickedObject);
+                else
+                    pWinMapTool->Set_GameObject(pPickedObject);
+            }
+            else
+                pWinMapTool->Clear_GameObjects();
+        }
+
+        // 계층이 있다면 게임 피킹한 오브젝트 전달
+        CImGuiWin_Hierarchi* pWinHierarchi = { nullptr };
+        m_pParentWin->Find_Child<CImGuiWin_Hierarchi>(&pWinHierarchi);
+        if (pWinHierarchi)
+            pWinHierarchi->Select_GameObject(pPickedObject);
     }
 
     // 브러쉬
@@ -430,47 +472,55 @@ void CImGuiWin_Viewer::Mouse_Picking(const _float& fTimeDelta)
         CGameObject* pPickedObject = { nullptr };
         _float3 vPickedWorldPos = {};
 
+        D3D11_TEXTURE2D_DESC TextureDesc = {};
         ComPtr<ID3D11Texture2D> pTexture = { nullptr };
-        m_pGI->Copy_RenderTargetViewToTexture_ByViewport(pTexture, 1, 0);
+        pTexture = m_pGI->Find_RenderTargetTexture2D(TEXT("Target_Depth"));
 
         if (pTexture != nullptr)
         {
-            D3D11_TEXTURE2D_DESC Desc = {};
-            pTexture->GetDesc(&Desc);
+            pTexture->GetDesc(&TextureDesc);
 
-            vector<_float4> vecPosAndIDs;
-            vecPosAndIDs.resize(Desc.Width * Desc.Height);
-            size_t iSize = sizeof(_float4) * vecPosAndIDs.size();
+            D3D11_BOX regionBox = {};
+            regionBox.left = Cast<_uint>(m_vMousePosOnViewer.x / m_vNoClipViewerSize.x * TextureDesc.Width);
+            regionBox.top = Cast<_uint>(m_vMousePosOnViewer.y / m_vNoClipViewerSize.y * TextureDesc.Height);
+            regionBox.front = 0;
+            regionBox.right = regionBox.left + 1;
+            regionBox.bottom = regionBox.top + 1;
+            regionBox.back = 1;
 
-            // 렌더타겟으로부터 얻어온 데이터를 순회해서 찾을 수 있게 한뒤에 필요한 값을 찾아낸다.
+            TextureDesc.Width = 1;
+            TextureDesc.Height = 1;
+            TextureDesc.Usage = D3D11_USAGE_STAGING;
+            TextureDesc.BindFlags = 0;
+            TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+            TextureDesc.MiscFlags = 0;
+
+            ComPtr<ID3D11Texture2D> pStagingTexture = { nullptr };
+            if (FAILED(m_pGI->Get_GraphicDev()->CreateTexture2D(&TextureDesc, nullptr, pStagingTexture.GetAddressOf())))
+                return;
+
+            m_pGI->Get_GraphicContext()->
+                CopySubresourceRegion(pStagingTexture.Get(), 0, 0, 0, 0, pTexture.Get(), 0, &regionBox);
+
             D3D11_MAPPED_SUBRESOURCE mappedResource;
-            m_pGI->Get_GraphicContext()->Map(pTexture.Get(), 0, D3D11_MAP_READ, 0, &mappedResource);
-            _float4* sourcData = Cast<_float4*>(mappedResource.pData);
-            _float4* destData = vecPosAndIDs.data();
-            size_t iRowSize = sizeof(_float4) * Desc.Width;
-            _uint iMappedRowPitchByte = mappedResource.RowPitch / sizeof(_float4);
-            for (_uint i = 0; i < Desc.Height; i++)
+            if (SUCCEEDED(m_pGI->Get_GraphicContext()->Map(pStagingTexture.Get(), 0, D3D11_MAP_READ, 0, &mappedResource)))
             {
-                memcpy(destData, sourcData, iRowSize);
-                sourcData += iMappedRowPitchByte;
-                destData += Desc.Width;
-            }
-            m_pGI->Get_GraphicContext()->Unmap(pTexture.Get(), 0);
+                _float4 vPickedData = {};
+                _float4* srcData = Cast<_float4*>(mappedResource.pData);
+                memcpy(&vPickedData, srcData, sizeof(_float4));
+                memcpy(&vPickedWorldPos, &vPickedData, sizeof(_float3));
 
-            // 정보를 옮겼으면 피킹을 하자
-            _uint iIndex = m_vMousePosOnViewer.x + m_vMousePosOnViewer.y * Desc.Width;
-            _float4 vData = vecPosAndIDs[iIndex];
-
-            _int iObjectID = Cast<_int>(vData.w);
-            if (iObjectID != -1)
-            {
-                CGameObject* pObj = m_pGI->Find_GameObjectByID(iObjectID);
-                if (pObj != nullptr)
+                _int iObjectID = Cast<_int>(vPickedData.z);
+                if (iObjectID != -1)
                 {
-                    pPickedObject = pObj;                               // 찍은 오브젝트
-                    vPickedWorldPos = { vData.x, vData.y, vData.z };    // 찍은 위치
+                    CGameObject* pObj = m_pGI->Find_GameObjectByID(iObjectID);
+                    if (pObj != nullptr)
+                    {
+                        pPickedObject = pObj;
+                    }
                 }
             }
+            m_pGI->Get_GraphicContext()->Unmap(pStagingTexture.Get(), 0);
         }
 
         pTexture.Reset();

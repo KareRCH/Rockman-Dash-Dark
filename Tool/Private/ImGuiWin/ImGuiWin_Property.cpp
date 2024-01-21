@@ -9,6 +9,7 @@
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 #include "ImGuiFileDialog.h"
+#include "ImGuizmo.h"
 
 HRESULT CImGuiWin_Property::Initialize()
 {
@@ -88,7 +89,6 @@ void CImGuiWin_Property::Layout_GameObjectProperty()
     vRot.y = XMConvertToDegrees(vRot.y);
     vRot.z = XMConvertToDegrees(vRot.z);
     vScale = m_pGameObject->Transform().Get_ScaleFloat3();
-
 
     string strName = ConvertToString(m_pGameObject->Get_Name());
     _char szName[MAX_PATH];

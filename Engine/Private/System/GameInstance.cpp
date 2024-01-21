@@ -28,6 +28,7 @@
 #include "Component/EffectComponent.h"
 #include "Component/RectBufferComp.h"
 #include "Utility/RapidJsonSerial.h"
+#include "System/Data/RenderTarget.h"
 
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -1316,6 +1317,14 @@ void CGameInstance::Toggle_DebugDraw()
 	m_pRenderMgr->Toggle_DebugDraw();
 }
 
+void CGameInstance::Set_VeiwportSize(_uint iResizeWidth, _uint iResizeHeight)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Set_ViewportSize(iResizeWidth, iResizeHeight);
+}
+
 #pragma endregion
 
 
@@ -1378,6 +1387,14 @@ HRESULT CGameInstance::Resize_RenderTargets(_uint iResizeWidth, _uint iResizeHei
 		return E_FAIL;
 
 	return m_pRenderTargetMgr->Resize_RenderTargets(iResizeWidth, iResizeHeight);
+}
+
+ID3D11Texture2D* CGameInstance::Find_RenderTargetTexture2D(const wstring& strTargetTag)
+{
+	if (nullptr == m_pRenderTargetMgr)
+		return nullptr;
+
+	return m_pRenderTargetMgr->Find_RenderTargetTexture2D(strTargetTag);
 }
 
 

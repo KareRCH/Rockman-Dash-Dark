@@ -48,7 +48,7 @@ VPS_INOUT VS_MAIN(VS_IN In)
 
 struct PS_OUT 
 {
-	float4		vColor : SV_TARGET0;
+	float4		vDiffuse : SV_TARGET0;
 };
 
 /* «»ºøºŒ¿Ã¥ı : «»ºø¿« ªˆ!!!! ¿ª ∞·¡§«—¥Ÿ. */
@@ -56,8 +56,8 @@ PS_OUT PS_MAIN(VPS_INOUT In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-    Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
-    //Out.vColor = float4(1.f, 0.f, 0.f, 1.f);
+    Out.vDiffuse = g_Texture.Sample(LinearSampler, In.vTexcoord);
+    //Out.vDiffuse = float4(1.f, 0.f, 0.f, 1.f);
 
 	return Out;
 }
@@ -65,21 +65,6 @@ PS_OUT PS_MAIN(VPS_INOUT In)
 
 technique11 DefaultTechnique
 {
-#ifdef TOOL
-	pass Tool
-	{
-		SetRasterizerState(RS_Cull_None);
-		SetDepthStencilState(DSS_None, 0);
-		SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_TOOL();
-	}
-#endif
-
 	pass Sky
 	{
 		SetRasterizerState(RS_Cull_None);

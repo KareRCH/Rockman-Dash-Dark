@@ -108,6 +108,7 @@ private:
 	_float2			m_vViewerCenter = {};
 	_bool			m_bMouseOnViewer = false;	// 마우스가 뷰어 안에 있는지.
 	_float2			m_vMousePosOnViewer = {};	// 뷰어기준으로 마우스 위치가 변환됨.
+	_float2			m_vNoClipViewerSize = {};	// 클립되지 않은 렌더뷰어 사이즈
 
 
 	_float			m_fConvertRatio = 1.f;		// 텍스처 복사용

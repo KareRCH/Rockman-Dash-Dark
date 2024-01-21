@@ -9,6 +9,7 @@
 #include "Component/ColliderComponent.h"
 
 #include "GameObject/Effect_Common.h"
+#include "GameObject/Fingerii_EnergyBall.h"
 #include "Utility/ClassID.h"
 
 
@@ -355,13 +356,15 @@ void CReaverBot_Fingerii::Register_State()
 
 	m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
 	m_State_Act.Add_Func(EState_Act::Walk, &ThisClass::ActState_Walk);
-	m_State_Act.Add_Func(EState_Act::Barrier, &ThisClass::ActState_Walk);
+	m_State_Act.Add_Func(EState_Act::Barrier, &ThisClass::ActState_Barrier);
+	m_State_Act.Add_Func(EState_Act::Concentration, &ThisClass::ActState_Concentration);
 	m_State_Act.Add_Func(EState_Act::Dead, &ThisClass::ActState_Dead);
 	m_State_Act.Set_State(EState_Act::Idle);
 
 	m_State_AI.Add_Func(EState_AI::Idle, &ThisClass::AIState_Idle);
 	m_State_AI.Add_Func(EState_AI::Chase, &ThisClass::AIState_Chase);
 	m_State_AI.Add_Func(EState_AI::Barrier, &ThisClass::AIState_Barrier);
+	m_State_AI.Add_Func(EState_AI::EnergyBall, &ThisClass::AIState_EnergyBall);
 	m_State_AI.Add_Func(EState_AI::Prowl, &ThisClass::AIState_Prowl);
 	m_State_AI.Add_Func(EState_AI::Dead, &ThisClass::AIState_Dead);
 	m_State_AI.Add_Func(EState_AI::Escape, &ThisClass::AIState_Escape);
@@ -379,9 +382,12 @@ void CReaverBot_Fingerii::ActState_Idle(const _float& fTimeDelta)
 	if (m_State_Act.Can_Update())
 	{
 
-		// 돌진
+		// 배리어
 		if (m_ActionKey.IsAct(EActionKey::Barrier))
 			m_State_Act.Set_State(EState_Act::Barrier);
+		// 에너지볼
+		if (m_ActionKey.IsAct(EActionKey::Concentration))
+			m_State_Act.Set_State(EState_Act::Concentration);
 		// 움직임
 		if (m_ActionKey.IsAct(EActionKey::MoveForward) || m_ActionKey.IsAct(EActionKey::MoveBackward)
 			|| m_ActionKey.IsAct(EActionKey::TurnRight) || m_ActionKey.IsAct(EActionKey::TurnLeft)
@@ -406,6 +412,12 @@ void CReaverBot_Fingerii::ActState_Walk(const _float& fTimeDelta)
 	{
 		Move_Update(fTimeDelta);
 
+		// 배리어
+		if (m_ActionKey.IsAct(EActionKey::Barrier))
+			m_State_Act.Set_State(EState_Act::Barrier);
+		// 에너지볼
+		if (m_ActionKey.IsAct(EActionKey::Concentration))
+			m_State_Act.Set_State(EState_Act::Concentration);
 		// 움직임
 		if (!m_ActionKey.IsAct(EActionKey::MoveForward) && !m_ActionKey.IsAct(EActionKey::MoveBackward)
 			&& !m_ActionKey.IsAct(EActionKey::TurnRight) && !m_ActionKey.IsAct(EActionKey::TurnLeft)
@@ -430,6 +442,33 @@ void CReaverBot_Fingerii::ActState_Barrier(const _float& fTimeDelta)
 	{
 		// 움직임
 		if (!m_ActionKey.IsAct(EActionKey::Barrier))
+			m_State_Act.Set_State(EState_Act::Idle);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Fingerii::ActState_Concentration(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(3, 1.0f, true);
+		m_fEnergyBallAttack.Reset();
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		if (m_fEnergyBallAttack.Increase(fTimeDelta))
+		{
+			Create_EnergyBall();
+			m_fEnergyBallAttack.Reset();
+		}
+
+		// 움직임
+		if (!m_ActionKey.IsAct(EActionKey::Concentration))
 			m_State_Act.Set_State(EState_Act::Idle);
 	}
 
@@ -466,6 +505,23 @@ void CReaverBot_Fingerii::ActState_Dead(const _float& fTimeDelta)
 	}
 }
 
+void CReaverBot_Fingerii::Create_EnergyBall()
+{
+	_vector vPos = Transform().Get_PositionVector() + XMVectorSet(0.f, 5.f, 0.f, 0.f);
+	_float3 vfPos = {};
+	XMStoreFloat3(&vfPos, vPos);
+	auto pDamageCollision = CFingerii_EnergyBall::Create(vfPos);
+	if (pDamageCollision == nullptr)
+		return;
+
+	GI()->Add_GameObject(pDamageCollision);
+	pDamageCollision->Set_Target(DynCast<CCharacter_Common*>(m_pTarget));
+	pDamageCollision->Transform().Look_At_OnLand(pDamageCollision->Transform().Get_PositionVector()
+		+ Transform().Get_LookNormalizedVector());
+	pDamageCollision->Transform().Set_Scale(1.f, 1.f, 1.f);
+	pDamageCollision->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+}
+
 void CReaverBot_Fingerii::AIState_Idle(const _float& fTimeDelta)
 {
 	if (m_State_AI.IsState_Entered())
@@ -499,7 +555,7 @@ void CReaverBot_Fingerii::AIState_Idle(const _float& fTimeDelta)
 						m_State_AI.Set_State(EState_AI::Chase);
 						break;
 					case 1:
-						m_State_AI.Set_State(EState_AI::Prowl);
+						m_State_AI.Set_State(EState_AI::Chase);
 						break;
 					}
 				}
@@ -517,7 +573,7 @@ void CReaverBot_Fingerii::AIState_Chase(const _float& fTimeDelta)
 {
 	if (m_State_AI.IsState_Entered())
 	{
-		m_fIdleTime.Readjust(5.f);
+		m_fIdleTime.Readjust(4.f);
 	}
 
 	if (m_State_AI.Can_Update())
@@ -535,7 +591,16 @@ void CReaverBot_Fingerii::AIState_Chase(const _float& fTimeDelta)
 
 			if (m_fIdleTime.Increase(fTimeDelta))
 			{
-				m_State_AI.Set_State(EState_AI::Barrier);
+				uniform_int_distribution<_uint> RandomPattern(0, 1);
+				switch (RandomPattern(m_RandomNumber))
+				{
+				case 0:
+					m_State_AI.Set_State(EState_AI::Barrier);
+					break;
+				case 1:
+					m_State_AI.Set_State(EState_AI::EnergyBall);
+					break;
+				}
 			}
 		}
 	}
@@ -555,9 +620,6 @@ void CReaverBot_Fingerii::AIState_Barrier(const _float& fTimeDelta)
 
 	if (m_State_AI.Can_Update())
 	{
-		// 사정거리 안에 들어온 적을 바라보며 기를 모은다.
-		m_ActionKey.Act(EActionKey::Barrier);
-
 		m_pTarget = Find_Target();
 
 		if (nullptr != m_pTarget)
@@ -566,15 +628,88 @@ void CReaverBot_Fingerii::AIState_Barrier(const _float& fTimeDelta)
 			_vector vTargetLook = XMVector3Normalize(XMVectorSetY(m_pTarget->Transform().Get_PositionVector()
 				- Transform().Get_PositionVector(), 0.f));
 			_float fDot = XMVectorGetX(XMVector3Dot(vLook, vTargetLook));
+			
 			if (fDot < 1.f - 0.001f)
 			{
 				m_ActionKey.Act(EActionKey::LookTarget);
 			}
-		}
 
-		if (m_fIdleTime.Increase(fTimeDelta))
+			_float fLength = XMVectorGetX(
+				XMVector3Length(Transform().Get_PositionVector() - m_pTarget->Transform().Get_PositionVector()));
+			if (fLength <= 4.f)
+			{
+				// 적이 사정권 안에 있으면 배리어를 친다.
+				m_ActionKey.Act(EActionKey::Barrier);
+			}
+			else
+			{
+				if (m_fIdleTime.Increase(fTimeDelta))
+					m_State_AI.Set_State(EState_AI::Idle);
+			}
+		}
+		else
 		{
-			m_State_AI.Set_State(EState_AI::Idle);
+			if (m_fIdleTime.Increase(fTimeDelta))
+			{
+				m_State_AI.Set_State(EState_AI::Idle);
+			}
+		}
+	}
+
+	if (m_State_AI.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Fingerii::AIState_EnergyBall(const _float& fTimeDelta)
+{
+	if (m_State_AI.IsState_Entered())
+	{
+		m_fIdleTime.Readjust(2.5f);
+	}
+
+	if (m_State_AI.Can_Update())
+	{
+		m_pTarget = Find_Target();
+
+		if (nullptr != m_pTarget)
+		{
+			_vector vLook = Transform().Get_LookNormalizedVector();
+			_vector vTargetLook = XMVector3Normalize(XMVectorSetY(m_pTarget->Transform().Get_PositionVector()
+				- Transform().Get_PositionVector(), 0.f));
+			_float fDot = XMVectorGetX(XMVector3Dot(vLook, vTargetLook));
+
+			if (fDot < 1.f - 0.001f)
+			{
+				m_ActionKey.Act(EActionKey::LookTarget);
+			}
+
+			_float fLength = XMVectorGetX(
+				XMVector3Length(Transform().Get_PositionVector() - m_pTarget->Transform().Get_PositionVector()));
+			if (fLength <= 3.f)
+			{
+				// 너무 가까우면 배리어를 치러간다.
+				if (m_fIdleTime.Increase(fTimeDelta))
+					m_State_AI.Set_State(EState_AI::Barrier);
+			}
+			if (fLength <= 8.f)
+			{
+				// 적이 사정권 안에 있으면 에너지 볼을 내보낸다.
+				m_ActionKey.Act(EActionKey::Concentration);
+			}
+			else
+			{
+				if (m_fIdleTime.Increase(fTimeDelta))
+					m_State_AI.Set_State(EState_AI::Idle);
+			}
+		}
+		else
+		{
+			if (m_fIdleTime.Increase(fTimeDelta))
+			{
+				m_State_AI.Set_State(EState_AI::Idle);
+			}
 		}
 	}
 

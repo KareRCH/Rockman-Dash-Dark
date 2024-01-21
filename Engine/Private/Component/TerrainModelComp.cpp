@@ -227,8 +227,12 @@ HRESULT CTerrainModelComp::Bind_ShaderResources()
         return E_FAIL;*/
     if (FAILED(m_pEffectComp->Bind_RawValue("g_vCamPosition", &(vTemp = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
         return E_FAIL;
-    // 클라이언트에서 하면 안될거임. 셰이더 코드에서 TOOL이 정의 되어있지 않으면 사용 못함.
-    m_pEffectComp->Bind_RawValue("g_iObjectID", &Get_OwnerObject()->Get_ID(), sizeof(_int));
+    // 클라이언트에서 하면 안될거임.
+    auto pOwnerObj = Get_OwnerObject();
+    if (nullptr != pOwnerObj)
+    {
+        m_pEffectComp->Bind_RawValue("g_iObjectID", &Get_OwnerObject()->Get_ID(), sizeof(_int));
+    }
 
     return S_OK;
 }

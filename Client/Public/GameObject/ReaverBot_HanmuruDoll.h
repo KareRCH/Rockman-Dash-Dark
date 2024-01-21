@@ -91,6 +91,7 @@ private:		// 약식 상태머신
 
 	FGauge m_fDeadTime = FGauge(2.f);
 	FGauge m_fDeadEffect = FGauge(0.1f);
+	FGauge m_fWalkAndSmash = FGauge(0.3f);
 
 private:
 	void ActState_Idle(const _float& fTimeDelta);

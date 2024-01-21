@@ -84,6 +84,7 @@ private:
 public:
 	GETSET_1(vector<D3D11_VIEWPORT>, m_vecViewport,	VecViewport, GET_REF)
 	D3D11_VIEWPORT&	Get_Viewport(_uint value) { return m_vecViewport[value]; }
+	void Set_ViewportSize(_uint iResizeWidth, _uint iResizeHeight);
 
 	GETSET_1(vector<D3D11_VIEWPORT>, m_vecViewport_RT, VecViewport_RenderTarget, GET_REF)
 

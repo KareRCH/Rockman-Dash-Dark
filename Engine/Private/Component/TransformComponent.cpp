@@ -151,6 +151,38 @@ void CTransformComponent::Look_At(_fvector vTargetPos)
 	Set_Look(vLook);
 }
 
+void CTransformComponent::Look_At(_fvector vTargetPos, _float fRadianSpeed)
+{
+	_float3		vScale = Get_ScaleFloat3();
+
+	_vector		vPosition = Get_PositionVector();
+	_vector		vLook = XMVector3Normalize(vTargetPos - vPosition);
+	_vector		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook));
+	_vector		vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+
+	_vector		vOriginLook = Get_LookNormalizedVector();
+	_vector		vOriginRight = Get_RightNormalizedVector();
+	_vector		vOriginUp = Get_UpNormalizedVector();
+
+	_matrix		matRotation(vRight, vUp, vLook, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+	_matrix		matOriginRotation(vOriginRight, vOriginUp, vOriginLook, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+
+	_vector		vQuaternion = XMQuaternionRotationMatrix(matRotation);
+	_vector		vOriginQuaternion = XMQuaternionRotationMatrix(matOriginRotation);
+
+	vQuaternion = XMQuaternionSlerp(vOriginQuaternion, vQuaternion, fRadianSpeed);
+
+	matRotation = XMMatrixRotationQuaternion(vQuaternion);
+
+	matRotation.r[0] *= vScale.x;
+	matRotation.r[1] *= vScale.y;
+	matRotation.r[2] *= vScale.z;
+
+	Set_Right(matRotation.r[0]);
+	Set_Up(matRotation.r[1]);
+	Set_Look(matRotation.r[2]);
+}
+
 void CTransformComponent::Look_At_OnLand(_fvector vTargetPos)
 {
 	_float3		vScale = Get_ScaleFloat3();

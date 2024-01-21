@@ -251,6 +251,7 @@ public:
 			return E_FAIL;
 
 		DX::Draw(pBatch, *this, vColor);
+		DX::Draw(pBatch, this->BoundingBox, vColor);
 
 		return S_OK;
 	}
@@ -296,6 +297,7 @@ public:
 	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 	{
 		DX::Draw(pBatch, *this, vColor);
+		DX::Draw(pBatch, this->BoundingBox, vColor);
 
 		return S_OK;
 	}
@@ -341,6 +343,7 @@ public:
 	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 	{
 		DX::Draw(pBatch, *this, vColor);
+		DX::Draw(pBatch, this->BoundingBox, vColor);
 
 		return S_OK;
 	}
@@ -544,6 +547,7 @@ public:
 	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 	{
 		DX::Draw(pBatch, *this, vColor);
+		DX::Draw(pBatch, this->BoundingBox, vColor);
 
 		return S_OK;
 	}

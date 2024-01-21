@@ -7,6 +7,7 @@
 #include "ImGuiWin/ImGuiWin_Property.h"
 
 #include "BaseClass/GameObject.h"
+#include "GameObject/GameObjectFactory.h"
 
 HRESULT CImGuiWin_Hierarchi::Initialize()
 {
@@ -65,15 +66,16 @@ void CImGuiWin_Hierarchi::Layout_ObjectList(const _float& fTimeDelta)
 			if (ImGui::Selectable(strName.c_str(), m_iSelected_GameObject == i))
 			{
 				m_iSelected_GameObject = i;
+
 				CImGuiWin_Property* pWinProperty = { nullptr };
 				m_pParentWin->Find_Child<CImGuiWin_Property>(&pWinProperty);
-
 				if (pWinProperty)
 					pWinProperty->Set_GameObject(m_vecGameObjects[i]);
 			}
 		}
 
 		Delete_GameObject();
+		Clone_GameObject();
 
 		ImGui::EndListBox();
 	}
@@ -113,6 +115,45 @@ void CImGuiWin_Hierarchi::Delete_GameObject()
 			m_iSelected_GameObject = -1;
 			m_vecGameObjects.erase(iter);
 		}
+	}
+}
+
+void CImGuiWin_Hierarchi::Clone_GameObject()
+{
+	if (m_iSelected_GameObject == -1)
+		return;
+
+	if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_D))
+	{
+		auto iter = m_vecGameObjects.begin() + m_iSelected_GameObject;
+		if ((*iter) != nullptr)
+		{
+			CGameObject* pObj = CGameObjectFactory::Create((*iter)->SerializeData());
+			if (nullptr == pObj)
+				return;
+
+			GI()->Add_GameObject(pObj);
+			Pushback_GameObject(pObj);
+
+			CImGuiWin_Property* pWinProperty = { nullptr };
+			m_pParentWin->Find_Child<CImGuiWin_Property>(&pWinProperty);
+			if (pWinProperty != nullptr)
+				pWinProperty->Set_GameObject(pObj);
+
+			m_iSelected_GameObject += 1;
+		}
+	}
+}
+
+void CImGuiWin_Hierarchi::Select_GameObject(CGameObject* pObj)
+{
+	if (nullptr == pObj)
+		return;
+
+	for (_uint i = 0; i < m_vecGameObjects.size(); i++)
+	{
+		if (m_vecGameObjects[i] == pObj)
+			m_iSelected_GameObject = i;
 	}
 }
 

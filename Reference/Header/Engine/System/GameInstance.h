@@ -300,6 +300,7 @@ public:		// ∑ª¥ı ∏≈¥œ¿˙
 	void			Add_DebugEvent(FastDelegate0<HRESULT> Event);
 	void			Toggle_Deferred();
 	void			Toggle_DebugDraw();
+	void			Set_VeiwportSize(_uint iResizeWidth, _uint iResizeHeight);
 #pragma endregion
 
 #pragma region ∑ª¥ı≈∏∞Ÿ ∏≈¥œ¿˙
@@ -311,6 +312,7 @@ public:
 	HRESULT End_MRT();
 	HRESULT Bind_RenderTarget_ShaderResource(const wstring& strTargetTag, class CEffectComponent* pEffect, const _char* pConstantName);
 	HRESULT Resize_RenderTargets(_uint iResizeWidth, _uint iResizeHeight);
+	ID3D11Texture2D* Find_RenderTargetTexture2D(const wstring& strTargetTag);
 #ifdef _DEBUG
 	HRESULT Ready_RenderTarget_Debug(const wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Render_Debug_RTVs(const wstring& strMRTTag, class CEffectComponent* pEffect, class CRectBufferComp* pVIBuffer);

@@ -458,6 +458,7 @@ void CReaverBot_HanmuruDoll::ActState_WalkAndSmash(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(2, 1.f, true);
+        m_fWalkAndSmash.Reset();
     }
 
     if (m_State_Act.Can_Update())
@@ -465,6 +466,11 @@ void CReaverBot_HanmuruDoll::ActState_WalkAndSmash(const _float& fTimeDelta)
         m_ActionKey.Act(EActionKey::MoveForward);
 
         Move_Update(fTimeDelta);
+
+        if (m_fWalkAndSmash.Increase(fTimeDelta))
+        {
+            Create_DamageCollision();
+        }
 
         // 원상태로 돌아감
         if (!m_ActionKey.IsAct(EActionKey::WalkAndSmash))

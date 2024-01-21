@@ -46,6 +46,9 @@ protected: // Ãæµ¹
 	virtual void	OnCollisionEntered(CGameObject* pDst, const FContact* const pContact) PURE;
 	virtual void	OnCollisionExited(CGameObject* pDst) PURE;
 
+public:
+	CColliderComponent* ColliderComp() const { return m_pColliderComp; }
+
 protected:
 	CColliderComponent* m_pColliderComp = { nullptr };
 };

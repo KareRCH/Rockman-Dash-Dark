@@ -127,6 +127,14 @@ namespace Engine
 
 
 #pragma region ¸¶¿ì½º
+	inline POINT Get_MousePos_Window(const HWND& hWnd)
+	{
+		POINT mouse;
+		::GetCursorPos(&mouse);
+
+		return mouse;
+	}
+
 	inline POINT Get_MousePos_Client(const HWND& hWnd)
 	{
 		POINT mouse;

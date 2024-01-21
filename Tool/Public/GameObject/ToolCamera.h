@@ -33,6 +33,7 @@ public:
 
 private:
 	_bool		m_bIsCanMove = false;
+	_float		m_fSpeed = { 5.f };
 };
 
 END
