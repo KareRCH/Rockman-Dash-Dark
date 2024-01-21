@@ -95,7 +95,7 @@ HRESULT CMainApp::Initialize()
 
 	m_pGI->Open_Level(0, CLevel_MapTool::Create());
 
-	//m_pGI->Toggle_Deferred();
+	m_pGI->Toggle_Deferred();
 
 	return S_OK;
 }
@@ -118,7 +118,8 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 	
 	m_pGI->Tick_PhysicsMgr(fTimeDelta);
 
-	
+	if (m_pGI->IsKey_Pressed(DIK_F7))
+		m_pGI->Toggle_DebugDraw();
 
 	return 0;
 }

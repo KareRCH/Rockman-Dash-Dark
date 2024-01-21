@@ -67,7 +67,7 @@ struct PS_IN
 
 struct PS_OUT
 {
-    float4 vColor : SV_TARGET0;
+    float4 vDiffuse : SV_TARGET0;
 };
 
 /* 픽셀셰이더 : 픽셀의 색!!!! 을 결정한다. */
@@ -78,7 +78,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	/* 첫번째 인자의 방식으로 두번째 인자의 위치에 있는 픽셀의 색을 얻어온다. */
     vector vSourColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
 
-    Out.vColor = vSourColor;
+    Out.vDiffuse = vSourColor;
 
     return Out;
 }

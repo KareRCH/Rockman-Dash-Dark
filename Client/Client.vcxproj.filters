@@ -97,6 +97,9 @@
     <Filter Include="02. GameObject\04. Characters\02. ReaverBots\04. HanmuruDoll">
       <UniqueIdentifier>{7e3b67d0-10c8-406a-9a73-994a83ee0a04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. Characters\02. ReaverBots\03. Fingerii">
+      <UniqueIdentifier>{37c516b4-6550-4ca6-b4c5-9c3f98e1cf22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -162,9 +165,6 @@
     <ClInclude Include="Public\GameObject\Weapon_Buster.h">
       <Filter>02. GameObject\04. Characters\01. Player\01. Buster</Filter>
     </ClInclude>
-    <ClInclude Include="Public\GameObject\ReaverBot_Fingerii.h">
-      <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
-    </ClInclude>
     <ClInclude Include="Public\GameObject\ReaverBot_Balfura.h">
       <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
     </ClInclude>
@@ -195,10 +195,16 @@
     <ClInclude Include="Public\GameObject\ComponentFactory.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\ReaverBot_Fingerii.h">
+      <Filter>02. GameObject\04. Characters\02. ReaverBots\03. Fingerii</Filter>
+    </ClInclude>
     <ClInclude Include="Public\GameObject\ReaverBot_HanmuruDoll.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. GameObject\04. Characters\02. ReaverBots\04. HanmuruDoll</Filter>
     </ClInclude>
     <ClInclude Include="Public\GameObject\DamageCollision.h">
+      <Filter>02. GameObject\04. Characters\02. ReaverBots\04. HanmuruDoll</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Fingerii_EnergyBall.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -254,9 +260,6 @@
     <ClCompile Include="Private\GameObject\Weapon_Buster.cpp">
       <Filter>02. GameObject\04. Characters\01. Player\01. Buster</Filter>
     </ClCompile>
-    <ClCompile Include="Private\GameObject\ReaverBot_Fingerii.cpp">
-      <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
-    </ClCompile>
     <ClCompile Include="Private\GameObject\ReaverBot_Balfura.cpp">
       <Filter>02. GameObject\04. Characters\02. ReaverBots</Filter>
     </ClCompile>
@@ -287,10 +290,16 @@
     <ClCompile Include="Private\GameObject\ComponentFactory.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Private\GameObject\ReaverBot_Fingerii.cpp">
+      <Filter>02. GameObject\04. Characters\02. ReaverBots\03. Fingerii</Filter>
+    </ClCompile>
     <ClCompile Include="Private\GameObject\ReaverBot_HanmuruDoll.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. GameObject\04. Characters\02. ReaverBots\04. HanmuruDoll</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\DamageCollision.cpp">
+      <Filter>02. GameObject\04. Characters\02. ReaverBots\04. HanmuruDoll</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Fingerii_EnergyBall.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

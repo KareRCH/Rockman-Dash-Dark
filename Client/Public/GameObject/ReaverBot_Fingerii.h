@@ -83,14 +83,14 @@ public:
 
 
 public:
-	enum class EActionKey : _uint { MoveForward, MoveBackward, TurnRight, TurnLeft, LookTarget, Barrier, Size };
+	enum class EActionKey : _uint { MoveForward, MoveBackward, TurnRight, TurnLeft, LookTarget, Barrier, Concentration, Size };
 	
 private:
 	ACTION_SET<EActionKey>	m_ActionKey;
 	_bool					m_bCanControl = { true };
 
 public:
-	enum class EState_Act { Idle, Walk, Barrier, Dead };
+	enum class EState_Act { Idle, Walk, Barrier, Concentration, Dead };
 
 	void Register_State();
 
@@ -100,16 +100,20 @@ private:		// 약식 상태머신
 
 	FGauge m_fDeadTime = FGauge(2.f);
 	FGauge m_fDeadEffect = FGauge(0.1f);
+	FGauge m_fEnergyBallAttack = FGauge(5.f);
 
 private:
 	void ActState_Idle(const _float& fTimeDelta);
 	void ActState_Walk(const _float& fTimeDelta);
 	void ActState_Barrier(const _float& fTimeDelta);
+	void ActState_Concentration(const _float& fTimeDelta);
 	void ActState_Dead(const _float& fTimeDelta);
 
+private:
+	void Create_EnergyBall();
 
 public:
-	enum class EState_AI { Idle, Chase, Barrier, Prowl, Dead, Escape };
+	enum class EState_AI { Idle, Chase, Barrier, EnergyBall, Prowl, Dead, Escape };
 
 private:		// 약식 상태머신
 	using SState_AI = STATE_SET<EState_AI, void(ThisClass*, const _float&)>;
@@ -123,6 +127,7 @@ private:
 	void AIState_Idle(const _float& fTimeDelta);
 	void AIState_Chase(const _float& fTimeDelta);
 	void AIState_Barrier(const _float& fTimeDelta);
+	void AIState_EnergyBall(const _float& fTimeDelta);
 	void AIState_Prowl(const _float& fTimeDelta);
 	void AIState_Dead(const _float& fTimeDelta);
 	void AIState_Escape(const _float& fTimeDelta);

@@ -43,20 +43,25 @@ void CToolCamera::Tick(const _float& fTimeDelta)
 
     if (m_bIsCanMove)
     {
+        if (GI()->IsKey_Pressing(DIK_LSHIFT))
+            m_fSpeed = 15.f;
+        else
+            m_fSpeed = 7.5f;
+
         if (GI()->IsKey_Pressing(DIK_W))
-            Transform().MoveForward(5.f * fTimeDelta);
+            Transform().MoveForward(m_fSpeed * fTimeDelta);
         else if (GI()->IsKey_Pressing(DIK_S))
-            Transform().MoveForward(-5.f * fTimeDelta);
+            Transform().MoveForward(-m_fSpeed * fTimeDelta);
 
         if (GI()->IsKey_Pressing(DIK_D))
             Transform().MoveRightward(5.f * fTimeDelta);
         else if (GI()->IsKey_Pressing(DIK_A))
-            Transform().MoveRightward(-5.f * fTimeDelta);
+            Transform().MoveRightward(-m_fSpeed * fTimeDelta);
 
         if (GI()->IsKey_Pressing(DIK_E))
-            Transform().MoveUpward(5.f * fTimeDelta);
+            Transform().MoveUpward(m_fSpeed * fTimeDelta);
         else if (GI()->IsKey_Pressing(DIK_Q))
-            Transform().MoveUpward(-5.f * fTimeDelta);
+            Transform().MoveUpward(-m_fSpeed * fTimeDelta);
 
         //GI()->Toggle_LockMouseCenter();
 

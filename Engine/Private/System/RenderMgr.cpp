@@ -39,7 +39,7 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 		return E_FAIL;
 
 	/* Target_Depth */
-	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Depth"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Depth"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, -1.f, 1.f))))
 		return E_FAIL;
 
 	/* Target_Shade */
@@ -357,5 +357,17 @@ HRESULT CRenderMgr::Render_Debug()
 	GI()->Render_Debug_RTVs(TEXT("MRT_LightAcc"), m_pEffect, m_pVIBuffer);
 
 	return S_OK;
+}
+
+void CRenderMgr::Set_ViewportSize(_uint iResizeWidth, _uint iResizeHeight)
+{
+	for (_uint i = 0; i < m_iNumViewPorts; i++)
+	{
+		m_vecViewport[i].Width = Cast<_float>(iResizeWidth);
+		m_vecViewport[i].Height = Cast<_float>(iResizeHeight);
+	}
+
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(m_vecViewport[0].Width, m_vecViewport[0].Height, 1.f));
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_vecViewport[0].Width, m_vecViewport[0].Height, 0.f, 1.f));
 }
 

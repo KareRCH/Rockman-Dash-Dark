@@ -117,6 +117,11 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 		{
 			Open_Level(LEVEL_PARSED, TEXT("Levels/LevelBoss.alevel"));
 		}
+		else if (m_iTestLevel == 4)
+		{
+			Open_Level(LEVEL_PARSED, TEXT("Levels/GamePlay.alevel"));
+			m_iTestLevel = UINT_MAX;
+		}
 	}
 
 	return 0;

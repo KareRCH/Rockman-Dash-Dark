@@ -90,7 +90,7 @@ PS_OUTPUT PS_MAIN(VPS_INOUT input)
     
     output.vDiffuse = vMtrlDiffuse;
     output.vNormal = vector(input.vNormal * 0.5f + 0.5f, 0.f);
-    output.vDepth = vector(input.vProjPos.z / input.vProjPos.w, input.vProjPos.w / g_fFar, 0.f, (float) g_iObjectID);
+    output.vDepth = vector(input.vProjPos.z / input.vProjPos.w, input.vProjPos.w / g_fFar, (float) g_iObjectID, 1.f);
     
     return output;
 }

@@ -16,6 +16,8 @@ HRESULT CImGuiWin_PrototypeProperty::Initialize()
 {
     m_bOpen = true;
 
+    m_pPipelineComp = Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp"));
+
     return S_OK;
 }
 
@@ -58,6 +60,7 @@ void CImGuiWin_PrototypeProperty::Free()
     SUPER::Free();
 
     Safe_Release(m_pGameObject);
+    Safe_Release(m_pPipelineComp);
 }
 
 void CImGuiWin_PrototypeProperty::Layout_Property()
@@ -92,21 +95,6 @@ void CImGuiWin_PrototypeProperty::Layout_GameObjectProperty()
     vRot.y = XMConvertToDegrees(vRot.y);
     vRot.z = XMConvertToDegrees(vRot.z);
     vScale = m_pGameObject->Transform().Get_ScaleFloat3();
-
-
-    /*ImGuizmo::IsOver();
-    ImGuizmo::Enable(true);
-
-    float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-    _float4x4 matrix = m_pGameObject->Transform().Get_TransformFloat4x4();
-    _float fMatrix[16] = {};
-    memcpy(fMatrix, &matrix, sizeof(fMatrix));
-    ImGuizmo::DecomposeMatrixToComponents(fMatrix, matrixTranslation, matrixRotation, matrixScale);
-    ImGui::InputFloat3("Tr", matrixTranslation);
-    ImGui::InputFloat3("Rt", matrixRotation);
-    ImGui::InputFloat3("Sc", matrixScale);
-    ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, fMatrix);
-*/
 
     string strName = ConvertToString(m_pGameObject->Get_Name());
     _char szName[MAX_PATH];

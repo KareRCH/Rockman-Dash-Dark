@@ -37,6 +37,7 @@ private:
 	ComPtr<ID3D11DeviceContext> m_pContext = { nullptr };
 
 public:
+	ID3D11Texture2D* Get_Texture2D() const { return m_pTexture2D.Get(); }
 	ID3D11RenderTargetView* Get_RTV() const { return m_pRTV.Get(); }
 	HRESULT Resize_RenderTarget(_uint iResizeWidth, _uint iResizeHeight);
 

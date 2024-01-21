@@ -232,14 +232,6 @@ FSerialData CCommonModelComp::SerializeData()
 
 HRESULT CCommonModelComp::Render_AnimModel()
 {
-	LIGHT_BUFFER_T lightBuffer = {
-		_float4(0.2f, 0.2f, 0.2f, 1.f),
-		_float4(0.2f, 0.2f, 0.2f, 1.f),
-		_float3(0.f, -0.2f, 1.f),
-		_float(50.f), _float4(1.f, 0.2f, 0.2f, 1.f)
-	};
-
-
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
@@ -254,6 +246,13 @@ HRESULT CCommonModelComp::Render_AnimModel()
 
 		_uint iMatIndex = m_pMeshComps[i]->Get_MeshMaterialIndex();
 		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
+
+		auto pOwnerObj = Get_OwnerObject();
+		if (nullptr != pOwnerObj)
+		{
+			_int iTemp = -1;
+			m_pEffectComp->Bind_RawValue("g_iObjectID", &(iTemp = pOwnerObj->Get_ID()), sizeof(_int));
+		}
 
 		for (_uint j = 0; j < m_iNumActivePasses; j++)
 		{
@@ -286,6 +285,13 @@ HRESULT CCommonModelComp::Render_NoAnimModel()
 
 		_uint iMatIndex = m_pMeshComps[i]->Get_MeshMaterialIndex();
 		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
+
+		auto pOwnerObj = Get_OwnerObject();
+		if (nullptr != pOwnerObj)
+		{
+			_int iTemp = -1;
+			m_pEffectComp->Bind_RawValue("g_iObjectID", &(iTemp = pOwnerObj->Get_ID()), sizeof(_int));
+		}
 
 		for (_uint j = 0; j < m_iNumActivePasses; j++)
 		{

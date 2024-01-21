@@ -64,7 +64,7 @@ VPS_INOUT VS_MAIN(VS_IN In)
 
 struct PS_OUT
 {
-    float4 vColor : SV_TARGET0;
+    float4 vDiffuse : SV_TARGET0;
 };
 
 /* 픽셀셰이더 : 픽셀의 색!!!! 을 결정한다. */
@@ -82,8 +82,8 @@ PS_OUT PS_MAIN(VPS_INOUT In)
     if (vSourColor.a < 0.3f)
         discard;
 
-    Out.vColor = vSourColor;
-    Out.vColor.a = g_fAlpha;
+    Out.vDiffuse = vSourColor;
+    Out.vDiffuse.a = g_fAlpha;
 
     return Out;
 }

@@ -116,6 +116,21 @@ void XM_CALLCONV DX::Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>*
     DrawCube(batch, matWorld, color);
 }
 
+void XM_CALLCONV DX::Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch, 
+    const Engine::FBoundingBox& box, DirectX::FXMVECTOR color)
+{
+    _float3 vHalfSize = { (box.vMax.x - box.vMin.x) * 0.5f
+        , (box.vMax.y - box.vMin.y) * 0.5f
+        , (box.vMax.z - box.vMin.z) * 0.5f };
+    XMMATRIX matWorld = XMMatrixScaling(vHalfSize.x, vHalfSize.y, vHalfSize.z);
+    XMVECTOR position = XMVectorSet(box.vMin.x + vHalfSize.x,
+        box.vMin.y + vHalfSize.y,
+        box.vMin.z + vHalfSize.z, 0.f);
+    matWorld.r[3] = XMVectorSelect(matWorld.r[3], position, g_XMSelect1110);
+
+    DrawCube(batch, matWorld, color);
+}
+
 void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     const BoundingOrientedBox& obb,
     FXMVECTOR color)

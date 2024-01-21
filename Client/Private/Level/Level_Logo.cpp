@@ -25,7 +25,7 @@ void CLevel_Logo::Tick(const _float& fTimeDelta)
 {
 	if (m_pGI->IsKey_Pressed(DIK_RETURN))
 	{
-		if (FAILED(m_pGI->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(LEVEL_PARSED, GI()->Get_TextureMainPath() + TEXT("Levels/Level1.alevel")))))
+		if (FAILED(m_pGI->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(LEVEL_PARSED, GI()->Get_TextureMainPath() + TEXT("Levels/GamePlay.alevel")))))
 			return;
 	}
 }
@@ -71,7 +71,6 @@ HRESULT CLevel_Logo::Ready_Objects()
 	pModel->Transform().Set_Position(XMVectorSet(0.f, 0.f, 10.f, 1.f));
 
 	TLIGHT_DESC			LightDesc{};
-
 	LightDesc.eType = TLIGHT_DESC::TYPE_DIRECTIONAL;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 	LightDesc.vDiffuse = _float4(0.6f, 0.6f, 0.6f, 1.f);

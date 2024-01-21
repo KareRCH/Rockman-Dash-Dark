@@ -3,6 +3,10 @@
 #include "Tool_Define.h"
 #include "ImGuiWin/ImGuiWin.h"
 
+BEGIN(Engine)
+class CGameObject;
+END
+
 BEGIN(Tool)
 
 /// <summary>
@@ -39,6 +43,8 @@ public:
 	void Pushback_GameObject(CGameObject* pObj);
 	void Reset_GameObjectList();
 	void Delete_GameObject();
+	void Clone_GameObject();
+	void Select_GameObject(CGameObject* pObj);
 
 private:
 	void Handle_ObjectPlaced(CGameObject* pObj);

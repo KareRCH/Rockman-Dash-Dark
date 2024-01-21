@@ -472,10 +472,10 @@ bool FCollisionDetector::SphereAndOBB(const FCollisionSphere& srcSphere, const F
 	_vector vResult = dstOBB.Get_PositionVector();
 	_vector vDir = srcSphere.Get_PositionVector() - dstOBB.Get_PositionVector();
 
+	_matrix matTransform = XMLoadFloat3x4(&dstOBB.Get_Transform());
 	for (int i = 0; i < 3; i++)
 	{
-		const _float* orientation = &(dstOBB.Get_Transform().f[i * 4]);
-		_vector vAxis = XMVector3Normalize(XMVectorSet(orientation[0], orientation[1], orientation[2], 0.f));
+		_vector vAxis = XMVector3Normalize(matTransform.r[i]);
 
 		_float fDistance = XMVectorGetX(XMVector3Dot(vAxis, vDir));
 
@@ -503,26 +503,6 @@ bool FCollisionDetector::SphereAndOBB(const FCollisionSphere& srcSphere, const F
 
 		vResult += (vAxis * fDistance);
 	}
-	/*FVector3 vCentre = srcSphere.Get_Axis(3);
-	FVector3 vRelCentre = dstOBB.Get_Transform().TransformInverse(vCentre);
-
-	FVector3 vResult(0, 0, 0);
-	Real fDist;
-
-	fDist = vRelCentre.x;
-	if (fDist > dstOBB.vHalfSize.x) fDist = dstOBB.vHalfSize.x;
-	if (fDist < -dstOBB.vHalfSize.x) fDist = -dstOBB.vHalfSize.x;
-	vResult.x = fDist;
-
-	fDist = vRelCentre.y;
-	if (fDist > dstOBB.vHalfSize.y) fDist = dstOBB.vHalfSize.y;
-	if (fDist < -dstOBB.vHalfSize.y) fDist = -dstOBB.vHalfSize.y;
-	vResult.y = fDist;
-
-	fDist = vRelCentre.z;
-	if (fDist > dstOBB.vHalfSize.z) fDist = dstOBB.vHalfSize.z;
-	if (fDist < -dstOBB.vHalfSize.z) fDist = -dstOBB.vHalfSize.z;
-	vResult.z = fDist;*/
 
 
 	// 구한 접점을 가지고 거리 체크
@@ -714,10 +694,10 @@ bool FCollisionDetector::CapsuleAndOBB(const FCollisionCapsule& srcCapsule, cons
 
 	_vector vDir = vSphere - dstOBB.Get_PositionVector();
 
+	_matrix matTransform = XMLoadFloat3x4(&dstOBB.Get_Transform());
 	for (int i = 0; i < 3; i++)
 	{
-		const _float* orientation = &(dstOBB.Get_Transform().f[i * 4]);
-		_vector vAxis = XMVector3Normalize(XMVectorSet(orientation[0], orientation[1], orientation[2], 0.f));
+		_vector vAxis = XMVector3Normalize(matTransform.r[i]);
 
 		_float fDistance = XMVectorGetX(XMVector3Dot(vAxis, vDir));
 

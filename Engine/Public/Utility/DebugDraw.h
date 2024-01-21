@@ -13,10 +13,12 @@
 //#include "Physics/CollisionPrimitive.h"
 
 BEGIN(Engine)
+class FCollisionPrimitive;
 class FCollisionSphere;
 class FCollisionBox;
 class FCollisionOBB;
 class FCollisionCapsule;
+struct FBoundingBox;
 END
 
 namespace DX
@@ -37,6 +39,10 @@ namespace DX
     // CollisionPrimitive Àü¿ë
     void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
         const FCollisionBox& box,
+        DirectX::FXMVECTOR color = DirectX::Colors::White);
+
+    void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
+        const FBoundingBox& box,
         DirectX::FXMVECTOR color = DirectX::Colors::White);
 
     void XM_CALLCONV Draw(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
