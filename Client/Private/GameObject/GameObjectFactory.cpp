@@ -10,6 +10,7 @@
 #include "GameObject/ReaverBot_HanmuruDoll.h"
 #include "GameObject/StaticObject.h"
 #include "GameObject/SkyBox.h"
+#include "GameObject/Door_Common.h"
 
 #include "BaseClass/Terrain.h"
 #include "BaseClass/Navigation.h"
@@ -56,6 +57,9 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 			break;
 		case EObjectIDExt::SkyBox:
 			pObj = TObjectExtTrait< ECast(EObjectIDExt::SkyBox)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::Door_Common:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::Door_Common)>::Class::Create(Data);
 			break;
 		}
 		break;

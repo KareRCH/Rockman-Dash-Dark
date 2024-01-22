@@ -73,9 +73,6 @@
     <Filter Include="01. ImGuiWin\03. ObjectTool\01. ClassBrowser">
       <UniqueIdentifier>{bb8a386d-98a7-4c8a-bc06-a3ef50db8d9a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98 Client\NewFilter1">
-      <UniqueIdentifier>{81472fbb-ca14-455e-b14a-193a5c6a578c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. ImGuiGizmo\FIle">
       <UniqueIdentifier>{0dab68ec-696e-44c8-b039-c69f6ce8aa44}</UniqueIdentifier>
     </Filter>
@@ -294,6 +291,12 @@
       <Filter>98 Client</Filter>
     </ClCompile>
     <ClCompile Include="..\Client\Private\GameObject\DamageCollision.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Fingerii_EnergyBall.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Door_Common.cpp">
       <Filter>98 Client</Filter>
     </ClCompile>
   </ItemGroup>

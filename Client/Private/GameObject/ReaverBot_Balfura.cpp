@@ -12,13 +12,14 @@ CReaverBot_Balfura::CReaverBot_Balfura()
 {
     Set_Name(TEXT("ReaverBot_Balfura"));
     Set_RenderGroup(ERenderGroup::NonBlend);
+    m_fHP = FGauge(8.f, true);
+    Register_State();
 }
 
 CReaverBot_Balfura::CReaverBot_Balfura(const CReaverBot_Balfura& rhs)
     : Base(rhs)
 {
-    /*NULL_CHECK(m_pColliderComp = DynCast<CColliderComponent*>(rhs.m_pColliderComp->Clone()));
-    NULL_CHECK(m_pModelComp = DynCast<CCommonModelComp*>(rhs.m_pModelComp->Clone()));*/
+    Register_State();
 }
 
 HRESULT CReaverBot_Balfura::Initialize_Prototype()
@@ -34,7 +35,7 @@ HRESULT CReaverBot_Balfura::Initialize_Prototype()
     m_pModelComp->Set_Animation(0, 1.f, true);
 
     FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
-    m_pColliderComp->Bind_Collision(ECollisionType::OBB);
+    m_pColliderComp->Bind_Collision(ECollisionType::Sphere);
     m_pColliderComp->EnterToPhysics(0);
     m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
     m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
@@ -120,9 +121,9 @@ void CReaverBot_Balfura::Tick(const _float& fTimeDelta)
     SUPER::Tick(fTimeDelta);
 
     //Input_ActionKey();
-    ////m_State_AI.Get_StateFunc()(this, fTimeDelta);
-    //m_State_Act.Get_StateFunc()(this, fTimeDelta);
-    //m_ActionKey.Reset();
+    m_State_AI.Get_StateFunc()(this, fTimeDelta);
+    m_State_Act.Get_StateFunc()(this, fTimeDelta);
+    m_ActionKey.Reset();
 
     m_pColliderComp->Tick(fTimeDelta);
 }
@@ -292,4 +293,296 @@ void CReaverBot_Balfura::OnCollisionExited(CGameObject* pDst)
 {
     SUPER::OnCollisionExited(pDst);
 
+}
+
+void CReaverBot_Balfura::Register_State()
+{
+    for (_uint i = 0; i < ECast(EActionKey::Size); i++)
+        m_ActionKey.Add_Action(Cast<EActionKey>(i));
+
+    m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
+    m_State_Act.Add_Func(EState_Act::Dead, &ThisClass::ActState_Dead);
+    m_State_Act.Set_State(EState_Act::Idle);
+
+    m_State_AI.Add_Func(EState_AI::Idle, &ThisClass::AIState_Idle);
+    m_State_AI.Add_Func(EState_AI::Look, &ThisClass::AIState_Look);
+    m_State_AI.Add_Func(EState_AI::SlowChase, &ThisClass::AIState_SlowChase);
+    m_State_AI.Add_Func(EState_AI::Charge, &ThisClass::AIState_Charge);
+    m_State_AI.Add_Func(EState_AI::Prowl, &ThisClass::AIState_Prowl);
+    m_State_AI.Set_State(EState_AI::Idle);
+}
+
+void CReaverBot_Balfura::Update_Move(const _float& fTimeDelta)
+{
+    if (m_ActionKey.IsAct(EActionKey::FastMove))
+        m_fSpeed = 10.f;
+    else if (m_ActionKey.IsAct(EActionKey::SlowMove))
+        m_fSpeed = 1.5f;
+    else
+        m_fSpeed = 5.f;
+
+    if (m_ActionKey.IsAct(EActionKey::MoveForward))
+        Transform().MoveForward(m_fSpeed * fTimeDelta);
+    else if (m_ActionKey.IsAct(EActionKey::MoveBackward))
+        Transform().MoveForward(-m_fSpeed * fTimeDelta);
+
+    if (m_ActionKey.IsAct(EActionKey::TurnRight))
+        Transform().TurnRight(m_fTurnSpeed * fTimeDelta);
+    else if (m_ActionKey.IsAct(EActionKey::TurnLeft))
+        Transform().TurnRight(-m_fTurnSpeed * fTimeDelta);
+
+    if (m_ActionKey.IsAct(EActionKey::LookHorizon))
+        Transform().Look_At_OnLand(Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector(), m_fTurnSpeed * fTimeDelta);
+    else if (m_ActionKey.IsAct(EActionKey::LookTarget))
+    {
+        if (nullptr != m_pTarget)
+        {
+            _matrix TargetMatrix = m_pTarget->ColliderComp()->Calculate_TransformMatrixFromParent();
+            Transform().Look_At(TargetMatrix.r[3], m_fTurnSpeed * fTimeDelta);
+        }
+    }
+}
+
+void CReaverBot_Balfura::ActState_Idle(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(0, 1.f, true);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Update_Move(fTimeDelta);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CReaverBot_Balfura::ActState_Dead(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(0, 1.f, true);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CReaverBot_Balfura::AIState_Idle(const _float& fTimeDelta)
+{
+    if (m_State_AI.IsState_Entered())
+    {
+        m_fIdleTime.Reset();
+    }
+
+    if (m_State_AI.Can_Update())
+    {
+        m_ActionKey.Act(EActionKey::MoveForward);
+        m_ActionKey.Act(EActionKey::SlowMove);
+
+        m_pTarget = Find_Target(10.f);
+
+        if (nullptr != m_pTarget)
+        {
+            _vector vLook = Transform().Get_LookNormalizedVector();
+            _vector vTargetLook = XMVector3Normalize(XMVectorSetY(m_pTarget->Transform().Get_PositionVector()
+                - Transform().Get_PositionVector(), 0.f));
+            _float fDot = XMVectorGetX(XMVector3Dot(vLook, vTargetLook));
+            if (fDot < 1.f - 0.001f)
+            {
+                m_ActionKey.Act(EActionKey::LookTarget);
+            }
+
+            if (m_fIdleTime.Increase(fTimeDelta))
+            {
+                m_State_AI.Set_State(EState_AI::Look);
+            }
+        }
+    }
+
+    if (m_State_AI.IsState_Exit())
+    {
+
+    }
+}
+
+void CReaverBot_Balfura::AIState_Look(const _float& fTimeDelta)
+{
+    if (m_State_AI.IsState_Entered())
+    {
+        m_fIdleTime.Reset();
+    }
+
+    if (m_State_AI.Can_Update())
+    {
+        m_pTarget = Find_Target(6.f);
+
+        if (nullptr != m_pTarget)
+        {
+            _vector vLook = Transform().Get_LookNormalizedVector();
+            _vector vTargetLook = XMVector3Normalize(XMVectorSetY(m_pTarget->Transform().Get_PositionVector()
+                - Transform().Get_PositionVector(), 0.f));
+            _float fDot = XMVectorGetX(XMVector3Dot(vLook, vTargetLook));
+            if (fDot < 1.f - 0.001f)
+            {
+                m_ActionKey.Act(EActionKey::LookTarget);
+            }
+
+            if (m_fIdleTime.Increase(fTimeDelta))
+            {
+                m_State_AI.Set_State(EState_AI::Charge);
+            }
+        }
+
+        if (m_fIdleTime.Increase(fTimeDelta))
+        {
+            m_State_AI.Set_State(EState_AI::Idle);
+        }
+    }
+
+    if (m_State_AI.IsState_Exit())
+    {
+
+    }
+}
+
+void CReaverBot_Balfura::AIState_SlowChase(const _float& fTimeDelta)
+{
+    if (m_State_AI.IsState_Entered())
+    {
+        m_fIdleTime.Reset();
+    }
+
+    if (m_State_AI.Can_Update())
+    {
+        m_ActionKey.Act(EActionKey::MoveForward);
+        m_ActionKey.Act(EActionKey::SlowMove);
+        m_ActionKey.Act(EActionKey::LookTarget);
+
+        m_pTarget = Find_Target(10.f);
+        if (nullptr != m_pTarget)
+        {
+            _vector vLook = Transform().Get_LookNormalizedVector();
+            _vector vTargetLook = XMVector3Normalize(XMVectorSetY(m_pTarget->Transform().Get_PositionVector()
+                - Transform().Get_PositionVector(), 0.f));
+            _float fDot = XMVectorGetX(XMVector3Dot(vLook, vTargetLook));
+            if (fDot < 1.f - 0.001f)
+            {
+                m_ActionKey.Act(EActionKey::LookTarget);
+            }
+
+            if (m_fIdleTime.Increase(fTimeDelta))
+            {
+                m_State_AI.Set_State(EState_AI::Look);
+            }
+        }
+
+        if (m_fIdleTime.Increase(fTimeDelta))
+        {
+            m_State_AI.Set_State(EState_AI::Idle);
+        }
+    }
+
+    if (m_State_AI.IsState_Exit())
+    {
+
+    }
+}
+
+void CReaverBot_Balfura::AIState_Charge(const _float& fTimeDelta)
+{
+    if (m_State_AI.IsState_Entered())
+    {
+        m_fIdleTime.Reset();
+    }
+
+    if (m_State_AI.Can_Update())
+    {
+        m_ActionKey.Act(EActionKey::MoveForward);
+        m_ActionKey.Act(EActionKey::FastMove);
+        m_ActionKey.Act(EActionKey::LookTarget);
+
+        m_pTarget = Find_Target(10.f);
+        if (nullptr != m_pTarget)
+        {
+            _vector vLook = Transform().Get_LookNormalizedVector();
+            _vector vTargetLook = XMVector3Normalize(XMVectorSetY(m_pTarget->Transform().Get_PositionVector()
+                - Transform().Get_PositionVector(), 0.f));
+            _float fDot = XMVectorGetX(XMVector3Dot(vLook, vTargetLook));
+            if (fDot < 1.f - 0.001f)
+            {
+                m_ActionKey.Act(EActionKey::LookTarget);
+            }
+
+            if (m_fIdleTime.Increase(fTimeDelta))
+            {
+                m_State_AI.Set_State(EState_AI::Idle);
+            }
+        }
+
+        if (m_fIdleTime.Increase(fTimeDelta))
+        {
+            m_State_AI.Set_State(EState_AI::Idle);
+        }
+    }
+
+    if (m_State_AI.IsState_Exit())
+    {
+
+    }
+}
+
+void CReaverBot_Balfura::AIState_Prowl(const _float& fTimeDelta)
+{
+    if (m_State_AI.IsState_Entered())
+    {
+        m_fIdleTime.Reset();
+    }
+
+    if (m_State_AI.Can_Update())
+    {
+
+    }
+
+    if (m_State_AI.IsState_Exit())
+    {
+
+    }
+}
+
+CCharacter_Common* CReaverBot_Balfura::Find_Target(_float fSearchDistance)
+{
+    auto listObjects = GI()->IntersectTests_Sphere_GetGameObject(0, Transform().Get_PositionFloat3(), fSearchDistance, COLLAYER_CHARACTER);
+    _float fDistance = FLT_MAX;
+    CGameObject* pClosestObj = { nullptr };
+    for (auto iter = listObjects.begin(); iter != listObjects.end(); iter++)
+    {
+        auto pObj = iter->first;
+        auto& ContactData = iter->second;
+        _float fObjDistance = XMVectorGetX(XMVector3Length((Transform().Get_PositionVector() - pObj->Transform().Get_PositionVector())));
+        if (fObjDistance <= fDistance
+            && pObj != this && nullptr != DynCast<CCharacter_Common*>(pObj))
+        {
+            if (ETeamRelation::Hostile ==
+                CTeamAgentComp::Check_Relation(&DynCast<CCharacter_Common*>(pObj)->TeamAgentComp(), &TeamAgentComp()))
+            {
+                fDistance = fObjDistance;
+                pClosestObj = pObj;
+            }
+
+        }
+    }
+
+    return DynCast<CCharacter_Common*>(pClosestObj);
 }

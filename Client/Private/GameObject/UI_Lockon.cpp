@@ -3,6 +3,7 @@
 #include "Component/PlaneModelComp.h"
 #include "Component/TextureComponent.h"
 #include "Component/EffectComponent.h"
+#include "Component/ColliderComponent.h"
 
 #include "GameObject/Character_Common.h"
 
@@ -60,7 +61,8 @@ void CUI_Lockon::Tick(const _float& fTimeDelta)
             if (m_fLockon_Lerp > 1.f)
                 m_fLockon_Lerp = 1.f;
 
-            _vector vLerpPos = XMVectorLerp(vCamPos, m_pTarget->Transform().Get_PositionVector(), m_fLockon_Lerp);
+            _matrix TargetMatrix = m_pTarget->ColliderComp()->Calculate_TransformMatrixFromParent();
+            _vector vLerpPos = XMVectorLerp(vCamPos, TargetMatrix.r[3], m_fLockon_Lerp);
             Transform().Set_Position(vLerpPos);
             XMStoreFloat3(&m_vLatest_LockonPos, vLerpPos);
         }

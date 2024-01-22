@@ -100,6 +100,9 @@
     <Filter Include="02. GameObject\04. Characters\02. ReaverBots\03. Fingerii">
       <UniqueIdentifier>{37c516b4-6550-4ca6-b4c5-9c3f98e1cf22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. Object\03. Door">
+      <UniqueIdentifier>{ca5d096c-c0f6-4808-8c3f-218c1a65322e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -207,6 +210,9 @@
     <ClInclude Include="Public\GameObject\Fingerii_EnergyBall.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\Door_Common.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -300,6 +306,9 @@
       <Filter>02. GameObject\04. Characters\02. ReaverBots\04. HanmuruDoll</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\Fingerii_EnergyBall.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Door_Common.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
