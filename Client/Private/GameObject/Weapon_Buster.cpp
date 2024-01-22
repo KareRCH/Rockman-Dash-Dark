@@ -8,9 +8,11 @@
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 
+
 #include "GameObject/Effect_Common.h"
 #include "GameObject/LoadingScreen.h"
 #include "GameObject/StaticObject.h"
+#include "GameObject/Door_Common.h"
 
 
 CWeapon_Buster::CWeapon_Buster()
@@ -196,6 +198,13 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 
 	CStaticObject* pSolid = DynCast<CStaticObject*>(pDst);
 	if (nullptr != pSolid)
+	{
+		Create_Effect();
+		Set_Dead();
+	}
+
+	CDoor_Common* pDoor = DynCast<CDoor_Common*>(pDst);
+	if (nullptr != pDoor)
 	{
 		Create_Effect();
 		Set_Dead();

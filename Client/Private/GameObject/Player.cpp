@@ -10,6 +10,7 @@
 #include "GameObject/Weapon_Buster.h"
 #include "GameObject/UI_Player.h"
 #include "GameObject/DamageCollision.h"
+#include "GameObject/Door_Common.h"
 
 #include "CloudStation/CloudStation_Player.h"
 
@@ -405,19 +406,29 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
         if (CTeamAgentComp::ERelation::Hostile ==
             CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pDamageCollision->TeamAgentComp()))
         {
-            if (m_fKnockDownDelay.IsMax() && !m_bInvisible)
+            if (!m_bInvisible)
             {
-                m_fKnockDownDelay.Reset();
-                if (m_fKnockDownValue.Increase(2.5f))
-                {
-                    m_State_Act.Set_State(EState_Act::DamagedHeavy);
-                    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
-                }
+                m_State_Act.Set_State(EState_Act::DamagedHeavy);
+                GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
                 m_fHP.Increase(-5.f);
             }
 
             //Create_Effect();
         }
+    }
+
+    CDoor_Common* pDoor = DynCast<CDoor_Common*>(pDst);
+    if (pDoor)
+    {
+        if (GI()->IsKey_Pressed(DIK_E))
+            pDoor->OpenDoor();
+
+        _float3 vNormal(_float(pContact->vContactNormal.x), _float(pContact->vContactNormal.y), _float(pContact->vContactNormal.z));
+        _vector vSimNormal = {};
+        vSimNormal = XMLoadFloat3(&vNormal);
+        Transform().Set_Position((Transform().Get_PositionVector() - vSimNormal * Cast<_float>(pContact->fPenetration)));
+        if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
+            m_bIsOnGround = true;
     }
 }
 
@@ -425,7 +436,6 @@ void CPlayer::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
 {
     SUPER::OnCollisionEntered(pDst, pContact);
 
-    
 }
 
 void CPlayer::OnCollisionExited(CGameObject* pDst)

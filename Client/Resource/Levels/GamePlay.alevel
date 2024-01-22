@@ -2759,45 +2759,6 @@
             {
                 "ComponentID": 2,
                 "Name": "Model",
-                "ProtoName": "Wall1Model",
-                "PosX": 0.0,
-                "PosY": 3.0,
-                "PosZ": 0.0,
-                "RotX": 90.0,
-                "RotY": 180.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "ActivePasses": [
-                    {
-                        "PassNum": 0
-                    }
-                ],
-                "ModelType": 0,
-                "ModelPath": "Model\\Map\\Main\\Wall1.amodel",
-                "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
-            },
-            {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "Wall1Collider",
-                "PosX": 0.0,
-                "PosY": 3.0,
-                "PosZ": 0.0,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 4.0,
-                "ScaleY": 6.0,
-                "ScaleZ": 0.10000000149011612,
-                "CollisionType": 7,
-                "CollisionLayer": 16,
-                "CollisionMask": 0
-            },
-            {
-                "ComponentID": 2,
-                "Name": "Model",
                 "ProtoName": "BigFloor1Model",
                 "PosX": 0.0,
                 "PosY": 0.0,
@@ -3729,6 +3690,84 @@
                 "ScaleZ": 20.0,
                 "CollisionType": 7,
                 "CollisionLayer": 16,
+                "CollisionMask": 0
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "Wall1Model",
+                "PosX": 0.0,
+                "PosY": 3.0,
+                "PosZ": 0.0,
+                "RotX": 90.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 0,
+                "ModelPath": "Model\\Map\\Main\\Wall1.amodel",
+                "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "Wall1Collider",
+                "PosX": 0.0,
+                "PosY": 3.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 4.0,
+                "ScaleY": 6.0,
+                "ScaleZ": 0.10000000149011612,
+                "CollisionType": 7,
+                "CollisionLayer": 16,
+                "CollisionMask": 0
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "Door1Model",
+                "PosX": 0.0,
+                "PosY": 1.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 1,
+                "ModelPath": "Model/Map/Main/Door.amodel",
+                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "Door1Collider",
+                "PosX": 0.0,
+                "PosY": 1.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 2.0,
+                "ScaleY": 2.0,
+                "ScaleZ": 0.30000001192092896,
+                "CollisionType": 7,
+                "CollisionLayer": 4,
                 "CollisionMask": 0
             },
             {
@@ -4256,7 +4295,7 @@
                         "CollisionMask": 55
                     }
                 ],
-                "HP": 100.0
+                "HP": 8.0
             },
             {
                 "Name": "ReaverBot_Balfura1",
@@ -4320,7 +4359,7 @@
                         "CollisionMask": 55
                     }
                 ],
-                "HP": 100.0
+                "HP": 8.0
             },
             {
                 "Name": "ReaverBot_Balfura2",
@@ -4384,7 +4423,7 @@
                         "CollisionMask": 55
                     }
                 ],
-                "HP": 100.0
+                "HP": 8.0
             },
             {
                 "Name": "ReaverBot_HanmuruDoll0",
@@ -6313,11 +6352,11 @@
                 "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 47.0,
+                "PosX": 57.0,
                 "PosY": 0.009999999776482582,
-                "PosZ": 108.0,
+                "PosZ": 110.0,
                 "RotX": 0.0,
-                "RotY": 90.0,
+                "RotY": 180.0,
                 "RotZ": 0.0,
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
@@ -7379,64 +7418,6 @@
                 "PosY": 0.009999999776482582,
                 "PosZ": 52.0,
                 "RotX": 0.0,
-                "RotY": -90.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "Wall1Model",
-                        "PosX": 0.0,
-                        "PosY": 3.0,
-                        "PosZ": 0.0,
-                        "RotX": 90.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 0,
-                        "ModelPath": "Model\\Map\\Main\\Wall1.amodel",
-                        "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "Wall1Collider",
-                        "PosX": 0.0,
-                        "PosY": 3.0,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 0.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 4.0,
-                        "ScaleY": 6.0,
-                        "ScaleZ": 0.10000000149011612,
-                        "CollisionType": 7,
-                        "CollisionLayer": 16,
-                        "CollisionMask": 0
-                    }
-                ]
-            },
-            {
-                "Name": "StaticObject0370",
-                "ProtoName": "Wall1",
-                "ClassID": 10004,
-                "StateFlag": 52,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 52.0,
-                "PosY": 2.009999990463257,
-                "PosZ": 122.85279846191406,
-                "RotX": -90.0,
                 "RotY": -90.0,
                 "RotZ": 0.0,
                 "ScaleX": 1.0,
@@ -9344,7 +9325,7 @@
                 "Name": "StaticObject037013",
                 "ProtoName": "Wall1",
                 "ClassID": 10004,
-                "StateFlag": 60,
+                "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 59.0,
@@ -9399,17 +9380,133 @@
                 ]
             },
             {
-                "Name": "StaticObject037014",
+                "Name": "Door_Common",
+                "ProtoName": "Door1",
+                "ClassID": 10010,
+                "StateFlag": 52,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 53.0,
+                "PosY": 0.009999999776482582,
+                "PosZ": 110.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "Door1Model",
+                        "PosX": 0.0,
+                        "PosY": 1.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Map/Main/Door.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "Door1Collider",
+                        "PosX": 0.0,
+                        "PosY": 1.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 2.0,
+                        "ScaleY": 2.0,
+                        "ScaleZ": 0.30000001192092896,
+                        "CollisionType": 7,
+                        "CollisionLayer": 4,
+                        "CollisionMask": 0
+                    }
+                ]
+            },
+            {
+                "Name": "StaticObject03215",
                 "ProtoName": "Wall1",
                 "ClassID": 10004,
                 "StateFlag": 60,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 52.0,
-                "PosY": 1.0099999904632568,
-                "PosZ": 117.85279846191406,
-                "RotX": -90.0,
-                "RotY": -90.0,
+                "PosX": 47.0,
+                "PosY": 0.009999999776482582,
+                "PosZ": 108.0,
+                "RotX": 0.0,
+                "RotY": 90.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "Wall1Model",
+                        "PosX": 0.0,
+                        "PosY": 3.0,
+                        "PosZ": 0.0,
+                        "RotX": 90.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 0,
+                        "ModelPath": "Model\\Map\\Main\\Wall1.amodel",
+                        "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "Wall1Collider",
+                        "PosX": 0.0,
+                        "PosY": 3.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 4.0,
+                        "ScaleY": 6.0,
+                        "ScaleZ": 0.10000000149011612,
+                        "CollisionType": 7,
+                        "CollisionLayer": 16,
+                        "CollisionMask": 0
+                    }
+                ]
+            },
+            {
+                "Name": "StaticObject03216",
+                "ProtoName": "Wall1",
+                "ClassID": 10004,
+                "StateFlag": 60,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 49.0,
+                "PosY": 0.009999999776482582,
+                "PosZ": 110.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
                 "RotZ": 0.0,
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
@@ -9905,7 +10002,7 @@
                         "CollisionMask": 55
                     }
                 ],
-                "HP": 100.0
+                "HP": 8.0
             },
             {
                 "Name": "ReaverBot_Balfura1",
@@ -9969,7 +10066,7 @@
                         "CollisionMask": 55
                     }
                 ],
-                "HP": 100.0
+                "HP": 8.0
             },
             {
                 "Name": "ReaverBot_Balfura2",
@@ -10033,7 +10130,7 @@
                         "CollisionMask": 55
                     }
                 ],
-                "HP": 100.0
+                "HP": 8.0
             },
             {
                 "Name": "ReaverBot_HanmuruDoll0",
@@ -11962,11 +12059,11 @@
                 "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 47.0,
+                "PosX": 57.0,
                 "PosY": 0.009999999776482582,
-                "PosZ": 108.0,
+                "PosZ": 110.0,
                 "RotX": 0.0,
-                "RotY": 90.0,
+                "RotY": 180.0,
                 "RotZ": 0.0,
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
@@ -13028,64 +13125,6 @@
                 "PosY": 0.009999999776482582,
                 "PosZ": 52.0,
                 "RotX": 0.0,
-                "RotY": -90.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "Wall1Model",
-                        "PosX": 0.0,
-                        "PosY": 3.0,
-                        "PosZ": 0.0,
-                        "RotX": 90.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 0,
-                        "ModelPath": "Model\\Map\\Main\\Wall1.amodel",
-                        "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "Wall1Collider",
-                        "PosX": 0.0,
-                        "PosY": 3.0,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 0.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 4.0,
-                        "ScaleY": 6.0,
-                        "ScaleZ": 0.10000000149011612,
-                        "CollisionType": 7,
-                        "CollisionLayer": 16,
-                        "CollisionMask": 0
-                    }
-                ]
-            },
-            {
-                "Name": "StaticObject0370",
-                "ProtoName": "Wall1",
-                "ClassID": 10004,
-                "StateFlag": 52,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 52.0,
-                "PosY": 2.009999990463257,
-                "PosZ": 122.85279846191406,
-                "RotX": -90.0,
                 "RotY": -90.0,
                 "RotZ": 0.0,
                 "ScaleX": 1.0,
@@ -14993,7 +15032,7 @@
                 "Name": "StaticObject037013",
                 "ProtoName": "Wall1",
                 "ClassID": 10004,
-                "StateFlag": 60,
+                "StateFlag": 52,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 59.0,
@@ -15048,17 +15087,133 @@
                 ]
             },
             {
-                "Name": "StaticObject037014",
+                "Name": "Door_Common",
+                "ProtoName": "Door1",
+                "ClassID": 10010,
+                "StateFlag": 52,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 53.0,
+                "PosY": 0.009999999776482582,
+                "PosZ": 110.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "Door1Model",
+                        "PosX": 0.0,
+                        "PosY": 1.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Map/Main/Door.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "Door1Collider",
+                        "PosX": 0.0,
+                        "PosY": 1.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 2.0,
+                        "ScaleY": 2.0,
+                        "ScaleZ": 0.30000001192092896,
+                        "CollisionType": 7,
+                        "CollisionLayer": 4,
+                        "CollisionMask": 0
+                    }
+                ]
+            },
+            {
+                "Name": "StaticObject03215",
                 "ProtoName": "Wall1",
                 "ClassID": 10004,
                 "StateFlag": 60,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
-                "PosX": 52.0,
-                "PosY": 1.0099999904632568,
-                "PosZ": 117.85279846191406,
-                "RotX": -90.0,
-                "RotY": -90.0,
+                "PosX": 47.0,
+                "PosY": 0.009999999776482582,
+                "PosZ": 108.0,
+                "RotX": 0.0,
+                "RotY": 90.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "Wall1Model",
+                        "PosX": 0.0,
+                        "PosY": 3.0,
+                        "PosZ": 0.0,
+                        "RotX": 90.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 1.0,
+                        "ScaleY": 1.0,
+                        "ScaleZ": 1.0,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 0,
+                        "ModelPath": "Model\\Map\\Main\\Wall1.amodel",
+                        "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "Wall1Collider",
+                        "PosX": 0.0,
+                        "PosY": 3.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 4.0,
+                        "ScaleY": 6.0,
+                        "ScaleZ": 0.10000000149011612,
+                        "CollisionType": 7,
+                        "CollisionLayer": 16,
+                        "CollisionMask": 0
+                    }
+                ]
+            },
+            {
+                "Name": "StaticObject03216",
+                "ProtoName": "Wall1",
+                "ClassID": 10004,
+                "StateFlag": 60,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 49.0,
+                "PosY": 0.009999999776482582,
+                "PosZ": 110.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
                 "RotZ": 0.0,
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,

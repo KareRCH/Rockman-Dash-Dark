@@ -21,7 +21,8 @@ enum class EObjectIDExt : _uint
 	Item_Deflector,
 	ItemChest,
 	SkyBox,
-	HanmuruDoll
+	HanmuruDoll,
+	Door_Common
 };
 
 template <_uint T>

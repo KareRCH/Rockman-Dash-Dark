@@ -63,6 +63,58 @@ public:		// 충돌 이벤트
 
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
+
+public:
+	enum class EActionKey : _uint { MoveForward, MoveBackward, TurnRight, TurnLeft, LookTarget, LookHorizon, SlowMove, FastMove, Size };
+
+private:
+	ACTION_SET<EActionKey>	m_ActionKey;
+	_bool					m_bCanControl = { true };
+
+public:
+	enum class EState_Act { Idle, Dead };
+
+	void Register_State();
+	void Update_Move(const _float& fTimeDelta);
+
+private:		// 약식 상태머신
+	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
+	SState_Act		m_State_Act;
+
+	FGauge m_fDeadTime = FGauge(2.f);
+	FGauge m_fDeadEffect = FGauge(0.1f);
+	_float m_fSpeed = 5.f;
+	_float m_fTurnSpeed = 5.f;
+
+private:
+	void ActState_Idle(const _float& fTimeDelta);
+	void ActState_Dead(const _float& fTimeDelta);
+
+
+public:
+	enum class EState_AI { Idle, Look, SlowChase, Charge, Prowl };
+
+private:		// 약식 상태머신
+	using SState_AI = STATE_SET<EState_AI, void(ThisClass*, const _float&)>;
+	SState_AI		m_State_AI;
+
+	FGauge			m_fIdleTime = FGauge(3.f);
+	FGauge			m_fTurnTime = FGauge(1.f);
+	_bool			m_fTurnLeft = { true };
+
+private:
+	void AIState_Idle(const _float& fTimeDelta);
+	void AIState_Look(const _float& fTimeDelta);
+	void AIState_SlowChase(const _float& fTimeDelta);
+	void AIState_Charge(const _float& fTimeDelta);
+	void AIState_Prowl(const _float& fTimeDelta);
+
+private:
+	CCharacter_Common* Find_Target(_float fSearchDistance);
+
+private:
+	CCharacter_Common* m_pTarget = { nullptr };
+
 };
 
 template <>
