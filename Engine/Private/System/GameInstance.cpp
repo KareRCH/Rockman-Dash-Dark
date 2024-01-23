@@ -29,6 +29,7 @@
 #include "Component/RectBufferComp.h"
 #include "Utility/RapidJsonSerial.h"
 #include "System/Data/RenderTarget.h"
+#include "System/Frustum.h"
 
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -48,6 +49,7 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDevi
 
 	FAILED_CHECK_RETURN(Initialize_InputDev(hInst, hWnd), E_FAIL);
 	FAILED_CHECK_RETURN(Initialize_PipelineMgr(), E_FAIL);
+	
 
 	FAILED_CHECK_RETURN(Initialize_ComponentMgr(), E_FAIL);
 	Add_PrototypeComp(TEXT("System"), TEXT("GraphicDevComp"), CD3D11DeviceComp::Create());
@@ -70,7 +72,7 @@ HRESULT CGameInstance::Initialize(HINSTANCE hInst, HWND hWnd, FDEVICE_INIT tDevi
 	FAILED_CHECK_RETURN(Initialize_CloudStationMgr(), E_FAIL);
 
 	FAILED_CHECK_RETURN(Initialize_ObjectMgr(), E_FAIL);
-	
+	FAILED_CHECK_RETURN(Initialize_Frustum(), E_FAIL);
 	
 	FAILED_CHECK_RETURN(Initialize_LevelMgr(), E_FAIL);
 
@@ -102,15 +104,12 @@ void CGameInstance::Release_Managers()
 	Safe_Release(m_pLevelMgr);
 	Safe_Release(m_pCloudStationMgr);
 
-
 	Safe_Release(m_pParticleMgr);
 	Safe_Release(m_pShaderMgr);
-
 
 	Safe_Release(m_pFontMgr);
 	Safe_Release(m_pTextureMgr);
 	Safe_Release(m_pPipelineMgr);
-
 
 	Safe_Release(m_pPhysicsMgr);
 	Safe_Release(m_pSoundMgr);
@@ -120,6 +119,7 @@ void CGameInstance::Release_Managers()
 
 	Safe_Release(m_pInputDev);
 	Safe_Release(m_pGraphicDev);
+	Safe_Release(m_pFrustum);
 }
 
 wstring CGameInstance::Get_MainPath()
@@ -1594,4 +1594,46 @@ FEffectData* CGameInstance::Find_EffectData(const wstring& strEffectFileName, co
 CShaderMgr* CGameInstance::Get_ShaderMgr()
 {
 	return m_pShaderMgr;
+}
+
+HRESULT CGameInstance::Initialize_Frustum()
+{
+	if (nullptr != m_pFrustum)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(m_pFrustum = CFrustum::Create(), E_FAIL);
+
+	return S_OK;
+}
+
+void CGameInstance::Tick_Frustum()
+{
+	if (nullptr == m_pFrustum)
+		return;
+
+	m_pFrustum->Tick();
+}
+
+void CGameInstance::Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrix)
+{
+	if (nullptr == m_pFrustum)
+		return;
+
+	m_pFrustum->Transform_ToLocalSpace(WorldMatrix);
+}
+
+_bool CGameInstance::IsIn_WorldPlanes(_fvector vPoint, _float fRadius)
+{
+	if (nullptr == m_pFrustum)
+		return false;
+
+	return m_pFrustum->IsIn_WorldPlanes(vPoint, fRadius);
+}
+
+_bool CGameInstance::IsIn_LocalPlanes(_fvector vPoint, _float fRadius)
+{
+	if (nullptr == m_pFrustum)
+		return false;
+
+	return m_pFrustum->IsIn_LocalPlanes(vPoint, fRadius);
 }

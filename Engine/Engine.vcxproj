@@ -256,6 +256,7 @@
     <ClInclude Include="Public\System\Data\ModelData.h" />
     <ClInclude Include="Public\System\Data\RenderTarget.h" />
     <ClInclude Include="Public\System\Define\RenderMgr_Define.h" />
+    <ClInclude Include="Public\System\Frustum.h" />
     <ClInclude Include="Public\System\LightMgr.h" />
     <ClInclude Include="Public\System\RenderTargetMgr.h" />
     <ClInclude Include="Public\Utility\ClassID.h" />
@@ -419,6 +420,7 @@
     <ClCompile Include="Private\System\Data\Light.cpp" />
     <ClCompile Include="Private\System\Data\MaterialData.cpp" />
     <ClCompile Include="Private\System\Data\ModelData.cpp" />
+    <ClCompile Include="Private\System\Frustum.cpp" />
     <ClCompile Include="Private\System\LightMgr.cpp" />
     <ClCompile Include="Private\System\PipelineMgr.cpp" />
     <ClCompile Include="Private\System\Data\BoneAnimData.cpp" />
@@ -474,7 +476,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <FileType>Document</FileType>
     </FxCompile>

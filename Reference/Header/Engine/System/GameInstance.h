@@ -362,6 +362,17 @@ private:	// 셰이더 매니저 귀속형 객체 전용
 	class CShaderMgr*				Get_ShaderMgr();
 #pragma endregion
 
+
+#pragma region 절두체
+public:
+	HRESULT Initialize_Frustum();
+	void	Tick_Frustum();
+	void	Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrix);
+	_bool	IsIn_WorldPlanes(_fvector vPoint, _float fRadius = 0.f);
+	_bool	IsIn_LocalPlanes(_fvector vPoint, _float fRadius = 0.f);
+#pragma endregion
+
+
 private:
 	wstring m_strMainPath = TEXT("");
 
@@ -388,6 +399,8 @@ private:
 	class CTextureMgr*		m_pTextureMgr = nullptr;
 	class CShaderMgr*		m_pShaderMgr = nullptr;
 	class CParticleMgr*		m_pParticleMgr = nullptr;
+
+	class CFrustum*			m_pFrustum = { nullptr };
 };
 
 

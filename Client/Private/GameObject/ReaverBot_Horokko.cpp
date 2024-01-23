@@ -9,6 +9,7 @@
 #include "Component/ColliderComponent.h"
 
 #include "GameObject/Effect_Common.h"
+#include "GameObject/Door_Common.h"
 #include "Utility/ClassID.h"
 
 CReaverBot_Horokko::CReaverBot_Horokko()
@@ -289,6 +290,17 @@ HRESULT CReaverBot_Horokko::Initialize_Component(FSerialData& InputData)
 void CReaverBot_Horokko::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
 	SUPER::OnCollision(pDst, pContact);
+
+	CDoor_Common* pDoor = DynCast<CDoor_Common*>(pDst);
+	if (pDoor)
+	{
+		_float3 vNormal(_float(pContact->vContactNormal.x), _float(pContact->vContactNormal.y), _float(pContact->vContactNormal.z));
+		_vector vSimNormal = {};
+		vSimNormal = XMLoadFloat3(&vNormal);
+		Transform().Set_Position((Transform().Get_PositionVector() - vSimNormal * Cast<_float>(pContact->fPenetration)));
+		if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
+			m_bIsOnGround = true;
+	}
 }
 
 void CReaverBot_Horokko::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)

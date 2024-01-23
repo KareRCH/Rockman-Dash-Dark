@@ -277,7 +277,23 @@ list_collide_test CPhysicsWorld3D::Test_Contacts(FCollisionPrimitive* const pCol
 		tColData.iContactsLeft = 1;	// 작동 시킬라면 넣어야함.
 
 		if (pCol->Get_CollisionMask() & pColDst->Get_CollisionLayer())
+		{
+			//_vector vSrc_Min = XMLoadFloat3(&pCol->BoundingBox.vMin);
+			//_vector vSrc_Max = XMLoadFloat3(&pCol->BoundingBox.vMax);
+			//_vector vDst_Min = XMLoadFloat3(&pColDst->BoundingBox.vMin);
+			//_vector vDst_Max = XMLoadFloat3(&pColDst->BoundingBox.vMax);
+
+			//_vector vBool1 = XMVectorGreaterOrEqual(vSrc_Max, vDst_Min);
+			//_vector vBool2 = XMVectorGreaterOrEqual(vDst_Max, vSrc_Min);
+
+			//// 바운딩 박스로 충돌되는지 확인
+			//if (XMVectorGetX(vBool1) && XMVectorGetY(vBool1) && XMVectorGetZ(vBool1)
+			//	&& XMVectorGetX(vBool2) && XMVectorGetY(vBool2) && XMVectorGetZ(vBool2))
+			//{
+
 			bCollide = FCollisionDetector::CollsionPrimitive(pCol, pColDst, &tColData);
+			//}
+		}
 		else
 			continue;
 
