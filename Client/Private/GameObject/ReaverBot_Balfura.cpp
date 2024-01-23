@@ -8,6 +8,8 @@
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 
+#include "GameObject/Door_Common.h"
+
 CReaverBot_Balfura::CReaverBot_Balfura()
 {
     Set_Name(TEXT("ReaverBot_Balfura"));
@@ -281,6 +283,16 @@ void CReaverBot_Balfura::OnCollision(CGameObject* pDst, const FContact* pContact
 {
     SUPER::OnCollision(pDst, pContact);
 
+    CDoor_Common* pDoor = DynCast<CDoor_Common*>(pDst);
+    if (pDoor)
+    {
+        _float3 vNormal(_float(pContact->vContactNormal.x), _float(pContact->vContactNormal.y), _float(pContact->vContactNormal.z));
+        _vector vSimNormal = {};
+        vSimNormal = XMLoadFloat3(&vNormal);
+        Transform().Set_Position((Transform().Get_PositionVector() - vSimNormal * Cast<_float>(pContact->fPenetration)));
+        if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
+            m_bIsOnGround = true;
+    }
 }
 
 void CReaverBot_Balfura::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)

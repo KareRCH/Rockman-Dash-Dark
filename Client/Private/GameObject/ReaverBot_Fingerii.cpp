@@ -10,6 +10,7 @@
 
 #include "GameObject/Effect_Common.h"
 #include "GameObject/Fingerii_EnergyBall.h"
+#include "GameObject/Door_Common.h"
 #include "Utility/ClassID.h"
 
 
@@ -290,6 +291,17 @@ HRESULT CReaverBot_Fingerii::Initialize_Component(FSerialData& InputData)
 void CReaverBot_Fingerii::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
 	SUPER::OnCollision(pDst, pContact);
+
+	CDoor_Common* pDoor = DynCast<CDoor_Common*>(pDst);
+	if (pDoor)
+	{
+		_float3 vNormal(_float(pContact->vContactNormal.x), _float(pContact->vContactNormal.y), _float(pContact->vContactNormal.z));
+		_vector vSimNormal = {};
+		vSimNormal = XMLoadFloat3(&vNormal);
+		Transform().Set_Position((Transform().Get_PositionVector() - vSimNormal * Cast<_float>(pContact->fPenetration)));
+		if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
+			m_bIsOnGround = true;
+	}
 }
 
 void CReaverBot_Fingerii::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)

@@ -703,6 +703,7 @@
     <ClInclude Include="Public\System\Data\Light.h">
       <Filter>01. System\01. Manager\02. GamePipeline\08. LightMgr\Light</Filter>
     </ClInclude>
+    <ClInclude Include="Public\System\Frustum.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -1006,6 +1007,7 @@
     <ClCompile Include="Private\System\Data\Light.cpp">
       <Filter>01. System\01. Manager\02. GamePipeline\08. LightMgr\Light</Filter>
     </ClCompile>
+    <ClCompile Include="Private\System\Frustum.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">
