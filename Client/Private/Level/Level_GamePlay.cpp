@@ -69,24 +69,24 @@ HRESULT CLevel_GamePlay::Ready_Objects()
 
 	_float3		vPoints[3] = {};
 
-	vPoints[0] = _float3(0.f, 0.0f, 100.f);
-	vPoints[1] = _float3(100.f, 0.0f, 0.0f);
+	vPoints[0] = _float3(0.f, 0.0f, 300.f);
+	vPoints[1] = _float3(300.f, 0.0f, 0.0f);
 	vPoints[2] = _float3(0.0f, 0.0f, 0.0f);
 	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
 
-	vPoints[0] = _float3(0.f, 0.0f, 100.f);
-	vPoints[1] = _float3(100.f, 0.0f, 100.f);
-	vPoints[2] = _float3(100.f, 0.0f, 0.0f);
+	vPoints[0] = _float3(0.f, 0.0f, 300.f);
+	vPoints[1] = _float3(300.f, 0.0f, 300.f);
+	vPoints[2] = _float3(300.f, 0.0f, 0.0f);
 	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
 
-	vPoints[0] = _float3(0.f, 0.0f, 200.f);
-	vPoints[1] = _float3(100.f, 0.0f, 100.f);
-	vPoints[2] = _float3(0.0f, 0.0f, 100.f);
+	vPoints[0] = _float3(0.f, 0.0f, 600.f);
+	vPoints[1] = _float3(300.f, 0.0f, 300.f);
+	vPoints[2] = _float3(0.0f, 0.0f, 300.f);
 	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
 
-	vPoints[0] = _float3(100.f, 0.0f, 100.f);
-	vPoints[1] = _float3(200.f, 0.0f, 0.f);
-	vPoints[2] = _float3(100.f, 0.0f, 0.0f);
+	vPoints[0] = _float3(300.f, 0.0f, 300.f);
+	vPoints[1] = _float3(600.f, 0.0f, 0.f);
+	vPoints[2] = _float3(300.f, 0.0f, 0.0f);
 	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
 
 	CloseHandle(hFile);
