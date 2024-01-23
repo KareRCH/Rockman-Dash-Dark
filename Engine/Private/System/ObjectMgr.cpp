@@ -180,14 +180,37 @@ HRESULT CObjectMgr::Add_GameObject(CGameObject* pObj)
 		while (true)
 		{
 			wstringstream ss;
-			ss << i;
-			wstring strNew = strName + ss.str();
-			auto iterObject = m_setObjectNames.find(strNew);
+			wstring strAdd = pObj->Get_Name();
+			queue<_tchar> vecLastChar;
+			_tchar lastChar;
+			do
+			{
+				lastChar = strAdd.back();
+				if (isdigit(lastChar))
+				{
+					vecLastChar.push(lastChar);
+					strAdd.pop_back();
+				}
+			} while (isdigit(lastChar));
+
+			_ulonglong lastInt = i, j = 1;
+			while (vecLastChar.size())
+			{
+				_tchar c = vecLastChar.front();
+				lastInt += (c - L'0') * j;
+				vecLastChar.pop();
+				j *= 10;
+			}
+
+			ss << lastInt;
+			strAdd = strAdd + ss.str();
+
+			auto iterObject = m_setObjectNames.find(strAdd);
 			// 없으면 추가하기
 			if (iterObject == m_setObjectNames.end())
 			{
-				m_setObjectNames.emplace(strNew);
-				pObj->Set_Name(strNew);
+				m_setObjectNames.emplace(strAdd);
+				pObj->Set_Name(strAdd);
 				break;
 			}
 			++i;
@@ -220,14 +243,37 @@ HRESULT CObjectMgr::Add_GameObject(const wstring& strLevelTag, CGameObject* pObj
 		while (true)
 		{
 			wstringstream ss;
-			ss << i;
-			wstring strNew = strName + ss.str();
-			auto iterObject = m_setObjectNames.find(strNew);
+			wstring strAdd = pObj->Get_Name();
+			queue<_tchar> vecLastChar;
+			_tchar lastChar;
+			do
+			{
+				lastChar = strAdd.back();
+				if (isdigit(lastChar))
+				{
+					vecLastChar.push(lastChar);
+					strAdd.pop_back();
+				}
+			} while (isdigit(lastChar));
+
+			_ulonglong lastInt = i, j = 1;
+			while (vecLastChar.size())
+			{
+				_tchar c = vecLastChar.front();
+				lastInt += (c - L'0') * j;
+				vecLastChar.pop();
+				j *= 10;
+			}
+
+			ss << lastInt;
+			strAdd = strAdd + ss.str();
+
+			auto iterObject = m_setObjectNames.find(strAdd);
 			// 없으면 추가하기
 			if (iterObject == m_setObjectNames.end())
 			{
-				m_setObjectNames.emplace(strNew);
-				pObj->Set_Name(strNew);
+				m_setObjectNames.emplace(strAdd);
+				pObj->Set_Name(strAdd);
 				break;
 			}
 			++i;
