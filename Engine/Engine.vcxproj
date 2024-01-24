@@ -251,6 +251,7 @@
     <ClInclude Include="Public\Component\InstancingBufferComp.h" />
     <ClInclude Include="Public\Component\ParticleRectBufferComp.h" />
     <ClInclude Include="Public\ModelLoad.h" />
+    <ClInclude Include="Public\Physics\BVHNode.h" />
     <ClInclude Include="Public\System\Data\Light.h" />
     <ClInclude Include="Public\System\Data\MaterialData.h" />
     <ClInclude Include="Public\System\Data\ModelData.h" />
@@ -408,6 +409,7 @@
     <ClCompile Include="Private\Component\VIBufferComp.cpp" />
     <ClCompile Include="Private\Component\InstancingBufferComp.cpp" />
     <ClCompile Include="Private\ModelLoad.cpp" />
+    <ClCompile Include="Private\Physics\BVHNode.cpp" />
     <ClCompile Include="Private\Physics\Collide.cpp" />
     <ClCompile Include="Private\Physics\CollisionPrimitive.cpp" />
     <ClCompile Include="Private\Physics\Contact.cpp" />

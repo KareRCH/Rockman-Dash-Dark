@@ -54,7 +54,7 @@ HRESULT CMainApp::Initialize()
 
 	FAILED_CHECK_RETURN(m_pGI->Add_Font(TEXT("Default"), TEXT("DungGeunMo-30.spritefont")), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 60.f), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 120.f), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_Immediate"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_FPS"), E_FAIL);

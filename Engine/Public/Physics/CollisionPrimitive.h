@@ -17,8 +17,51 @@ enum class ECollisionType
 
 struct FBoundingBox
 {
-	_float3 vMin;
-	_float3 vMax;
+public:
+	FBoundingBox() {}
+	FBoundingBox(const FBoundingBox& one, const FBoundingBox& two)
+	{
+		vMin.x = (one.vMin.x < two.vMin.x) ? one.vMin.x : two.vMin.x;
+		vMin.y = (one.vMin.y < two.vMin.y) ? one.vMin.y : two.vMin.y;
+		vMin.z = (one.vMin.z < two.vMin.z) ? one.vMin.z : two.vMin.z;
+
+		vMax.x = (one.vMax.x > two.vMax.x) ? one.vMax.x : two.vMax.x;
+		vMax.y = (one.vMax.y > two.vMax.y) ? one.vMax.y : two.vMax.y;
+		vMax.z = (one.vMax.z > two.vMax.z) ? one.vMax.z : two.vMax.z;
+	}
+
+public:
+	_bool Overlaps(const FBoundingBox* pOther) const
+	{
+		_vector vSimMin = XMLoadFloat3(&vMin);
+		_vector vSimMax = XMLoadFloat3(&vMax);
+
+		_vector vSimOtherMin = XMLoadFloat3(&pOther->vMin);
+		_vector vSimOtherMax = XMLoadFloat3(&pOther->vMax);
+
+		_vector vBool1 = XMVectorGreaterOrEqual(vSimMax, vSimOtherMin);
+		_vector vBool2 = XMVectorGreaterOrEqual(vSimOtherMax, vSimMin);
+
+		return (XMVectorGetX(vBool1) && XMVectorGetY(vBool1) && XMVectorGetZ(vBool1)
+			&& XMVectorGetX(vBool2) && XMVectorGetY(vBool2) && XMVectorGetZ(vBool2));
+	}
+	_float Get_Growth(const FBoundingBox& Other) const
+	{
+		FBoundingBox newBox(*this, Other);
+
+		// 새로 만들어질 박스가 기존보다 얼마나큰지 계산한다.
+		_float newBoxSq = XMVectorGetX(XMVector3LengthSq(XMLoadFloat3(&newBox.vMax) - XMLoadFloat3(&newBox.vMin)));
+		_float BoxSq = XMVectorGetX(XMVector3LengthSq(XMLoadFloat3(&vMax) - XMLoadFloat3(&vMin)));
+
+		return (newBoxSq - BoxSq);
+	}
+	_float Get_Size() const
+	{
+		return ((vMax.x - vMin.x) * (vMax.y - vMin.y) * (vMax.z - vMin.z));
+	}
+
+	_float3 vMin = {};
+	_float3 vMax = {};
 };
 
 /// <summary>

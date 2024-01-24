@@ -704,6 +704,7 @@
       <Filter>01. System\01. Manager\02. GamePipeline\08. LightMgr\Light</Filter>
     </ClInclude>
     <ClInclude Include="Public\System\Frustum.h" />
+    <ClInclude Include="Public\Physics\BVHNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -1008,6 +1009,7 @@
       <Filter>01. System\01. Manager\02. GamePipeline\08. LightMgr\Light</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Frustum.cpp" />
+    <ClCompile Include="Private\Physics\BVHNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">
