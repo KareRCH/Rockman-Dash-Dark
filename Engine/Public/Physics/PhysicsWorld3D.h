@@ -5,6 +5,7 @@
 #include "Physics/RigidBody.h"
 #include "Physics/CollisionPrimitive.h"
 #include "Physics/Contact.h"
+#include "Physics/BVHNode.h"
 
 BEGIN(Engine)
 
@@ -54,6 +55,8 @@ private:
 	FContact*					m_pContacts;					// 추가 접촉처리가 필요한 객체에 대한 포인터
 
 	_uint						m_iMaxContacts;					// 최대 접촉 개수
+
+	FBVHNode*					m_pBVHRootNode = { nullptr };
 
 public:
 	void						Pause_Simulation() { m_bIsPaused = true; }
