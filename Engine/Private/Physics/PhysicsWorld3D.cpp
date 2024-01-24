@@ -235,7 +235,7 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 	//}
 
 	FPotentialContact pContacts;
-	_uint iNumContacts = m_pBVHRootNode->Get_PotentialContacts(&pContacts, 100);
+	_uint iNumContacts = m_pBVHRootNode->Get_PotentialContacts(&pContacts, 300);
 
 	for (auto iter = pContacts.listBodies.begin(); iter != pContacts.listBodies.end(); ++iter)
 	{
@@ -252,7 +252,13 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 		// 하나라도 충돌을 체크를 하는 경우에만 계산한다.
 		if (pColSrc->Get_CollisionMask() & pColDst->Get_CollisionLayer()
 			|| pColDst->Get_CollisionMask() & pColSrc->Get_CollisionLayer())
-			bCollide = FCollisionDetector::CollsionPrimitive(pColSrc, pColDst, &tColData);
+		{
+			if (pColSrc->BoundingBox.Overlaps(&pColDst->BoundingBox))
+			{
+				bCollide = FCollisionDetector::CollsionPrimitive(pColSrc, pColDst, &tColData);
+				++iDebugCount;
+			}
+		}
 		else
 			bCollide = false;
 
@@ -264,8 +270,6 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 			if (pColDst->Get_CollisionMask() & pColSrc->Get_CollisionLayer())
 				pColDst->Handle_CollsionEvent(pColSrc->Get_Owner(), &tColData.tContacts);
 		}
-
-		++iDebugCount;
 	}
 
 	/*wstringstream ss;
