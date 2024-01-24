@@ -57,7 +57,7 @@ private:
 	_uint						m_iMaxContacts;					// 최대 접촉 개수
 
 	FBVHNode*					m_pBVHRootNode = { nullptr };
-
+	
 public:
 	void						Pause_Simulation() { m_bIsPaused = true; }
 	void						Play_Simulation() { m_bIsPaused = false; }

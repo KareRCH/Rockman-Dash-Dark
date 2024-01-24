@@ -8,20 +8,24 @@ FBVHNode::~FBVHNode()
     if (nullptr != pParent)
     {
         // Find our sibling
-        FBVHNode* pSibling;
+        FBVHNode* pSibling = { nullptr };
         if (pParent->pChildren[0] == this) 
             pSibling = pParent->pChildren[1];
         else 
             pSibling = pParent->pChildren[0];
 
-        // Write its data to our parent
+        // 부모노드에 형제 노드의 값을 덮어 씌운다.
         pParent->Volume = pSibling->Volume;
         pParent->pBody = pSibling->pBody;
         pParent->pChildren[0] = pSibling->pChildren[0];
         pParent->pChildren[1] = pSibling->pChildren[1];
 
-        // Delete the sibling (we blank its parent and
-        // children to avoid processing/deleting them)
+        if (pSibling->pChildren[0] != nullptr)
+            pSibling->pChildren[0]->pParent = pParent;
+        if (pSibling->pChildren[1] != nullptr)
+            pSibling->pChildren[1]->pParent = pParent;
+
+        // 이사한 형제 노드는 이제 필요없다.
         pSibling->pParent = nullptr;
         pSibling->pBody = nullptr;
         pSibling->pChildren[0] = nullptr;
@@ -32,18 +36,18 @@ FBVHNode::~FBVHNode()
         pParent->RecalculateBoundingVolume();
     }
 
-    // Delete our children (again we remove their
-    // parent data so we don't try to process their siblings
-    // as they are deleted).
-    if (pChildren[0]) 
+    // 형제 노드에 대한 처리를 하지 않게 하면서 삭제 시키기
+    if (nullptr != pChildren[0])
     {
         pChildren[0]->pParent = nullptr;
         Safe_Delete(pChildren[0]);
+        pChildren[0] = nullptr;
     }
-    if (pChildren[1]) 
+    if (nullptr != pChildren[1])
     {
         pChildren[1]->pParent = nullptr;
         Safe_Delete(pChildren[1]);
+        pChildren[1] = nullptr;
     }
 }
 
@@ -51,9 +55,6 @@ _uint FBVHNode::Get_PotentialContacts(FPotentialContact* pContacts, _uint iLimit
 {
     // 리프이거나 리미트가 0이면 0을 반환
     if (IsLeaf() || iLimit == 0) return 0;
-
-    if (pChildren[0] == nullptr || pChildren[1] == nullptr)
-        return 0;
 
     // 잠재적인 충돌체가 몇개인지 찾아낸다.
     return pChildren[0]->Get_PotentialContactsWith(
@@ -64,30 +65,29 @@ _uint FBVHNode::Get_PotentialContacts(FPotentialContact* pContacts, _uint iLimit
 void FBVHNode::Insert(FRigidBody* pNewBody, const FBoundingBox& NewVolume)
 {
     // 리프인지 확인
-    if (IsLeaf() || pChildren[0] == nullptr && pChildren[1] == nullptr)
+    if (IsLeaf())
     {
-        // Child one is a copy of us.
+        // 왼쪽 자식으로 현재 자신의 것을 카피하여 집어넣는다.
         pChildren[0] = new FBVHNode(
             this, Volume, pBody
         );
 
-        // Child two holds the new body
+        // 오른쪽 자식으로 새로운 노드를 만든다.
         pChildren[1] = new FBVHNode(
             this, NewVolume, pNewBody
         );
 
-        // And we now loose the body (we're no longer a leaf)
+        // 기존 것을 Internal로 만든다.
         this->pBody = nullptr;
 
-        // We need to recalculate our bounding volume
+        // 바운딩 볼륨을 재계산한다.
         RecalculateBoundingVolume();
     }
 
-    // Otherwise we need to work out which child gets to keep
-    // the inserted body. We give it to whoever would grow the
-    // least to incorporate it.
+    // Internal이면 두 자식들 중 하나에 끼워넣기 한다.
     else
     {
+        // 볼륨의 크기를 균등하게 하기 위해 바운딩 박스의 사이즈 변화율에 따라 분배한다.
         if (pChildren[0]->Volume.Get_Growth(NewVolume) <
             pChildren[1]->Volume.Get_Growth(NewVolume))
         {
@@ -102,14 +102,17 @@ void FBVHNode::Insert(FRigidBody* pNewBody, const FBoundingBox& NewVolume)
 
 void FBVHNode::Remove(FRigidBody* _pBody)
 {
+    // Body를 검색하고 Delete한다.
     FBVHNode* pNode = Find(_pBody);
     if (nullptr != pNode)
+    {
         Safe_Delete(pNode);
+    }
 }
 
 FBVHNode* FBVHNode::Find(FRigidBody* _pBody)
 {
-    // 리프일 때 바디가 같으면 삭제, 삭제 되면서 동시에 부모 노드들의 바운딩 박스 재계산
+    // 리프일 때 찾는 바디가 있으면 그 바디를 반환한다.
     if (IsLeaf())
     {
         if (pBody == _pBody)
@@ -129,6 +132,9 @@ FBVHNode* FBVHNode::Find(FRigidBody* _pBody)
             if (pChildren[1] != nullptr)
                 pNode2 = pChildren[1]->Find(_pBody);
 
+            if (nullptr != pNode1 && nullptr != pNode2)
+                int t = 0;
+
             if (nullptr != pNode1)
                 return pNode1;
             if (nullptr != pNode2)
@@ -139,6 +145,59 @@ FBVHNode* FBVHNode::Find(FRigidBody* _pBody)
     return nullptr;
 }
 
+void FBVHNode::BodyMoved()
+{
+    // 예외처리
+    if (!IsLeaf())
+        return;
+
+    // 부모가 있을 때, 오버랩 검사를 한다.
+    if (pParent != nullptr)
+    {
+        // 현재 영역에 겹치는가?
+        if (Overlaps(pParent))
+        {
+            // 삼촌이 있을 때, 그 영역과 겹친다면 노드 삭제하고 다시 넣도록 한다.
+            if (pParent->pParent != nullptr)
+            {
+                FBVHNode* pParentSibling = { nullptr };
+                if (pParent->pParent->pChildren[0] == pParent)
+                    pParentSibling = pParent->pParent->pChildren[1];
+                else
+                    pParentSibling = pParent->pParent->pChildren[0];
+                
+                if (Overlaps(pParentSibling))
+                {
+                    FRigidBody* pMovedBody = pBody;
+                    FBVHNode* pRoot = Get_Root();
+                    delete this;
+                    FCollisionPrimitive* pCol = ReCast<FCollisionPrimitive*>(pMovedBody->Get_Owner());
+                    pRoot->Insert(pMovedBody, pCol->BoundingBox);
+                }
+                else
+                {
+                    RecalculateBoundingVolume();
+                }
+            }
+            // 부모의 형제가 없다면, 바로 바운딩 볼륨 조절
+            else
+            {
+                RecalculateBoundingVolume();
+            }
+        }
+        // 겹치지 않으면 바로 뺐다가 다시 집어넣는다.
+        else
+        {
+            FRigidBody* pMovedBody = pBody;
+            FBVHNode* pRoot = Get_Root();
+            delete this;
+            FCollisionPrimitive* pCol = ReCast<FCollisionPrimitive*>(pMovedBody->Get_Owner());
+            pRoot->Insert(pMovedBody, pCol->BoundingBox);
+        }
+        
+    }
+}
+
 _bool FBVHNode::Overlaps(const FBVHNode* pOther) const
 {
     return Volume.Overlaps(&pOther->Volume);
@@ -146,11 +205,10 @@ _bool FBVHNode::Overlaps(const FBVHNode* pOther) const
 
 _uint FBVHNode::Get_PotentialContactsWith(const FBVHNode* pOther, FPotentialContact* pContacts, _uint iLimit) const
 {
-    // Early out if we don't overlap or if we have no room
-        // to report contacts
+    // BVH간에 겹치지 않거나 제한이 0이되면 충돌 계산을 하지 않는다.
     if (!Overlaps(pOther) || iLimit == 0) return 0;
 
-    // If we're both at leaf nodes, then we have a potential contact
+    // 노드간에 리프라면 충돌처리를 위해 리스트에 바디를 넣는다.
     if (IsLeaf() && pOther->IsLeaf())
     {
         pContacts->listBodies.push_back({ pBody, pOther->pBody });
@@ -209,5 +267,14 @@ void FBVHNode::RecalculateBoundingVolume(_bool bIsRecurse)
     );
 
     // 부모 노드를 거치며 바운딩 볼륨을 계산
-    if (pParent) pParent->RecalculateBoundingVolume(true);
+    if (pParent) 
+        pParent->RecalculateBoundingVolume(true);
+}
+
+FBVHNode* FBVHNode::Get_Root()
+{
+    if (pParent == nullptr)
+        return this;
+
+    return pParent->Get_Root();
 }
