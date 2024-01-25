@@ -20,7 +20,8 @@ public:
     FBVHNode(FBVHNode* pParent, const FBoundingBox& Volume, FRigidBody* pBody = nullptr)
         : pParent(pParent), Volume(Volume), pBody(pBody)
     {
-
+        if (pBody != nullptr && pBody->Get_Owner() != nullptr)
+            Cast<FCollisionPrimitive*>(pBody->Get_Owner())->Set_TransformChangedEvent(MakeDelegate(this, &FBVHNode::BodyMoved));
     }
     ~FBVHNode();
 
