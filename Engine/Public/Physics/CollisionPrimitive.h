@@ -271,6 +271,12 @@ public:
 protected:
 	TransformChangedDelegate TransformChangedEvent;
 
+public:
+	void Set_CollisionKinematic()
+	{
+		if (pBody)
+			pBody->Set_BodyType(ERIGID_BODY_TYPE::KINEMATIC);
+	}
 #ifdef _DEBUG
 public:
 	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) PURE;

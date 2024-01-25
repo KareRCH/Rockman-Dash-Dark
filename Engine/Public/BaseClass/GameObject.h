@@ -81,6 +81,7 @@ public:
 	const ERenderGroup&		Get_RenderGroup() const { return m_eRenderGroup; }
 
 	GETSET_2(wstring, m_strPrototypeName, ProtoName, GET_C_REF, SET_C_REF)
+	GETSET_2(_float, m_fCullRadius, CullRadius, GET_C_REF, SET_C_REF)
 
 private:	// 기본 속성
 	_uint				m_iID = 0U;							// 식별용 ID, 오브젝트 관리에 사용된다.
@@ -93,6 +94,7 @@ private:	// 기본 속성
 	_float				m_fPriority[ECast(EGObjTickPriority::Size)] = {};	// 우선도
 
 	wstring				m_strPrototypeName = TEXT("");					// 프로토타입 이름
+	_float				m_fCullRadius = { 1.f };
 
 public:		// 각 오브젝트는 자식 오브젝트를 가질 수 있음
 	GETSET_2(CGameObject*, m_pOwner, Owner, GET_REF_C, SET__C)

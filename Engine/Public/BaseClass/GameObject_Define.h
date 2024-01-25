@@ -30,6 +30,8 @@ enum class EGObjectState : _uint
 	Late_Tick = EBIT_FLAG32_4,			// 레이트 틱
 	Render = EBIT_FLAG32_5,				// 렌더링 유무
 	RenderZBuffer = EBIT_FLAG32_6,		// ZBuffer로 렌더링하는 옵션
+	Cull = EBIT_FLAG32_7,				// 컬링 옵션
+	Drawing = EBIT_FLAG32_8				// 현재 그려지고 있는가
 };
 
 END

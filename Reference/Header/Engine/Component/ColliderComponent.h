@@ -129,6 +129,11 @@ public:
 		if (m_pCollisionShape)
 			m_pCollisionShape->Set_CollisionMask(m_iCollisionMask_Flag);
 	}
+	void Set_CollisionKinematic()
+	{
+		if (m_pCollisionShape)
+			m_pCollisionShape->Set_CollisionKinematic();
+	}
 
 protected:
 	_uint	m_iCollisionLayer_Flag = { 0 };		// 콜리전 레이어, 충돌체가 존재하는 층

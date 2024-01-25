@@ -89,6 +89,7 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype(FSerialData& InputData)
 			m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
 			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
 			m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+			m_pColliderComp->Set_CollisionKinematic();
 			//m_pColliderComp->EnterToPhysics(0);
 			break;
 		}
@@ -277,7 +278,8 @@ HRESULT CReaverBot_Horokko::Initialize_Component(FSerialData& InputData)
 			m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
 			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
 			m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-			//m_pColliderComp->EnterToPhysics(0);
+			m_pColliderComp->Set_CollisionKinematic();
+			m_pColliderComp->EnterToPhysics(0);
 			break;
 		}
 	}

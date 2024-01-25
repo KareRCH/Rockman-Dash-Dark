@@ -200,7 +200,8 @@ void CPlayer::Late_Tick(const _float& fTimeDelta)
     SUPER::Late_Tick(fTimeDelta);
 
     m_pModelComp->Add_AnimTime(fTimeDelta);
-    m_pModelComp->Invalidate_Animation();
+    if (IsState(EGObjectState::Drawing))
+        m_pModelComp->Invalidate_Animation();
 
     m_pModelComp->Late_Tick(fTimeDelta);
 }
@@ -344,6 +345,7 @@ HRESULT CPlayer::Initialize_Component(FSerialData& InputData)
             m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+            m_pColliderComp->Set_CollisionKinematic();
             m_pColliderComp->EnterToPhysics(0);
             break;
         case ECast(EComponentID::CloudStation):

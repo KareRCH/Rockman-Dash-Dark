@@ -45,6 +45,33 @@ public:
 	void						Add_RigidBody(FRigidBody* pBody);
 	void						Delete_RigidBody(FRigidBody* pBody);
 
+public:
+	struct FDistPoint
+	{
+		FRigidBody* pBody = nullptr;
+		_float fStart = -1.f;
+		_float fDist = -1.f;
+		_float fEnd = -1.f;
+		_bool bIsInit = { false };
+
+		bool operator < (const FDistPoint& other) const
+		{
+			return fStart < other.fStart;
+		}
+	};
+
+	struct FEndPoint
+	{
+		FRigidBody* pBody = nullptr;
+		_float fPoint = -1.f;
+		bool bIsStart = false;
+
+		bool operator < (const FEndPoint& other) const
+		{
+			return fPoint < other.fPoint;
+		}
+	};
+
 private:
 	_bool						m_bCalculateIterations;			// 계산 반복
 
@@ -55,8 +82,7 @@ private:
 	FContact*					m_pContacts;					// 추가 접촉처리가 필요한 객체에 대한 포인터
 
 	_uint						m_iMaxContacts;					// 최대 접촉 개수
-
-	FBVHNode*					m_pBVHRootNode = { nullptr };
+	list<FDistPoint>			m_listBroadBody;				// 브로드 페이즈용 바디
 	
 public:
 	void						Pause_Simulation() { m_bIsPaused = true; }

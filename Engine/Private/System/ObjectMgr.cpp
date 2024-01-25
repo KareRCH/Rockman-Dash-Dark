@@ -440,11 +440,24 @@ void CObjectMgr::RegistToTick_GameObjects()
 			// 렌더 상태가 켜져있으면 조건에 따라 그룹에 추가한다.
 			if (!pObj->IsState(EGObjectState::Pause) && pObj->IsState(EGObjectState::Render))
 			{
-				GI()->Transform_Frustum_ToLocalSpace(pObj->Transform().Get_TransformMatrix());
-				if (GI()->IsIn_LocalPlanes(XMVector3TransformCoord(
-						pObj->Transform().Get_PositionVector(), 
-						pObj->Transform().Get_TransformInverseMatrix()), 0.f))
+				if (pObj->IsState(EGObjectState::Cull))
+				{
+					GI()->Transform_Frustum_ToLocalSpace(pObj->Transform().Get_TransformMatrix());
+					if (GI()->IsIn_LocalPlanes(XMVector3TransformCoord(
+						pObj->Transform().Get_PositionVector(),
+						pObj->Transform().Get_TransformInverseMatrix()), pObj->Get_CullRadius()))
+					{
+						GI()->Add_RenderGroup(pObj->Get_RenderGroup(), pObj);
+						pObj->TurnOn_State(EGObjectState::Drawing);
+					}
+					else
+						pObj->TurnOff_State(EGObjectState::Drawing);
+				}
+				else
+				{
 					GI()->Add_RenderGroup(pObj->Get_RenderGroup(), pObj);
+					pObj->TurnOn_State(EGObjectState::Drawing);
+				}
 			}
 		}
 	}

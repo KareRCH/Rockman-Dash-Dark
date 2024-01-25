@@ -5,7 +5,6 @@
 
 CPhysicsWorld3D::CPhysicsWorld3D()
 {
-	//m_pBVHRootNode = new FBVHNode(nullptr, FBoundingBox());
 }
 
 CPhysicsWorld3D::~CPhysicsWorld3D()
@@ -28,7 +27,6 @@ CPhysicsWorld3D* CPhysicsWorld3D::Create(_uint iMaxContacts, _uint iIterations)
 
 void CPhysicsWorld3D::Free()
 {
-	//Safe_Delete(m_pBVHRootNode);
 }
 
 HRESULT CPhysicsWorld3D::Ready_Physics(_uint iMaxContacts, _uint iIterations)
@@ -96,82 +94,65 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 	//}
 
 	// D-SAP
-	list<FDistPoint> listDistance;			// 거리점
-	list<FEndPoint> listEndPoint;			// 첫점, 끝점 저장
-	list<FEndPoint> listEndPoint_Calc;			// 계산용 리스트
 	list<pair<FRigidBody*, FRigidBody*>> listPairCollide;	// 충돌 계산 페어
 
 	// 거리 만들기, Square 거리로 계산한다.
 	// O(n)
-	for (auto iter = m_listBody.begin(); iter != m_listBody.end(); ++iter)
+	for (auto iter = m_listBroadBody.begin(); iter != m_listBroadBody.end(); iter++)
 	{
-		_float3 vPos = (*iter)->Get_Position();
+		// 움직이는 물체에 대해서만 위치를 업데이트 한다.
+		if ((*iter).pBody->Get_BodyType() == ERIGID_BODY_TYPE::STATIC && (*iter).bIsInit)
+			continue;
+
+		FDistPoint& DistPoint = (*iter);
+
+		_float3 vPos = DistPoint.pBody->Get_Position();
 		_vector vSimPos = XMLoadFloat3(&vPos);
-		_float fLength = XMVectorGetX(XMVector3Length(vSimPos));
-		listDistance.push_back({ (*iter), fLength });
-	}
-	// 정렬 O(log(n))
-	listDistance.sort();
+		DistPoint.fDist = XMVectorGetX(XMVector3Length(vSimPos));
 
-	// 시작점, 끝점 만들기, 똑같이 Square로 계산한다.
-	// O(n)
-	for (auto iter = listDistance.begin(); iter != listDistance.end(); ++iter)
-	{
-		FCollisionPrimitive* pShape = static_cast<FCollisionPrimitive*>((*iter).pBody->Get_Owner());
+		FCollisionPrimitive* pShape = Cast<FCollisionPrimitive*>((*iter).pBody->Get_Owner());
 		_float fHalfScale = XMVectorGetX(XMVector3Length(pShape->Get_ScaleVector() * 0.5f));
-		listEndPoint.push_back({ (*iter).pBody, (*iter).fDist - fHalfScale, true });
-		listEndPoint.push_back({ (*iter).pBody, (*iter).fDist + fHalfScale, false });
-	}
-	// 정렬 O(log(n))
-	listEndPoint.sort();
+		DistPoint.fStart = DistPoint.fDist - fHalfScale;
+		DistPoint.fEnd = DistPoint.fDist + fHalfScale;
 
-	// 충돌쌍 만드는 파트
-	for (auto iter = listEndPoint.begin(); iter != listEndPoint.end(); ++iter)
+		(*iter).bIsInit = true;
+	}
+	// 시작 위치에 기반한 정렬
+	m_listBroadBody.sort();
+
+	for (auto iter = m_listBroadBody.begin(); iter != m_listBroadBody.end(); ++iter)
 	{
-		if ((*iter).bIsStart)
+		FDistPoint& SrcData = (*iter);
+
+		for (auto iterDst = (++iter)--; iterDst != m_listBroadBody.end(); ++iterDst)
 		{
-			// 계산후 충돌쌍 생성
-			for (auto iterCalc = listEndPoint_Calc.begin(); iterCalc != listEndPoint_Calc.end(); ++iterCalc)
+			FDistPoint& DstData = (*iterDst);
+
+			// 스타트 포인트가 있다면 충돌 쌍을 생성한다.
+			if (SrcData.fStart < DstData.fEnd && DstData.fStart <= SrcData.fEnd)
 			{
-				// 스타트 포인트가 있다면 충돌 쌍을 생성한다.
 				// 레이어 마스크가 겹칠 때 쌍을 만든다.
-				FCollisionPrimitive* pColSrc = static_cast<FCollisionPrimitive*>((*iter).pBody->Get_Owner());
-				FCollisionPrimitive* pColDst = static_cast<FCollisionPrimitive*>((*iterCalc).pBody->Get_Owner());
+				FCollisionPrimitive* pColSrc = Cast<FCollisionPrimitive*>(SrcData.pBody->Get_Owner());
+				FCollisionPrimitive* pColDst = Cast<FCollisionPrimitive*>(DstData.pBody->Get_Owner());
 
 				// 마스크로 충돌되는지 확인
 				if (pColSrc->Get_CollisionMask() & pColDst->Get_CollisionLayer()
 					|| pColDst->Get_CollisionMask() & pColSrc->Get_CollisionLayer())
 				{
-					_vector vSrc_Min = XMLoadFloat3(&pColSrc->BoundingBox.vMin);
-					_vector vSrc_Max = XMLoadFloat3(&pColSrc->BoundingBox.vMax);
-					_vector vDst_Min = XMLoadFloat3(&pColDst->BoundingBox.vMin);
-					_vector vDst_Max = XMLoadFloat3(&pColDst->BoundingBox.vMax);
-
-					_vector vBool1 = XMVectorGreaterOrEqual(vSrc_Max, vDst_Min);
-					_vector vBool2 = XMVectorGreaterOrEqual(vDst_Max, vSrc_Min);
-
 					// 바운딩 박스로 충돌되는지 확인
-					if (XMVectorGetX(vBool1) && XMVectorGetY(vBool1) && XMVectorGetZ(vBool1)
-						&& XMVectorGetX(vBool2) && XMVectorGetY(vBool2) && XMVectorGetZ(vBool2))
+					if (pColSrc->BoundingBox.vMax.x >= pColDst->BoundingBox.vMin.x
+						&& pColSrc->BoundingBox.vMax.y >= pColDst->BoundingBox.vMin.y
+						&& pColSrc->BoundingBox.vMax.z >= pColDst->BoundingBox.vMin.z
+						&& pColDst->BoundingBox.vMax.x >= pColSrc->BoundingBox.vMin.x
+						&& pColDst->BoundingBox.vMax.y >= pColSrc->BoundingBox.vMin.y
+						&& pColDst->BoundingBox.vMax.z >= pColSrc->BoundingBox.vMin.z)
 					{
-						listPairCollide.push_back({ (*iter).pBody, (*iterCalc).pBody });
+						listPairCollide.push_back({ SrcData.pBody, DstData.pBody });
 					}
 				}
 			}
-			listEndPoint_Calc.push_back((*iter));
-		}
-		// 끝점일 때는 매칭되는 점을 뺀다.
-		else
-		{
-			for (auto iterCalc = listEndPoint_Calc.begin(); iterCalc != listEndPoint_Calc.end(); ++iterCalc)
-			{
-				// StartPoint와 매칭될 때 삭제한다.
-				if ((*iter).pBody == (*iterCalc).pBody)
-				{
-					listEndPoint_Calc.erase(iterCalc);
-					break;
-				}
-			}
+			else
+				break;
 		}
 	}
 
@@ -280,43 +261,56 @@ list_collide_test CPhysicsWorld3D::Test_Contacts(FCollisionPrimitive* const pCol
 {
 	list_collide_test listCollision;
 
+	_vector vSimPos = pCollision->Get_PositionVector();
+	_float fDist = XMVectorGetX(XMVector3Length(vSimPos));
+
+	_vector vMin = XMLoadFloat3(&pCollision->BoundingBox.vMin);
+	_vector vMax = XMLoadFloat3(&pCollision->BoundingBox.vMax);
+
+	_float fHalfScale = XMVectorGetX(XMVector3Length((vMax - vMin) * 0.5f));
+	_float fStart = fDist - fHalfScale;
+	_float fEnd = fDist + fHalfScale;
+	
+	auto iterFind = lower_bound(m_listBroadBody.begin(), m_listBroadBody.end(), fStart,
+		[](const FDistPoint& DistPoint, _float _fStart) {
+			return (DistPoint.fEnd < _fStart);
+		});
+	if (iterFind == m_listBroadBody.end())
+		return listCollision;
+
 	// 받은 충돌체로 리스트바디의 충돌체들과 비교해서 하나라도 충돌하면 반환한다.
-	for (auto iter = m_listBody.begin(); iter != m_listBody.end(); ++iter)
+	for (auto iter = iterFind; iter != m_listBroadBody.end(); ++iter)
 	{
-		FCollisionPrimitive* pCol = static_cast<FCollisionPrimitive*>(pCollision);
-		FCollisionPrimitive* pColDst = static_cast<FCollisionPrimitive*>((*iter)->Get_Owner());
-		if (pCol == pColDst)
-			continue;
+		FDistPoint& DistPoint = (*iter);
 
-		_bool bCollide = false;
-		FCollisionData tColData;
-		tColData.iContactsLeft = 1;	// 작동 시킬라면 넣어야함.
-
-		if (pCol->Get_CollisionMask() & pColDst->Get_CollisionLayer())
+		if (fStart < DistPoint.fEnd && DistPoint.fStart <= fEnd)
 		{
-			//_vector vSrc_Min = XMLoadFloat3(&pCol->BoundingBox.vMin);
-			//_vector vSrc_Max = XMLoadFloat3(&pCol->BoundingBox.vMax);
-			//_vector vDst_Min = XMLoadFloat3(&pColDst->BoundingBox.vMin);
-			//_vector vDst_Max = XMLoadFloat3(&pColDst->BoundingBox.vMax);
+			FCollisionPrimitive* pColDst = Cast<FCollisionPrimitive*>(DistPoint.pBody->Get_Owner());
 
-			//_vector vBool1 = XMVectorGreaterOrEqual(vSrc_Max, vDst_Min);
-			//_vector vBool2 = XMVectorGreaterOrEqual(vDst_Max, vSrc_Min);
+			_bool bCollide = false;
+			FCollisionData tColData;
+			tColData.iContactsLeft = 1;	// 작동 시킬라면 넣어야함.
 
-			//// 바운딩 박스로 충돌되는지 확인
-			//if (XMVectorGetX(vBool1) && XMVectorGetY(vBool1) && XMVectorGetZ(vBool1)
-			//	&& XMVectorGetX(vBool2) && XMVectorGetY(vBool2) && XMVectorGetZ(vBool2))
-			//{
+			if (pCollision->Get_CollisionMask() & pColDst->Get_CollisionLayer())
+			{
+				if (pCollision->BoundingBox.vMax.x >= pColDst->BoundingBox.vMin.x
+					&& pCollision->BoundingBox.vMax.y >= pColDst->BoundingBox.vMin.y
+					&& pCollision->BoundingBox.vMax.z >= pColDst->BoundingBox.vMin.z
+					&& pColDst->BoundingBox.vMax.x >= pCollision->BoundingBox.vMin.x
+					&& pColDst->BoundingBox.vMax.y >= pCollision->BoundingBox.vMin.y
+					&& pColDst->BoundingBox.vMax.z >= pCollision->BoundingBox.vMin.z)
+					bCollide = FCollisionDetector::CollsionPrimitive(pCollision, pColDst, &tColData);
+			}
+			else
+				continue;
 
-			bCollide = FCollisionDetector::CollsionPrimitive(pCol, pColDst, &tColData);
-			//}
+			if (bCollide)
+			{
+				listCollision.push_back(pair<FCollisionPrimitive*, FContact>(pColDst, tColData.tContacts));
+			}
 		}
 		else
-			continue;
-
-		if (bCollide)
-		{
-			listCollision.push_back(pair<FCollisionPrimitive*, FContact>(pColDst, tColData.tContacts));
-		}
+			break;
 	}
 
 	return listCollision;
@@ -332,6 +326,7 @@ void CPhysicsWorld3D::Add_RigidBody(FRigidBody* pBody)
 		return;
 	
 	m_listBody.push_back(pBody);
+	m_listBroadBody.push_back({ pBody, -1.f, -1.f, -1.f });
 	/*FCollisionPrimitive* pCol = ReCast<FCollisionPrimitive*>(pBody->Get_Owner());
 	pCol->Calculate_Transform();
 	pCol->Calculate_Shape();
@@ -348,8 +343,12 @@ void CPhysicsWorld3D::Delete_RigidBody(FRigidBody* pBody)
 			return pDstBody == pBody;
 		});
 	if (iter != m_listBody.end())
-	{
-		//m_pBVHRootNode->Remove((*iter));
 		m_listBody.erase(iter);
-	}
+
+	auto iterBroad = find_if(m_listBroadBody.begin(), m_listBroadBody.end(),
+		[&pBody](FDistPoint& pDstBody) {
+			return pDstBody.pBody == pBody;
+		});
+	if (iterBroad != m_listBroadBody.end())
+		m_listBroadBody.erase(iterBroad);
 }

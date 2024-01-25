@@ -6,11 +6,14 @@
 CStaticObject::CStaticObject()
 {
     Set_Name(TEXT("StaticObject"));
+    TurnOn_State(EGObjectState::Cull);
+    Set_CullRadius(10.f);
     Set_RenderGroup(ERenderGroup::NonBlend);
 }
 
 CStaticObject::CStaticObject(const CStaticObject& rhs)
 {
+    TurnOn_State(EGObjectState::Cull);
 }
 
 HRESULT CStaticObject::Initialize_Prototype()
@@ -234,6 +237,7 @@ HRESULT CStaticObject::Initialize_Component(FSerialData& InputData)
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
                 m_pModelComp = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
             m_pModelComp->Set_Animation(0, 1.f, true);
+            Set_CullRadius(XMVectorGetX(XMVector3Length(m_pModelComp->Transform().Get_ScaleVector() * 6.f)));
             break;
         case ECast(EComponentID::Collider):
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),

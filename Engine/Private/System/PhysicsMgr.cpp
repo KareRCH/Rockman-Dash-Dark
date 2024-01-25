@@ -98,9 +98,9 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Sphere_GetGameObj
 	pShape.Set_Position(_float3(vPos.x, vPos.y, vPos.z));
 	pShape.fBaseRadius = fRadius;
 	pShape.Set_CollisionMask(iMask);
-	pShape.Calculate_Shape();
 	pShape.pBody->CalculateDerivedData();
 	pShape.Calculate_Transform();
+	pShape.Calculate_Shape();
 
 	return IntersectTests_GetGameObject(iWorldID, static_cast<FCollisionPrimitive*>(&pShape));
 }

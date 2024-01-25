@@ -437,7 +437,7 @@ protected:
     _float3                         vVelocity;                      // 속도
     _float3                         vRotation;                      // 회전 속도
     _float4                         qtOrientation;                  // 정위, 나중에 쿼터니온으로 바꿀 것
-    _float3                         vScale;                         // 크기
+    _float3                         vScale = { 1.f, 1.f, 1.f };     // 크기
     
 
     _float3x3                       matInverseInertiaTensorWorld;   // 3차원 행렬
