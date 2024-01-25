@@ -24,7 +24,7 @@ void FRigidBody::CalculateDerivedData()
 
 void FRigidBody::Integrate(const _float& fDuration)
 {
-	if (eBodyType == ERIGID_BODY_TYPE::STATIC) return;					// STATIC이면 힘을 부과하지 않는다.
+	if (eBodyType == ERIGID_BODY_TYPE::STATIC || eBodyType == ERIGID_BODY_TYPE::KINEMATIC) return;		// STATIC이면 힘을 부과하지 않는다.
 	if (eBodyType == ERIGID_BODY_TYPE::DYNAMIC && !bIsAwake) return;	// DYNAMIC에 대해서만 재운다.
 
 	// 선형 가속 합을 가속에 더하기

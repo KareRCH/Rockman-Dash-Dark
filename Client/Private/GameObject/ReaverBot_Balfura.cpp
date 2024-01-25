@@ -13,7 +13,7 @@
 CReaverBot_Balfura::CReaverBot_Balfura()
 {
     Set_Name(TEXT("ReaverBot_Balfura"));
-    Set_RenderGroup(ERenderGroup::NonBlend);
+    TurnOn_State(EGObjectState::Cull);
     m_fHP = FGauge(8.f, true);
     Register_State();
 }
@@ -21,6 +21,7 @@ CReaverBot_Balfura::CReaverBot_Balfura()
 CReaverBot_Balfura::CReaverBot_Balfura(const CReaverBot_Balfura& rhs)
     : Base(rhs)
 {
+    TurnOn_State(EGObjectState::Cull);
     Register_State();
 }
 
@@ -135,9 +136,11 @@ void CReaverBot_Balfura::Late_Tick(const _float& fTimeDelta)
     SUPER::Late_Tick(fTimeDelta);
 
     m_pModelComp->Add_AnimTime(fTimeDelta);
-    m_pModelComp->Invalidate_Animation();
-
-    m_pModelComp->Late_Tick(fTimeDelta);
+    if (IsState(EGObjectState::Drawing))
+    {
+        m_pModelComp->Invalidate_Animation();
+        m_pModelComp->Late_Tick(fTimeDelta);
+    }
 }
 
 HRESULT CReaverBot_Balfura::Render()
@@ -269,6 +272,7 @@ HRESULT CReaverBot_Balfura::Initialize_Component(FSerialData& InputData)
             m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
+            m_pColliderComp->Set_CollisionKinematic();
             m_pColliderComp->EnterToPhysics(0);
             break;
         }

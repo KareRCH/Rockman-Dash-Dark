@@ -49,11 +49,14 @@ public:
 	struct FDistPoint
 	{
 		FRigidBody* pBody = nullptr;
+		_float fStart = -1.f;
 		_float fDist = -1.f;
+		_float fEnd = -1.f;
+		_bool bIsInit = { false };
 
 		bool operator < (const FDistPoint& other) const
 		{
-			return fDist < other.fDist;
+			return fStart < other.fStart;
 		}
 	};
 
@@ -79,9 +82,7 @@ private:
 	FContact*					m_pContacts;					// 추가 접촉처리가 필요한 객체에 대한 포인터
 
 	_uint						m_iMaxContacts;					// 최대 접촉 개수
-	list<FRigidBody*>			m_listBroadBody;				// 브로드 페이즈용 바디
-
-	FBVHNode*					m_pBVHRootNode = { nullptr };
+	list<FDistPoint>			m_listBroadBody;				// 브로드 페이즈용 바디
 	
 public:
 	void						Pause_Simulation() { m_bIsPaused = true; }
