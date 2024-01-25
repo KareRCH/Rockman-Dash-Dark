@@ -134,7 +134,23 @@ public:
 	void Calculate_Transform()
 	{
 		if (!TransformEvent.empty())
+		{
 			XMStoreFloat3x4(&matOffset, Handle_TransformEvent());
+		}
+
+		if (!TransformChangedEvent.empty())
+		{
+			_matrix TransformMatrix = XMLoadFloat3x4(&matTransform);
+			_matrix NewMatrix = TransformMatrix * pBody->Get_TransformMatrix() * XMLoadFloat3x4(&matOffset);
+
+			if (XMVector4EqualInt(XMVectorEqual(TransformMatrix.r[0], NewMatrix.r[0]), XMVectorTrueInt())
+				&& XMVector4EqualInt(XMVectorEqual(TransformMatrix.r[1], NewMatrix.r[1]), XMVectorTrueInt())
+					&& XMVector4EqualInt(XMVectorEqual(TransformMatrix.r[2], NewMatrix.r[2]), XMVectorTrueInt())
+						&& XMVector4EqualInt(XMVectorEqual(TransformMatrix.r[3], NewMatrix.r[3]), XMVectorTrueInt()))
+			{
+				Handle_TransformChangedEvent();
+			}
+		}
 
 		XMStoreFloat3x4(&matTransform, pBody->Get_TransformMatrix() * XMLoadFloat3x4(&matOffset));
 	}
@@ -245,6 +261,15 @@ public:
 
 protected:
 	CollisionDelegate EventHandler;
+
+public:
+	typedef FastDelegate0<void> TransformChangedDelegate;
+	void Set_TransformChangedEvent(TransformChangedDelegate Event) { TransformChangedEvent = Event; }
+	void Remove_TransformChangedEvent() { TransformChangedEvent.clear(); }
+	void Handle_TransformChangedEvent() { if (!TransformChangedEvent.empty()) TransformChangedEvent(); }
+
+protected:
+	TransformChangedDelegate TransformChangedEvent;
 
 #ifdef _DEBUG
 public:

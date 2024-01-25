@@ -20,6 +20,9 @@ FBVHNode::~FBVHNode()
         pParent->pChildren[0] = pSibling->pChildren[0];
         pParent->pChildren[1] = pSibling->pChildren[1];
 
+        if (pParent->pBody != nullptr && pParent->pBody->Get_Owner() != nullptr)
+            Cast<FCollisionPrimitive*>(pParent->pBody->Get_Owner())->Remove_TransformChangedEvent();
+
         if (pSibling->pChildren[0] != nullptr)
             pSibling->pChildren[0]->pParent = pParent;
         if (pSibling->pChildren[1] != nullptr)
@@ -67,6 +70,9 @@ void FBVHNode::Insert(FRigidBody* pNewBody, const FBoundingBox& NewVolume)
     // 리프인지 확인
     if (IsLeaf())
     {
+        if (pBody != nullptr && pBody->Get_Owner() != nullptr)
+            Cast<FCollisionPrimitive*>(pBody->Get_Owner())->Remove_TransformChangedEvent();
+
         // 왼쪽 자식으로 현재 자신의 것을 카피하여 집어넣는다.
         pChildren[0] = new FBVHNode(
             this, Volume, pBody
@@ -79,6 +85,7 @@ void FBVHNode::Insert(FRigidBody* pNewBody, const FBoundingBox& NewVolume)
 
         // 기존 것을 Internal로 만든다.
         this->pBody = nullptr;
+        
 
         // 바운딩 볼륨을 재계산한다.
         RecalculateBoundingVolume();
@@ -151,51 +158,56 @@ void FBVHNode::BodyMoved()
     if (!IsLeaf())
         return;
 
-    // 부모가 있을 때, 오버랩 검사를 한다.
-    if (pParent != nullptr)
-    {
-        // 현재 영역에 겹치는가?
-        if (Overlaps(pParent))
-        {
-            // 삼촌이 있을 때, 그 영역과 겹친다면 노드 삭제하고 다시 넣도록 한다.
-            if (pParent->pParent != nullptr)
-            {
-                FBVHNode* pParentSibling = { nullptr };
-                if (pParent->pParent->pChildren[0] == pParent)
-                    pParentSibling = pParent->pParent->pChildren[1];
-                else
-                    pParentSibling = pParent->pParent->pChildren[0];
-                
-                if (Overlaps(pParentSibling))
-                {
-                    FRigidBody* pMovedBody = pBody;
-                    FBVHNode* pRoot = Get_Root();
-                    delete this;
-                    FCollisionPrimitive* pCol = ReCast<FCollisionPrimitive*>(pMovedBody->Get_Owner());
-                    pRoot->Insert(pMovedBody, pCol->BoundingBox);
-                }
-                else
-                {
-                    RecalculateBoundingVolume();
-                }
-            }
-            // 부모의 형제가 없다면, 바로 바운딩 볼륨 조절
-            else
-            {
-                RecalculateBoundingVolume();
-            }
-        }
-        // 겹치지 않으면 바로 뺐다가 다시 집어넣는다.
-        else
-        {
-            FRigidBody* pMovedBody = pBody;
-            FBVHNode* pRoot = Get_Root();
-            delete this;
-            FCollisionPrimitive* pCol = ReCast<FCollisionPrimitive*>(pMovedBody->Get_Owner());
-            pRoot->Insert(pMovedBody, pCol->BoundingBox);
-        }
-        
-    }
+    //// 부모가 있을 때, 오버랩 검사를 한다.
+    //if (pParent != nullptr)
+    //{
+    //    // 현재 영역에 겹치는가?
+    //    if (Overlaps(pParent))
+    //    {
+    //        // 삼촌이 있을 때, 그 영역과 겹친다면 노드 삭제하고 다시 넣도록 한다.
+    //        if (pParent->pParent != nullptr)
+    //        {
+    //            FBVHNode* pParentSibling = { nullptr };
+    //            if (pParent->pParent->pChildren[0] == pParent)
+    //                pParentSibling = pParent->pParent->pChildren[1];
+    //            else
+    //                pParentSibling = pParent->pParent->pChildren[0];
+    //            
+    //            if (Overlaps(pParentSibling))
+    //            {
+    //                FRigidBody* pMovedBody = pBody;
+    //                FBVHNode* pRoot = Get_Root();
+    //                delete this;
+    //                FCollisionPrimitive* pCol = ReCast<FCollisionPrimitive*>(pMovedBody->Get_Owner());
+    //                pRoot->Insert(pMovedBody, pCol->BoundingBox);
+    //            }
+    //            else
+    //            {
+    //                RecalculateBoundingVolume();
+    //            }
+    //        }
+    //        // 부모의 형제가 없다면, 바로 바운딩 볼륨 조절
+    //        else
+    //        {
+    //            RecalculateBoundingVolume();
+    //        }
+    //    }
+    //    // 겹치지 않으면 바로 뺐다가 다시 집어넣는다.
+    //    else
+    //    {
+    //        FRigidBody* pMovedBody = pBody;
+    //        FBVHNode* pRoot = Get_Root();
+    //        delete this;
+    //        FCollisionPrimitive* pCol = ReCast<FCollisionPrimitive*>(pMovedBody->Get_Owner());
+    //        pRoot->Insert(pMovedBody, pCol->BoundingBox);
+    //    }
+    //}
+
+    FRigidBody* pMovedBody = pBody;
+    FBVHNode* pRoot = Get_Root();
+    delete this;
+    FCollisionPrimitive* pCol = ReCast<FCollisionPrimitive*>(pMovedBody->Get_Owner());
+    pRoot->Insert(pMovedBody, pCol->BoundingBox);
 }
 
 _bool FBVHNode::Overlaps(const FBVHNode* pOther) const

@@ -58,7 +58,6 @@ private:
 
 	FBVHNode*					m_pBVHRootNode = { nullptr };
 	
-
 public:
 	void						Pause_Simulation() { m_bIsPaused = true; }
 	void						Play_Simulation() { m_bIsPaused = false; }

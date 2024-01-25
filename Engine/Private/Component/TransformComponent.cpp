@@ -202,12 +202,6 @@ void CTransformComponent::Look_At_OnLand(_fvector vTargetPos)
 	Set_Right(vRight);
 	Set_Up(vUp);
 	Set_Look(vLook);
-
-	_matrix		vMat = Get_TransformMatrix();
-	if (isnan(vMat.r->m128_f32[0]))
-	{
-		int t = 0;
-	}
 }
 
 _float CTransformComponent::Look_At_OnLand(_fvector vTargetPos, _float fRadianSpeed)
