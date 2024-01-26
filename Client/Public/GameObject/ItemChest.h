@@ -55,8 +55,36 @@ public:
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
 
+public:
+	enum class EActionKey : _uint { Open, Close, Size };
+
 private:
-	_int			m_iTest = 0;
+	ACTION_SET<EActionKey>	m_ActionKey;
+
+public:
+	enum class EState_Act { Idle, Open, Close };
+
+	void Register_State();
+
+private:		// 약식 상태머신
+	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
+	SState_Act		m_State_Act;
+
+	FGauge m_fItemGiveDelay = FGauge(1.f);
+	FGauge m_fWalkAndSmash = FGauge(0.3f);
+
+private:
+	void ActState_Idle(const _float& fTimeDelta);
+	void ActState_Open(const _float& fTimeDelta);
+	void ActState_Close(const _float& fTimeDelta);
+
+public:
+	void Open_Chest();
+	void Close_Chest();
+
+private:
+	EItemObtain		m_eItemObtain = { EItemObtain::Money };
+
 };
 
 template <>

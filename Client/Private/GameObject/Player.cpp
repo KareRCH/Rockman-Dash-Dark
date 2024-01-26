@@ -187,7 +187,9 @@ void CPlayer::Tick(const _float& fTimeDelta)
 
     Lockon_Active(fTimeDelta);
 
+    Input_Weapon(fTimeDelta);
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
+    m_ActionKey.Reset();
 
     m_pColliderComp->Tick(fTimeDelta);
     m_pCameraPivotComp->Tick(fTimeDelta);
@@ -338,6 +340,16 @@ HRESULT CPlayer::Initialize_Component(FSerialData& InputData)
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
                 m_pModelComp = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
             m_pModelComp->Set_Animation(0, 1.f, true);
+            m_pModelComp->Deactive_Mesh(11);
+            m_pModelComp->Deactive_Mesh(15);
+            m_pModelComp->Deactive_Mesh(16);
+            m_pModelComp->Deactive_Mesh(17);
+            m_pModelComp->Deactive_Mesh(18);
+            m_pModelComp->Deactive_Mesh(19);
+            m_pModelComp->Deactive_Mesh(20);
+            m_pModelComp->Deactive_Mesh(21);
+            m_pModelComp->Deactive_Mesh(22);
+            m_pModelComp->Deactive_Mesh(23);
             break;
         case ECast(EComponentID::Collider):
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
@@ -456,6 +468,9 @@ void CPlayer::Update_ToCloudStation()
 
 void CPlayer::Register_State()
 {
+    for (_uint i = 0; i < ECast(EActionKey::Size); i++)
+        m_ActionKey.Add_Action(Cast<EActionKey>(i));
+
     m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
     m_State_Act.Add_Func(EState_Act::Run, &ThisClass::ActState_Run);
     m_State_Act.Add_Func(EState_Act::Walk, &ThisClass::ActState_Walk);
@@ -471,6 +486,9 @@ void CPlayer::Register_State()
     m_State_Act.Add_Func(EState_Act::ReadyLaser, &ThisClass::ActState_ReadyLaser);
     m_State_Act.Add_Func(EState_Act::ShootingLaser, &ThisClass::ActState_ShootingLaser);
     m_State_Act.Add_Func(EState_Act::EndLaser, &ThisClass::ActState_EndLaser);
+    m_State_Act.Add_Func(EState_Act::Homing, &ThisClass::ActState_Homing);
+    m_State_Act.Add_Func(EState_Act::SpreadBuster, &ThisClass::ActState_SpreadBuster);
+    m_State_Act.Add_Func(EState_Act::ChargeShot, &ThisClass::ActState_ChargeShot);
     m_State_Act.Set_State(EState_Act::Idle);
 }
 
@@ -539,19 +557,6 @@ void CPlayer::Move_Update(const _float& fTimeDelta)
             m_vVelocity.z *= 0.998f;
     }
 
-    /*_vector vMoveDir = XMVector3Normalize(XMLoadFloat3(&m_vLookDirection));
-    _vector vCurMoveDir = XMVector3Normalize(XMLoadFloat3(&m_vLookDirection_Blend));
-    _float fObjAngle = XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), vMoveDir));
-    _float fCurAngle = XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), vCurMoveDir));
-    _vector vObjRotate = XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), fObjAngle);
-    _vector vCurRotate = XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), fCurAngle);
-    _vector vBlended_Rotate = XMQuaternionSlerp(vObjRotate, vCurRotate, 0.5f);
-    _float fFinalAngle = acosf(XMVectorGetX(XMVector4Dot(vCurRotate, vBlended_Rotate)));
-    vCurMoveDir = XMVector3Rotate(vCurMoveDir, XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), fFinalAngle));
-    XMStoreFloat3(&m_vLookDirection_Blend, vCurMoveDir);*/
-
-    //Transform().TurnAxis(_float3(0.f, 1.f, 0.f), m_vLookDirection.x * 5.f * fTimeDelta);
-
     if (m_bIsOnGround)
     {
         if (GI()->IsKey_Pressed(DIK_SPACE))
@@ -584,6 +589,88 @@ void CPlayer::Look_Update(const _float& fTimeDelta)
     Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
 }
 
+void CPlayer::Input_Weapon(const _float& fTimeDelta)
+{
+    if (GI()->IsKey_Pressed(DIK_Z))
+    {
+        if (ECast(EMainWeapon::ChargeBuster) == ECast(m_eMainWeapon))
+            ChangeMainWeapon(EMainWeapon::None);
+        else
+            ChangeMainWeapon(Cast<EMainWeapon>(ECast(m_eMainWeapon) + 1));
+    }
+
+    if (GI()->IsKey_Pressed(DIK_C))
+    {
+        if (ECast(ESubWeapon::SpreadBusterArm) == ECast(m_eSubWeapon))
+            ChangeSubWeapon(ESubWeapon::ThrowArm);
+        else
+            ChangeSubWeapon(Cast<ESubWeapon>(ECast(m_eSubWeapon) + 1));
+    }
+
+    switch (m_eMainWeapon)
+    {
+    case EMainWeapon::None:
+        
+        break;
+    case EMainWeapon::Buster:
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_LB))
+            m_ActionKey.Act(EActionKey::Buster);
+        break;
+    case EMainWeapon::ChargeBuster:
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_LB))
+            m_ActionKey.Act(EActionKey::ChargeBuster);
+        break;
+    default:
+        break;
+    }
+
+    switch (m_eSubWeapon)
+    {
+    case ESubWeapon::ThrowArm:
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
+            m_ActionKey.Act(EActionKey::Throw);
+        break;
+    case ESubWeapon::LaserArm:
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
+            m_ActionKey.Act(EActionKey::Laser);
+        break;
+    case ESubWeapon::BladeArm:
+        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+            m_ActionKey.Act(EActionKey::Blade);
+        break;
+    case ESubWeapon::BusterCannonArm:
+        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+            m_ActionKey.Act(EActionKey::BusterCannon);
+        break;
+    case ESubWeapon::DrillArm:
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
+            m_ActionKey.Act(EActionKey::Drill);
+        break;
+    case ESubWeapon::HomingArm:
+        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+            m_ActionKey.Act(EActionKey::Homing);
+        break;
+    case ESubWeapon::HyperShellArm:
+        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+            m_ActionKey.Act(EActionKey::HyperShell);
+        break;
+    case ESubWeapon::MachinegunArm:
+        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+            m_ActionKey.Act(EActionKey::Machinegun);
+        break;
+    case ESubWeapon::ShieldArm:
+        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+            m_ActionKey.Act(EActionKey::Shield);
+        break;
+    case ESubWeapon::SpreadBusterArm:
+        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+            m_ActionKey.Act(EActionKey::SpreadBuster);
+        break;
+    default:
+        break;
+    }
+}
+
 void CPlayer::ActState_Idle(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
@@ -600,10 +687,14 @@ void CPlayer::ActState_Idle(const _float& fTimeDelta)
             m_State_Act.Set_State(EState_Act::Ready_Jump);
         if (m_bIsMoving)
             m_State_Act.Set_State(EState_Act::Run);
-        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_LB))
+        if (m_ActionKey.IsAct(EActionKey::Buster))
             m_State_Act.Set_State(EState_Act::Buster);
-        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
+        if (m_ActionKey.IsAct(EActionKey::Laser))
             m_State_Act.Set_State(EState_Act::ReadyLaser);
+        if (m_ActionKey.IsAct(EActionKey::Homing))
+            m_State_Act.Set_State(EState_Act::Homing);
+        if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
+            m_State_Act.Set_State(EState_Act::SpreadBuster);
     }
 
     if (m_State_Act.IsState_Exit())
@@ -667,10 +758,14 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
             m_State_Act.Set_State(EState_Act::Ready_Jump);
         if (!m_bIsMoving)
             m_State_Act.Set_State(EState_Act::Idle);
-        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_LB))
+        if (m_ActionKey.IsAct(EActionKey::Buster))
             m_State_Act.Set_State(EState_Act::Buster);
-        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
+        if (m_ActionKey.IsAct(EActionKey::Laser))
             m_State_Act.Set_State(EState_Act::ReadyLaser);
+        if (m_ActionKey.IsAct(EActionKey::Homing))
+            m_State_Act.Set_State(EState_Act::Homing);
+        if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
+            m_State_Act.Set_State(EState_Act::SpreadBuster);
     }
 
     if (m_State_Act.IsState_Exit())
@@ -977,6 +1072,77 @@ void CPlayer::ActState_EndLaser(const _float& fTimeDelta)
     }
 }
 
+void CPlayer::ActState_Homing(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(19, 1.f, false, false, 0.2f);
+        ShootBuster();
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_SpreadBuster(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(19, 1.f, false, false, 0.2f);
+        ShootSpreadBuster();
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ChargeShot(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(19, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
 void CPlayer::ShootBuster()
 {
     _vector vPos = Transform().Get_PositionVector() + XMVectorSet(0.f, 0.8f, 0.f, 0.f);
@@ -991,6 +1157,35 @@ void CPlayer::ShootBuster()
     pBuster->Set_Speed(20.f);
     pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
     pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+}
+
+void CPlayer::ShootMissile()
+{
+
+}
+
+void CPlayer::ShootSpreadBuster()
+{
+    for (_uint i = 0; i < 5; i++)
+    {
+        _vector vPos = Transform().Get_PositionVector() + XMVectorSet(0.f, 0.8f, 0.f, 0.f);
+        _float3 vfPos = {};
+        XMStoreFloat3(&vfPos, vPos);
+        auto pBuster = CWeapon_Buster::Create(vfPos);
+        if (pBuster == nullptr)
+            return;
+
+        _int iCont = i - 2;
+        _float fRadian = XMConvertToRadians(Cast<_float>(iCont * 20));
+
+        pBuster->Set_LifeTime(0.3f);
+        pBuster->Set_Speed(20.f);
+        pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+        pBuster->Transform().TurnRight(fRadian);
+        pBuster->Transform().MoveForward(0.5f);
+        pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+        GI()->Add_GameObject(pBuster);
+    }
 }
 
 void CPlayer::Lockon_Active(const _float& fTimeDelta)
@@ -1073,6 +1268,84 @@ CCharacter_Common* CPlayer::Find_Target()
     }
 
     return DynCast<CCharacter_Common*>(pClosestObj);
+}
+
+void CPlayer::ChangeMainWeapon(EMainWeapon eWeapon)
+{
+    m_eMainWeapon = eWeapon;
+
+    m_pModelComp->Deactive_Mesh(9);
+    m_pModelComp->Deactive_Mesh(24);
+
+    switch (m_eMainWeapon)
+    {
+    case Client::EMainWeapon::None:
+        m_pModelComp->Active_Mesh(9);
+        m_pModelComp->Active_Mesh(24);
+        break;
+    case Client::EMainWeapon::Buster:
+        m_pModelComp->Active_Mesh(19);
+        break;
+    case Client::EMainWeapon::ChargeBuster:
+        m_pModelComp->Active_Mesh(19);
+        break;
+    default:
+        break;
+    }
+}
+
+void CPlayer::ChangeSubWeapon(ESubWeapon eWeapon)
+{
+    m_eSubWeapon = eWeapon;
+
+    m_pModelComp->Deactive_Mesh(6);
+    m_pModelComp->Deactive_Mesh(7);
+    m_pModelComp->Deactive_Mesh(11);
+    m_pModelComp->Deactive_Mesh(15);
+    m_pModelComp->Deactive_Mesh(16);
+    m_pModelComp->Deactive_Mesh(17);
+    m_pModelComp->Deactive_Mesh(18);
+    m_pModelComp->Deactive_Mesh(20);
+    m_pModelComp->Deactive_Mesh(21);
+    m_pModelComp->Deactive_Mesh(22);
+    m_pModelComp->Deactive_Mesh(23);
+
+    switch (m_eSubWeapon)
+    {
+    case Client::ESubWeapon::ThrowArm:
+        m_pModelComp->Active_Mesh(6);
+        m_pModelComp->Active_Mesh(7);
+        break;
+    case Client::ESubWeapon::LaserArm:
+        m_pModelComp->Active_Mesh(11);
+        break;
+    case Client::ESubWeapon::BladeArm:
+        m_pModelComp->Active_Mesh(18);
+        break;
+    case Client::ESubWeapon::BusterCannonArm:
+        m_pModelComp->Active_Mesh(20);
+        break;
+    case Client::ESubWeapon::DrillArm:
+        m_pModelComp->Active_Mesh(21);
+        break;
+    case Client::ESubWeapon::HomingArm:
+        m_pModelComp->Active_Mesh(22);
+        break;
+    case Client::ESubWeapon::HyperShellArm:
+        m_pModelComp->Active_Mesh(23);
+        break;
+    case Client::ESubWeapon::MachinegunArm:
+        m_pModelComp->Active_Mesh(15);
+        break;
+    case Client::ESubWeapon::ShieldArm:
+        m_pModelComp->Active_Mesh(16);
+        break;
+    case Client::ESubWeapon::SpreadBusterArm:
+        m_pModelComp->Active_Mesh(17);
+        break;
+    default:
+        break;
+    }
 }
 
 

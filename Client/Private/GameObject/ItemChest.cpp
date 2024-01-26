@@ -14,20 +14,18 @@
 CItemChest::CItemChest()
 {
 	Set_Name(TEXT("ItemChest"));
-	Set_RenderGroup(ERenderGroup::NonBlend);
+	Register_State();
 }
 
 CItemChest::CItemChest(const CItemChest& rhs)
 {
+	Register_State();
 }
 
 HRESULT CItemChest::Initialize_Prototype()
 {
-	if (FAILED(Initialize_Component()))
-		return E_FAIL;
-
 	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
-	m_pModelComp->Transform().Set_Scale(_float3(0.3f, 0.3f, 0.3f));
+	m_pModelComp->Transform().Set_Scale(_float3(0.5f, 0.5f, 0.5f));
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelAnim.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Object/Chest/Chest.amodel");
 
@@ -113,14 +111,8 @@ void CItemChest::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
 
-	if (GI()->IsKey_Pressed(DIK_R))
-	{
-		++m_iTest;
-		if (m_iTest > 3)
-			m_iTest = 0;
-
-		m_pModelComp->Set_Animation(m_iTest, 1.f, true);
-	}
+	m_ActionKey.Reset();
+	m_State_Act.Get_StateFunc()(this, fTimeDelta);
 }
 
 void CItemChest::Late_Tick(const _float& fTimeDelta)
@@ -128,9 +120,12 @@ void CItemChest::Late_Tick(const _float& fTimeDelta)
 	SUPER::Late_Tick(fTimeDelta);
 
 	m_pModelComp->Add_AnimTime(fTimeDelta);
-	m_pModelComp->Invalidate_Animation();
 
-	m_pModelComp->Late_Tick(fTimeDelta);
+	if (IsState(EGObjectState::Drawing))
+	{
+		m_pModelComp->Invalidate_Animation();
+		m_pModelComp->Late_Tick(fTimeDelta);
+	}
 }
 
 HRESULT CItemChest::Render()
@@ -270,4 +265,76 @@ FSerialData CItemChest::SerializeData()
 	Data.Add_Member("ClassID", g_ClassID);
 
 	return Data;
+}
+
+void CItemChest::Register_State()
+{
+	for (_uint i = 0; i < ECast(EActionKey::Size); i++)
+		m_ActionKey.Add_Action(Cast<EActionKey>(i));
+
+	m_State_Act.Add_Func(EState_Act::Idle, &ThisClass::ActState_Idle);
+	m_State_Act.Add_Func(EState_Act::Open, &ThisClass::ActState_Open);
+	m_State_Act.Add_Func(EState_Act::Close, &ThisClass::ActState_Close);
+	m_State_Act.Set_State(EState_Act::Idle);
+}
+
+void CItemChest::ActState_Idle(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(0, 1.f, false);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		// ¿­¸²
+		if (m_ActionKey.IsAct(EActionKey::Open))
+			m_State_Act.Set_State(EState_Act::Open);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+void CItemChest::ActState_Open(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(2, 1.f, false, true);
+		m_fItemGiveDelay.Reset();
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+
+
+		// ´ÝÈû
+		if (m_ActionKey.IsAct(EActionKey::Close))
+			m_State_Act.Set_State(EState_Act::Close);
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+void CItemChest::ActState_Close(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(2, 1.f, false, true);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
 }

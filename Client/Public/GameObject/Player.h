@@ -88,6 +88,7 @@ private:
 	void	Register_State();
 	void	Move_Update(const _float& fTimeDelta);
 	void	Look_Update(const _float& fTimeDelta);
+	void	Input_Weapon(const _float& fTimeDelta);
 
 private:
 	_bool		m_bIsMoving = false;
@@ -116,8 +117,16 @@ private:
 	MOVE_DIR	m_eMoveDir = { MOVE_FORWARD };
 
 public:
+	enum class EActionKey : _uint { Buster, ChargeBuster, Throw, 
+		Laser, Homing, Blade, BusterCannon, Drill, HyperShell, Machinegun, Shield, SpreadBuster, Size };
+
+private:
+	ACTION_SET<EActionKey>	m_ActionKey;
+
+public:
 	enum class EState_Act { Idle, Run, Walk, Ready_Jump, Jump_Up, Jump_Down, Landing, Buster, 
-		DamagedLight, DamagedHeavy, KnockDown, StandUp, ReadyLaser, ShootingLaser, EndLaser };
+		DamagedLight, DamagedHeavy, KnockDown, StandUp, ReadyLaser, ShootingLaser, EndLaser,
+		Homing, SpreadBuster, ChargeShot };
 
 private:		// 약식 상태머신
 	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
@@ -139,9 +148,14 @@ private:
 	void ActState_ReadyLaser(const _float& fTimeDelta);
 	void ActState_ShootingLaser(const _float& fTimeDelta);
 	void ActState_EndLaser(const _float& fTimeDelta);
+	void ActState_Homing(const _float& fTimeDelta);
+	void ActState_SpreadBuster(const _float& fTimeDelta);
+	void ActState_ChargeShot(const _float& fTimeDelta);
 
 private:
 	void ShootBuster();
+	void ShootMissile();
+	void ShootSpreadBuster();
 	void Lockon_Active(const _float& fTimeDelta);
 	void Lockon_Target();
 	void Lockon_Untarget();
@@ -157,6 +171,16 @@ private:
 private:
 	class CCharacter_Common* m_pLockon_Target = { nullptr };
 	class CUI_Lockon* m_pLockon_UI = { nullptr };
+
+public:
+	void ChangeMainWeapon(EMainWeapon eWeapon);
+	void ChangeSubWeapon(ESubWeapon eWeapon);
+
+private:
+	EMainWeapon			m_eMainWeapon = { EMainWeapon::None };
+
+private:
+	ESubWeapon			m_eSubWeapon = { ESubWeapon::ThrowArm };
 
 };
 
