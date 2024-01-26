@@ -924,6 +924,8 @@ void CPlayer::ActState_DamagedLight(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
+        Transform().MoveForward(-fTimeDelta);
+
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
             m_State_Act.Set_State(EState_Act::Idle);
@@ -941,10 +943,14 @@ void CPlayer::ActState_DamagedHeavy(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(15, 1.f, false, false, 0.3f);
+        m_vVelocity.y = 3.f;
     }
 
     if (m_State_Act.Can_Update())
     {
+        Move_Update(fTimeDelta);
+        Transform().MoveForward(-4.f * fTimeDelta);
+
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
             m_State_Act.Set_State(EState_Act::KnockDown);
@@ -1276,6 +1282,7 @@ void CPlayer::ChangeMainWeapon(EMainWeapon eWeapon)
 
     m_pModelComp->Deactive_Mesh(9);
     m_pModelComp->Deactive_Mesh(24);
+    m_pModelComp->Deactive_Mesh(19);
 
     switch (m_eMainWeapon)
     {
