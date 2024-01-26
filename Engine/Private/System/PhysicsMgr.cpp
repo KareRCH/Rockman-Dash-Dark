@@ -111,6 +111,7 @@ list<pair<CGameObject*, FContact>> CPhysicsMgr::IntersectTests_Box_GetGameObject
 	pShape.Set_Position(_float3(vPos.x, vPos.y, vPos.z));
 	pShape.vHalfSize = _float3(vHalfSize.x, vHalfSize.y, vHalfSize.z);
 	pShape.Set_CollisionMask(iMask);
+	pShape.pBody->CalculateDerivedData();
 	pShape.Calculate_Shape();
 	pShape.Calculate_Transform();
 

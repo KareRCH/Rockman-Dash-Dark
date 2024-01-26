@@ -15,7 +15,6 @@
 CReaverBot_Horokko::CReaverBot_Horokko()
 {
 	Set_Name(TEXT("ReaverBot_Horokko"));
-	Set_RenderGroup(ERenderGroup::NonBlend);
 	m_fHP = FGauge(10.f, true);
 	Register_State();
 	m_RandomNumber = mt19937_64(m_RandomDevice());
@@ -379,6 +378,7 @@ void CReaverBot_Horokko::Dead_Effect()
 	if (nullptr == pEffect)
 		return;
 
+	//srand(time(NULL));
 	pEffect->Transform().Set_Position(Transform().Get_PositionFloat3());
 }
 
@@ -417,7 +417,6 @@ void CReaverBot_Horokko::ActState_Idle(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-
 		// µ¹Áø
 		if (m_ActionKey.IsAct(EActionKey::Charge))
 			m_State_Act.Set_State(EState_Act::Ready_Charge);
