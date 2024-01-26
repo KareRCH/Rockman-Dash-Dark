@@ -20,6 +20,8 @@ CCommonModelComp::CCommonModelComp(const CCommonModelComp& rhs)
 	, m_iNumMeshes(rhs.m_iNumMeshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
 	, m_eModelType(rhs.m_eModelType)
+	, m_ActiveMeshes(rhs.m_ActiveMeshes)
+	, m_iNumActiveMeshes(rhs.m_iNumActiveMeshes)
 {
 	Safe_AddRef(m_pEffectComp);
 	for (_uint i = 0; i < m_iNumMeshes; i++)
@@ -232,19 +234,21 @@ FSerialData CCommonModelComp::SerializeData()
 
 HRESULT CCommonModelComp::Render_AnimModel()
 {
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumActiveMeshes; ++i)
 	{
+		_uint iIndex = m_ActiveMeshes[i];
+
 		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
 		_vector vTemp = {};
 
 		m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
 		m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
 		m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
-		m_pMeshComps[i]->Bind_BoneMatricesToEffect(m_pEffectComp, "g_matBones", *m_pSkeletalComp->Get_BoneGroup());
+		m_pMeshComps[iIndex]->Bind_BoneMatricesToEffect(m_pEffectComp, "g_matBones", *m_pSkeletalComp->Get_BoneGroup());
 
 		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(vTemp = PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One))), sizeof(_float4));
 
-		_uint iMatIndex = m_pMeshComps[i]->Get_MeshMaterialIndex();
+		_uint iMatIndex = m_pMeshComps[iIndex]->Get_MeshMaterialIndex();
 		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
 
 		auto pOwnerObj = Get_OwnerObject();
@@ -260,10 +264,10 @@ HRESULT CCommonModelComp::Render_AnimModel()
 			m_pEffectComp->Begin(m_vecActivePasses[j]);
 
 			// 버퍼를 장치에 바인드
-			m_pMeshComps[i]->Bind_Buffer();
+			m_pMeshComps[iIndex]->Bind_Buffer();
 
 			// 바인딩된 정점, 인덱스 그리기
-			m_pMeshComps[i]->Render_Buffer();
+			m_pMeshComps[iIndex]->Render_Buffer();
 		}
 	}
 
@@ -272,8 +276,10 @@ HRESULT CCommonModelComp::Render_AnimModel()
 
 HRESULT CCommonModelComp::Render_NoAnimModel()
 {
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumActiveMeshes; ++i)
 	{
+		_uint iIndex = m_ActiveMeshes[i];
+
 		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
 		_vector vTemp = {};
 
@@ -283,7 +289,7 @@ HRESULT CCommonModelComp::Render_NoAnimModel()
 
 		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(vTemp = PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One))), sizeof(_float4));
 
-		_uint iMatIndex = m_pMeshComps[i]->Get_MeshMaterialIndex();
+		_uint iMatIndex = m_pMeshComps[iIndex]->Get_MeshMaterialIndex();
 		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
 
 		auto pOwnerObj = Get_OwnerObject();
@@ -299,10 +305,10 @@ HRESULT CCommonModelComp::Render_NoAnimModel()
 			m_pEffectComp->Begin(m_vecActivePasses[j]);
 
 			// 버퍼를 장치에 바인드
-			m_pMeshComps[i]->Bind_Buffer();
+			m_pMeshComps[iIndex]->Bind_Buffer();
 
 			// 바인딩된 정점, 인덱스 그리기
-			m_pMeshComps[i]->Render_Buffer();
+			m_pMeshComps[iIndex]->Render_Buffer();
 		}
 	}
 
@@ -363,6 +369,8 @@ HRESULT CCommonModelComp::Bind_Model(TYPE eType, EModelGroupIndex eGroupIndex, c
 		m_pAnimationComp->Bind_BoneGroup(m_pSkeletalComp->Get_BoneGroup());
 		m_pAnimationComp->Load_Animations(eGroupIndex, strModelFilePath);
 	}
+
+	Active_AllMeshes();
 
 	return S_OK;
 }
@@ -435,4 +443,53 @@ HRESULT CCommonModelComp::Unbind_Effect()
 		return E_FAIL;
 
 	return m_pEffectComp->Unbind_Effect();
+}
+
+void CCommonModelComp::Active_Mesh(_uint iIndex)
+{
+	if (iIndex < 0 || iIndex >= m_iNumMeshes)
+		return;
+
+	auto iter = find_if(m_ActiveMeshes.begin(), m_ActiveMeshes.end(),
+		[&iIndex](const _uint iActive) {
+			return iIndex == iActive;
+		});
+	if (iter != m_ActiveMeshes.end())
+		return;
+
+	m_ActiveMeshes.push_back(iIndex);
+	++m_iNumActiveMeshes;
+}
+
+void CCommonModelComp::Active_AllMeshes()
+{
+	m_iNumActiveMeshes = 0;
+	m_ActiveMeshes.clear();
+	for (_uint i = 0; i < m_iNumMeshes; i++)
+	{
+		m_ActiveMeshes.push_back(i);
+		++m_iNumActiveMeshes;
+	}
+}
+
+void CCommonModelComp::Deactive_Mesh(_uint iIndex)
+{
+	if (iIndex < 0 || iIndex >= m_iNumMeshes)
+		return;
+
+	auto iter = find_if(m_ActiveMeshes.begin(), m_ActiveMeshes.end(),
+		[&iIndex](const _uint iActive) {
+			return iIndex == iActive;
+		});
+	if (iter == m_ActiveMeshes.end())
+		return;
+
+	m_ActiveMeshes.erase(iter);
+	--m_iNumActiveMeshes;
+}
+
+void CCommonModelComp::Deactive_AllMeshes()
+{
+	m_iNumActiveMeshes = 0;
+	m_ActiveMeshes.clear();
 }

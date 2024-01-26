@@ -273,7 +273,7 @@ list_collide_test CPhysicsWorld3D::Test_Contacts(FCollisionPrimitive* const pCol
 	
 	auto iterFind = lower_bound(m_listBroadBody.begin(), m_listBroadBody.end(), fStart,
 		[](const FDistPoint& DistPoint, _float _fStart) {
-			return (DistPoint.fEnd < _fStart);
+			return (DistPoint.fStart < _fStart);
 		});
 	if (iterFind == m_listBroadBody.end())
 		return listCollision;
@@ -283,7 +283,7 @@ list_collide_test CPhysicsWorld3D::Test_Contacts(FCollisionPrimitive* const pCol
 	{
 		FDistPoint& DistPoint = (*iter);
 
-		if (fStart < DistPoint.fEnd && DistPoint.fStart <= fEnd)
+		if (fStart <= DistPoint.fEnd && DistPoint.fStart <= fEnd)
 		{
 			FCollisionPrimitive* pColDst = Cast<FCollisionPrimitive*>(DistPoint.pBody->Get_Owner());
 

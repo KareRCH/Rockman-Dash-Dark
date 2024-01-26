@@ -168,9 +168,10 @@ HRESULT CWeapon_Buster::Initialize_Component()
 	m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
 	m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
 	m_pColliderComp->Set_CollisionKinematic();
-	m_pColliderComp->EnterToPhysics(0);
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR | COLLAYER_OBJECT);
+	m_pColliderComp->EnterToPhysics(0);
+	
 
 	return S_OK;
 }

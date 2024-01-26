@@ -79,9 +79,17 @@ private:
 	wstring m_strEffectPath = TEXT("");		// 프로토타입에 쓰임
 
 
+public:
+	void Active_Mesh(_uint iIndex);
+	void Active_AllMeshes();
+	void Deactive_Mesh(_uint iIndex);
+	void Deactive_AllMeshes();
+
 private:		// 메쉬 관련
 	_uint								m_iNumMeshes = { 0 };
 	vector<class CMeshComp*>			m_pMeshComps;
+	_uint								m_iNumActiveMeshes = { 0 };
+	vector<_uint>						m_ActiveMeshes;
 
 
 

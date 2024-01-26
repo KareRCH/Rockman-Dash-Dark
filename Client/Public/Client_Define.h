@@ -27,6 +27,42 @@ namespace Client
 		ETEAM_NPC = EBIT_FLAG32_3,
 		ETEAM_ATTACKABLE_NPC = EBIT_FLAG32_4,
 	};
+
+	// 받을 수 있는 아이템
+	enum class EItemObtain
+	{
+		LaserArm,
+		BladeArm,
+		BusterCannonArm,
+		DrillArm,
+		HomingArm,
+		HyperChellArm,
+		MachinegunArm,
+		ShieldArm,
+		SpreadBusterArm,
+		Money,
+	};
+
+	enum class EMainWeapon : _uint
+	{
+		None,
+		Buster,
+		ChargeBuster,
+	};
+
+	enum class ESubWeapon : _uint
+	{
+		ThrowArm,		// 메인
+		LaserArm,
+		BladeArm,
+		BusterCannonArm,
+		DrillArm,
+		HomingArm,
+		HyperShellArm,
+		MachinegunArm,
+		ShieldArm,
+		SpreadBusterArm,
+	};
 }
 using namespace Client;
 
