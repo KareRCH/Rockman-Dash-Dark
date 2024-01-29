@@ -79,3 +79,27 @@ void CSkeletalComponent::Invalidate_BoneTransforms()
 
     m_pBoneGroup->Invalidate_FinalTransforms();
 }
+
+_float4x4 CSkeletalComponent::Get_BoneTransformFloat4x4(_uint iIndex)
+{
+    if (!m_pBoneGroup)
+        return _float4x4();
+
+    auto pBone = m_pBoneGroup->Find_BoneData(iIndex);
+    if (nullptr == pBone)
+        return _float4x4();
+
+    return pBone->matFinalTransform;
+}
+
+_matrix CSkeletalComponent::Get_BoneTransformMatrix(_uint iIndex)
+{
+    if (!m_pBoneGroup)
+        return XMMatrixIdentity();
+
+    auto pBone = m_pBoneGroup->Find_BoneData(iIndex);
+    if (nullptr == pBone)
+        return XMMatrixIdentity();
+
+    return XMLoadFloat4x4(&pBone->matFinalTransform);
+}

@@ -111,6 +111,7 @@ private:
 
 	_bool		m_bInvisible = { false };				// 무적
 	FDelay		m_fInvisibleTime = FDelay(5.f, true);	// 무적시간
+	FGauge		m_fGauge = FGauge(1.f);					// 범용 타이머
 
 	enum MOVE_DIR { MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK };
 	MOVE_DIR	m_ePrevMoveDir = { MOVE_FORWARD };
@@ -126,7 +127,12 @@ private:
 public:
 	enum class EState_Act { Idle, Run, Walk, Ready_Jump, Jump_Up, Jump_Down, Landing, Buster, 
 		DamagedLight, DamagedHeavy, KnockDown, StandUp, ReadyLaser, ShootingLaser, EndLaser,
-		Homing, SpreadBuster, ChargeShot };
+		Homing, SpreadBuster, ChargeShot,
+		ReadyBusterCannon, ShootBusterCannon, EndBusterCannon,
+		ReadyHyperShell, ShootHyperShell, EndHyperShell,
+		ReadyMachinegun, ShootingMachinegun, EndMachinegun,
+		BladeAttack1, BladeAttack2, BladeEnd
+	};
 
 private:		// 약식 상태머신
 	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
@@ -145,17 +151,40 @@ private:
 	void ActState_DamagedHeavy(const _float& fTimeDelta);
 	void ActState_KnockDown(const _float& fTimeDelta);
 	void ActState_StandUp(const _float& fTimeDelta);
+
 	void ActState_ReadyLaser(const _float& fTimeDelta);
 	void ActState_ShootingLaser(const _float& fTimeDelta);
 	void ActState_EndLaser(const _float& fTimeDelta);
+
 	void ActState_Homing(const _float& fTimeDelta);
+
 	void ActState_SpreadBuster(const _float& fTimeDelta);
 	void ActState_ChargeShot(const _float& fTimeDelta);
+
+	void ActState_ReadyBusterCannon(const _float& fTimeDelta);
+	void ActState_ShootBusterCannon(const _float& fTimeDelta);
+	void ActState_EndBusterCannon(const _float& fTimeDelta);
+
+	void ActState_ReadyHyperShell(const _float& fTimeDelta);
+	void ActState_ShootHyperShell(const _float& fTimeDelta);
+	void ActState_EndHyperShell(const _float& fTimeDelta);
+
+	void ActState_ReadyMachinegun(const _float& fTimeDelta);
+	void ActState_ShootingMachinegun(const _float& fTimeDelta);
+	void ActState_EndMachinegun(const _float& fTimeDelta);
+
+	void ActState_BladeAttack1(const _float& fTimeDelta);
+	void ActState_BladeAttack2(const _float& fTimeDelta);
+	void ActState_BladeEnd(const _float& fTimeDelta);
 
 private:
 	void ShootBuster();
 	void ShootMissile();
 	void ShootSpreadBuster();
+	void ShootLaser();
+	void ShootBusterCannon();
+	void ShootHyperShell();
+	void ShootMachinegun();
 	void Lockon_Active(const _float& fTimeDelta);
 	void Lockon_Target();
 	void Lockon_Untarget();
@@ -181,6 +210,9 @@ private:
 
 private:
 	ESubWeapon			m_eSubWeapon = { ESubWeapon::ThrowArm };
+
+private:
+	class CWeapon_LaserEmission*		m_pLaserEmission = { nullptr };
 
 };
 

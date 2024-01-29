@@ -6,12 +6,22 @@ sampler LinearSampler = sampler_state
     AddressV = wrap;
 };
 
+sampler LinearBorderSampler_Alpha = sampler_state
+{
+    filter = min_mag_mip_linear;
+    AddressU = border;
+    AddressV = border;
+    BorderColor = float4(0.f, 0.f, 0.f, 0.f);
+};
+
 sampler PointSampler = sampler_state
 {
     filter = min_mag_mip_Point;
     AddressU = wrap;
     AddressV = wrap;
 };
+
+
 
 RasterizerState RS_Default
 {
@@ -56,6 +66,7 @@ BlendState BS_Default
 BlendState BS_AlphaBlend_Add
 {
     BlendEnable[0] = true;
+    BlendEnable[1] = true;
 
     SrcBlend = SRC_ALPHA;
     DestBlend = Inv_Src_Alpha;

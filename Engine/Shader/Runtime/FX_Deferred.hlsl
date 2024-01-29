@@ -139,7 +139,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 
     vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 1000.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
 
     vector vWorldPos;
 

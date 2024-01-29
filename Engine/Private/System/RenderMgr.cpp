@@ -50,6 +50,10 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Specular"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	/* Target_Final */
+	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Final"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
 	
 
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
@@ -62,16 +66,21 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 		return E_FAIL;
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
+	if (FAILED(GI()->Add_MRT(TEXT("MRT_Final"), TEXT("Target_Final"))))
+		return E_FAIL;
 	
 
 	m_pVIBuffer = CRectBufferComp::Create();
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
 
-	m_pEffect = CEffectComponent::Create();
+	m_pEffect[ECast(EEffect::Deferred)] = CEffectComponent::Create();
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
-	if (FAILED(m_pEffect->Bind_Effect(TEXT("Runtime/FX_Deferred.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements)))
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Effect(TEXT("Runtime/FX_Deferred.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements)))
+		return E_FAIL;
+	m_pEffect[ECast(EEffect::Fog)] = CEffectComponent::Create();
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Effect(TEXT("Runtime/FX_Fog.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements)))
 		return E_FAIL;
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(m_vecViewport[0].Width, m_vecViewport[0].Height, 1.f));
@@ -79,15 +88,17 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_vecViewport[0].Width, m_vecViewport[0].Height, 0.f, 1.f));
 
 #ifdef _DEBUG
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Diffuse"), 100.f, 100.f, 200.f, 200.f)))
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Diffuse"), 50.f, 50.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Normal"), 100.f, 300.f, 200.f, 200.f)))
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Normal"), 50.f, 150.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Depth"), 100.f, 500.f, 200.f, 200.f)))
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Depth"), 50.f, 250.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Shade"), 300.f, 100.f, 200.f, 200.f)))
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Shade"), 150.f, 50.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Specular"), 300.f, 300.f, 200.f, 200.f)))
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Specular"), 150.f, 150.f, 100.f, 100.f)))
+		return E_FAIL;
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Final"), 150.f, 250.f, 100.f, 100.f)))
 		return E_FAIL;
 #endif
 
@@ -106,6 +117,8 @@ HRESULT CRenderMgr::Render()
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 	if (FAILED(Render_Deferred()))
+		return E_FAIL;
+	if (FAILED(Render_Fog()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
@@ -142,7 +155,10 @@ void CRenderMgr::Free()
 {
 	Clear_RenderGroup();
 
-	Safe_Release(m_pEffect);
+	for (_uint i = 0; i < ECast(EEffect::Size); i++)
+	{
+		Safe_Release(m_pEffect[i]);
+	}
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pPipelineComp);
 }
@@ -194,11 +210,8 @@ HRESULT CRenderMgr::Render_NonBlend()
 	//GameInstance()->TurnOn_ZBuffer();
 
 	/* 기존에 셋팅되어있던 백버퍼를 빼내고 Diffuse와 Normal을 장치에 바인딩한다. */
-	if (m_bIsDeferred)
-	{
-		if (FAILED(GI()->Begin_MRT(TEXT("MRT_GameObjects"))))
-			return E_FAIL;
-	}
+	if (FAILED(GI()->Begin_MRT(TEXT("MRT_GameObjects"))))
+		return E_FAIL;
 
 	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::NonBlend)])
 	{
@@ -207,11 +220,8 @@ HRESULT CRenderMgr::Render_NonBlend()
 	}
 
 	/* 백버퍼를 원래 위치로 다시 장치에 바인딩한다. */
-	if (m_bIsDeferred)
-	{
-		if (FAILED(GI()->End_MRT()))
-			return E_FAIL;
-	}
+	if (FAILED(GI()->End_MRT()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -270,38 +280,35 @@ HRESULT CRenderMgr::Render_PostProcess()
 
 HRESULT CRenderMgr::Render_LightAcc()
 {
-	if (!m_bIsDeferred)
-		return S_OK;
-
 	/* Shade */
 	/* 여러개 빛의 연산 결과를 저장해 준다. */
 	if (FAILED(GI()->Begin_MRT(TEXT("MRT_LightAcc"))))
 		return E_FAIL;
 
-	if (FAILED(m_pEffect->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pEffect->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pEffect->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Normal"), m_pEffect, "g_NormalTexture")))
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Normal"), m_pEffect[ECast(EEffect::Deferred)], "g_NormalTexture")))
 		return E_FAIL;
 
 	_float4x4 matTemp = {};
-	if (FAILED(m_pEffect->Bind_Matrix("g_ViewMatrixInv", 
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ViewMatrixInv",
 		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
 		return E_FAIL;
-	if (FAILED(m_pEffect->Bind_Matrix("g_ProjMatrixInv", 
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ProjMatrixInv",
 		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
 		return E_FAIL;
 
 	_float4 vCamPos = {};
-	if (FAILED(m_pEffect->Bind_RawValue("g_vCamPosition",
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_RawValue("g_vCamPosition",
 		&(vCamPos = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
 		return E_FAIL;
 
-	GI()->Render_Lights(m_pEffect, m_pVIBuffer);
+	GI()->Render_Lights(m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
 
 	if (FAILED(GI()->End_MRT()))
 		return E_FAIL;
@@ -311,24 +318,84 @@ HRESULT CRenderMgr::Render_LightAcc()
 
 HRESULT CRenderMgr::Render_Deferred()
 {
-	if (!m_bIsDeferred)
+	if (m_bIsPostProcess)
+	{
+		if (FAILED(GI()->Begin_MRT(TEXT("MRT_Final"))))
+			return E_FAIL;
+	}
+
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Diffuse"), m_pEffect[ECast(EEffect::Deferred)], "g_DiffuseTexture")))
+		return E_FAIL;
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Shade"), m_pEffect[ECast(EEffect::Deferred)], "g_ShadeTexture")))
+		return E_FAIL;
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Specular"), m_pEffect[ECast(EEffect::Deferred)], "g_SpecularTexture")))
+		return E_FAIL;
+
+	m_pEffect[ECast(EEffect::Deferred)]->Begin(3);
+
+	m_pVIBuffer->Bind_Buffer();
+
+	m_pVIBuffer->Render_Buffer();
+
+	if (m_bIsPostProcess)
+	{
+		if (FAILED(GI()->End_MRT()))
+			return E_FAIL;
+	}
+
+	ID3D11ShaderResourceView* pSRV = { nullptr };
+	m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
+
+	return S_OK;
+}
+
+HRESULT CRenderMgr::Render_Fog()
+{
+	if (!m_bIsPostProcess || !m_bIsFogShader)
 		return S_OK;
 
-	if (FAILED(m_pEffect->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pEffect->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pEffect->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Diffuse"), m_pEffect, "g_DiffuseTexture")))
-		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Shade"), m_pEffect, "g_ShadeTexture")))
-		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Specular"), m_pEffect, "g_SpecularTexture")))
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	m_pEffect->Begin(3);
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_fStart", &m_fFogStart, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_fRange", &m_fFogRange, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_fDensity", &m_fFogDensity, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_vColor", &m_vFogColor, sizeof(_float4))))
+		return E_FAIL;
+
+	_float4x4 matTemp = {};
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ViewMatrixInv",
+		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ProjMatrixInv",
+		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
+		return E_FAIL;
+
+	_float4 vCamPos = {};
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_vCamPosition",
+		&(vCamPos = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::Fog)], "g_DepthTexture")))
+		return E_FAIL;
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Final"), m_pEffect[ECast(EEffect::Fog)], "g_FinalTexture")))
+		return E_FAIL;
+
+	m_pEffect[ECast(EEffect::Fog)]->Begin(ECast(m_eFogType));
 
 	m_pVIBuffer->Bind_Buffer();
 
@@ -342,8 +409,8 @@ HRESULT CRenderMgr::Render_Deferred()
 
 HRESULT CRenderMgr::Render_Debug()
 {
-	m_pEffect->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
-	m_pEffect->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
+	m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
+	m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
 
 	// 디버그용 렌더 이벤트를 등록하고 실행한뒤 제거한다.
 	if (m_bIsDebugDraw)
@@ -353,8 +420,9 @@ HRESULT CRenderMgr::Render_Debug()
 	if (!m_bIsDeferred)
 		return S_OK;
 
-	GI()->Render_Debug_RTVs(TEXT("MRT_GameObjects"), m_pEffect, m_pVIBuffer);
-	GI()->Render_Debug_RTVs(TEXT("MRT_LightAcc"), m_pEffect, m_pVIBuffer);
+	GI()->Render_Debug_RTVs(TEXT("MRT_GameObjects"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	GI()->Render_Debug_RTVs(TEXT("MRT_LightAcc"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	GI()->Render_Debug_RTVs(TEXT("MRT_Final"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
 
 	return S_OK;
 }

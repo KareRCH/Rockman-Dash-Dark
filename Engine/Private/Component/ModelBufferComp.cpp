@@ -103,10 +103,10 @@ HRESULT CModelBufferComp::Initialize(const EModelGroupIndex eGroupIndex, const w
 	return S_OK;
 }
 
-void CModelBufferComp::Render_Buffer()
+HRESULT CModelBufferComp::Render_Buffer()
 {
 	if (m_pVB == nullptr || m_pIB == nullptr)
-		return;
+		return E_FAIL;
 
 	_uint iStride = sizeof(SHADER_VTX_SKINMODEL);
 	_uint iOffset = 0;
@@ -120,6 +120,7 @@ void CModelBufferComp::Render_Buffer()
 	// 정점 버퍼 삼각형 리스트
 	D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	return S_OK;
 }
 
 CModelBufferComp* CModelBufferComp::Create()

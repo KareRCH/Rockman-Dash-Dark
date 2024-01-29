@@ -1039,6 +1039,9 @@
     <FxCompile Include="Shader\Runtime\FX_Deferred.hlsl">
       <Filter>03. Shader\02. DeferredShading</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\Runtime\FX_Fog.hlsl">
+      <Filter>03. Shader\03. Effect</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Runtime\FX_ModelNoAnim.hlsl">

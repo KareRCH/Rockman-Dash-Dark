@@ -404,10 +404,22 @@ public:
 public:
 	virtual void Calculate_Shape() override
 	{
-		vDirHalfSize = _float3(0.f, Get_ScaleFloat3().y * 0.5f, 0.f);
-		fRadius = max(Get_ScaleFloat3().x, Get_ScaleFloat3().z) * 0.5f;
+		_matrix TransformMatrix = XMLoadFloat3x4(&matTransform);
+
+		_vector vRight = TransformMatrix.r[0];
+		_vector vUp = TransformMatrix.r[1];
+		_vector vLook = TransformMatrix.r[2];
+
+		_float fXScale = XMVectorGetX(XMVector3Length(vRight));
+		_float fYScale = XMVectorGetX(XMVector3Length(vUp));
+		_float fZScale = XMVectorGetX(XMVector3Length(vLook));
+
+		XMStoreFloat3(&vDirHalfSize, vUp * 0.5f);
+		fRadius = fXScale * 0.5f;
 		_vector vPos = Get_PositionVector();
-		_vector vLength = XMVectorSet(fRadius, fabs(vDirHalfSize.y) + fRadius, fRadius, 0.f);
+		_vector vLength = XMVectorSet(fabs(vDirHalfSize.x) + fRadius, 
+			fabs(vDirHalfSize.y) + fRadius, 
+			fabs(vDirHalfSize.z) + fRadius, 0.f);
 
 		XMStoreFloat3(&BoundingBox.vMin, vPos - vLength);
 		XMStoreFloat3(&BoundingBox.vMax, vPos + vLength);

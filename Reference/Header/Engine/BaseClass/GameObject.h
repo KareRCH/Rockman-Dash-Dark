@@ -44,6 +44,12 @@ public:
 	virtual HRESULT	Render();
 
 public:
+	// 실제 게임에 추가되었을 때 작동하는 이벤트 함수. ObjectMgr에서 작동시킴
+	virtual void OnCreate() {}
+	// 실제 게임에서 죽어없어질 때 작동하는 이벤트 함수. ObjectMgr에서 작동시킴
+	virtual void OnDead() {}
+
+public:
 	// 직렬화 데이터 뽑아낼 때 사용하는 함수. 각 오브젝트 별로 뽑아내는 데이터가 다릅니다.
 	virtual FSerialData SerializeData_Prototype();
 	virtual FSerialData SerializeData();

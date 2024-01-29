@@ -239,14 +239,14 @@ HRESULT CCommonModelComp::Render_AnimModel()
 		_uint iIndex = m_ActiveMeshes[i];
 
 		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
-		_vector vTemp = {};
+		_float4 TempFloat4 = {};
 
 		m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
 		m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
 		m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
 		m_pMeshComps[iIndex]->Bind_BoneMatricesToEffect(m_pEffectComp, "g_matBones", *m_pSkeletalComp->Get_BoneGroup());
 
-		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(vTemp = PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One))), sizeof(_float4));
+		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(TempFloat4 = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One))), sizeof(_float4));
 
 		_uint iMatIndex = m_pMeshComps[iIndex]->Get_MeshMaterialIndex();
 		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
@@ -281,13 +281,13 @@ HRESULT CCommonModelComp::Render_NoAnimModel()
 		_uint iIndex = m_ActiveMeshes[i];
 
 		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
-		_vector vTemp = {};
+		_float4 TempFloat4 = {};
 
 		m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
 		m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
 		m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
 
-		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(vTemp = PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One))), sizeof(_float4));
+		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(TempFloat4 = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One))), sizeof(_float4));
 
 		_uint iMatIndex = m_pMeshComps[iIndex]->Get_MeshMaterialIndex();
 		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
@@ -492,4 +492,50 @@ void CCommonModelComp::Deactive_AllMeshes()
 {
 	m_iNumActiveMeshes = 0;
 	m_ActiveMeshes.clear();
+}
+
+void CCommonModelComp::BindAndRender_Mesh(_uint iIndex)
+{
+	if (iIndex < 0 || iIndex >= m_iNumMeshes)
+		return;
+
+	// 버퍼를 장치에 바인드
+	m_pMeshComps[iIndex]->Bind_Buffer();
+
+	// 바인딩된 정점, 인덱스 그리기
+	m_pMeshComps[iIndex]->Render_Buffer();
+}
+
+void CCommonModelComp::Bind_MeshMaterial(_uint iMeshIndex, aiTextureType eType, const _char* pConstName)
+{
+	if (iMeshIndex < 0 || iMeshIndex >= m_iNumMeshes)
+		return;
+
+	_uint iMatIndex = m_pMeshComps[iMeshIndex]->Get_MeshMaterialIndex();
+	m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, pConstName, eType);
+}
+
+_float4x4 CCommonModelComp::Get_BoneTransformFloat4x4WithParents(_uint iIndex)
+{
+	if (!m_pSkeletalComp)
+		return _float4x4();
+
+	_matrix CompMatrix = Calculate_TransformMatrixFromParent();
+	CompMatrix = m_pSkeletalComp->Get_BoneTransformMatrix(iIndex) * CompMatrix;
+
+	_float4x4 ResultFloat4x4 = {};
+	XMStoreFloat4x4(&ResultFloat4x4, CompMatrix);
+
+	return ResultFloat4x4;
+}
+
+_matrix CCommonModelComp::Get_BoneTransformMatrixWithParents(_uint iIndex)
+{
+	if (!m_pSkeletalComp)
+		return _matrix();
+
+	_matrix CompMatrix = Calculate_TransformMatrixFromParent();
+	CompMatrix = m_pSkeletalComp->Get_BoneTransformMatrix(iIndex) * CompMatrix;
+
+	return CompMatrix;
 }
