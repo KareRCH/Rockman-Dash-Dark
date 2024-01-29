@@ -237,7 +237,6 @@ HRESULT CStaticObject::Initialize_Component(FSerialData& InputData)
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
                 m_pModelComp = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
             m_pModelComp->Set_Animation(0, 1.f, true);
-            Set_CullRadius(XMVectorGetX(XMVector3Length(m_pModelComp->Transform().Get_ScaleVector() * 6.f)));
             break;
         case ECast(EComponentID::Collider):
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
@@ -246,6 +245,7 @@ HRESULT CStaticObject::Initialize_Component(FSerialData& InputData)
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
             m_pColliderComp->EnterToPhysics(0);
+            Set_CullRadius(XMVectorGetX(XMVector3Length(m_pColliderComp->Transform().Get_ScaleVector() * 6.f)));
             break;
         }
     }

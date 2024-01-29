@@ -84,6 +84,8 @@ public:
 	void Active_AllMeshes();
 	void Deactive_Mesh(_uint iIndex);
 	void Deactive_AllMeshes();
+	// 외부 수동 바인드용
+	void BindAndRender_Mesh(_uint iIndex);
 
 private:		// 메쉬 관련
 	_uint								m_iNumMeshes = { 0 };
@@ -91,13 +93,16 @@ private:		// 메쉬 관련
 	_uint								m_iNumActiveMeshes = { 0 };
 	vector<_uint>						m_ActiveMeshes;
 
-
+public:
+	void Bind_MeshMaterial(_uint iMeshIndex, aiTextureType eType, const _char* pConstName);
 
 private:		// 머터리얼 관련
 	_uint								m_iNumMaterials = { 0 };
 	vector<class CMaterialComponent*>	m_pMaterialComps;
 
-
+public:
+	_float4x4	Get_BoneTransformFloat4x4WithParents(_uint iIndex);
+	_matrix		Get_BoneTransformMatrixWithParents(_uint iIndex);
 
 private:		// 뼈 관련
 	// 뼈 하나의 정보가 저장된 컴포넌트 여러개, 언리얼 용어를 따왔다.
@@ -119,6 +124,7 @@ public:
 	// 이펙트를 언바인드 한다. 안쓸듯
 	HRESULT Unbind_Effect();
 
+	CEffectComponent* EffectComp() const { return m_pEffectComp; }
 
 private:
 	class CEffectComponent* m_pEffectComp = { nullptr };

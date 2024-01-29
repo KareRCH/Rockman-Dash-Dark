@@ -103,6 +103,9 @@
     <Filter Include="02. GameObject\05. Object\03. Door">
       <UniqueIdentifier>{ca5d096c-c0f6-4808-8c3f-218c1a65322e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98. ShaderFiles">
+      <UniqueIdentifier>{a91e2ab2-430c-4247-af26-158acc071441}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -213,6 +216,27 @@
     <ClInclude Include="Public\GameObject\Door_Common.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\Weapon_LaserEmission.h">
+      <Filter>02. GameObject\04. Characters\01. Player\01. Buster</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Weapon_Laser.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Weapon_SpreadBuster.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Weapon_HomingMissile.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Weapon_Machinegun.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Effect_Explosion.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\Weapon_HyperShell.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -311,6 +335,27 @@
     <ClCompile Include="Private\GameObject\Door_Common.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Private\GameObject\Weapon_LaserEmission.cpp">
+      <Filter>02. GameObject\04. Characters\01. Player\01. Buster</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Weapon_Laser.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Weapon_SpreadBuster.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Weapon_HomingMissile.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Weapon_Machinegun.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Effect_Explosion.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Weapon_HyperShell.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico">
@@ -324,5 +369,19 @@
     <ResourceCompile Include="Default\Client.rc">
       <Filter>리소스 파일</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\Runtime\FX_ViewShape.hlsl">
+      <Filter>98. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Runtime\FX_ParticlePoint.hlsl">
+      <Filter>98. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Runtime\FX_ColorShape.hlsl">
+      <Filter>98. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Runtime\FX_ExplosionLine.hlsl">
+      <Filter>98. ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

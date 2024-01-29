@@ -33,10 +33,6 @@ float g_fFar = 1000.f;
 
 // 텍스처
 Texture2D g_texDiffuse;
-sampler DefaultSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-};
 
 int g_iObjectID = -1;
 
@@ -72,9 +68,9 @@ struct PS_OUTPUT
 
 //-------------------------------------------------
 
-VPS_INOUT VS_MAIN(VS_INPUT input)
+VPS_INOUT VS_MAIN(VS_INPUT In)
 {
-    VPS_INOUT output = (VPS_INOUT) 0;
+    VPS_INOUT Out = (VPS_INOUT) 0;
     
     float4x4 matBoneTransform = { 1.f, 0.f, 0.f, 0.f,
                                   0.f, 1.f, 0.f, 0.f,
@@ -84,44 +80,47 @@ VPS_INOUT VS_MAIN(VS_INPUT input)
     // 하나라도 값이 들어가 있음
     //if (!all(input.vBoneID))
     {
-        matBoneTransform = g_matBones[input.vBoneID[0]] * input.vWeight[0];
-        matBoneTransform += g_matBones[input.vBoneID[1]] * input.vWeight[1];
-        matBoneTransform += g_matBones[input.vBoneID[2]] * input.vWeight[2];
-        matBoneTransform += g_matBones[input.vBoneID[3]] * input.vWeight[3];
+        matBoneTransform = g_matBones[In.vBoneID[0]] * In.vWeight[0];
+        matBoneTransform += g_matBones[In.vBoneID[1]] * In.vWeight[1];
+        matBoneTransform += g_matBones[In.vBoneID[2]] * In.vWeight[2];
+        matBoneTransform += g_matBones[In.vBoneID[3]] * In.vWeight[3];
     }
     
-    output.vPosition = mul(float4(input.vPosition.xyz, 1.f), mul(matBoneTransform, g_matWorld));
-    output.vPosition = mul(output.vPosition, g_matView);
-    output.vPosition = mul(output.vPosition, g_matProj);
+    matrix BoneWorldMatrix = mul(matBoneTransform, g_matWorld);
+    matrix WVMatrix = mul(BoneWorldMatrix, g_matView);
+    matrix WVPMatrix = mul(WVMatrix, g_matProj);
     
-    output.vNormal = mul(input.vNormal, (float3x3) mul(matBoneTransform, g_matWorld));
-    output.vNormal = normalize(output.vNormal);
-    
-    output.vTexCoord = input.vTexCoord;
+    Out.vPosition = mul(float4(In.vPosition.xyz, 1.f), WVPMatrix);
+    Out.vNormal = normalize(mul(In.vNormal, (float3x3) BoneWorldMatrix));
+    Out.vTexCoord = In.vTexCoord;
     
     // 월드 정점 위치 계산
-    output.vWorldPos = mul(float4(input.vPosition.xyz, 1.f), g_matWorld);
-    output.vProjPos = output.vPosition;
+    Out.vWorldPos = mul(float4(In.vPosition.xyz, 1.f), BoneWorldMatrix);
+    Out.vProjPos = Out.vPosition;
     
-    return output;
+    return Out;
 }
 
 //-------------------------------------------------
 
-PS_OUTPUT PS_MAIN(VPS_INOUT input)
+PS_OUTPUT PS_MAIN(VPS_INOUT In)
 {
-    PS_OUTPUT output = (PS_OUTPUT)0;
+    PS_OUTPUT Out = (PS_OUTPUT)0;
     
-    vector vMtrlDiffuse = g_texDiffuse.Sample(DefaultSampler, input.vTexCoord);
+    vector vMtrlDiffuse = g_texDiffuse.Sample(LinearSampler, In.vTexCoord);
 
     if (vMtrlDiffuse.a < 0.3f)
         discard;
     
-    output.vDiffuse = vMtrlDiffuse;
-    output.vNormal = vector(input.vNormal * 0.5f + 0.5f, 0.f);
-    output.vDepth = vector(input.vProjPos.z / input.vProjPos.w, input.vProjPos.w / g_fFar, (float) g_iObjectID, 1.f);
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = vector(In.vNormal * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, (float) g_iObjectID, 0.f);
     
-    return output;
+    //float fDot = dot(normalize((In.vWorldPos - g_vCamPosition).xyz), Out.vNormal.xyz);
+    //if (fDot < 0.18f && fDot > -0.18f)
+    //    Out.vDiffuse.rgb = vector(0.f, 0.f, 0.f, 1.f).rgb;
+    
+    return Out;
 }
 
 // ----------------------- 툴 전용 --------------------------------

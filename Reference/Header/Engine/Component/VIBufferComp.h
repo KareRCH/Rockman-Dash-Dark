@@ -43,9 +43,9 @@ public:
 	HRESULT Copy_IBufferToArray(void* pArray, size_t iSize);
 
 	// 버퍼를 장치에 바인드
-	HRESULT Bind_Buffer();
+	virtual HRESULT Bind_Buffer();
 	// 정점, 인덱스를 렌더링
-	HRESULT Render_Buffer();
+	virtual HRESULT Render_Buffer();
 	
 
 public:

@@ -49,6 +49,7 @@ public:
 
 	HRESULT			Render_LightAcc();
 	HRESULT			Render_Deferred();
+	HRESULT			Render_Fog();
 #ifdef _DEBUG
 private:
 	HRESULT			Render_Debug();
@@ -72,14 +73,38 @@ private:
 public:
 	void Toggle_Deferred() { m_bIsDeferred = !m_bIsDeferred; }
 
+public:
+	enum class EEffect : _uint { Deferred, Fog, Size };
+
 private:
 	_bool					m_bIsDeferred = { false };
 
-	class CEffectComponent* m_pEffect = { nullptr };
-	class CRectBufferComp* m_pVIBuffer = { nullptr };
+	class CEffectComponent* m_pEffect[ECast(EEffect::Size)] = {nullptr, nullptr};
+	class CRectBufferComp*	m_pVIBuffer = { nullptr };
 
-	_float4x4								m_WorldMatrix;
-	_float4x4								m_ViewMatrix, m_ProjMatrix;
+	_float4x4				m_WorldMatrix;
+	_float4x4				m_ViewMatrix, m_ProjMatrix;
+
+public:
+	void Enable_PostProcess() { m_bIsPostProcess = true; }
+	void Disable_PostProcess() { m_bIsPostProcess = false; }
+
+private:
+	_bool					m_bIsPostProcess = { true };
+
+public:
+	enum class EFogType : _uint { Linear, Exponential, SquareExponential };
+
+	void Enable_FogShader() { m_bIsFogShader = true; }
+	void Disable_FogShader() { m_bIsFogShader = false; }
+
+private:
+	EFogType				m_eFogType = { EFogType::Linear };
+	_bool					m_bIsFogShader = { true };
+	_float					m_fFogStart = { 15.f };
+	_float					m_fFogRange = { 30.f };
+	_float					m_fFogDensity = { 0.05f };
+	_float4					m_vFogColor = { 0.f, 0.f, 0.f, 1.f };
 
 public:
 	GETSET_1(vector<D3D11_VIEWPORT>, m_vecViewport,	VecViewport, GET_REF)

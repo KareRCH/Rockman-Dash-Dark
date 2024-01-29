@@ -11,6 +11,11 @@
 #include "GameObject/UI_Player.h"
 #include "GameObject/DamageCollision.h"
 #include "GameObject/Door_Common.h"
+#include "GameObject/Weapon_LaserEmission.h"
+#include "GameObject/Weapon_SpreadBuster.h"
+#include "GameObject/Weapon_HomingMissile.h"
+#include "GameObject/Weapon_Machinegun.h"
+#include "GameObject/Weapon_HyperShell.h"
 
 #include "CloudStation/CloudStation_Player.h"
 
@@ -280,6 +285,7 @@ void CPlayer::Free()
     Safe_Release(m_pLockon_Target);
     Safe_Release(m_pLockon_UI);
     Safe_Release(m_pPlayerCloud);
+    Safe_Release(m_pLaserEmission);
 }
 
 FSerialData CPlayer::SerializeData_Prototype()
@@ -489,6 +495,20 @@ void CPlayer::Register_State()
     m_State_Act.Add_Func(EState_Act::Homing, &ThisClass::ActState_Homing);
     m_State_Act.Add_Func(EState_Act::SpreadBuster, &ThisClass::ActState_SpreadBuster);
     m_State_Act.Add_Func(EState_Act::ChargeShot, &ThisClass::ActState_ChargeShot);
+
+    m_State_Act.Add_Func(EState_Act::ReadyBusterCannon, &ThisClass::ActState_ReadyBusterCannon);
+    m_State_Act.Add_Func(EState_Act::ShootBusterCannon, &ThisClass::ActState_ShootBusterCannon);
+    m_State_Act.Add_Func(EState_Act::EndBusterCannon, &ThisClass::ActState_EndBusterCannon);
+    m_State_Act.Add_Func(EState_Act::ReadyHyperShell, &ThisClass::ActState_ReadyHyperShell);
+    m_State_Act.Add_Func(EState_Act::ShootHyperShell, &ThisClass::ActState_ShootHyperShell);
+    m_State_Act.Add_Func(EState_Act::EndHyperShell, &ThisClass::ActState_EndHyperShell);
+    m_State_Act.Add_Func(EState_Act::ReadyMachinegun, &ThisClass::ActState_ReadyMachinegun);
+    m_State_Act.Add_Func(EState_Act::ShootingMachinegun, &ThisClass::ActState_ShootingMachinegun);
+    m_State_Act.Add_Func(EState_Act::EndMachinegun, &ThisClass::ActState_EndMachinegun);
+    m_State_Act.Add_Func(EState_Act::BladeAttack1, &ThisClass::ActState_BladeAttack1);
+    m_State_Act.Add_Func(EState_Act::BladeAttack2, &ThisClass::ActState_BladeAttack2);
+    m_State_Act.Add_Func(EState_Act::BladeEnd, &ThisClass::ActState_BladeEnd);
+
     m_State_Act.Set_State(EState_Act::Idle);
 }
 
@@ -635,7 +655,7 @@ void CPlayer::Input_Weapon(const _float& fTimeDelta)
             m_ActionKey.Act(EActionKey::Laser);
         break;
     case ESubWeapon::BladeArm:
-        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
             m_ActionKey.Act(EActionKey::Blade);
         break;
     case ESubWeapon::BusterCannonArm:
@@ -655,7 +675,7 @@ void CPlayer::Input_Weapon(const _float& fTimeDelta)
             m_ActionKey.Act(EActionKey::HyperShell);
         break;
     case ESubWeapon::MachinegunArm:
-        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
             m_ActionKey.Act(EActionKey::Machinegun);
         break;
     case ESubWeapon::ShieldArm:
@@ -695,6 +715,14 @@ void CPlayer::ActState_Idle(const _float& fTimeDelta)
             m_State_Act.Set_State(EState_Act::Homing);
         if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
             m_State_Act.Set_State(EState_Act::SpreadBuster);
+        if (m_ActionKey.IsAct(EActionKey::Blade))
+            m_State_Act.Set_State(EState_Act::BladeAttack1);
+        if (m_ActionKey.IsAct(EActionKey::BusterCannon))
+            m_State_Act.Set_State(EState_Act::ReadyBusterCannon);
+        if (m_ActionKey.IsAct(EActionKey::HyperShell))
+            m_State_Act.Set_State(EState_Act::ReadyHyperShell);
+        if (m_ActionKey.IsAct(EActionKey::Machinegun))
+            m_State_Act.Set_State(EState_Act::ReadyMachinegun);
     }
 
     if (m_State_Act.IsState_Exit())
@@ -766,6 +794,14 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
             m_State_Act.Set_State(EState_Act::Homing);
         if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
             m_State_Act.Set_State(EState_Act::SpreadBuster);
+        if (m_ActionKey.IsAct(EActionKey::Blade))
+            m_State_Act.Set_State(EState_Act::BladeAttack1);
+        if (m_ActionKey.IsAct(EActionKey::BusterCannon))
+            m_State_Act.Set_State(EState_Act::ReadyBusterCannon);
+        if (m_ActionKey.IsAct(EActionKey::HyperShell))
+            m_State_Act.Set_State(EState_Act::ReadyHyperShell);
+        if (m_ActionKey.IsAct(EActionKey::Machinegun))
+            m_State_Act.Set_State(EState_Act::ReadyMachinegun);
     }
 
     if (m_State_Act.IsState_Exit())
@@ -892,7 +928,7 @@ void CPlayer::ActState_Buster(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(7, 2.f, false, false, 0.5f);
+        m_pModelComp->Set_Animation(7, 2.f, false, false, 0.8f);
         GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_buster.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
         ShootBuster();
     }
@@ -1037,21 +1073,34 @@ void CPlayer::ActState_ShootingLaser(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(19, 1.f, true, false, 0.2f);
+        ShootLaser();
     }
 
     if (m_State_Act.Can_Update())
     {
         Look_Update(fTimeDelta);
 
+        if (m_pLaserEmission)
+        {
+            _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
+            _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.4f;
+            m_pLaserEmission->Transform().Set_Position(vPos);
+            m_pLaserEmission->Transform().Look_At(m_pLaserEmission->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+        }
+
         if (!GI()->IsMouse_Pressing(DIM_RB))
         {
-            m_State_Act.Set_State(EState_Act::Idle);
+            m_State_Act.Set_State(EState_Act::EndLaser);
         }
     }
 
     if (m_State_Act.IsState_Exit())
     {
-
+        if (m_pLaserEmission)
+        {
+            m_pLaserEmission->EndShooting();
+            Safe_ReleaseAndUnlink(m_pLaserEmission);
+        }
     }
 }
 
@@ -1083,7 +1132,7 @@ void CPlayer::ActState_Homing(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(19, 1.f, false, false, 0.2f);
-        ShootBuster();
+        ShootMissile();
     }
 
     if (m_State_Act.Can_Update())
@@ -1149,9 +1198,296 @@ void CPlayer::ActState_ChargeShot(const _float& fTimeDelta)
     }
 }
 
+void CPlayer::ActState_ReadyBusterCannon(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(24, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::ShootBusterCannon);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ShootBusterCannon(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(25, 1.f, false, false, 0.2f);
+        ShootBusterCannon();
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+        Transform().MoveForward(-2.f * fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::EndBusterCannon);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_EndBusterCannon(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(24, 1.f, false, true, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ReadyHyperShell(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(24, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::ShootHyperShell);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ShootHyperShell(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(25, 1.f, false, false, 0.2f);
+        m_fGauge.Readjust(3.f);
+        m_fGauge.fCur = 3.f;
+        ShootHyperShell();
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+        m_fGauge.Decrease(2.f * fTimeDelta);
+        Transform().MoveForward(-m_fGauge.fCur * fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::EndHyperShell);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_EndHyperShell(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(24, 1.f, false, true, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ReadyMachinegun(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(22, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::ShootingMachinegun);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ShootingMachinegun(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(23, 1.f, false, false, 0.2f);
+        ShootMachinegun();
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (!m_ActionKey.IsAct(EActionKey::Machinegun))
+            m_State_Act.Set_State(EState_Act::EndMachinegun);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::ShootingMachinegun);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_EndMachinegun(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(22, 1.f, false, true, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_BladeAttack1(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(20, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            if (m_ActionKey.IsAct(EActionKey::Blade))
+                m_State_Act.Set_State(EState_Act::BladeAttack2);
+            else
+                m_State_Act.Set_State(EState_Act::BladeEnd);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_BladeAttack2(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(21, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::BladeEnd);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_BladeEnd(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(0, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+        m_State_Act.Set_State(EState_Act::Idle);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
 void CPlayer::ShootBuster()
 {
-    _vector vPos = Transform().Get_PositionVector() + XMVectorSet(0.f, 0.8f, 0.f, 0.f);
+    _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(110);
+    _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.1f;
     _float3 vfPos = {};
     XMStoreFloat3(&vfPos, vPos);
     auto pBuster = CWeapon_Buster::Create(vfPos);
@@ -1167,17 +1503,33 @@ void CPlayer::ShootBuster()
 
 void CPlayer::ShootMissile()
 {
+    _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
+    _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.4f;
+    _float3 vfPos = {};
+    XMStoreFloat3(&vfPos, vPos);
+    auto pMissile = CWeapon_HomingMissile::Create(vfPos);
+    if (pMissile == nullptr)
+        return;
 
+    // 초기에만 세팅
+    if (m_pLockon_Target)
+        pMissile->Set_Target(m_pLockon_Target);
+
+    pMissile->Set_Speed(20.f);
+    pMissile->Set_LifeTime(1.f);
+    pMissile->Transform().Look_At(pMissile->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    pMissile->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+    GI()->Add_GameObject(pMissile);
 }
 
 void CPlayer::ShootSpreadBuster()
 {
     for (_uint i = 0; i < 5; i++)
     {
-        _vector vPos = Transform().Get_PositionVector() + XMVectorSet(0.f, 0.8f, 0.f, 0.f);
+        _vector vPos = m_pModelComp->Get_BoneTransformMatrixWithParents(135).r[3];
         _float3 vfPos = {};
         XMStoreFloat3(&vfPos, vPos);
-        auto pBuster = CWeapon_Buster::Create(vfPos);
+        auto pBuster = CWeapon_SpreadBuster::Create(vfPos);
         if (pBuster == nullptr)
             return;
 
@@ -1192,6 +1544,77 @@ void CPlayer::ShootSpreadBuster()
         pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
         GI()->Add_GameObject(pBuster);
     }
+}
+
+void CPlayer::ShootLaser()
+{
+    if (m_pLaserEmission != nullptr)
+        return;
+
+    _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
+    _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.4f;
+    _float3 vfPos = {};
+    XMStoreFloat3(&vfPos, vPos);
+    m_pLaserEmission = CWeapon_LaserEmission::Create(vfPos);
+    if (m_pLaserEmission == nullptr)
+        return;
+
+    // 초기에만 세팅
+    m_pLaserEmission->Transform().Look_At(m_pLaserEmission->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    m_pLaserEmission->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+    GI()->Add_GameObject(m_pLaserEmission);
+    Safe_AddRef(m_pLaserEmission);
+}
+
+void CPlayer::ShootBusterCannon()
+{
+    _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
+    _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.9f;
+    _float3 vfPos = {};
+    XMStoreFloat3(&vfPos, vPos);
+    auto pBuster = CWeapon_Buster::Create(vfPos);
+    if (pBuster == nullptr)
+        return;
+
+    GI()->Add_GameObject(pBuster);
+    pBuster->Set_LifeTime(1.f);
+    pBuster->Set_Speed(20.f);
+    pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+}
+
+void CPlayer::ShootHyperShell()
+{
+    _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
+    _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.9f;
+    _float3 vfPos = {};
+    XMStoreFloat3(&vfPos, vPos);
+    auto pBuster = CWeapon_HyperShell::Create(vfPos);
+    if (pBuster == nullptr)
+        return;
+
+    GI()->Add_GameObject(pBuster);
+    pBuster->Set_LifeTime(1.f);
+    pBuster->Set_Speed(20.f);
+    pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+}
+
+void CPlayer::ShootMachinegun()
+{
+    _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
+    _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.4f;
+    _float3 vfPos = {};
+    XMStoreFloat3(&vfPos, vPos);
+    auto pMachinegun = CWeapon_Machinegun::Create(vfPos);
+    if (pMachinegun == nullptr)
+        return;
+
+    GI()->Add_GameObject(pMachinegun);
+    pMachinegun->Set_LifeTime(0.8f);
+    pMachinegun->Set_Speed(30.f);
+    pMachinegun->Transform().Look_At(pMachinegun->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    pMachinegun->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 }
 
 void CPlayer::Lockon_Active(const _float& fTimeDelta)

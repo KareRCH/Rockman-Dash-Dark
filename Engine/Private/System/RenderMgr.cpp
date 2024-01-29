@@ -79,6 +79,7 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 		return E_FAIL;
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Effect(TEXT("Runtime/FX_Deferred.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements)))
 		return E_FAIL;
+	m_pEffect[ECast(EEffect::Fog)] = CEffectComponent::Create();
 	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Effect(TEXT("Runtime/FX_Fog.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements)))
 		return E_FAIL;
 
@@ -154,7 +155,10 @@ void CRenderMgr::Free()
 {
 	Clear_RenderGroup();
 
-	Safe_Release(m_pEffect);
+	for (_uint i = 0; i < ECast(EEffect::Size); i++)
+	{
+		Safe_Release(m_pEffect[i]);
+	}
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pPipelineComp);
 }
@@ -314,8 +318,11 @@ HRESULT CRenderMgr::Render_LightAcc()
 
 HRESULT CRenderMgr::Render_Deferred()
 {
-	if (FAILED(GI()->Begin_MRT(TEXT("MRT_Final"))))
-		return E_FAIL;
+	if (m_bIsPostProcess)
+	{
+		if (FAILED(GI()->Begin_MRT(TEXT("MRT_Final"))))
+			return E_FAIL;
+	}
 
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -337,17 +344,23 @@ HRESULT CRenderMgr::Render_Deferred()
 
 	m_pVIBuffer->Render_Buffer();
 
+	if (m_bIsPostProcess)
+	{
+		if (FAILED(GI()->End_MRT()))
+			return E_FAIL;
+	}
+
 	ID3D11ShaderResourceView* pSRV = { nullptr };
 	m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
-
-	if (FAILED(GI()->End_MRT()))
-		return E_FAIL;
 
 	return S_OK;
 }
 
 HRESULT CRenderMgr::Render_Fog()
 {
+	if (!m_bIsPostProcess || !m_bIsFogShader)
+		return S_OK;
+
 	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -355,13 +368,41 @@ HRESULT CRenderMgr::Render_Fog()
 	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_fStart", &m_fFogStart, sizeof(_float))))
+		return E_FAIL;
 	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_fRange", &m_fFogRange, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_fDensity", &m_fFogDensity, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_vColor", &m_vFogColor, sizeof(_float4))))
 		return E_FAIL;
 
+	_float4x4 matTemp = {};
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ViewMatrixInv",
+		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ProjMatrixInv",
+		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
+		return E_FAIL;
+
+	_float4 vCamPos = {};
+	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_vCamPosition",
+		&(vCamPos = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
+		return E_FAIL;
+
 	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::Fog)], "g_DepthTexture")))
 		return E_FAIL;
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Final"), m_pEffect[ECast(EEffect::Fog)], "g_FinalTexture")))
+		return E_FAIL;
+
+	m_pEffect[ECast(EEffect::Fog)]->Begin(ECast(m_eFogType));
+
+	m_pVIBuffer->Bind_Buffer();
+
+	m_pVIBuffer->Render_Buffer();
+
+	ID3D11ShaderResourceView* pSRV = { nullptr };
+	m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
 
 	return S_OK;
 }
@@ -381,6 +422,7 @@ HRESULT CRenderMgr::Render_Debug()
 
 	GI()->Render_Debug_RTVs(TEXT("MRT_GameObjects"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
 	GI()->Render_Debug_RTVs(TEXT("MRT_LightAcc"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	GI()->Render_Debug_RTVs(TEXT("MRT_Final"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
 
 	return S_OK;
 }

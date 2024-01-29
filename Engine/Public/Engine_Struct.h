@@ -164,6 +164,28 @@ namespace Engine
 		};
 	};
 
+	struct SHADER_VTX_PARTICLE_POINT
+	{
+		_float3		vPosition;
+		_float3		vNormal;
+		_float2		vTexCoord;
+		_float3		vTangent;
+		_int4		vBoneID;
+		_float4		vWeight;
+
+		static const _uint iNumElements = 7;
+		static constexpr D3D11_INPUT_ELEMENT_DESC Elements[iNumElements] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "PSIZE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+			{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		};
+	};
+
 	struct SAMPLER_COMMON_DESC
 	{
 		static constexpr D3D11_SAMPLER_DESC Desc = {
@@ -171,6 +193,12 @@ namespace Engine
 			0.f, 1, D3D11_COMPARISON_NEVER, { 0, 0, 0, 0 }, 0, D3D11_FLOAT32_MAX
 		};
 	};
+
+	typedef struct
+	{
+		_float4		vRight, vUp, vLook, vPosition;
+		_float4		vColor;
+	}VTXINSTANCE;
 
 	struct DX11DEVICE_T
 	{

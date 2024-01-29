@@ -42,6 +42,8 @@ public:
 	// 최종 트랜스폼의 주소를 저장한 벡터를 내보내, 버퍼에 전달 할 수 있도록 해준다.
 	CBoneGroup* Get_BoneGroup();
 	void		Invalidate_BoneTransforms();
+	_float4x4	Get_BoneTransformFloat4x4(_uint iIndex);
+	_matrix		Get_BoneTransformMatrix(_uint iIndex);
 
 private:	// 뼈 정보
 	class CBoneGroup* m_pBoneGroup = { nullptr };		// 모든 뼈에 대한 정보를 가지고 있는 객체

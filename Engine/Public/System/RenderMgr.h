@@ -74,7 +74,7 @@ public:
 	void Toggle_Deferred() { m_bIsDeferred = !m_bIsDeferred; }
 
 public:
-	enum class EEffect { Deferred, Fog, Size };
+	enum class EEffect : _uint { Deferred, Fog, Size };
 
 private:
 	_bool					m_bIsDeferred = { false };
@@ -85,7 +85,25 @@ private:
 	_float4x4				m_WorldMatrix;
 	_float4x4				m_ViewMatrix, m_ProjMatrix;
 
-	_float					m_fFogRange = { 100.f };
+public:
+	void Enable_PostProcess() { m_bIsPostProcess = true; }
+	void Disable_PostProcess() { m_bIsPostProcess = false; }
+
+private:
+	_bool					m_bIsPostProcess = { true };
+
+public:
+	enum class EFogType : _uint { Linear, Exponential, SquareExponential };
+
+	void Enable_FogShader() { m_bIsFogShader = true; }
+	void Disable_FogShader() { m_bIsFogShader = false; }
+
+private:
+	EFogType				m_eFogType = { EFogType::Linear };
+	_bool					m_bIsFogShader = { true };
+	_float					m_fFogStart = { 15.f };
+	_float					m_fFogRange = { 30.f };
+	_float					m_fFogDensity = { 0.05f };
 	_float4					m_vFogColor = { 0.f, 0.f, 0.f, 1.f };
 
 public:

@@ -35,6 +35,15 @@ void CImGuiWin_Convert::Tick(const _float& fTimeDelta)
 
     if (ImGui::Button(u8"폴더 설정하기"))
     {
+        const _tchar* pRelativeDir = L"../Client/Resource/";
+
+        _tchar CurrentDir[MAX_PATH];
+        GetCurrentDirectory(MAX_PATH, CurrentDir);
+
+        _tchar AbsoluteDir[MAX_PATH];
+        PathCombine(AbsoluteDir, CurrentDir, pRelativeDir);
+
+
         BROWSEINFO bi = { 0 };
         LPITEMIDLIST pidl;
         TCHAR szDir[MAX_PATH];
@@ -48,6 +57,7 @@ void CImGuiWin_Convert::Tick(const _float& fTimeDelta)
         bi.lpfn = BrowseCallbackProc;
         // 프로그램이 실행된 경로를 초기 폴더로 설정합니다.
         bi.lParam = reinterpret_cast<LPARAM>(szDir);
+        //bi.pszDisplayName = AbsoluteDir;
 
         pidl = SHBrowseForFolder(&bi);
 

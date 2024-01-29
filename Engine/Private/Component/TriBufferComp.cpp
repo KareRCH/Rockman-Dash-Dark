@@ -82,7 +82,7 @@ HRESULT CTriBufferComp::Initialize(void* Arg)
 	return S_OK;
 }
 
-void CTriBufferComp::Render_Buffer()
+HRESULT CTriBufferComp::Render_Buffer()
 {
 	_uint iStride = sizeof(VTXCOL);
 	_uint iOffset = 0;
@@ -96,6 +96,7 @@ void CTriBufferComp::Render_Buffer()
 	// 정점 버퍼로 그릴 기본형 설정. 삼각형 설정
 	D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	return S_OK;
 }
 
 CTriBufferComp* CTriBufferComp::Create()

@@ -26,7 +26,7 @@ public:
 	virtual HRESULT Initialize(void* Arg = nullptr) override;
 	virtual HRESULT Initialize(const EModelGroupIndex eGroupIndex, const wstring& strGroupKey, const wstring& strModelKey, const _uint iRangeIndex);
 
-	void Render_Buffer();
+	virtual HRESULT Render_Buffer();
 
 public:
 	static CModelBufferComp* Create();
