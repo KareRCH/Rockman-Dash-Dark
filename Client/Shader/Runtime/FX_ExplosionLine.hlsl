@@ -1,12 +1,9 @@
 #include "Shader_Defines.hlsli"
 
 // 행렬 변환
-cbuffer MatrixBuffer : register(b0)
-{
-    matrix g_WorldMatrix;
-    matrix g_ViewMatrix;
-    matrix g_ProjMatrix;
-};
+matrix g_WorldMatrix;
+matrix g_ViewMatrix;
+matrix g_ProjMatrix;
 
 vector g_vCamPosition = vector(0.f, 0.f, 0.f, 0.f);
 float g_fFar = 1000.f;

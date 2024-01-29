@@ -1,13 +1,7 @@
 #include "GameObject/Weapon_Buster.h"
 
-#include "Component/TriBufferComp.h"
-#include "Component/ColorShaderComp.h"
-#include "Component/SkinnedModelComp.h"
-#include "Component/ModelShaderComp.h"
-#include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
-
 
 #include "GameObject/Effect_Common.h"
 #include "GameObject/LoadingScreen.h"

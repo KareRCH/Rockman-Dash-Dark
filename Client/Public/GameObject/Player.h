@@ -88,6 +88,7 @@ private:
 	void	Register_State();
 	void	Move_Update(const _float& fTimeDelta);
 	void	Look_Update(const _float& fTimeDelta);
+	void	Input_Move(const _float& fTimeDelta);
 	void	Input_Weapon(const _float& fTimeDelta);
 
 private:
@@ -101,7 +102,7 @@ private:
 	_float3		m_vLookDirection_Blend = { 0.f, 0.f, 1.f};	// 캐릭터가 바라보는 방향 블렌딩용
 	_float		m_fDirectionAngle = 0.f;				// 캐릭터가 바라보는 방향각도
 
-	FGauge		m_fFootSound = FGauge(0.25f);
+	FGauge		m_fFootSound = FGauge(0.35f);
 	FGauge		m_fDamageKnockback = FGauge(0.5f);		// 넉백 시간
 	FGauge		m_fStrongKnockback = FGauge(1.f);		// 강하게 넉백
 
@@ -118,7 +119,9 @@ private:
 	MOVE_DIR	m_eMoveDir = { MOVE_FORWARD };
 
 public:
-	enum class EActionKey : _uint { Buster, ChargeBuster, Throw, 
+	enum class EActionKey : _uint { MoveForward, MoveBackward, MoveRight, MoveLeft, Jump, Lockon,
+		MoveSlow, MoveFast, JumpLow, LowFrict,
+		Buster, ChargeBuster, Throw, 
 		Laser, Homing, Blade, BusterCannon, Drill, HyperShell, Machinegun, Shield, SpreadBuster, Size };
 
 private:
@@ -182,9 +185,14 @@ private:
 	void ShootMissile();
 	void ShootSpreadBuster();
 	void ShootLaser();
+	void AttachLaser();
+	void DeleteLaser();
 	void ShootBusterCannon();
 	void ShootHyperShell();
 	void ShootMachinegun();
+	void CreateBlade();
+	void AttachBlade();
+	void DeleteBlade();
 	void Lockon_Active(const _float& fTimeDelta);
 	void Lockon_Target();
 	void Lockon_Untarget();
@@ -213,6 +221,7 @@ private:
 
 private:
 	class CWeapon_LaserEmission*		m_pLaserEmission = { nullptr };
+	class CWeapon_Blade*				m_pBlade = { nullptr };
 
 };
 

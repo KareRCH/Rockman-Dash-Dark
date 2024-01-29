@@ -241,15 +241,15 @@ HRESULT CCommonModelComp::Render_AnimModel()
 		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
 		_float4 TempFloat4 = {};
 
-		m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
-		m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
-		m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
-		m_pMeshComps[iIndex]->Bind_BoneMatricesToEffect(m_pEffectComp, "g_matBones", *m_pSkeletalComp->Get_BoneGroup());
+		m_pEffectComp->Bind_Matrix("g_WorldMatrix", &matTemp);
+		m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
+		m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
+		m_pMeshComps[iIndex]->Bind_BoneMatricesToEffect(m_pEffectComp, "g_BoneMatrices", *m_pSkeletalComp->Get_BoneGroup());
 
 		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(TempFloat4 = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One))), sizeof(_float4));
 
 		_uint iMatIndex = m_pMeshComps[iIndex]->Get_MeshMaterialIndex();
-		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
+		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_DiffuseTexture", aiTextureType_DIFFUSE);
 
 		auto pOwnerObj = Get_OwnerObject();
 		if (nullptr != pOwnerObj)
@@ -283,14 +283,14 @@ HRESULT CCommonModelComp::Render_NoAnimModel()
 		_float4x4 matTemp = Calculate_TransformFloat4x4FromParent();
 		_float4 TempFloat4 = {};
 
-		m_pEffectComp->Bind_Matrix("g_matWorld", &matTemp);
-		m_pEffectComp->Bind_Matrix("g_matView", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
-		m_pEffectComp->Bind_Matrix("g_matProj", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
+		m_pEffectComp->Bind_Matrix("g_WorldMatrix", &matTemp);
+		m_pEffectComp->Bind_Matrix("g_ViewMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
+		m_pEffectComp->Bind_Matrix("g_ProjMatrix", &(matTemp = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
 
 		m_pEffectComp->Bind_RawValue("g_vCamPosition", VPCast(&(TempFloat4 = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One))), sizeof(_float4));
 
 		_uint iMatIndex = m_pMeshComps[iIndex]->Get_MeshMaterialIndex();
-		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_texDiffuse", aiTextureType_DIFFUSE);
+		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_DiffuseTexture", aiTextureType_DIFFUSE);
 
 		auto pOwnerObj = Get_OwnerObject();
 		if (nullptr != pOwnerObj)

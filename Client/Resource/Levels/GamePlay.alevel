@@ -304,7 +304,7 @@
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
                 "ScaleZ": 1.0,
-                "CollisionType": 7,
+                "CollisionType": 0,
                 "CollisionLayer": 1,
                 "CollisionMask": 55
             },
@@ -348,7 +348,7 @@
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
                 "ScaleZ": 1.0,
-                "CollisionType": 7,
+                "CollisionType": 0,
                 "CollisionLayer": 1,
                 "CollisionMask": 55
             },
@@ -392,7 +392,7 @@
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
                 "ScaleZ": 1.0,
-                "CollisionType": 7,
+                "CollisionType": 0,
                 "CollisionLayer": 1,
                 "CollisionMask": 55
             },
@@ -8183,7 +8183,7 @@
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
                 "ScaleZ": 1.0,
-                "CollisionType": 7,
+                "CollisionType": 0,
                 "CollisionLayer": 1,
                 "CollisionMask": 55
             },
@@ -14156,7 +14156,7 @@
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
                 "ScaleZ": 1.0,
-                "CollisionType": 7,
+                "CollisionType": 0,
                 "CollisionLayer": 1,
                 "CollisionMask": 55
             },
@@ -14200,7 +14200,7 @@
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
                 "ScaleZ": 1.0,
-                "CollisionType": 7,
+                "CollisionType": 0,
                 "CollisionLayer": 1,
                 "CollisionMask": 55
             },
@@ -14327,7 +14327,7 @@
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
                 "ScaleZ": 1.0,
-                "CollisionType": 7,
+                "CollisionType": 0,
                 "CollisionLayer": 1,
                 "CollisionMask": 55
             },
@@ -14371,7 +14371,7 @@
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
                 "ScaleZ": 1.0,
-                "CollisionType": 7,
+                "CollisionType": 0,
                 "CollisionLayer": 1,
                 "CollisionMask": 55
             },
@@ -14415,7 +14415,7 @@
                 "ScaleX": 1.0,
                 "ScaleY": 1.0,
                 "ScaleZ": 1.0,
-                "CollisionType": 7,
+                "CollisionType": 0,
                 "CollisionLayer": 1,
                 "CollisionMask": 55
             }
@@ -14861,7 +14861,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -14925,7 +14925,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -14989,7 +14989,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -26567,7 +26567,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -35437,7 +35437,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -35501,7 +35501,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -35687,7 +35687,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -35751,7 +35751,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -35815,7 +35815,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -36266,7 +36266,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -36330,7 +36330,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -36394,7 +36394,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -47972,7 +47972,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -56842,7 +56842,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -56906,7 +56906,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -57092,7 +57092,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -57156,7 +57156,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }
@@ -57220,7 +57220,7 @@
                         "ScaleX": 1.0,
                         "ScaleY": 1.0,
                         "ScaleZ": 1.0,
-                        "CollisionType": 7,
+                        "CollisionType": 0,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
                     }

@@ -68,6 +68,12 @@ private:
 	mt19937_64					m_RandomNumber;
 
 private:
+	FGauge m_fDeadTime = FGauge(2.f);
+	FGauge m_fDeadEffect = FGauge(0.1f);
+	FGauge m_fHitTime = FGauge(0.1f);
+	_float m_fHitStrength = { 0.3f };
+
+private:
 	void Move_Update(const _float& fTimeDelta);
 
 private:
@@ -89,8 +95,6 @@ private:		// 약식 상태머신
 	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
 	SState_Act		m_State_Act;
 
-	FGauge m_fDeadTime = FGauge(2.f);
-	FGauge m_fDeadEffect = FGauge(0.1f);
 	FGauge m_fWalkAndSmash = FGauge(0.3f);
 
 private:

@@ -3,28 +3,16 @@
 // 행렬 변환
 cbuffer MatrixBuffer : register(b0)
 {
-    matrix g_matWorld;
-    matrix g_matView;
-    matrix g_matProj;
-};
-
-// 빛 정보를 저장하는 버퍼
-cbuffer LightBuffer : register(b1)
-{
-    vector g_vLightDir = vector(1.f, -1.f, 1.f, 0.f);
-    vector g_vLightDiffuse = vector(1.f, 1.f, 1.f, 1.f);
-    vector g_vLightAmbient = vector(1.f, 1.f, 1.f, 1.f);
-    vector g_vLightSpecular = vector(1.f, 1.f, 1.f, 1.f);
-    
-    vector g_vMtrlAmbient = vector(0.3f, 0.3f, 0.3f, 1.f);
-    vector g_vMtrlSpecular = vector(1.f, 1.f, 1.f, 1.f);
+    matrix g_WorldMatrix;
+    matrix g_ViewMatrix;
+    matrix g_ProjMatrix;
 };
 
 vector g_vCamPosition = vector(0.f, 0.f, 0.f, 0.f);
 float g_fFar = 1000.f;
 
 // 텍스처
-Texture2D g_texDiffuse;
+Texture2D g_DiffuseTexture;
 
 int g_iObjectID = -1;
 
@@ -60,17 +48,17 @@ VPS_INOUT VS_MAIN(VS_INPUT input)
 {
     VPS_INOUT output = (VPS_INOUT) 0;
     
-    output.vPosition = mul(float4(input.vPosition.xyz, 1.f), g_matWorld);
-    output.vPosition = mul(output.vPosition, g_matView);
-    output.vPosition = mul(output.vPosition, g_matProj);
+    output.vPosition = mul(float4(input.vPosition.xyz, 1.f), g_WorldMatrix);
+    output.vPosition = mul(output.vPosition, g_ViewMatrix);
+    output.vPosition = mul(output.vPosition, g_ProjMatrix);
     
-    output.vNormal = mul(input.vNormal, (float3x3) g_matWorld);
+    output.vNormal = mul(input.vNormal, (float3x3) g_WorldMatrix);
     output.vNormal = normalize(output.vNormal);
     
     output.vTexCoord = input.vTexCoord;
     
     // 월드 정점 위치 계산
-    output.vWorldPos = mul(float4(input.vPosition.xyz, 1.f), g_matWorld);
+    output.vWorldPos = mul(float4(input.vPosition.xyz, 1.f), g_WorldMatrix);
     output.vProjPos = output.vPosition;
     
     return output;
@@ -83,7 +71,7 @@ PS_OUTPUT PS_MAIN(VPS_INOUT input)
     PS_OUTPUT output;
     
     // 베이스 컬러 세팅
-    float4 vMtrlDiffuse = g_texDiffuse.Sample(LinearSampler, input.vTexCoord);
+    float4 vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, input.vTexCoord);
     
     if (vMtrlDiffuse.a < 0.3f)
         discard;

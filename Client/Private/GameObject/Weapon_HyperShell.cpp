@@ -232,13 +232,13 @@ void CWeapon_HyperShell::Create_Effect()
 			return;
 
 
-		uniform_real_distribution<_float> RandomTime(0.f, 0.5f);
+		uniform_real_distribution<_float> RandomTime(0.f, 0.25f);
 		uniform_real_distribution<_float> RandomPosX(-3.f, 3.f);
 		uniform_real_distribution<_float> RandomPosY(-2.f, 2.f);
 		uniform_real_distribution<_float> RandomPosZ(-3.f, 3.f);
 
 		pEffect->Transform().Set_Position(Transform().Get_PositionVector()
 			+ XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));
-		pEffect->Set_StartTime(RandomTime(m_RandomNumber) + i * 0.1f);
+		pEffect->Set_StartTime(RandomTime(m_RandomNumber) + i * 0.05f);
 	}
 }

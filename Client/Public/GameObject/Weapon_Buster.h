@@ -5,9 +5,7 @@
 #include "Utility/LogicDeviceBasic.h"
 
 BEGIN(Engine)
-
 class CCommonModelComp;
-
 END
 
 BEGIN(Client)

@@ -86,7 +86,7 @@ HRESULT CMeshComp::Bind_BoneMatricesToEffect(CEffectComponent* pEffect, const _c
 		return E_FAIL;
 
 	vector<_float4x4> matBind;
-	matBind.resize(256, {});
+	matBind.resize(200, {});
 
 	size_t iMeshBoneCount = m_pMeshData->vecMeshBoneDatas.size();
 	for (size_t i = 0; i < iMeshBoneCount; i++)
@@ -99,7 +99,7 @@ HRESULT CMeshComp::Bind_BoneMatricesToEffect(CEffectComponent* pEffect, const _c
 			XMLoadFloat4x4(&m_pMeshData->vecMeshBoneDatas[i].matOffset) * XMLoadFloat4x4(pBoneFinalTransform));
 	}
 
-	return pEffect->Bind_Matrices(pConstantName, matBind.data(), 256);
+	return pEffect->Bind_Matrices(pConstantName, matBind.data(), 200);
 }
 
 HRESULT CMeshComp::Bind_Buffer()

@@ -58,10 +58,12 @@ DepthStencilState DSS_None
     DepthWriteMask = zero;
 };
 
+
 BlendState BS_Default
 {
     BlendEnable[0] = false;
 };
+
 
 BlendState BS_AlphaBlend_Add
 {

@@ -344,6 +344,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\GameObject\TestTextureObject.h" />
     <ClInclude Include="Public\GameObject\UI_Lockon.h" />
     <ClInclude Include="Public\GameObject\UI_Player.h" />
+    <ClInclude Include="Public\GameObject\Weapon_Blade.h" />
     <ClInclude Include="Public\GameObject\Weapon_Buster.h" />
     <ClInclude Include="Public\GameObject\Weapon_HomingMissile.h" />
     <ClInclude Include="Public\GameObject\Weapon_HyperShell.h" />
@@ -385,6 +386,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\GameObject\TestTextureObject.cpp" />
     <ClCompile Include="Private\GameObject\UI_Lockon.cpp" />
     <ClCompile Include="Private\GameObject\UI_Player.cpp" />
+    <ClCompile Include="Private\GameObject\Weapon_Blade.cpp" />
     <ClCompile Include="Private\GameObject\Weapon_Buster.cpp" />
     <ClCompile Include="Private\GameObject\Weapon_HomingMissile.cpp" />
     <ClCompile Include="Private\GameObject\Weapon_HyperShell.cpp" />

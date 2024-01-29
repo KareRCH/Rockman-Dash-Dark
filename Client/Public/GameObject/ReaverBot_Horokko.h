@@ -69,8 +69,8 @@ private:
 	CCommonModelComp* m_pModelComp = { nullptr };
 
 private:
-	random_device				m_RandomDevice;
-	mt19937_64					m_RandomNumber;
+	random_device		m_RandomDevice;
+	mt19937_64			m_RandomNumber;
 
 public:
 	void Input_ActionKey();
@@ -79,6 +79,8 @@ public:
 private:
 	_float m_fMoveSpeed = { 5.f };
 
+	FGauge m_fHitTime = FGauge(0.1f);
+	_float m_fHitStrength = { 0.3f };
 
 public:
 	void Dead_Effect();

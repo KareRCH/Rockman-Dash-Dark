@@ -237,6 +237,9 @@
     <ClInclude Include="Public\GameObject\Weapon_HyperShell.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\Weapon_Blade.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -354,6 +357,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\Weapon_HyperShell.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Weapon_Blade.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

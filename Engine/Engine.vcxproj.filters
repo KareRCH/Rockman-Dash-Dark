@@ -64,23 +64,11 @@
     <Filter Include="03. Shader\99. Test">
       <UniqueIdentifier>{6616dfa3-5f18-4ba8-8c68-5c84ac7edcc3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Shader\99. Test\ModelTest">
-      <UniqueIdentifier>{4032150e-332a-4c97-a68c-f38046acb7b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Shader\99. Test\Test1">
-      <UniqueIdentifier>{98cd46d6-9b59-4cb4-a7ef-a234c27a796c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Shader\99. Test\Texture">
-      <UniqueIdentifier>{357fe1e0-dab1-4ad0-8d47-88afeee70c0b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Shader\02. DeferredShading">
       <UniqueIdentifier>{4a9b8166-0cec-45e0-95b7-53b3de1f8f17}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Shader\01. ForwardShading">
       <UniqueIdentifier>{2ee62cbf-431b-4a0f-9046-99cdf7f4cb9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Shader\02. DeferredShading\01. GBuffer">
-      <UniqueIdentifier>{f6a8962c-b852-4855-a50c-a5b154bccb40}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Utility\02. Component\03. InternalComponent">
       <UniqueIdentifier>{ee136c04-e3cc-498e-9e90-33b2c1c57f19}</UniqueIdentifier>
@@ -1012,42 +1000,18 @@
     <ClCompile Include="Private\Physics\BVHNode.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\Compiled\PS_ModelTest.hlsl">
-      <Filter>03. Shader\99. Test\ModelTest</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\Compiled\VS_ModelTest.hlsl">
-      <Filter>03. Shader\99. Test\ModelTest</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\Compiled\VS_Test1.hlsl">
-      <Filter>03. Shader\99. Test\Test1</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\Compiled\PS_Test1.hlsl">
-      <Filter>03. Shader\99. Test\Test1</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\Compiled\VS_Texture.hlsl">
-      <Filter>03. Shader\99. Test\Texture</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\Compiled\PS_Texture.hlsl">
-      <Filter>03. Shader\99. Test\Texture</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\Compiled\VS_Deferred_GBuffer.hlsl">
-      <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\Compiled\PS_Deferred_GBuffer.hlsl">
-      <Filter>03. Shader\02. DeferredShading\01. GBuffer</Filter>
-    </FxCompile>
     <FxCompile Include="Shader\Runtime\FX_Deferred.hlsl">
       <Filter>03. Shader\02. DeferredShading</Filter>
     </FxCompile>
     <FxCompile Include="Shader\Runtime\FX_Fog.hlsl">
       <Filter>03. Shader\03. Effect</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\Runtime\FX_ModelAnim.hlsl">
+      <Filter>03. Shader\03. Effect</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Runtime\FX_ModelNoAnim.hlsl">
-      <Filter>03. Shader\03. Effect</Filter>
-    </None>
-    <None Include="Shader\Runtime\FX_ModelAnim.hlsl">
       <Filter>03. Shader\03. Effect</Filter>
     </None>
     <None Include="Shader\Runtime\FX_Terrain.hlsl">

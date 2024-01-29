@@ -16,6 +16,7 @@
 #include "GameObject/Weapon_HomingMissile.h"
 #include "GameObject/Weapon_Machinegun.h"
 #include "GameObject/Weapon_HyperShell.h"
+#include "GameObject/Weapon_Blade.h"
 
 #include "CloudStation/CloudStation_Player.h"
 
@@ -194,7 +195,9 @@ void CPlayer::Tick(const _float& fTimeDelta)
 
     Input_Weapon(fTimeDelta);
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
+    Move_Update(fTimeDelta);
     m_ActionKey.Reset();
+
 
     m_pColliderComp->Tick(fTimeDelta);
     m_pCameraPivotComp->Tick(fTimeDelta);
@@ -286,6 +289,7 @@ void CPlayer::Free()
     Safe_Release(m_pLockon_UI);
     Safe_Release(m_pPlayerCloud);
     Safe_Release(m_pLaserEmission);
+    Safe_Release(m_pBlade);
 }
 
 FSerialData CPlayer::SerializeData_Prototype()
@@ -406,11 +410,15 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
                 if (m_fKnockDownValue.Increase(2.5f))
                 {
                     m_State_Act.Set_State(EState_Act::DamagedHeavy);
+                    DeleteLaser();
+                    DeleteBlade();
                     GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
                 }
                 else
                 {
                     m_State_Act.Set_State(EState_Act::DamagedLight);
+                    DeleteLaser();
+                    DeleteBlade();
                     GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
                 }
                 m_fHP.Increase(-5.f);
@@ -429,6 +437,8 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
             if (!m_bInvisible)
             {
                 m_State_Act.Set_State(EState_Act::DamagedHeavy);
+                DeleteLaser();
+                DeleteBlade();
                 GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
                 m_fHP.Increase(-5.f);
             }
@@ -517,7 +527,6 @@ void CPlayer::Move_Update(const _float& fTimeDelta)
     _float3 vfPos = Transform().Get_PositionFloat3();
     _vector vPos = Transform().Get_PositionVector();
 
-
     m_vVelocity.y -= m_vAcceleration.y * fTimeDelta;
     vfPos.y += m_vVelocity.y * fTimeDelta;
     if (vfPos.y <= 0.f)
@@ -533,60 +542,92 @@ void CPlayer::Move_Update(const _float& fTimeDelta)
     m_bIsMoving = false;
     m_vLookDirection = {};
     m_ePrevMoveDir = m_eMoveDir;
-    if (GI()->IsKey_Pressing(DIK_W))
+    if (m_ActionKey.IsAct(EActionKey::MoveForward))
     {
         m_vLookDirection.z = 1.f;
-        m_vVelocity.z += m_vAcceleration.z * fTimeDelta;
+        if (m_ActionKey.IsAct(EActionKey::MoveSlow))
+            m_vVelocity.z += m_vAcceleration.z * 0.3f * fTimeDelta;
+        else if (m_ActionKey.IsAct(EActionKey::MoveFast))
+            m_vVelocity.z += m_vAcceleration.z * 1.5f * fTimeDelta;
+        else
+            m_vVelocity.z += m_vAcceleration.z * fTimeDelta;
         m_bIsMoving = true;
         m_eMoveDir = MOVE_FORWARD;
     }
-    else if (GI()->IsKey_Pressing(DIK_S))
+    else if (m_ActionKey.IsAct(EActionKey::MoveBackward))
     {
         m_vLookDirection.z = -1.f;
-        m_vVelocity.z -= m_vAcceleration.z * fTimeDelta;
+        if (m_ActionKey.IsAct(EActionKey::MoveSlow))
+            m_vVelocity.z -= m_vAcceleration.z * 0.3f * fTimeDelta;
+        else if (m_ActionKey.IsAct(EActionKey::MoveFast))
+            m_vVelocity.z -= m_vAcceleration.z * 1.5f * fTimeDelta;
+        else
+            m_vVelocity.z -= m_vAcceleration.z * fTimeDelta;
         m_bIsMoving = true;
         m_eMoveDir = MOVE_BACK;
     }
     else
     {
         if (m_bIsOnGround)
-            m_vVelocity.z *= 0.5f;
+        {
+            if (!m_ActionKey.IsAct(EActionKey::LowFrict))
+                m_vVelocity.z *= 0.5f;
+            else
+                m_vVelocity.z *= 0.95f;
+        }
         else
             m_vVelocity.z *= 0.998f;
     }
 
-    if (GI()->IsKey_Pressing(DIK_D))
+    if (m_ActionKey.IsAct(EActionKey::MoveRight))
     {
         m_vLookDirection.x = 1.f;
-        m_vVelocity.x += m_vAcceleration.x * fTimeDelta;
+        if (m_ActionKey.IsAct(EActionKey::MoveSlow))
+            m_vVelocity.x += m_vAcceleration.x * 0.3f * fTimeDelta;
+        else if (m_ActionKey.IsAct(EActionKey::MoveFast))
+            m_vVelocity.x += m_vAcceleration.x * 1.5f * fTimeDelta;
+        else
+            m_vVelocity.x += m_vAcceleration.x * fTimeDelta;
         m_bIsMoving = true;
         m_eMoveDir = MOVE_RIGHT;
     }
-    else if (GI()->IsKey_Pressing(DIK_A))
+    else if (m_ActionKey.IsAct(EActionKey::MoveLeft))
     {
         m_vLookDirection.x = -1.f;
-        m_vVelocity.x -= m_vAcceleration.x * fTimeDelta;
+        if (m_ActionKey.IsAct(EActionKey::MoveSlow))
+            m_vVelocity.x -= m_vAcceleration.x * 0.3f * fTimeDelta;
+        else if (m_ActionKey.IsAct(EActionKey::MoveFast))
+            m_vVelocity.x -= m_vAcceleration.x * 1.5f * fTimeDelta;
+        else
+            m_vVelocity.x -= m_vAcceleration.x * fTimeDelta;
         m_bIsMoving = true;
         m_eMoveDir = MOVE_LEFT;
     }
     else
     {
         if (m_bIsOnGround)
-            m_vVelocity.x *= 0.5f;
+        {
+            if (!m_ActionKey.IsAct(EActionKey::LowFrict))
+                m_vVelocity.x *= 0.5f;
+            else
+                m_vVelocity.x *= 0.95f;
+        }
         else
-            m_vVelocity.z *= 0.998f;
+            m_vVelocity.x *= 0.998f;
     }
 
     if (m_bIsOnGround)
     {
-        if (GI()->IsKey_Pressed(DIK_SPACE))
+        if (m_ActionKey.IsAct(EActionKey::Jump))
         {
-            m_vVelocity.y = m_vMoveSpeed.y;
+            if (!m_ActionKey.IsAct(EActionKey::JumpLow))
+                m_vVelocity.y = m_vMoveSpeed.y;
+            else
+                m_vVelocity.y = m_vMoveSpeed.y * 0.65f;
             m_bIsOnGround = false;
 
         }
     }
-
 
     if (m_vVelocity.x > m_vMoveSpeed.x)
         m_vVelocity.x = m_vMoveSpeed.x;
@@ -606,7 +647,24 @@ void CPlayer::Move_Update(const _float& fTimeDelta)
 
 void CPlayer::Look_Update(const _float& fTimeDelta)
 {
-    Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
+    if (nullptr == m_pLockon_Target)
+        Transform().TurnAxis(_float3(0.f, 1.f, 0.f), Cast<_float>(GI()->Get_DIMouseMove(DIMS_X)) * 0.1f * fTimeDelta);
+}
+
+void CPlayer::Input_Move(const _float& fTimeDelta)
+{
+    if (GI()->IsKey_Pressing(DIK_W))
+        m_ActionKey.Act(EActionKey::MoveForward);
+    else if (GI()->IsKey_Pressing(DIK_S))
+        m_ActionKey.Act(EActionKey::MoveBackward);
+
+    if (GI()->IsKey_Pressing(DIK_D))
+        m_ActionKey.Act(EActionKey::MoveRight);
+    else if (GI()->IsKey_Pressing(DIK_A))
+        m_ActionKey.Act(EActionKey::MoveLeft);
+
+    if (m_bIsOnGround && GI()->IsKey_Pressed(DIK_SPACE))
+        m_ActionKey.Act(EActionKey::Jump);
 }
 
 void CPlayer::Input_Weapon(const _float& fTimeDelta)
@@ -700,7 +758,7 @@ void CPlayer::ActState_Idle(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
-        Move_Update(fTimeDelta);
+        Input_Move(fTimeDelta);
         Look_Update(fTimeDelta);
 
         if (!m_bIsOnGround)
@@ -754,7 +812,7 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
-        Move_Update(fTimeDelta);
+        Input_Move(fTimeDelta);
         Look_Update(fTimeDelta);
 
         if (m_ePrevMoveDir != m_eMoveDir)
@@ -819,7 +877,7 @@ void CPlayer::ActState_Walk(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
-        Move_Update(fTimeDelta);
+        Input_Move(fTimeDelta);
         Look_Update(fTimeDelta);
 
         if (!m_bIsOnGround)
@@ -844,7 +902,7 @@ void CPlayer::ActState_Ready_Jump(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
-        Move_Update(fTimeDelta);
+        Input_Move(fTimeDelta);
         Look_Update(fTimeDelta);
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
@@ -866,7 +924,7 @@ void CPlayer::ActState_Jump_Up(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
-        Move_Update(fTimeDelta);
+        Input_Move(fTimeDelta);
         Look_Update(fTimeDelta);
 
         if (m_vVelocity.y < 0)
@@ -888,7 +946,7 @@ void CPlayer::ActState_Jump_Down(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
-        Move_Update(fTimeDelta);
+        Input_Move(fTimeDelta);
         Look_Update(fTimeDelta);
 
         if (m_bIsOnGround)
@@ -911,7 +969,7 @@ void CPlayer::ActState_Landing(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
-        Move_Update(fTimeDelta);
+        Input_Move(fTimeDelta);
         Look_Update(fTimeDelta);
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
@@ -980,13 +1038,11 @@ void CPlayer::ActState_DamagedHeavy(const _float& fTimeDelta)
     {
         m_pModelComp->Set_Animation(15, 1.f, false, false, 0.3f);
         m_vVelocity.y = 3.f;
+        m_vVelocity.z = -3.f;
     }
 
     if (m_State_Act.Can_Update())
     {
-        Move_Update(fTimeDelta);
-        Transform().MoveForward(-4.f * fTimeDelta);
-
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
             m_State_Act.Set_State(EState_Act::KnockDown);
@@ -1079,14 +1135,7 @@ void CPlayer::ActState_ShootingLaser(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
         Look_Update(fTimeDelta);
-
-        if (m_pLaserEmission)
-        {
-            _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
-            _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.4f;
-            m_pLaserEmission->Transform().Set_Position(vPos);
-            m_pLaserEmission->Transform().Look_At(m_pLaserEmission->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
-        }
+        AttachLaser();
 
         if (!GI()->IsMouse_Pressing(DIM_RB))
         {
@@ -1096,11 +1145,7 @@ void CPlayer::ActState_ShootingLaser(const _float& fTimeDelta)
 
     if (m_State_Act.IsState_Exit())
     {
-        if (m_pLaserEmission)
-        {
-            m_pLaserEmission->EndShooting();
-            Safe_ReleaseAndUnlink(m_pLaserEmission);
-        }
+        DeleteLaser();
     }
 }
 
@@ -1226,13 +1271,14 @@ void CPlayer::ActState_ShootBusterCannon(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(25, 1.f, false, false, 0.2f);
+        m_ActionKey.Act(EActionKey::MoveBackward);
         ShootBusterCannon();
     }
 
     if (m_State_Act.Can_Update())
     {
         Look_Update(fTimeDelta);
-        Transform().MoveForward(-2.f * fTimeDelta);
+        m_ActionKey.Act(EActionKey::LowFrict);
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
@@ -1297,16 +1343,14 @@ void CPlayer::ActState_ShootHyperShell(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(25, 1.f, false, false, 0.2f);
-        m_fGauge.Readjust(3.f);
-        m_fGauge.fCur = 3.f;
+        m_ActionKey.Act(EActionKey::MoveBackward);
         ShootHyperShell();
     }
 
     if (m_State_Act.Can_Update())
     {
         Look_Update(fTimeDelta);
-        m_fGauge.Decrease(2.f * fTimeDelta);
-        Transform().MoveForward(-m_fGauge.fCur * fTimeDelta);
+        m_ActionKey.Act(EActionKey::LowFrict);
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
@@ -1421,11 +1465,16 @@ void CPlayer::ActState_BladeAttack1(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(20, 1.f, false, false, 0.2f);
+        m_ActionKey.Act(EActionKey::MoveForward);
+        m_ActionKey.Act(EActionKey::MoveFast);
+        CreateBlade();
     }
 
     if (m_State_Act.Can_Update())
     {
         Look_Update(fTimeDelta);
+        AttachBlade();
+        m_ActionKey.Act(EActionKey::LowFrict);
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
@@ -1446,16 +1495,21 @@ void CPlayer::ActState_BladeAttack2(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(21, 1.f, false, false, 0.2f);
+        m_pModelComp->Set_Animation(21, 1.3f, false, false, 0.2f);
+        m_ActionKey.Act(EActionKey::Jump);
     }
 
     if (m_State_Act.Can_Update())
     {
         Look_Update(fTimeDelta);
+        AttachBlade();
+        m_ActionKey.Act(EActionKey::MoveForward);
+        m_ActionKey.Act(EActionKey::JumpLow);
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
-            m_State_Act.Set_State(EState_Act::BladeEnd);
+            if (m_bIsOnGround)
+                m_State_Act.Set_State(EState_Act::BladeEnd);
         }
     }
 
@@ -1470,6 +1524,7 @@ void CPlayer::ActState_BladeEnd(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(0, 1.f, false, false, 0.2f);
+        DeleteBlade();
     }
 
     if (m_State_Act.Can_Update())
@@ -1566,6 +1621,26 @@ void CPlayer::ShootLaser()
     Safe_AddRef(m_pLaserEmission);
 }
 
+void CPlayer::AttachLaser()
+{
+    if (m_pLaserEmission)
+    {
+        _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
+        _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.4f;
+        m_pLaserEmission->Transform().Set_Position(vPos);
+        m_pLaserEmission->Transform().Look_At(m_pLaserEmission->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    }
+}
+
+void CPlayer::DeleteLaser()
+{
+    if (m_pLaserEmission)
+    {
+        m_pLaserEmission->EndShooting();
+        Safe_ReleaseAndUnlink(m_pLaserEmission);
+    }
+}
+
 void CPlayer::ShootBusterCannon()
 {
     _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
@@ -1615,6 +1690,44 @@ void CPlayer::ShootMachinegun()
     pMachinegun->Set_Speed(30.f);
     pMachinegun->Transform().Look_At(pMachinegun->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
     pMachinegun->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+}
+
+void CPlayer::CreateBlade()
+{
+    if (m_pBlade)
+        return;
+
+    _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
+    _vector vPos = BoneMatrix.r[3];// +XMVector3Normalize(BoneMatrix.r[1]);
+    _float3 vfPos = {};
+    XMStoreFloat3(&vfPos, vPos);
+    m_pBlade = CWeapon_Blade::Create(vfPos);
+    if (m_pBlade == nullptr)
+        return;
+
+    GI()->Add_GameObject(m_pBlade);
+    m_pBlade->Transform().Set_Transform(BoneMatrix);
+    m_pBlade->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+    Safe_AddRef(m_pBlade);
+}
+
+void CPlayer::AttachBlade()
+{
+    if (m_pBlade)
+    {
+        _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
+        //BoneMatrix.r[3] += XMVector3Normalize(BoneMatrix.r[1]);
+        m_pBlade->Transform().Set_Transform(BoneMatrix);
+    }
+}
+
+void CPlayer::DeleteBlade()
+{
+    if (m_pBlade)
+    {
+        m_pBlade->Set_Dead();
+        Safe_ReleaseAndUnlink(m_pBlade);
+    }
 }
 
 void CPlayer::Lockon_Active(const _float& fTimeDelta)

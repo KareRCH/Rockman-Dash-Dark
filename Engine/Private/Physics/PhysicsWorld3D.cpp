@@ -235,10 +235,10 @@ _uint CPhysicsWorld3D::Generate_Contacts()
 	ss << iDebugCount;
 	str = L"Physics CheckCount : " + ss.str() + L"\n";
 	OutputDebugString(str.c_str());*/
-	cout << "검사 카운트 : " << iDebugCount << endl;
+	//cout << "검사 카운트 : " << iDebugCount << endl;
 	/*cout << "Src 카운트 : " << iDebug_BodySrc << endl;
 	cout << "Dst 카운트 : " << ((iDebug_BodySrc) ? (iDebugCount / iDebug_BodySrc) : 0) << endl;*/
-	cout << "Body 카운트 : " << m_listBody.size() << endl;
+	//cout << "Body 카운트 : " << m_listBody.size() << endl;
 
 	// 사용된 접촉 수를 반환
 	return m_iMaxContacts - iLimit;

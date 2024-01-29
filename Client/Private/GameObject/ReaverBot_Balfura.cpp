@@ -1,14 +1,11 @@
 #include "GameObject/ReaverBot_Balfura.h"
 
-#include "Component/TriBufferComp.h"
-#include "Component/ColorShaderComp.h"
-#include "Component/SkinnedModelComp.h"
-#include "Component/ModelShaderComp.h"
-#include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
+#include "Component/EffectComponent.h"
 #include "Component/ColliderComponent.h"
 
 #include "GameObject/Door_Common.h"
+#include "GameObject/Effect_Common.h"
 
 CReaverBot_Balfura::CReaverBot_Balfura()
 {
@@ -16,6 +13,7 @@ CReaverBot_Balfura::CReaverBot_Balfura()
     TurnOn_State(EGObjectState::Cull);
     m_fHP = FGauge(8.f, true);
     Register_State();
+    m_RandomNumber = mt19937_64(m_RandomDevice());
 }
 
 CReaverBot_Balfura::CReaverBot_Balfura(const CReaverBot_Balfura& rhs)
@@ -23,6 +21,7 @@ CReaverBot_Balfura::CReaverBot_Balfura(const CReaverBot_Balfura& rhs)
 {
     TurnOn_State(EGObjectState::Cull);
     Register_State();
+    m_RandomNumber = mt19937_64(m_RandomDevice());
 }
 
 HRESULT CReaverBot_Balfura::Initialize_Prototype()
@@ -84,7 +83,6 @@ HRESULT CReaverBot_Balfura::Initialize_Prototype(FSerialData& InputData)
             m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-            //m_pColliderComp->EnterToPhysics(0);
             break;
         }
     }
@@ -123,6 +121,14 @@ void CReaverBot_Balfura::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
+    if (!m_State_Act.IsOnState(EState_Act::Dead) && m_fHP.Get_Percent() <= 0.f)
+        m_State_Act.Set_State(EState_Act::Dead);
+
+    if (!m_fHitTime.Increase(fTimeDelta))
+        m_fHitStrength = 0.3f;
+    else
+        m_fHitStrength = 0.f;
+
     //Input_ActionKey();
     m_State_AI.Get_StateFunc()(this, fTimeDelta);
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
@@ -147,7 +153,14 @@ HRESULT CReaverBot_Balfura::Render()
 {
     SUPER::Render();
 
-    m_pModelComp->Render();
+    if (m_pModelComp)
+    {
+        auto pEffectComp = m_pModelComp->EffectComp();
+
+        pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&m_fHitStrength), sizeof(_float));
+
+        m_pModelComp->Render();
+    }
 
 #ifdef _DEBUG
     GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
@@ -265,6 +278,8 @@ HRESULT CReaverBot_Balfura::Initialize_Component(FSerialData& InputData)
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
                 m_pModelComp = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
             m_pModelComp->Set_Animation(0, 1.f, true);
+            m_pModelComp->Reset_ActivePass();
+            m_pModelComp->Set_ActivePass(1);
             break;
         case ECast(EComponentID::Collider):
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName), 
@@ -297,6 +312,16 @@ void CReaverBot_Balfura::OnCollision(CGameObject* pDst, const FContact* pContact
         if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
             m_bIsOnGround = true;
     }
+
+    CCharacter_Common* pAttacker = DynCast<CCharacter_Common*>(pDst);
+    if (pAttacker)
+    {
+        if (CTeamAgentComp::ERelation::Hostile ==
+            CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pAttacker->TeamAgentComp()))
+        {
+            m_fHitTime.Reset();
+        }
+    }
 }
 
 void CReaverBot_Balfura::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
@@ -309,6 +334,23 @@ void CReaverBot_Balfura::OnCollisionExited(CGameObject* pDst)
 {
     SUPER::OnCollisionExited(pDst);
 
+}
+
+void CReaverBot_Balfura::Dead_Effect()
+{
+    CEffect_Common* pEffect = CEffect_Common::Create();
+    if (FAILED(GI()->Add_GameObject(pEffect)))
+        return;
+
+    if (nullptr == pEffect)
+        return;
+
+    uniform_real_distribution<_float> RandomPosX(-0.5f, 0.5f);
+    uniform_real_distribution<_float> RandomPosY(-0.5f, 0.5f);
+    uniform_real_distribution<_float> RandomPosZ(-0.5f, 0.5f);
+    pEffect->Transform().Set_Position(Transform().Get_PositionVector()
+        + XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));
+    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("boom_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
 }
 
 void CReaverBot_Balfura::Register_State()
@@ -386,7 +428,14 @@ void CReaverBot_Balfura::ActState_Dead(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
+        if (m_fDeadEffect.Increase(fTimeDelta))
+        {
+            m_fDeadEffect.Reset();
+            Dead_Effect();
+        }
 
+        if (m_fDeadTime.Increase(fTimeDelta))
+            Set_Dead();
     }
 
     if (m_State_Act.IsState_Exit())

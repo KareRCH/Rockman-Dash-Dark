@@ -58,7 +58,7 @@ private:
 	_bool		m_bIsLookOnGround = { true };		// 카메라가 물체의 Right 벡터 회전을 무시
 
 protected:
-	_bool		m_bIsOnGround = { false };
+	_bool		m_bIsOnGround = { true };
 
 public:
 	void Damage_HP(_float fDamage) { m_fHP.fCur -= fDamage; }

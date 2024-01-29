@@ -1,10 +1,6 @@
 #include "GameObject/ReaverBot_HanmuruDoll.h"
 
-#include "Component/TriBufferComp.h"
-#include "Component/ColorShaderComp.h"
-#include "Component/SkinnedModelComp.h"
-#include "Component/ModelShaderComp.h"
-#include "Component/ModelBufferComp.h"
+#include "Component/EffectComponent.h"
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 
@@ -129,6 +125,11 @@ void CReaverBot_HanmuruDoll::Tick(const _float& fTimeDelta)
     if (!m_State_Act.IsOnState(EState_Act::Dead) && m_fHP.Get_Percent() <= 0.f)
         m_State_Act.Set_State(EState_Act::Dead);
 
+    if (!m_fHitTime.Increase(fTimeDelta))
+        m_fHitStrength = 0.3f;
+    else
+        m_fHitStrength = 0.f;
+
     //Input_ActionKey();
     m_State_AI.Get_StateFunc()(this, fTimeDelta);
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
@@ -151,7 +152,14 @@ HRESULT CReaverBot_HanmuruDoll::Render()
 {
     SUPER::Render();
 
-    m_pModelComp->Render();
+    if (m_pModelComp)
+    {
+        auto pEffectComp = m_pModelComp->EffectComp();
+
+        pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&m_fHitStrength), sizeof(_float));
+
+        m_pModelComp->Render();
+    }
 
 #ifdef _DEBUG
     GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
@@ -269,6 +277,8 @@ HRESULT CReaverBot_HanmuruDoll::Initialize_Component(FSerialData& InputData)
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
                 m_pModelComp = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
             m_pModelComp->Set_Animation(0, 1.f, true);
+            m_pModelComp->Reset_ActivePass();
+            m_pModelComp->Set_ActivePass(1);
             break;
         case ECast(EComponentID::Collider):
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
@@ -300,6 +310,16 @@ void CReaverBot_HanmuruDoll::OnCollision(CGameObject* pDst, const FContact* pCon
         Transform().Set_Position((Transform().Get_PositionVector() - vSimNormal * Cast<_float>(pContact->fPenetration)));
         if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
             m_bIsOnGround = true;
+    }
+
+    CCharacter_Common* pAttacker = DynCast<CCharacter_Common*>(pDst);
+    if (pAttacker)
+    {
+        if (CTeamAgentComp::ERelation::Hostile ==
+            CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pAttacker->TeamAgentComp()))
+        {
+            m_fHitTime.Reset();
+        }
     }
 }
 

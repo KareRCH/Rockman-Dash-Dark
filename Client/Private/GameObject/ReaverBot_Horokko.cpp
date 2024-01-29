@@ -1,10 +1,6 @@
 #include "GameObject/ReaverBot_Horokko.h"
 
-#include "Component/TriBufferComp.h"
-#include "Component/ColorShaderComp.h"
-#include "Component/SkinnedModelComp.h"
-#include "Component/ModelShaderComp.h"
-#include "Component/ModelBufferComp.h"
+#include "Component/EffectComponent.h"
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 
@@ -131,6 +127,11 @@ void CReaverBot_Horokko::Tick(const _float& fTimeDelta)
 	if (!m_State_Act.IsOnState(EState_Act::Dead) && m_fHP.Get_Percent() <= 0.f)
 		m_State_Act.Set_State(EState_Act::Dead);
 
+	if (!m_fHitTime.Increase(fTimeDelta))
+		m_fHitStrength = 0.3f;
+	else
+		m_fHitStrength = 0.f;
+
 	m_State_AI.Get_StateFunc()(this, fTimeDelta);
 	m_State_Act.Get_StateFunc()(this, fTimeDelta);
 	m_ActionKey.Reset();
@@ -152,7 +153,14 @@ HRESULT CReaverBot_Horokko::Render()
 {
 	SUPER::Render();
 
-	m_pModelComp->Render();
+	if (m_pModelComp)
+	{
+		auto pEffectComp = m_pModelComp->EffectComp();
+
+		pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&m_fHitStrength), sizeof(_float));
+
+		m_pModelComp->Render();
+	}
 
 #ifdef _DEBUG
 	GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
@@ -270,6 +278,8 @@ HRESULT CReaverBot_Horokko::Initialize_Component(FSerialData& InputData)
 			FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
 				m_pModelComp = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
 			m_pModelComp->Set_Animation(0, 1.f, true);
+			m_pModelComp->Reset_ActivePass();
+			m_pModelComp->Set_ActivePass(1);
 			break;
 		case ECast(EComponentID::Collider):
 			FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
@@ -302,11 +312,22 @@ void CReaverBot_Horokko::OnCollision(CGameObject* pDst, const FContact* pContact
 		if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
 			m_bIsOnGround = true;
 	}
+
+	CCharacter_Common* pAttacker = DynCast<CCharacter_Common*>(pDst);
+	if (pAttacker)
+	{
+		if (CTeamAgentComp::ERelation::Hostile ==
+			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pAttacker->TeamAgentComp()))
+		{
+			m_fHitTime.Reset();
+		}
+	}
 }
 
 void CReaverBot_Horokko::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
 {
 	SUPER::OnCollisionEntered(pDst, pContact);
+
 }
 
 void CReaverBot_Horokko::OnCollisionExited(CGameObject* pDst)
@@ -378,8 +399,12 @@ void CReaverBot_Horokko::Dead_Effect()
 	if (nullptr == pEffect)
 		return;
 
-	//srand(time(NULL));
-	pEffect->Transform().Set_Position(Transform().Get_PositionFloat3());
+	uniform_real_distribution<_float> RandomPosX(-0.5f, 0.5f);
+	uniform_real_distribution<_float> RandomPosY(0.f, 1.f);
+	uniform_real_distribution<_float> RandomPosZ(-0.5f, 0.5f);
+	pEffect->Transform().Set_Position(Transform().Get_PositionVector()
+		+ XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));
+	GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("boom_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
 }
 
 void CReaverBot_Horokko::Register_State()

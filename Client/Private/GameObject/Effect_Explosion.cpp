@@ -1,8 +1,6 @@
 #include "GameObject/Effect_Explosion.h"
 
 #include "Component/EffectComponent.h"
-#include "Component/ModelShaderComp.h"
-#include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
 
 
@@ -79,25 +77,6 @@ HRESULT CEffect_Explosion::Render()
 		_float	TempFloat = {};
 		auto pEffectComp = m_pModelComp->EffectComp();
 
-		
-
-		//{
-		//	pEffectComp->Bind_Matrix("g_WorldMatrix", &TempFloat4x4);
-		//	pEffectComp->Bind_Matrix("g_ViewMatrix",
-		//		&(TempFloat4x4 = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
-		//	pEffectComp->Bind_Matrix("g_ProjMatrix",
-		//		&(TempFloat4x4 = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
-		//
-		//	m_pModelComp->Bind_MeshMaterial(1, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-		//	pEffectComp->Bind_RawValue("g_fAlpha", VPCast(&m_fAlpha.fCur), sizeof(_float));
-		//
-		//	// 그리기 시작
-		//	pEffectComp->Begin(1);
-		//
-		//	// 버퍼를 장치에 바인드, 그리기
-		//	m_pModelComp->BindAndRender_Mesh(1);
-		//}
-
 		{
 			pEffectComp->Bind_Matrix("g_WorldMatrix", &TempFloat4x4);
 			pEffectComp->Bind_Matrix("g_ViewMatrix",
@@ -115,6 +94,25 @@ HRESULT CEffect_Explosion::Render()
 			// 버퍼를 장치에 바인드, 그리기
 			m_pModelComp->BindAndRender_Mesh(0);
 		}
+
+		{
+			pEffectComp->Bind_Matrix("g_WorldMatrix", &TempFloat4x4);
+			pEffectComp->Bind_Matrix("g_ViewMatrix",
+				&(TempFloat4x4 = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)));
+			pEffectComp->Bind_Matrix("g_ProjMatrix",
+				&(TempFloat4x4 = PipelineComp().Get_CamFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)));
+		
+			m_pModelComp->Bind_MeshMaterial(1, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+			pEffectComp->Bind_RawValue("g_fAlpha", VPCast(&m_fAlpha.fCur), sizeof(_float));
+		
+			// 그리기 시작
+			pEffectComp->Begin(1);
+		
+			// 버퍼를 장치에 바인드, 그리기
+			m_pModelComp->BindAndRender_Mesh(1);
+		}
+
+		
 	}
 
 	return S_OK;

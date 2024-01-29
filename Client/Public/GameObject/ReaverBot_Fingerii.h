@@ -78,9 +78,15 @@ private:
 	_float m_fMoveSpeed = { 3.f };
 
 
-public:
+private:
 	void Dead_Effect();
 
+private:
+	FGauge m_fDeadTime = FGauge(2.f);
+	FGauge m_fDeadEffect = FGauge(0.1f);
+
+	FGauge m_fHitTime = FGauge(0.1f);
+	_float m_fHitStrength = { 0.3f };
 
 public:
 	enum class EActionKey : _uint { MoveForward, MoveBackward, TurnRight, TurnLeft, LookTarget, Barrier, Concentration, Size };
@@ -98,8 +104,6 @@ private:		// 약식 상태머신
 	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
 	SState_Act		m_State_Act;
 
-	FGauge m_fDeadTime = FGauge(2.f);
-	FGauge m_fDeadEffect = FGauge(0.1f);
 	FGauge m_fEnergyBallAttack = FGauge(5.f);
 
 private:
