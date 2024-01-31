@@ -18,7 +18,7 @@
 #include "GameObject/Weapon_HyperShell.h"
 #include "GameObject/Weapon_Blade.h"
 #include "GameObject/ReaverBot_Fingerii.h"
-#include "GameObject/UI_Dialog.h"
+#include "GameObject/ItemChest.h"
 
 #include "CloudStation/CloudStation_Player.h"
 
@@ -408,6 +408,30 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
     SUPER::OnCollision(pDst, pContact);
 
+    CItemChest* pChest = DynCast<CItemChest*>(pDst);
+    if (nullptr != pChest)
+    {
+        _float3 vNormal(_float(pContact->vContactNormal.x), _float(pContact->vContactNormal.y), _float(pContact->vContactNormal.z));
+        _vector vSimNormal = {};
+        vSimNormal = XMLoadFloat3(&vNormal);
+        Transform().Set_Position((Transform().Get_PositionVector() - vSimNormal * Cast<_float>(pContact->fPenetration)));
+        if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
+            m_bIsOnGround = true;
+
+        if (m_ActionKey.IsAct(EActionKey::Interaction))
+        {
+            _vector vLook = pDst->Transform().Get_LookNormalizedVector();
+            _vector vPosLook = XMVector3Normalize(Transform().Get_PositionVector() - pDst->Transform().Get_PositionVector());
+            _float fDot = XMVectorGetX(XMVector3Dot(vPosLook, Transform().Get_LookNormalizedVector()));
+            _float fDotLookAndPos = XMVectorGetX(XMVector3Dot(vPosLook, vLook));
+            if (fDot <= -0.8f && fDotLookAndPos >= 0.8f)
+            {
+                pChest->Open_Chest(MakeDelegate(this, &ThisClass::Gotcha), MakeDelegate(this, &ThisClass::EndOpenChest));
+                m_State_Act.Set_State(EState_Act::ItemGetting);
+            }
+        }
+    }
+
     CCharacter_Common* pEnemy = DynCast<CCharacter_Common*>(pDst);
     if (pEnemy)
     {
@@ -485,7 +509,7 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
     CDoor_Common* pDoor = DynCast<CDoor_Common*>(pDst);
     if (pDoor)
     {
-        if (GI()->IsKey_Pressed(DIK_E))
+        if (m_ActionKey.IsAct(EActionKey::Interaction))
             pDoor->OpenDoor();
 
         _float3 vNormal(_float(pContact->vContactNormal.x), _float(pContact->vContactNormal.y), _float(pContact->vContactNormal.z));
@@ -494,6 +518,8 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
         Transform().Set_Position((Transform().Get_PositionVector() - vSimNormal * Cast<_float>(pContact->fPenetration)));
         if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
             m_bIsOnGround = true;
+
+
     }
 }
 
@@ -557,6 +583,8 @@ void CPlayer::Register_State()
     m_State_Act.Add_Func(EState_Act::Grabbing, &ThisClass::ActState_Grabbing);
     m_State_Act.Add_Func(EState_Act::Throw, &ThisClass::ActState_Throw);
     m_State_Act.Add_Func(EState_Act::Squat, &ThisClass::ActState_Squat);
+    m_State_Act.Add_Func(EState_Act::ItemGetting, &ThisClass::ActState_ItemGetting);
+    m_State_Act.Add_Func(EState_Act::ItemGet, &ThisClass::ActState_ItemGet);
 
     m_State_Act.Set_State(EState_Act::Idle);
 }
@@ -705,10 +733,11 @@ void CPlayer::Input_Move(const _float& fTimeDelta)
     if (m_bIsOnGround && GI()->IsKey_Pressed(DIK_SPACE))
     {
         m_ActionKey.Act(EActionKey::Jump);
-        auto pDialog = CUI_Dialog::Create();
-        pDialog->Add_Dialog(L"응애");
-        pDialog->Add_Dialog(L"나 아기 록맨");
-        GI()->Add_GameObject(pDialog);
+    }
+
+    if (m_bIsOnGround && GI()->IsKey_Pressed(DIK_E))
+    {
+        m_ActionKey.Act(EActionKey::Interaction);
     }
 }
 
@@ -2005,6 +2034,21 @@ void CPlayer::ThrowUnit()
 
         GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_throw.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
     }
+}
+
+void CPlayer::Gotcha(_bool bIsGetItem, EItemObtain eItem)
+{
+    if (bIsGetItem)
+    {
+        m_State_Act.Set_State(EState_Act::ItemGet);
+    }
+    else
+        m_State_Act.Set_State(EState_Act::Idle);
+}
+
+void CPlayer::EndOpenChest()
+{
+    m_State_Act.Set_State(EState_Act::Idle);
 }
 
 void CPlayer::Lockon_Active(const _float& fTimeDelta)

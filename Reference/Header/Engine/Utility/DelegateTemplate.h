@@ -50,6 +50,9 @@ template<typename Delegate, typename... Args>
 class MulticastDelegate
 {
 public:
+	using Func = Delegate;
+
+public:
 	void Add(const Delegate& Listener)
 	{
 		m_Delegates.push_back(Listener);

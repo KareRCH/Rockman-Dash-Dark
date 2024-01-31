@@ -95,7 +95,7 @@ private:	// 기본 속성
 	_uint				m_iID = 0U;							// 식별용 ID, 오브젝트 관리에 사용된다.
 	wstring				m_strName = L"";					// 오브젝트 이름, 인스턴스를 식별하기 위해 사용된다.
 	_uint				m_iStateFlag = 0U;					// 상태 플래그, 32가지의 상태를 구현한다. 시스템에서 쓰인다.
-	_unset<wstring>		m_setTag[ECast(EGObjTag::Size)];	// 분류 태그. 시스템과 게임 로직에 사용된다.
+	set<wstring>		m_setTag[ECast(EGObjTag::Size)];	// 분류 태그. 시스템과 게임 로직에 사용된다.
 
 	ERenderGroup		m_eRenderGroup = ERenderGroup::NonBlend;
 
@@ -133,7 +133,7 @@ public:		// 컴포넌트의 상태 변경시 자동으로 변경해주기 위한 이벤트 함수
 private:	// 컴포넌트 속성
 	_uint								m_iNumComponents = { 0 };	// 컴포넌트 개수
 	vector<CGameObjectComp*>			m_vecComponents;				// 컴포넌트 관리 컨테이너
-	_unmap<wstring, CGameObjectComp*>	m_mapPrimComp;				// 오브젝트 전용 컴포넌트 관리 컨테이너
+	map<wstring, CGameObjectComp*>		m_mapPrimComp;				// 오브젝트 전용 컴포넌트 관리 컨테이너
 
 	using list_comp = list<CGameObjectComp*>;
 	list_comp		  m_listUpdateComp[ECast(ECompTickType::Size)];	// 컴포넌트 업데이트 관리 리소스

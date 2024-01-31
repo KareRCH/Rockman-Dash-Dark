@@ -94,6 +94,8 @@ private:
 
 public:
 	HRESULT Bind_ShaderResources();
+	HRESULT Bind_Texture(_uint iIndex);
+	HRESULT BindAndRender_Buffer(_uint iPass);
 	
 public:
 	void Set_Mode(MODE eMode) { m_eMode = eMode; }

@@ -360,7 +360,7 @@ const _uint CGameInstance::ResolutionY()
 	if (nullptr == m_pGraphicDev)
 		return 0;
 
-	return m_pGraphicDev->Get_ResolutionX();
+	return m_pGraphicDev->Get_ResolutionY();
 }
 
 void CGameInstance::Set_Resolution(_uint iX, _uint iY)

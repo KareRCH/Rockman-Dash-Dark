@@ -9,6 +9,10 @@
 
 BEGIN(Client)
 
+// 대화중 특정 이벤트 발생시
+typedef FastDelegate0<void> OccurDelegate;
+typedef FastDelegate0<void> EndDelegate;
+
 class CUI_Dialog : public CGameObject
 {
 	DERIVED_CLASS(CGameObject, CUI_Dialog)
@@ -42,6 +46,7 @@ public:
 
 public:
 	HRESULT Initialize_Component();
+	HRESULT Bind_ShaderResources();
 
 private:
 	class CPlaneModelComp* m_pPlaneModelComp = { nullptr };
@@ -68,13 +73,24 @@ private:
 	void ActState_Closing(const _float& fTimeDelta);
 
 public:
-	void Add_Dialog(const wstring& strDialog) { m_Dialogs.push_back(strDialog); }
+	void Add_Dialog(const wstring& strDialog, OccurDelegate Event = nullptr);
 	void Set_Delay(_float fDelay) { m_fDelay.Readjust(fDelay); }
+	void Set_EndEvent(EndDelegate Event) { m_EndEvent = Event; }
 
 private:
-	list<wstring>	m_Dialogs;
-	_uint			m_iCurDialogIndex = { 0 };
-	FGauge			m_fDelay = FGauge(0.08f);
+	using SPairDialog = pair<wstring, OccurDelegate>;
+	list<SPairDialog>	m_Dialogs;
+	_uint				m_iCurDialogIndex = { 0 };
+	FGauge				m_fDelay = FGauge(0.08f);
+	OccurDelegate		m_OccurEvent = nullptr;
+	EndDelegate			m_EndEvent = nullptr;
+
+private:
+	_float3 m_vOffset = { 0.f, -150.f, 0.f };
+
+	_float3 m_vPos[9] = {};
+	_float3 m_vScale[9] = {};
+	FGauge	m_fLerp = FGauge(1.f);
 
 };
 

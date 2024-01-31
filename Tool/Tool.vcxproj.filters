@@ -299,6 +299,33 @@
     <ClCompile Include="..\Client\Private\GameObject\Door_Common.cpp">
       <Filter>98 Client</Filter>
     </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Effect_Explosion.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\UI_Dialog.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Weapon_Blade.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Weapon_HomingMissile.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Weapon_HyperShell.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Weapon_Laser.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Weapon_LaserEmission.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Weapon_Machinegun.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Weapon_SpreadBuster.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Include\Tool.rc">

@@ -13,6 +13,10 @@ END
 
 BEGIN(Client)
 
+typedef FastDelegate0<void> OpenDelegate;
+typedef FastDelegate2<_bool, EItemObtain, void> GiveItemDelegate;
+typedef FastDelegate0<void> EndDelegate;
+
 /// <summary>
 /// 아이템을 주는 상자
 /// </summary>
@@ -39,6 +43,7 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void OnCreated() override;
 	virtual void BeginPlay() override;
 
 public:
@@ -86,11 +91,16 @@ private:
 	void ActState_Close(const _float& fTimeDelta);
 
 public:
-	void Open_Chest();
+	void Open_Chest(GiveItemDelegate Event, EndDelegate EndEvent);
 	void Close_Chest();
+	void Give_Item();
+	void NothingInChest();
 
 private:
-	EItemObtain		m_eItemObtain = { EItemObtain::Money };
+	EItemObtain			m_eItemObtain = { EItemObtain::Money };
+	OpenDelegate		m_OpenEvent;
+	GiveItemDelegate	m_GiveItemEvent;
+	EndDelegate			m_EndEvent;
 
 };
 

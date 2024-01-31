@@ -45,7 +45,7 @@ public:
 	void				Clear_Prototypes(const wstring& strContainTag);
 
 private:
-	_unmap<wstring, class CGameObject*>			m_mapPrototypes;			// 오브젝트의 프로토타입  
+	map<wstring, class CGameObject*>			m_mapPrototypes;			// 오브젝트의 프로토타입  
 #pragma endregion
 
 
@@ -81,7 +81,7 @@ private:
 private:
 	_uint							m_iGiveObjectID = 0;		// 부여되는 게임 오브젝트의 ID
 	vector<class CGameObject*>		m_vecGameObjects;			// 게임 오브젝트 저장공간
-	_unset<wstring>					m_setObjectNames;			// 게임 오브젝트 이름 중복 검사용
+	set<wstring>					m_setObjectNames;			// 게임 오브젝트 이름 중복 검사용
 	wstring							m_strLevelTag;				// 생성할 오브젝트에 대한 부여 레벨 태그
 	MultiBgeinDelegate				m_EventBeginPlay;			// 오브젝트 플레이 시작 이벤트
 #pragma endregion

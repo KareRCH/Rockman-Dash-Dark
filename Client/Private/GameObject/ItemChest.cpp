@@ -1,25 +1,20 @@
 #include "GameObject/ItemChest.h"
 
-#include "Component/TriBufferComp.h"
-#include "Component/ColorShaderComp.h"
-#include "Component/SkinnedModelComp.h"
-#include "Component/ModelShaderComp.h"
-#include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
-
-#include "Utility/RapidJsonSerial.h"
 #include "Component/ColliderComponent.h"
 
+#include "Utility/RapidJsonSerial.h"
+#include "GameObject/Player.h"
+#include "GameObject/UI_Dialog.h"
 
 CItemChest::CItemChest()
 {
 	Set_Name(TEXT("ItemChest"));
-	Register_State();
 }
 
 CItemChest::CItemChest(const CItemChest& rhs)
 {
-	Register_State();
+	
 }
 
 HRESULT CItemChest::Initialize_Prototype()
@@ -137,6 +132,13 @@ HRESULT CItemChest::Render()
 #endif
 
 	return S_OK;
+}
+
+void CItemChest::OnCreated()
+{
+	SUPER::OnCreated();
+
+	Register_State();
 }
 
 void CItemChest::BeginPlay()
@@ -301,18 +303,57 @@ void CItemChest::ActState_Idle(const _float& fTimeDelta)
 	}
 }
 
-void CItemChest::Open_Chest()
+void CItemChest::Open_Chest(GiveItemDelegate Event, EndDelegate EndEvent)
 {
 	if (m_State_Act.IsOnState(EState_Act::Idle))
 	{
 		m_State_Act.Set_State(EState_Act::Open);
 		// 대충 아이템 주는 이벤트 발생
+		
+		m_GiveItemEvent = Event;
+		m_EndEvent = EndEvent;
+
+		CUI_Dialog* pDialog = CUI_Dialog::Create();
+		pDialog->Add_Dialog(TEXT("안에 무언가가 들어있다..."));
+		pDialog->Add_Dialog(TEXT("여러가지 무기들을 얻었다!"), MakeDelegate(this, &ThisClass::Give_Item));
+		pDialog->Set_EndEvent(MakeDelegate(this, &ThisClass::Close_Chest));
+		GI()->Add_GameObject(pDialog);
+	}
+	else if (m_State_Act.IsOnState(EState_Act::Close))
+	{
+		m_GiveItemEvent = Event;
+		m_EndEvent = EndEvent;
+
+		CUI_Dialog* pDialog = CUI_Dialog::Create();
+		pDialog->Add_Dialog(TEXT("안에는 아무것도 없다..."));
+		pDialog->Set_EndEvent(MakeDelegate(this, &ThisClass::NothingInChest));
+		GI()->Add_GameObject(pDialog);
 	}
 }
 
 void CItemChest::Close_Chest()
 {
 	m_State_Act.Set_State(EState_Act::Close);
+}
+
+void CItemChest::Give_Item()
+{
+	if (!m_GiveItemEvent.empty())
+	{
+		m_GiveItemEvent(true, EItemObtain::BladeArm);
+		GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("gotcha.mp3"), CHANNELID::SOUND_VFX, 1.f);
+	}
+	m_GiveItemEvent.clear();
+}
+
+void CItemChest::NothingInChest()
+{
+	if (!m_EndEvent.empty())
+	{
+		m_EndEvent();
+		m_EndEvent.clear();
+	}
+	m_GiveItemEvent.clear();
 }
 
 void CItemChest::ActState_Open(const _float& fTimeDelta)
@@ -325,8 +366,6 @@ void CItemChest::ActState_Open(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-
-
 		// 닫힘
 		if (m_ActionKey.IsAct(EActionKey::Close))
 			m_State_Act.Set_State(EState_Act::Close);
@@ -342,7 +381,12 @@ void CItemChest::ActState_Close(const _float& fTimeDelta)
 {
 	if (m_State_Act.IsState_Entered())
 	{
-		m_pModelComp->Set_Animation(2, 1.f, false, true);
+		m_pModelComp->Set_Animation(2, 1.f, false, false);
+		if (!m_EndEvent.empty())
+		{
+			m_EndEvent();
+			m_EndEvent.clear();
+		}
 	}
 
 	if (m_State_Act.Can_Update())

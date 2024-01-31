@@ -11,6 +11,7 @@
 #include "GameObject/StaticObject.h"
 #include "GameObject/SkyBox.h"
 #include "GameObject/Door_Common.h"
+#include "GameObject/ItemChest.h"
 
 #include "BaseClass/Terrain.h"
 #include "BaseClass/Navigation.h"
@@ -60,6 +61,9 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 			break;
 		case EObjectIDExt::Door_Common:
 			pObj = TObjectExtTrait< ECast(EObjectIDExt::Door_Common)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::ItemChest:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::ItemChest)>::Class::Create(Data);
 			break;
 		}
 		break;

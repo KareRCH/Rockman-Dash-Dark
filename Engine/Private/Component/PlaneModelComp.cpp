@@ -215,3 +215,26 @@ HRESULT CPlaneModelComp::Bind_ShaderResources()
 
     return S_OK;
 }
+
+HRESULT CPlaneModelComp::Bind_Texture(_uint iIndex)
+{
+    if (iIndex < 0)
+        return E_FAIL;
+
+    if (FAILED(m_pTextureComp->Bind_SRVToEffect(m_pEffectComp, "g_Texture", iIndex)))
+        return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CPlaneModelComp::BindAndRender_Buffer(_uint iPass)
+{
+    if (FAILED(m_pEffectComp->Begin(iPass)))
+        return E_FAIL;
+    if (FAILED(m_pVIBufferComp->Bind_Buffer()))
+        return E_FAIL;
+    if (FAILED(m_pVIBufferComp->Render_Buffer()))
+        return E_FAIL;
+
+    return S_OK;
+}

@@ -83,7 +83,7 @@ PS_OUT PS_MAIN(VPS_INOUT In)
         discard;
 
     Out.vDiffuse = vSourColor;
-    Out.vDiffuse.a = g_fAlpha;
+    Out.vDiffuse.a = min(Out.vDiffuse.a, g_fAlpha);
 
     return Out;
 }

@@ -124,7 +124,9 @@ public:
 		MoveSlow, MoveFast, JumpLow, LowFrict,
 		Buster, ChargeBuster, 
 		Laser, Homing, Blade, BusterCannon, Drill, HyperShell, Machinegun, Shield, SpreadBuster, 
-		Grab, Throw, Squat, Size 
+		Grab, Throw, Squat, 
+		Interaction,
+		Size 
 	};
 
 private:
@@ -207,6 +209,8 @@ private:
 	void DeleteBlade();
 	void GrabingUnit();
 	void ThrowUnit();
+	void Gotcha(_bool bIsGetItem, EItemObtain eItem);
+	void EndOpenChest();
 	void Lockon_Active(const _float& fTimeDelta);
 	void Lockon_Target();
 	void Lockon_Untarget();

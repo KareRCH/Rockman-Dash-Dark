@@ -14,6 +14,10 @@ CTransformComponent::CTransformComponent()
 
 CTransformComponent::CTransformComponent(const CTransformComponent& rhs)
 	: Base(rhs)
+	, m_vRotation(rhs.m_vRotation)
+	, m_qtOrientation(rhs.m_qtOrientation)
+	, m_vScale(rhs.m_vScale)
+	, m_matTransform(rhs.m_matTransform)
 {
 }
 
