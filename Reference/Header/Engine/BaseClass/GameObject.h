@@ -45,9 +45,11 @@ public:
 
 public:
 	// 실제 게임에 추가되었을 때 작동하는 이벤트 함수. ObjectMgr에서 작동시킴
-	virtual void OnCreate() {}
+	virtual void OnCreated() {}
+	// 실제 게임에 추가된 뒤 처음 Tick을 실행할 때 작동하는 함수. ObjectMgr에서 작동시킴
+	virtual void BeginPlay() {}
 	// 실제 게임에서 죽어없어질 때 작동하는 이벤트 함수. ObjectMgr에서 작동시킴
-	virtual void OnDead() {}
+	virtual void EndPlay() {}
 
 public:
 	// 직렬화 데이터 뽑아낼 때 사용하는 함수. 각 오브젝트 별로 뽑아내는 데이터가 다릅니다.

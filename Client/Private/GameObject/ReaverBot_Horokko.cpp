@@ -39,7 +39,6 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype()
 	m_pColliderComp->Transform().Set_Position(0.f, 0.5f, 0.f);
 	m_pColliderComp->Transform().Set_Scale(1.f, 0.5f, 1.f);
 	m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
-	m_pColliderComp->EnterToPhysics(0);
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
 		| COLLAYER_ATTACKER | COLLAYER_OBJECT);
@@ -123,7 +122,8 @@ void CReaverBot_Horokko::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
 
-	Input_ActionKey();
+	m_ActionKey.Reset();
+
 	if (!m_State_Act.IsOnState(EState_Act::Dead) && m_fHP.Get_Percent() <= 0.f)
 		m_State_Act.Set_State(EState_Act::Dead);
 
@@ -134,7 +134,8 @@ void CReaverBot_Horokko::Tick(const _float& fTimeDelta)
 
 	m_State_AI.Get_StateFunc()(this, fTimeDelta);
 	m_State_Act.Get_StateFunc()(this, fTimeDelta);
-	m_ActionKey.Reset();
+	
+	Move_Update(fTimeDelta);
 
 	m_pColliderComp->Tick(fTimeDelta);
 }
@@ -145,7 +146,6 @@ void CReaverBot_Horokko::Late_Tick(const _float& fTimeDelta)
 
 	m_pModelComp->Add_AnimTime(fTimeDelta);
 	m_pModelComp->Invalidate_Animation();
-
 	m_pModelComp->Late_Tick(fTimeDelta);
 }
 
@@ -167,6 +167,18 @@ HRESULT CReaverBot_Horokko::Render()
 #endif
 
 	return S_OK;
+}
+
+void CReaverBot_Horokko::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, 10.f, 6.f };
+	m_vAcceleration = { 100.f, g_fGravity, 100.f };
+
+	m_bIsCanGrab = true;
+	if (m_pColliderComp)
+		m_pColliderComp->EnterToPhysics(0);
 }
 
 CReaverBot_Horokko* CReaverBot_Horokko::Create()
@@ -288,7 +300,6 @@ HRESULT CReaverBot_Horokko::Initialize_Component(FSerialData& InputData)
 			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
 			m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
 			m_pColliderComp->Set_CollisionKinematic();
-			m_pColliderComp->EnterToPhysics(0);
 			break;
 		}
 	}
@@ -300,7 +311,31 @@ HRESULT CReaverBot_Horokko::Initialize_Component(FSerialData& InputData)
 
 void CReaverBot_Horokko::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
-	SUPER::OnCollision(pDst, pContact);
+	if (!m_bIsGrabbed)
+		SUPER::OnCollision(pDst, pContact);
+
+	CCharacter_Common* pEnemy = DynCast<CCharacter_Common*>(pDst);
+	if (pEnemy)
+	{
+		// 던져질 때 친구면 대미지를 줌
+		if (CTeamAgentComp::ERelation::Nuetral ==
+			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
+		{
+			if (m_bIsThrowing)
+			{
+				pEnemy->Damage_HP(5.f);
+				Damage_HP(5.f);
+
+				_vector vNormal = -XMLoadFloat3(&pContact->vContactNormal) * 5.f;
+				XMStoreFloat3(&m_vVelocity, vNormal);
+				m_vVelocity.y = 5.f;
+
+				m_bIsThrowing = false;
+				m_fHitTime.Reset();
+				GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+			}
+		}
+	}
 
 	CDoor_Common* pDoor = DynCast<CDoor_Common*>(pDst);
 	if (pDoor)
@@ -375,19 +410,69 @@ void CReaverBot_Horokko::Input_ActionKey()
 
 void CReaverBot_Horokko::Move_Update(const _float& fTimeDelta)
 {
-	if (m_ActionKey.IsAct(EActionKey::MoveForward))
-		Transform().MoveForward(m_fMoveSpeed * fTimeDelta);
-	else if (m_ActionKey.IsAct(EActionKey::MoveBackward))
-		Transform().MoveForward(-m_fMoveSpeed * fTimeDelta);
+	if (m_bIsGrabbed)
+		return;
 
-	if (m_ActionKey.IsAct(EActionKey::TurnRight))
-		Transform().TurnRight(m_fMoveSpeed * fTimeDelta);
-	else if (m_ActionKey.IsAct(EActionKey::TurnLeft))
-		Transform().TurnRight(-m_fMoveSpeed * fTimeDelta);
+	_float3 vfPos = Transform().Get_PositionFloat3();
+	_vector vPos = Transform().Get_PositionVector();
 
-	if (m_ActionKey.IsAct(EActionKey::LookTarget)
-		&& nullptr != m_pTarget)
-		Transform().Look_At_OnLand(m_pTarget->Transform().Get_PositionVector(), 5.f * fTimeDelta);
+	m_vVelocity.y -= m_vAcceleration.y * fTimeDelta;
+	vfPos.y += m_vVelocity.y * fTimeDelta;
+	if (vfPos.y <= 0.f)
+	{
+		vfPos.y = 0.f;
+		m_bIsOnGround = true;
+		m_bIsThrowing = false;
+	}
+	else
+		m_bIsOnGround = false;
+
+	if (m_bIsOnGround)
+	{
+		m_vVelocity.x *= 0.5f;
+		m_vVelocity.z *= 0.5f;
+		m_bIsOnGround = false;
+	}
+	else
+	{
+		m_vVelocity.x *= 0.998f;
+		m_vVelocity.z *= 0.998f;
+	}
+
+	Transform().Set_Position(vPos + XMLoadFloat3(&m_vVelocity) * fTimeDelta);
+	Transform().Set_PositionY(vfPos.y);
+	/*if (!m_pNaviComp->IsMove(Transform().Get_PositionVector()))
+		Transform().Set_Position(vPos);*/
+
+	if (!(m_fHP.Get_Percent() <= 0.f))
+	{
+		if (m_ActionKey.IsAct(EActionKey::MoveForward))
+			Transform().MoveForward(m_fMoveSpeed * fTimeDelta);
+		else if (m_ActionKey.IsAct(EActionKey::MoveBackward))
+			Transform().MoveForward(-m_fMoveSpeed * fTimeDelta);
+
+		if (m_ActionKey.IsAct(EActionKey::TurnRight))
+			Transform().TurnRight(m_fMoveSpeed * fTimeDelta);
+		else if (m_ActionKey.IsAct(EActionKey::TurnLeft))
+			Transform().TurnRight(-m_fMoveSpeed * fTimeDelta);
+
+		if (m_ActionKey.IsAct(EActionKey::LookTarget)
+			&& nullptr != m_pTarget)
+			Transform().Look_At_OnLand(m_pTarget->Transform().Get_PositionVector(), 5.f * fTimeDelta);
+	}
+}
+
+void CReaverBot_Horokko::Explosion_Effect(_float3 vPos)
+{
+	CEffect_Common* pEffect = CEffect_Common::Create();
+	if (FAILED(GI()->Add_GameObject(pEffect)))
+		return;
+
+	if (nullptr == pEffect)
+		return;
+
+	pEffect->Transform().Set_Position(vPos);
+	GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("boom_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
 }
 
 void CReaverBot_Horokko::Dead_Effect()
@@ -470,8 +555,6 @@ void CReaverBot_Horokko::ActState_Run(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		Move_Update(fTimeDelta);
-
 		// 돌진
 		if (m_ActionKey.IsAct(EActionKey::Charge))
 			m_State_Act.Set_State(EState_Act::Ready_Charge);
@@ -523,8 +606,6 @@ void CReaverBot_Horokko::ActState_Charge_Attack(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		Move_Update(fTimeDelta);
-
 		// 떼면 돌진, 다시 Charge를 누르면 Idle로
 		if (m_ActionKey.IsAct(EActionKey::Charge))
 			m_State_Act.Set_State(EState_Act::Idle);

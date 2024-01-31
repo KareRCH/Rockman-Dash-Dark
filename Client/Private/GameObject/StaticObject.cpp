@@ -30,7 +30,6 @@ HRESULT CStaticObject::Initialize_Prototype()
     m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
     m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
     m_pColliderComp->Bind_Collision(ECollisionType::OBB);
-    m_pColliderComp->EnterToPhysics(0);
     m_pColliderComp->Set_CollisionLayer(COLLAYER_WALL);
 
     return S_OK;
@@ -71,7 +70,6 @@ HRESULT CStaticObject::Initialize_Prototype(FSerialData& InputData)
             m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-            //m_pColliderComp->EnterToPhysics(0);
             break;
         }
     }
@@ -126,6 +124,14 @@ HRESULT CStaticObject::Render()
 #endif
 
     return S_OK;
+}
+
+void CStaticObject::BeginPlay()
+{
+    SUPER::BeginPlay();
+
+    if (m_pColliderComp)
+        m_pColliderComp->EnterToPhysics(0);
 }
 
 CStaticObject* CStaticObject::Create()
@@ -244,7 +250,6 @@ HRESULT CStaticObject::Initialize_Component(FSerialData& InputData)
             m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-            m_pColliderComp->EnterToPhysics(0);
             Set_CullRadius(XMVectorGetX(XMVector3Length(m_pColliderComp->Transform().Get_ScaleVector() * 6.f)));
             break;
         }

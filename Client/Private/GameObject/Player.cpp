@@ -17,6 +17,8 @@
 #include "GameObject/Weapon_Machinegun.h"
 #include "GameObject/Weapon_HyperShell.h"
 #include "GameObject/Weapon_Blade.h"
+#include "GameObject/ReaverBot_Fingerii.h"
+#include "GameObject/UI_Dialog.h"
 
 #include "CloudStation/CloudStation_Player.h"
 
@@ -184,6 +186,7 @@ void CPlayer::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
+    m_ActionKey.Reset();
     if (m_fInvisibleTime.Increase(fTimeDelta))
         m_bInvisible = false;
 
@@ -196,9 +199,9 @@ void CPlayer::Tick(const _float& fTimeDelta)
     Input_Weapon(fTimeDelta);
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
     Move_Update(fTimeDelta);
-    m_ActionKey.Reset();
 
-
+    GrabingUnit();
+    
     m_pColliderComp->Tick(fTimeDelta);
     m_pCameraPivotComp->Tick(fTimeDelta);
 
@@ -227,6 +230,15 @@ HRESULT CPlayer::Render()
 #endif
 
     return S_OK;
+}
+
+void CPlayer::BeginPlay()
+{
+    if (m_pColliderComp)
+        m_pColliderComp->EnterToPhysics(0);
+
+    m_pCloudStationComp->Open_CloudStation_Session(TEXT("Player"), CCloudStation_Player::Create());
+    m_pCloudStationComp->Connect_CloudStation(TEXT("Player"));
 }
 
 CPlayer* CPlayer::Create()
@@ -290,6 +302,7 @@ void CPlayer::Free()
     Safe_Release(m_pPlayerCloud);
     Safe_Release(m_pLaserEmission);
     Safe_Release(m_pBlade);
+    Safe_Release(m_pGrabUnit);
 }
 
 FSerialData CPlayer::SerializeData_Prototype()
@@ -368,13 +381,10 @@ HRESULT CPlayer::Initialize_Component(FSerialData& InputData)
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
             m_pColliderComp->Set_CollisionKinematic();
-            m_pColliderComp->EnterToPhysics(0);
             break;
         case ECast(EComponentID::CloudStation):
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
                 m_pCloudStationComp = DynCast<CCloudStationComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
-            m_pCloudStationComp->Open_CloudStation_Session(TEXT("Player"), CCloudStation_Player::Create());
-            m_pCloudStationComp->Connect_CloudStation(TEXT("Player"));
             break;
         case ECast(EComponentID::Pivot):
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
@@ -404,27 +414,53 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
         if (CTeamAgentComp::ERelation::Hostile ==
             CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
         {
-            if (m_fKnockDownDelay.IsMax() && !m_bInvisible)
+            _bool bIsGrab = { false };
+            if (m_pGrabUnit == nullptr)
             {
-                m_fKnockDownDelay.Reset();
-                if (m_fKnockDownValue.Increase(2.5f))
+                if (m_ActionKey.IsAct(EActionKey::Grab))
                 {
-                    m_State_Act.Set_State(EState_Act::DamagedHeavy);
-                    DeleteLaser();
-                    DeleteBlade();
-                    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+                    if (pEnemy->Get_IsCanGrab())
+                    {
+                        m_State_Act.Set_State(EState_Act::Grab);
+                        DeleteLaser();
+                        DeleteBlade();
+                        m_pGrabUnit = pEnemy;
+                        Safe_AddRef(pEnemy);
+                        pEnemy->Set_Grabbed(true);
+                        bIsGrab = true;
+                    }
                 }
-                else
-                {
-                    m_State_Act.Set_State(EState_Act::DamagedLight);
-                    DeleteLaser();
-                    DeleteBlade();
-                    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
-                }
-                m_fHP.Increase(-5.f);
+            }
+            else
+            {
+                if (m_pGrabUnit == pDst)
+                    bIsGrab = true;
             }
 
-            //Create_Effect();
+            if (!bIsGrab)
+            {
+                if (m_fKnockDownDelay.IsMax() && !m_bInvisible)
+                {
+                    m_fKnockDownDelay.Reset();
+                    if (m_fKnockDownValue.Increase(2.5f))
+                    {
+                        m_State_Act.Set_State(EState_Act::DamagedHeavy);
+                        DeleteLaser();
+                        DeleteBlade();
+                        ThrowUnit();
+                        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+                    }
+                    else
+                    {
+                        m_State_Act.Set_State(EState_Act::DamagedLight);
+                        DeleteLaser();
+                        DeleteBlade();
+                        ThrowUnit();
+                        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+                    }
+                    m_fHP.Increase(-5.f);
+                }
+            }
         }
     }
 
@@ -439,11 +475,10 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
                 m_State_Act.Set_State(EState_Act::DamagedHeavy);
                 DeleteLaser();
                 DeleteBlade();
+                ThrowUnit();
                 GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
                 m_fHP.Increase(-5.f);
             }
-
-            //Create_Effect();
         }
     }
 
@@ -518,6 +553,10 @@ void CPlayer::Register_State()
     m_State_Act.Add_Func(EState_Act::BladeAttack1, &ThisClass::ActState_BladeAttack1);
     m_State_Act.Add_Func(EState_Act::BladeAttack2, &ThisClass::ActState_BladeAttack2);
     m_State_Act.Add_Func(EState_Act::BladeEnd, &ThisClass::ActState_BladeEnd);
+    m_State_Act.Add_Func(EState_Act::Grab, &ThisClass::ActState_Grab);
+    m_State_Act.Add_Func(EState_Act::Grabbing, &ThisClass::ActState_Grabbing);
+    m_State_Act.Add_Func(EState_Act::Throw, &ThisClass::ActState_Throw);
+    m_State_Act.Add_Func(EState_Act::Squat, &ThisClass::ActState_Squat);
 
     m_State_Act.Set_State(EState_Act::Idle);
 }
@@ -664,7 +703,13 @@ void CPlayer::Input_Move(const _float& fTimeDelta)
         m_ActionKey.Act(EActionKey::MoveLeft);
 
     if (m_bIsOnGround && GI()->IsKey_Pressed(DIK_SPACE))
+    {
         m_ActionKey.Act(EActionKey::Jump);
+        auto pDialog = CUI_Dialog::Create();
+        pDialog->Add_Dialog(L"응애");
+        pDialog->Add_Dialog(L"나 아기 록맨");
+        GI()->Add_GameObject(pDialog);
+    }
 }
 
 void CPlayer::Input_Weapon(const _float& fTimeDelta)
@@ -705,8 +750,17 @@ void CPlayer::Input_Weapon(const _float& fTimeDelta)
     switch (m_eSubWeapon)
     {
     case ESubWeapon::ThrowArm:
-        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
-            m_ActionKey.Act(EActionKey::Throw);
+        if (nullptr == m_pGrabUnit)
+        {
+            if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
+                m_ActionKey.Act(EActionKey::Grab);
+        }
+        else
+        {
+            m_ActionKey.Act(EActionKey::Grab);
+            if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+                m_ActionKey.Act(EActionKey::Throw);
+        }
         break;
     case ESubWeapon::LaserArm:
         if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
@@ -747,13 +801,21 @@ void CPlayer::Input_Weapon(const _float& fTimeDelta)
     default:
         break;
     }
+
+    if (GI()->IsKey_Pressed(DIK_X))
+    {
+        m_ActionKey.Act(EActionKey::Squat);
+    }
 }
 
 void CPlayer::ActState_Idle(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(0, 1.f, true);
+        if (nullptr == m_pGrabUnit)
+            m_pModelComp->Set_Animation(0, 1.f, true);
+        else
+            m_pModelComp->Set_Animation(27, 0.f, false, true);
     }
 
     if (m_State_Act.Can_Update())
@@ -765,22 +827,33 @@ void CPlayer::ActState_Idle(const _float& fTimeDelta)
             m_State_Act.Set_State(EState_Act::Ready_Jump);
         if (m_bIsMoving)
             m_State_Act.Set_State(EState_Act::Run);
-        if (m_ActionKey.IsAct(EActionKey::Buster))
-            m_State_Act.Set_State(EState_Act::Buster);
-        if (m_ActionKey.IsAct(EActionKey::Laser))
-            m_State_Act.Set_State(EState_Act::ReadyLaser);
-        if (m_ActionKey.IsAct(EActionKey::Homing))
-            m_State_Act.Set_State(EState_Act::Homing);
-        if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
-            m_State_Act.Set_State(EState_Act::SpreadBuster);
-        if (m_ActionKey.IsAct(EActionKey::Blade))
-            m_State_Act.Set_State(EState_Act::BladeAttack1);
-        if (m_ActionKey.IsAct(EActionKey::BusterCannon))
-            m_State_Act.Set_State(EState_Act::ReadyBusterCannon);
-        if (m_ActionKey.IsAct(EActionKey::HyperShell))
-            m_State_Act.Set_State(EState_Act::ReadyHyperShell);
-        if (m_ActionKey.IsAct(EActionKey::Machinegun))
-            m_State_Act.Set_State(EState_Act::ReadyMachinegun);
+
+        if (m_pGrabUnit == nullptr)
+        {
+            if (m_ActionKey.IsAct(EActionKey::Buster))
+                m_State_Act.Set_State(EState_Act::Buster);
+            if (m_ActionKey.IsAct(EActionKey::Laser))
+                m_State_Act.Set_State(EState_Act::ReadyLaser);
+            if (m_ActionKey.IsAct(EActionKey::Homing))
+                m_State_Act.Set_State(EState_Act::Homing);
+            if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
+                m_State_Act.Set_State(EState_Act::SpreadBuster);
+            if (m_ActionKey.IsAct(EActionKey::Blade))
+                m_State_Act.Set_State(EState_Act::BladeAttack1);
+            if (m_ActionKey.IsAct(EActionKey::BusterCannon))
+                m_State_Act.Set_State(EState_Act::ReadyBusterCannon);
+            if (m_ActionKey.IsAct(EActionKey::HyperShell))
+                m_State_Act.Set_State(EState_Act::ReadyHyperShell);
+            if (m_ActionKey.IsAct(EActionKey::Machinegun))
+                m_State_Act.Set_State(EState_Act::ReadyMachinegun);
+        }
+        else
+        {
+            if (m_ActionKey.IsAct(EActionKey::Throw))
+                m_State_Act.Set_State(EState_Act::Throw);
+            if (m_ActionKey.IsAct(EActionKey::Squat))
+                m_State_Act.Set_State(EState_Act::Squat);
+        }
     }
 
     if (m_State_Act.IsState_Exit())
@@ -796,16 +869,28 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
         switch (m_eMoveDir)
         {
         case MOVE_FORWARD:
-            m_pModelComp->Set_Animation(2, 1.0f, true);
+            if (nullptr == m_pGrabUnit)
+                m_pModelComp->Set_Animation(2, 1.0f, true);
+            else
+                m_pModelComp->Set_Animation(31, 1.0f, true);
             break;
         case MOVE_RIGHT:
-            m_pModelComp->Set_Animation(8, 1.0f, true);
+            if (nullptr == m_pGrabUnit)
+                m_pModelComp->Set_Animation(8, 1.0f, true);
+            else
+                m_pModelComp->Set_Animation(33, 1.0f, true);
             break;
         case MOVE_LEFT:
-            m_pModelComp->Set_Animation(9, 1.0f, true);
+            if (nullptr == m_pGrabUnit)
+                m_pModelComp->Set_Animation(9, 1.0f, true);
+            else
+                m_pModelComp->Set_Animation(34, 1.0f, true);
             break;
         case MOVE_BACK:
-            m_pModelComp->Set_Animation(10, 1.0f, true);
+            if (nullptr == m_pGrabUnit)
+                m_pModelComp->Set_Animation(10, 1.0f, true);
+            else
+                m_pModelComp->Set_Animation(32, 1.0f, true);
             break;
         }
     }
@@ -820,16 +905,28 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
             switch (m_eMoveDir)
             {
             case MOVE_FORWARD:
-                m_pModelComp->Set_AnimationMaintain(2, 1.0f, true);
+                if (nullptr == m_pGrabUnit)
+                    m_pModelComp->Set_AnimationMaintain(2, 1.0f, true);
+                else
+                    m_pModelComp->Set_AnimationMaintain(31, 1.0f, true);
                 break;
             case MOVE_RIGHT:
-                m_pModelComp->Set_AnimationMaintain(8, 1.0f, true);
+                if (nullptr == m_pGrabUnit)
+                    m_pModelComp->Set_AnimationMaintain(8, 1.0f, true);
+                else
+                    m_pModelComp->Set_AnimationMaintain(33, 1.0f, true);
                 break;
             case MOVE_LEFT:
-                m_pModelComp->Set_AnimationMaintain(9, 1.0f, true);
+                if (nullptr == m_pGrabUnit)
+                    m_pModelComp->Set_AnimationMaintain(9, 1.0f, true);
+                else
+                    m_pModelComp->Set_AnimationMaintain(34, 1.0f, true);
                 break;
             case MOVE_BACK:
-                m_pModelComp->Set_AnimationMaintain(10, 1.0f, true);
+                if (nullptr == m_pGrabUnit)
+                    m_pModelComp->Set_AnimationMaintain(10, 1.0f, true);
+                else
+                    m_pModelComp->Set_AnimationMaintain(32, 1.0f, true);
                 break;
             }
         }
@@ -844,22 +941,30 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
             m_State_Act.Set_State(EState_Act::Ready_Jump);
         if (!m_bIsMoving)
             m_State_Act.Set_State(EState_Act::Idle);
-        if (m_ActionKey.IsAct(EActionKey::Buster))
-            m_State_Act.Set_State(EState_Act::Buster);
-        if (m_ActionKey.IsAct(EActionKey::Laser))
-            m_State_Act.Set_State(EState_Act::ReadyLaser);
-        if (m_ActionKey.IsAct(EActionKey::Homing))
-            m_State_Act.Set_State(EState_Act::Homing);
-        if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
-            m_State_Act.Set_State(EState_Act::SpreadBuster);
-        if (m_ActionKey.IsAct(EActionKey::Blade))
-            m_State_Act.Set_State(EState_Act::BladeAttack1);
-        if (m_ActionKey.IsAct(EActionKey::BusterCannon))
-            m_State_Act.Set_State(EState_Act::ReadyBusterCannon);
-        if (m_ActionKey.IsAct(EActionKey::HyperShell))
-            m_State_Act.Set_State(EState_Act::ReadyHyperShell);
-        if (m_ActionKey.IsAct(EActionKey::Machinegun))
-            m_State_Act.Set_State(EState_Act::ReadyMachinegun);
+        if (m_pGrabUnit == nullptr)
+        {
+            if (m_ActionKey.IsAct(EActionKey::Buster))
+                m_State_Act.Set_State(EState_Act::Buster);
+            if (m_ActionKey.IsAct(EActionKey::Laser))
+                m_State_Act.Set_State(EState_Act::ReadyLaser);
+            if (m_ActionKey.IsAct(EActionKey::Homing))
+                m_State_Act.Set_State(EState_Act::Homing);
+            if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
+                m_State_Act.Set_State(EState_Act::SpreadBuster);
+            if (m_ActionKey.IsAct(EActionKey::Blade))
+                m_State_Act.Set_State(EState_Act::BladeAttack1);
+            if (m_ActionKey.IsAct(EActionKey::BusterCannon))
+                m_State_Act.Set_State(EState_Act::ReadyBusterCannon);
+            if (m_ActionKey.IsAct(EActionKey::HyperShell))
+                m_State_Act.Set_State(EState_Act::ReadyHyperShell);
+            if (m_ActionKey.IsAct(EActionKey::Machinegun))
+                m_State_Act.Set_State(EState_Act::ReadyMachinegun);
+        }
+        else
+        {
+            if (m_ActionKey.IsAct(EActionKey::Throw))
+                m_State_Act.Set_State(EState_Act::Throw);
+        }
     }
 
     if (m_State_Act.IsState_Exit())
@@ -1496,13 +1601,18 @@ void CPlayer::ActState_BladeAttack2(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(21, 1.3f, false, false, 0.2f);
-        m_ActionKey.Act(EActionKey::Jump);
+        m_fGauge.Readjust(0.2f);
+        
     }
 
     if (m_State_Act.Can_Update())
     {
         Look_Update(fTimeDelta);
         AttachBlade();
+        m_fGauge.Increase(fTimeDelta);
+        if (m_fGauge.IsMax_Once())
+            m_ActionKey.Act(EActionKey::Jump);
+
         m_ActionKey.Act(EActionKey::MoveForward);
         m_ActionKey.Act(EActionKey::JumpLow);
 
@@ -1531,6 +1641,142 @@ void CPlayer::ActState_BladeEnd(const _float& fTimeDelta)
     {
         Look_Update(fTimeDelta);
         m_State_Act.Set_State(EState_Act::Idle);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Grab(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(26, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+            m_State_Act.Set_State(EState_Act::Grabbing);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Grabbing(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(27, 1.f, false, false, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+            m_State_Act.Set_State(EState_Act::Idle);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Throw(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(28, 1.f, false, false, 0.2f);
+        
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+        if (m_pModelComp->AnimationComp()->IsAnimation_UpTo(13.f))
+            ThrowUnit();
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+            m_State_Act.Set_State(EState_Act::Idle);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Squat(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(36, 1.f, false, false, 0.2f);
+
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Range(9.5f, 10.5f))
+        {
+            if (m_pGrabUnit)
+            {
+                // 핑거리 일 때만 이벤트가 발생한다.
+                auto pFingerii = DynCast<CReaverBot_Fingerii*>(m_pGrabUnit);
+                if (pFingerii)
+                {
+                    pFingerii->SquatBonus();
+                }
+            }
+        }
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+            m_State_Act.Set_State(EState_Act::Idle);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ItemGetting(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(0, 1.f, false, true, 0.2f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ItemGet(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(30, 1.f, false, false, 0.2f);
+
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+
     }
 
     if (m_State_Act.IsState_Exit())
@@ -1730,11 +1976,42 @@ void CPlayer::DeleteBlade()
     }
 }
 
+void CPlayer::GrabingUnit()
+{
+    if (m_pGrabUnit)
+    {
+        _matrix RightHandMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
+        _matrix LeftHandMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(110);
+
+        _vector vPos = (RightHandMatrix.r[3] + LeftHandMatrix.r[3]) * 0.5f;
+        m_pGrabUnit->Transform().Set_Position(vPos);
+        m_pGrabUnit->Transform().Look_At(vPos + Transform().Get_LookNormalizedVector());
+    }
+}
+
+void CPlayer::ThrowUnit()
+{
+    if (m_pGrabUnit)
+    {
+        _vector vLook = Transform().Get_LookNormalizedVector() * 5.f;
+        _float3 vfVelocity = {};
+        XMStoreFloat3(&vfVelocity, vLook);
+        vfVelocity.y = 3.f;
+        m_pGrabUnit->Set_Velocity(vfVelocity);
+        m_pGrabUnit->Set_Grabbed(false);
+        m_pGrabUnit->Set_Throwing(true);
+
+        Safe_ReleaseAndUnlink(m_pGrabUnit);
+
+        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_throw.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+    }
+}
+
 void CPlayer::Lockon_Active(const _float& fTimeDelta)
 {
     if (m_pLockon_Target)
     {
-        if (m_pLockon_Target->IsDead() || GI()->IsKey_Pressed(DIK_R))
+        if (m_pLockon_Target == m_pGrabUnit || m_pLockon_Target->IsDead() || GI()->IsKey_Pressed(DIK_R))
         {
             Lockon_Untarget();
             return;
@@ -1754,7 +2031,7 @@ void CPlayer::Lockon_Target()
     if (nullptr != m_pLockon_Target)
         return;
 
-    m_pLockon_Target = Find_Target();
+    m_pLockon_Target = Find_Target(20.f);
     if (nullptr == m_pLockon_Target)
         return;
 
@@ -1778,22 +2055,23 @@ void CPlayer::Lockon_Target()
 
 void CPlayer::Lockon_Untarget()
 {
-    Safe_Release(m_pLockon_Target);
-    m_pLockon_Target = nullptr;
+    Safe_ReleaseAndUnlink(m_pLockon_Target);
 
     m_pLockon_UI->Clear_Target();
-    Safe_Release(m_pLockon_UI);
-    m_pLockon_UI = nullptr;
+    Safe_ReleaseAndUnlink(m_pLockon_UI);
 }
 
-CCharacter_Common* CPlayer::Find_Target()
+CCharacter_Common* CPlayer::Find_Target(_float fRange)
 {
-    auto listObjects = GI()->IntersectTests_Sphere_GetGameObject(0, Transform().Get_PositionFloat3(), 10.f, COLLAYER_CHARACTER);
+    auto listObjects = GI()->IntersectTests_Sphere_GetGameObject(0, Transform().Get_PositionFloat3(), fRange, COLLAYER_CHARACTER);
     _float fDistance = FLT_MAX;
     CGameObject* pClosestObj = { nullptr };
     for (auto iter = listObjects.begin(); iter != listObjects.end(); iter++)
     {
         auto pObj = iter->first;
+        if (pObj == m_pGrabUnit)
+            continue;
+
         auto& ContactData = iter->second;
         _float fObjDistance = XMVectorGetX(XMVector3Length((Transform().Get_PositionVector() - pObj->Transform().Get_PositionVector())));
         if (fObjDistance <= fDistance

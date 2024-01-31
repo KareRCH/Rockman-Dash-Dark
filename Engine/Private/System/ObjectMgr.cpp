@@ -15,6 +15,9 @@ HRESULT CObjectMgr::Initialize(_uint iNumLevels)
 
 void CObjectMgr::Priority_Tick(const _float& fTimeDelta)
 {
+	m_EventBeginPlay.Broadcast();
+	m_EventBeginPlay.Clear();
+
 	RegistToTick_GameObjects();
 
 	for (auto pObj : m_listTickObjects)
@@ -220,12 +223,17 @@ HRESULT CObjectMgr::Add_GameObject(CGameObject* pObj)
 	{
 		m_setObjectNames.emplace(strName);
 	}
+	pObj->OnCreated();
+	m_EventBeginPlay.Add(MakeDelegate(pObj, &CGameObject::BeginPlay));
 
 	return S_OK;
 }
 
 HRESULT CObjectMgr::Add_GameObject(const wstring& strLevelTag, CGameObject* pObj)
 {
+	if (nullptr == pObj)
+		return E_FAIL;
+
 	m_vecGameObjects.push_back(pObj);
 	pObj->m_iID = m_iGiveObjectID++;
 
@@ -283,6 +291,8 @@ HRESULT CObjectMgr::Add_GameObject(const wstring& strLevelTag, CGameObject* pObj
 	{
 		m_setObjectNames.emplace(strName);
 	}
+	pObj->OnCreated();
+	m_EventBeginPlay.Add(MakeDelegate(pObj, &CGameObject::BeginPlay));
 
 	return S_OK;
 }
@@ -430,6 +440,7 @@ void CObjectMgr::RegistToTick_GameObjects()
 			if (iter != m_setObjectNames.end())
 				m_setObjectNames.erase(iter);
 
+			pObj->EndPlay();
 			_uint iRefCount = Safe_Release(pObj);
 			m_vecGameObjects[i] = nullptr;
 			bChanged = true;

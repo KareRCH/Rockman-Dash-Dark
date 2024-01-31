@@ -102,6 +102,8 @@ HRESULT CRenderTarget::Render_Debug(CEffectComponent* pEffect, CVIBufferComp* pV
 
 	return pVIBuffer->Render_Buffer();
 }
+#endif // _DEBUG
+
 HRESULT CRenderTarget::Resize_RenderTarget(_uint iResizeWidth, _uint iResizeHeight)
 {
 	D3D11_TEXTURE2D_DESC Desc = {};
@@ -138,5 +140,5 @@ HRESULT CRenderTarget::Resize_RenderTarget(_uint iResizeWidth, _uint iResizeHeig
 
 	return S_OK;
 }
-#endif // _DEBUG
+
 

@@ -80,6 +80,7 @@ HRESULT CAnimationComponent::Bind_BoneGroup(CBoneGroup* pBoneGroup)
 		Safe_Release(m_pBoneGroup);
 
 	m_pBoneGroup = pBoneGroup;
+	Safe_AddRef(m_pBoneGroup);
 
 	return S_OK;
 }
@@ -262,6 +263,16 @@ void CAnimationComponent::Apply_FinalMask()
 _bool CAnimationComponent::IsAnimation_Finished()
 {
 	return (m_CurAnim.bIsReverse) ? (m_CurAnim.fTrackPos <= 0) : (m_CurAnim.fTrackPos >= m_CurAnim.fDuration);
+}
+
+_bool CAnimationComponent::IsAnimation_UpTo(_float fTrackPos)
+{
+	return (m_CurAnim.bIsReverse) ? (m_CurAnim.fTrackPos <= fTrackPos) : (m_CurAnim.fTrackPos >= fTrackPos);
+}
+
+_bool CAnimationComponent::IsAnimation_Range(_float fTrackMin, _float fTrackMax)
+{
+	return (m_CurAnim.fTrackPos >= fTrackMin) && (m_CurAnim.fTrackPos <= fTrackMax);
 }
 
 void CAnimationComponent::Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse, _float fTransitionSpeed)

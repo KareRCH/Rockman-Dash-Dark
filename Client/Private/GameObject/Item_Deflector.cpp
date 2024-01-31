@@ -32,7 +32,6 @@ HRESULT CItem_Deflector::Initialize_Prototype()
 
     FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
     m_pColliderComp->Bind_Collision(ECollisionType::Sphere);
-    m_pColliderComp->EnterToPhysics(0);
     m_pColliderComp->Set_CollisionLayer(COLLAYER_ITEM);
     m_pColliderComp->Set_CollisionMask(COLLAYER_WALL | COLLAYER_FLOOR | COLLAYER_OBJECT);
 
@@ -74,7 +73,6 @@ HRESULT CItem_Deflector::Initialize_Prototype(FSerialData& InputData)
             m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-            m_pColliderComp->EnterToPhysics(0);
             break;
         }
     }
@@ -134,6 +132,14 @@ HRESULT CItem_Deflector::Render()
 #endif
 
     return S_OK;
+}
+
+void CItem_Deflector::BeginPlay()
+{
+    SUPER::BeginPlay();
+
+    if (m_pColliderComp)
+        m_pColliderComp->EnterToPhysics(0);
 }
 
 CItem_Deflector* CItem_Deflector::Create()
@@ -234,7 +240,6 @@ HRESULT CItem_Deflector::Initialize_Component(FSerialData& InputData)
             m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-            m_pColliderComp->EnterToPhysics(0);
             break;
         }
     }

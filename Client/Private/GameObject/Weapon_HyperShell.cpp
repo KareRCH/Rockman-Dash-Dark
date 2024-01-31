@@ -231,7 +231,6 @@ void CWeapon_HyperShell::Create_Effect()
 		if (nullptr == pEffect)
 			return;
 
-
 		uniform_real_distribution<_float> RandomTime(0.f, 0.25f);
 		uniform_real_distribution<_float> RandomPosX(-3.f, 3.f);
 		uniform_real_distribution<_float> RandomPosY(-2.f, 2.f);

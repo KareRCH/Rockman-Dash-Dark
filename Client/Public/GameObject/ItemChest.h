@@ -3,15 +3,19 @@
 #include "Client_Define.h"
 #include "GameObject/Character_Common.h"
 #include "GameObject/GameObjectFactory.h"
+#include "Utility/DelegateTemplate.h"
 
 BEGIN(Engine)
-
 class CCommonModelComp;
-
 END
+
+
 
 BEGIN(Client)
 
+/// <summary>
+/// 아이템을 주는 상자
+/// </summary>
 class CItemChest : public CCharacter_Common
 {
 	DERIVED_CLASS(CCharacter_Common, CItemChest)
@@ -33,6 +37,9 @@ public:
 	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;
 	virtual HRESULT	Render() override;
+
+public:
+	virtual void BeginPlay() override;
 
 public:
 	static	CItemChest* Create();

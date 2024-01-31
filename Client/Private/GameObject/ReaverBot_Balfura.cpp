@@ -38,7 +38,6 @@ HRESULT CReaverBot_Balfura::Initialize_Prototype()
 
     FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
     m_pColliderComp->Bind_Collision(ECollisionType::Sphere);
-    m_pColliderComp->EnterToPhysics(0);
     m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
     m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
         | COLLAYER_ATTACKER | COLLAYER_OBJECT);
@@ -169,6 +168,14 @@ HRESULT CReaverBot_Balfura::Render()
     return S_OK;
 }
 
+void CReaverBot_Balfura::BeginPlay()
+{
+    SUPER::BeginPlay();
+
+    if (m_pColliderComp)
+        m_pColliderComp->EnterToPhysics(0);
+}
+
 FSerialData CReaverBot_Balfura::SerializeData_Prototype()
 {
     FSerialData Data = SUPER::SerializeData_Prototype();
@@ -288,7 +295,6 @@ HRESULT CReaverBot_Balfura::Initialize_Component(FSerialData& InputData)
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
             m_pColliderComp->Set_CollisionKinematic();
-            m_pColliderComp->EnterToPhysics(0);
             break;
         }
     }

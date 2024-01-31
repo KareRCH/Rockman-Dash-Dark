@@ -43,6 +43,9 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void BeginPlay() override;
+
+public:
 	static CReaverBot_Horokko* Create();
 	static CReaverBot_Horokko* Create(FSerialData& InputData);
 	virtual CGameObject* Clone(void* Arg = nullptr);
@@ -78,11 +81,13 @@ public:
 
 private:
 	_float m_fMoveSpeed = { 5.f };
+	_bool m_bIsMoving = { false };
 
 	FGauge m_fHitTime = FGauge(0.1f);
 	_float m_fHitStrength = { 0.3f };
 
 public:
+	void Explosion_Effect(_float3 vPos);
 	void Dead_Effect();
 
 

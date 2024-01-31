@@ -50,6 +50,9 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void BeginPlay() override;
+
+public:
 	static CPlayer* Create();
 	static CPlayer* Create(FSerialData& InputData);
 	virtual CGameObject* Clone(void* Arg = nullptr);
@@ -94,15 +97,12 @@ private:
 private:
 	_bool		m_bIsMoving = false;
 
-	_float3		m_vMaxMoveSpeed = {};					// 최대 움직임 속도
-	_float3		m_vMoveSpeed = {};						// 움직임 속도
-	_float3		m_vVelocity = {};						// 속도
-	_float3		m_vAcceleration = {};					// 가속도
+	
 	_float3		m_vLookDirection = { 0.f, 0.f, 1.f};		// 캐릭터가 바라보는 방향
 	_float3		m_vLookDirection_Blend = { 0.f, 0.f, 1.f};	// 캐릭터가 바라보는 방향 블렌딩용
 	_float		m_fDirectionAngle = 0.f;				// 캐릭터가 바라보는 방향각도
 
-	FGauge		m_fFootSound = FGauge(0.35f);
+	FGauge		m_fFootSound = FGauge(0.26f);
 	FGauge		m_fDamageKnockback = FGauge(0.5f);		// 넉백 시간
 	FGauge		m_fStrongKnockback = FGauge(1.f);		// 강하게 넉백
 
@@ -117,12 +117,15 @@ private:
 	enum MOVE_DIR { MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK };
 	MOVE_DIR	m_ePrevMoveDir = { MOVE_FORWARD };
 	MOVE_DIR	m_eMoveDir = { MOVE_FORWARD };
+	_bool		m_bIsCanMove = { true };
 
 public:
 	enum class EActionKey : _uint { MoveForward, MoveBackward, MoveRight, MoveLeft, Jump, Lockon,
 		MoveSlow, MoveFast, JumpLow, LowFrict,
-		Buster, ChargeBuster, Throw, 
-		Laser, Homing, Blade, BusterCannon, Drill, HyperShell, Machinegun, Shield, SpreadBuster, Size };
+		Buster, ChargeBuster, 
+		Laser, Homing, Blade, BusterCannon, Drill, HyperShell, Machinegun, Shield, SpreadBuster, 
+		Grab, Throw, Squat, Size 
+	};
 
 private:
 	ACTION_SET<EActionKey>	m_ActionKey;
@@ -134,7 +137,9 @@ public:
 		ReadyBusterCannon, ShootBusterCannon, EndBusterCannon,
 		ReadyHyperShell, ShootHyperShell, EndHyperShell,
 		ReadyMachinegun, ShootingMachinegun, EndMachinegun,
-		BladeAttack1, BladeAttack2, BladeEnd
+		BladeAttack1, BladeAttack2, BladeEnd,
+		Grab, Grabbing, Throw, Squat,
+		ItemGetting, ItemGet,
 	};
 
 private:		// 약식 상태머신
@@ -180,6 +185,13 @@ private:
 	void ActState_BladeAttack2(const _float& fTimeDelta);
 	void ActState_BladeEnd(const _float& fTimeDelta);
 
+	void ActState_Grab(const _float& fTimeDelta);
+	void ActState_Grabbing(const _float& fTimeDelta);
+	void ActState_Throw(const _float& fTimeDelta);
+	void ActState_Squat(const _float& fTimeDelta);
+	void ActState_ItemGetting(const _float& fTimeDelta);
+	void ActState_ItemGet(const _float& fTimeDelta);
+
 private:
 	void ShootBuster();
 	void ShootMissile();
@@ -193,17 +205,17 @@ private:
 	void CreateBlade();
 	void AttachBlade();
 	void DeleteBlade();
+	void GrabingUnit();
+	void ThrowUnit();
 	void Lockon_Active(const _float& fTimeDelta);
 	void Lockon_Target();
 	void Lockon_Untarget();
-
-	
 
 public:
 	void Set_Target(class CCharacter_Common* pTarget) { m_pLockon_Target = pTarget; Safe_AddRef(m_pLockon_Target); }
 
 private:
-	CCharacter_Common* Find_Target();
+	CCharacter_Common* Find_Target(_float fRange);
 
 private:
 	class CCharacter_Common* m_pLockon_Target = { nullptr };
@@ -222,6 +234,7 @@ private:
 private:
 	class CWeapon_LaserEmission*		m_pLaserEmission = { nullptr };
 	class CWeapon_Blade*				m_pBlade = { nullptr };
+	CCharacter_Common*					m_pGrabUnit = { nullptr };
 
 };
 

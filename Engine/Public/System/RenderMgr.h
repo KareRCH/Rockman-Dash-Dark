@@ -74,7 +74,7 @@ public:
 	void Toggle_Deferred() { m_bIsDeferred = !m_bIsDeferred; }
 
 public:
-	enum class EEffect : _uint { Deferred, Fog, Size };
+	enum class EEffect : _uint { Deferred, PostProcess, Size };
 
 private:
 	_bool					m_bIsDeferred = { false };

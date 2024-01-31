@@ -33,7 +33,6 @@ HRESULT CItemChest::Initialize_Prototype()
 	m_pColliderComp->Transform().Set_Position(0.f, 1.f, 0.f);
 	m_pColliderComp->Transform().Set_Scale(1.0f, 1.f, 1.0f);
 	m_pColliderComp->Bind_Collision(ECollisionType::OBB);
-	m_pColliderComp->EnterToPhysics(0);
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_OBJECT);
 
 	TeamAgentComp().Set_TeamID(ETEAM_NUTRAL);
@@ -76,7 +75,6 @@ HRESULT CItemChest::Initialize_Prototype(FSerialData& InputData)
 			m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
 			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
 			m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-			//m_pColliderComp->EnterToPhysics(0);
 			break;
 		}
 	}
@@ -141,6 +139,14 @@ HRESULT CItemChest::Render()
 	return S_OK;
 }
 
+void CItemChest::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	if (m_pColliderComp)
+		m_pColliderComp->EnterToPhysics(0);
+}
+
 CItemChest* CItemChest::Create()
 {
 	ThisClass* pInstance = new ThisClass();
@@ -200,8 +206,6 @@ void CItemChest::Free()
 
 HRESULT CItemChest::Initialize_Component()
 {
-	
-
 	return S_OK;
 }
 
@@ -239,7 +243,6 @@ HRESULT CItemChest::Initialize_Component(FSerialData& InputData)
 			m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
 			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
 			m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-			m_pColliderComp->EnterToPhysics(0);
 			break;
 		}
 	}
@@ -296,6 +299,20 @@ void CItemChest::ActState_Idle(const _float& fTimeDelta)
 	{
 
 	}
+}
+
+void CItemChest::Open_Chest()
+{
+	if (m_State_Act.IsOnState(EState_Act::Idle))
+	{
+		m_State_Act.Set_State(EState_Act::Open);
+		// 대충 아이템 주는 이벤트 발생
+	}
+}
+
+void CItemChest::Close_Chest()
+{
+	m_State_Act.Set_State(EState_Act::Close);
 }
 
 void CItemChest::ActState_Open(const _float& fTimeDelta)

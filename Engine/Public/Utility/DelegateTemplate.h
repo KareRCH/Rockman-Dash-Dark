@@ -53,7 +53,6 @@ public:
 	void Add(const Delegate& Listener)
 	{
 		m_Delegates.push_back(Listener);
-		++m_iNumDelegates;
 	}
 	void Remove(const Delegate& Listener)
 	{
@@ -64,25 +63,22 @@ public:
 		if (iter != m_Delegates.end())
 		{
 			m_Delegates.erase(iter);
-			--m_iNumDelegates;
 		}
 	}
 	void Broadcast(Args... args)
 	{
-		for (size_t i = 0; i < m_iNumDelegates; i++)
+		for (auto iter = m_Delegates.begin(); iter != m_Delegates.end(); ++iter)
 		{
-			if (!m_Delegates[i].empty())
-				m_Delegates[i](args...);
+			if (!(*iter).empty())
+				(*iter)(args...);
 		}
 	}
 
 	void Clear()
 	{
-		m_iNumDelegates = 0;
 		m_Delegates.clear();
 	}
 
 private:
-	size_t				m_iNumDelegates = { 0 };
-	vector<Delegate>	m_Delegates;
+	list<Delegate>		m_Delegates;
 };

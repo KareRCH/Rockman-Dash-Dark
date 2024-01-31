@@ -79,8 +79,8 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 		return E_FAIL;
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Effect(TEXT("Runtime/FX_Deferred.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements)))
 		return E_FAIL;
-	m_pEffect[ECast(EEffect::Fog)] = CEffectComponent::Create();
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Effect(TEXT("Runtime/FX_Fog.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements)))
+	m_pEffect[ECast(EEffect::PostProcess)] = CEffectComponent::Create();
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_Effect(TEXT("Runtime/FX_Fog.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements)))
 		return E_FAIL;
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(m_vecViewport[0].Width, m_vecViewport[0].Height, 1.f));
@@ -361,41 +361,41 @@ HRESULT CRenderMgr::Render_Fog()
 	if (!m_bIsPostProcess || !m_bIsFogShader)
 		return S_OK;
 
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_fStart", &m_fFogStart, sizeof(_float))))
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_RawValue("g_fStart", &m_fFogStart, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_fRange", &m_fFogRange, sizeof(_float))))
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_RawValue("g_fRange", &m_fFogRange, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_fDensity", &m_fFogDensity, sizeof(_float))))
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_RawValue("g_fDensity", &m_fFogDensity, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_vColor", &m_vFogColor, sizeof(_float4))))
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_RawValue("g_vColor", &m_vFogColor, sizeof(_float4))))
 		return E_FAIL;
 
 	_float4x4 matTemp = {};
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ViewMatrixInv",
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_Matrix("g_ViewMatrixInv",
 		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
 		return E_FAIL;
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_Matrix("g_ProjMatrixInv",
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_Matrix("g_ProjMatrixInv",
 		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::Proj, ECamNum::One)))))
 		return E_FAIL;
 
 	_float4 vCamPos = {};
-	if (FAILED(m_pEffect[ECast(EEffect::Fog)]->Bind_RawValue("g_vCamPosition",
+	if (FAILED(m_pEffect[ECast(EEffect::PostProcess)]->Bind_RawValue("g_vCamPosition",
 		&(vCamPos = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::Fog)], "g_DepthTexture")))
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::PostProcess)], "g_DepthTexture")))
 		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Final"), m_pEffect[ECast(EEffect::Fog)], "g_FinalTexture")))
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Final"), m_pEffect[ECast(EEffect::PostProcess)], "g_FinalTexture")))
 		return E_FAIL;
 
-	m_pEffect[ECast(EEffect::Fog)]->Begin(ECast(m_eFogType));
+	m_pEffect[ECast(EEffect::PostProcess)]->Begin(ECast(m_eFogType));
 
 	m_pVIBuffer->Bind_Buffer();
 
@@ -407,6 +407,7 @@ HRESULT CRenderMgr::Render_Fog()
 	return S_OK;
 }
 
+#ifdef _DEBUG
 HRESULT CRenderMgr::Render_Debug()
 {
 	m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
@@ -426,6 +427,7 @@ HRESULT CRenderMgr::Render_Debug()
 
 	return S_OK;
 }
+#endif
 
 void CRenderMgr::Set_ViewportSize(_uint iResizeWidth, _uint iResizeHeight)
 {

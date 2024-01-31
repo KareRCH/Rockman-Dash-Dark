@@ -14,6 +14,7 @@
 #include "Utility/ClassID.h"
 
 
+
 CReaverBot_Fingerii::CReaverBot_Fingerii()
 {
 	Set_Name(TEXT("ReaverBot_Fingerii"));
@@ -45,7 +46,6 @@ HRESULT CReaverBot_Fingerii::Initialize_Prototype()
 	m_pColliderComp->Transform().Set_Position(0.f, 2.f, 0.f);
 	m_pColliderComp->Transform().Set_Scale(1.2f, 4.f, 1.2f);
 	m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
-	m_pColliderComp->EnterToPhysics(0);
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
 		| COLLAYER_ATTACKER | COLLAYER_OBJECT);
@@ -93,7 +93,6 @@ HRESULT CReaverBot_Fingerii::Initialize_Prototype(FSerialData& InputData)
 			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
 			m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
 			m_pColliderComp->Set_CollisionKinematic();
-			//m_pColliderComp->EnterToPhysics(0);
 			break;
 		}
 	}
@@ -131,18 +130,25 @@ void CReaverBot_Fingerii::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
 
+	m_ActionKey.Reset();
 	Input_ActionKey();
 	if (!m_State_Act.IsOnState(EState_Act::Dead) && m_fHP.Get_Percent() <= 0.f)
 		m_State_Act.Set_State(EState_Act::Dead);
+
+	if (m_bIsGrabbed && !m_State_Act.IsOnState(EState_Act::Squat))
+		m_State_Act.Set_State(EState_Act::Squat);
 
 	if (!m_fHitTime.Increase(fTimeDelta))
 		m_fHitStrength = 0.3f;
 	else
 		m_fHitStrength = 0.f;
 
-	m_State_AI.Get_StateFunc()(this, fTimeDelta);
+	if (!m_bIsGrabbed)
+		m_State_AI.Get_StateFunc()(this, fTimeDelta);
 	m_State_Act.Get_StateFunc()(this, fTimeDelta);
-	m_ActionKey.Reset();
+	
+	Move_Update(fTimeDelta);
+	m_bIsSquatBonus = false;
 
 	m_pColliderComp->Tick(fTimeDelta);
 }
@@ -175,6 +181,19 @@ HRESULT CReaverBot_Fingerii::Render()
 #endif
 
 	return S_OK;
+}
+
+void CReaverBot_Fingerii::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, 10.f, 6.f };
+	m_vAcceleration = { 100.f, g_fGravity, 100.f };
+
+	m_bIsCanGrab = true;
+
+	if (m_pColliderComp)
+		m_pColliderComp->EnterToPhysics(0);
 }
 
 CReaverBot_Fingerii* CReaverBot_Fingerii::Create()
@@ -296,7 +315,6 @@ HRESULT CReaverBot_Fingerii::Initialize_Component(FSerialData& InputData)
 			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
 			m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
 			m_pColliderComp->Set_CollisionKinematic();
-			m_pColliderComp->EnterToPhysics(0);
 			break;
 		}
 	}
@@ -308,7 +326,31 @@ HRESULT CReaverBot_Fingerii::Initialize_Component(FSerialData& InputData)
 
 void CReaverBot_Fingerii::OnCollision(CGameObject* pDst, const FContact* pContact)
 {
-	SUPER::OnCollision(pDst, pContact);
+	if (!m_bIsGrabbed)
+		SUPER::OnCollision(pDst, pContact);
+
+	CCharacter_Common* pEnemy = DynCast<CCharacter_Common*>(pDst);
+	if (pEnemy)
+	{
+		// 던져질 때 친구면 대미지를 줌
+		if (CTeamAgentComp::ERelation::Nuetral ==
+			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
+		{
+			if (m_bIsThrowing)
+			{
+				pEnemy->Damage_HP(5.f);
+				Damage_HP(5.f);
+
+				_vector vNormal = -XMLoadFloat3(&pContact->vContactNormal) * 5.f;
+				XMStoreFloat3(&m_vVelocity, vNormal);
+				m_vVelocity.y = 5.f;
+
+				m_bIsThrowing = false;
+				m_fHitTime.Reset();
+				GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+			}
+		}
+	}
 
 	CDoor_Common* pDoor = DynCast<CDoor_Common*>(pDst);
 	if (pDoor)
@@ -362,19 +404,56 @@ void CReaverBot_Fingerii::Input_ActionKey()
 
 void CReaverBot_Fingerii::Move_Update(const _float& fTimeDelta)
 {
-	if (m_ActionKey.IsAct(EActionKey::MoveForward))
-		Transform().MoveForward(m_fMoveSpeed * fTimeDelta);
-	else if (m_ActionKey.IsAct(EActionKey::MoveBackward))
-		Transform().MoveForward(-m_fMoveSpeed * fTimeDelta);
+	if (m_bIsGrabbed)
+		return;
 
-	if (m_ActionKey.IsAct(EActionKey::TurnRight))
-		Transform().TurnRight(1.f * fTimeDelta);
-	else if (m_ActionKey.IsAct(EActionKey::TurnLeft))
-		Transform().TurnRight(-1.f * fTimeDelta);
+	_float3 vfPos = Transform().Get_PositionFloat3();
+	_vector vPos = Transform().Get_PositionVector();
 
-	if (m_ActionKey.IsAct(EActionKey::LookTarget)
-		&& nullptr != m_pTarget)
-		Transform().Look_At_OnLand(m_pTarget->Transform().Get_PositionVector(), 2.f * fTimeDelta);
+	m_vVelocity.y -= m_vAcceleration.y * fTimeDelta;
+	vfPos.y += m_vVelocity.y * fTimeDelta;
+	if (vfPos.y <= 0.f)
+	{
+		vfPos.y = 0.f;
+		m_bIsOnGround = true;
+		m_bIsThrowing = false;
+	}
+	else
+		m_bIsOnGround = false;
+
+	if (m_bIsOnGround)
+	{
+		m_vVelocity.x *= 0.5f;
+		m_vVelocity.z *= 0.5f;
+		m_bIsOnGround = false;
+	}
+	else
+	{
+		m_vVelocity.x *= 0.998f;
+		m_vVelocity.z *= 0.998f;
+	}
+
+	Transform().Set_Position(vPos + XMLoadFloat3(&m_vVelocity) * fTimeDelta);
+	Transform().Set_PositionY(vfPos.y);
+	/*if (!m_pNaviComp->IsMove(Transform().Get_PositionVector()))
+		Transform().Set_Position(vPos);*/
+
+	if (!(m_fHP.Get_Percent() <= 0.f))
+	{
+		if (m_ActionKey.IsAct(EActionKey::MoveForward))
+			Transform().MoveForward(m_fMoveSpeed * fTimeDelta);
+		else if (m_ActionKey.IsAct(EActionKey::MoveBackward))
+			Transform().MoveForward(-m_fMoveSpeed * fTimeDelta);
+
+		if (m_ActionKey.IsAct(EActionKey::TurnRight))
+			Transform().TurnRight(1.f * fTimeDelta);
+		else if (m_ActionKey.IsAct(EActionKey::TurnLeft))
+			Transform().TurnRight(-1.f * fTimeDelta);
+
+		if (m_ActionKey.IsAct(EActionKey::LookTarget)
+			&& nullptr != m_pTarget)
+			Transform().Look_At_OnLand(m_pTarget->Transform().Get_PositionVector(), 2.f * fTimeDelta);
+	}
 }
 
 void CReaverBot_Fingerii::Dead_Effect()
@@ -404,6 +483,7 @@ void CReaverBot_Fingerii::Register_State()
 	m_State_Act.Add_Func(EState_Act::Barrier, &ThisClass::ActState_Barrier);
 	m_State_Act.Add_Func(EState_Act::Concentration, &ThisClass::ActState_Concentration);
 	m_State_Act.Add_Func(EState_Act::Dead, &ThisClass::ActState_Dead);
+	m_State_Act.Add_Func(EState_Act::Squat, &ThisClass::ActState_Squat);
 	m_State_Act.Set_State(EState_Act::Idle);
 
 	m_State_AI.Add_Func(EState_AI::Idle, &ThisClass::AIState_Idle);
@@ -542,6 +622,34 @@ void CReaverBot_Fingerii::ActState_Dead(const _float& fTimeDelta)
 
 		if (m_fDeadTime.Increase(fTimeDelta))
 			Set_Dead();
+	}
+
+	if (m_State_Act.IsState_Exit())
+	{
+
+	}
+}
+
+void CReaverBot_Fingerii::ActState_Squat(const _float& fTimeDelta)
+{
+	if (m_State_Act.IsState_Entered())
+	{
+		m_pModelComp->Set_Animation(4, 1.f, true);
+		m_State_AI.Set_State(EState_AI::Idle);
+	}
+
+	if (m_State_Act.Can_Update())
+	{
+		if (m_pModelComp->AnimationComp()->IsAnimation_Range(30.f, 31.f))
+		{
+			if (m_bIsSquatBonus)
+				Dead_Effect();
+		}
+
+		if (!m_bIsGrabbed)
+		{
+			m_State_Act.Set_State(EState_Act::Idle);
+		}
 	}
 
 	if (m_State_Act.IsState_Exit())

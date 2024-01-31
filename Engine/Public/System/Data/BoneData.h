@@ -72,7 +72,7 @@ public:
 
 private:
 	_uint							m_iNumBones;	// »À °³¼ö
-	_unmap<wstring, FBoneData*>		mapBones;		// »À ÀÌ¸§ °Ë»ö
+	map<wstring, FBoneData*>		mapBones;		// »À ÀÌ¸§ °Ë»ö
 	vector<FBoneData*>				vecBones;		// »À ÀÎµ¦½º °Ë»ö
 
 };

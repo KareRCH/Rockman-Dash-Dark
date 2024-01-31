@@ -69,8 +69,11 @@ void CGameObjectComp::Free()
 {
     SUPER::Free();
 
-    for (auto& Pair : m_mapPrimComponent)
-        Safe_Release(Pair.second);
+    for (auto iter = m_mapPrimComponent.begin(); iter != m_mapPrimComponent.end(); ++iter)
+    {
+        if (iter != m_mapPrimComponent.end())
+            Safe_Release(iter->second);
+    }
     m_mapPrimComponent.clear();
 
     Safe_Release(m_pDeviceComp);

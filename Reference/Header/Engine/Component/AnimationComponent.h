@@ -92,6 +92,8 @@ private:
 
 public:
 	_bool	IsAnimation_Finished();
+	_bool	IsAnimation_UpTo(_float fTrackPos);
+	_bool	IsAnimation_Range(_float fTrackMin, _float fTrackMax);
 	void Set_Animation(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse = false, _float fTransitionSpeed = 0.1f);
 	void Set_AnimationMaintain(_uint iAnimIndex, _float fSpeedMultiply, _bool bIsLoop, _bool bReverse = false, _float fTransitionSpeed = 0.1f);
 	void Add_AnimTime(const _float& fTimeDelta);

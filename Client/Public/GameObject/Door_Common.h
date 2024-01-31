@@ -36,6 +36,9 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void BeginPlay() override;
+
+public:
 	static CDoor_Common* Create();
 	static CDoor_Common* Create(FSerialData& InputData);
 	virtual CGameObject* Clone(void* Arg = nullptr);

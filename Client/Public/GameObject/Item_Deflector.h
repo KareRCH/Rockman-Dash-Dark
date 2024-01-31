@@ -33,6 +33,9 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void BeginPlay() override;
+
+public:
 	static	CItem_Deflector* Create();
 	static	CItem_Deflector* Create(FSerialData& InputData);
 	virtual CGameObject* Clone(void* Arg = nullptr);

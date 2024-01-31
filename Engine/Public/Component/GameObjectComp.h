@@ -96,7 +96,7 @@ public:
 	CGameObjectComp* Find_PrimComponent(const wstring& strCompKey);					// Primitive 컴포넌트 추가
 
 private:
-	_unmap<wstring, CGameObjectComp*>	m_mapPrimComponent;		// Primitive 컴포넌트를 저장하는 컨테이너, CComponent는 저장이 안됩니다.
+	map<wstring, CGameObjectComp*>	m_mapPrimComponent;		// Primitive 컴포넌트를 저장하는 컨테이너, CComponent는 저장이 안됩니다.
 	// Scene 컴포넌트를 저장시 동시에 저장됩니다.
 #pragma endregion
 

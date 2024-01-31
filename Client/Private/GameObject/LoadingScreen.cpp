@@ -94,8 +94,6 @@ CGameObject* CLoadingScreen::Clone(void* Arg)
 void CLoadingScreen::Free()
 {
     SUPER::Free();
-
-    Safe_Release(m_pPlaneModelComp);
 }
 
 FSerialData CLoadingScreen::SerializeData()

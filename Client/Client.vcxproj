@@ -342,6 +342,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\GameObject\Player.h" />
     <ClInclude Include="Public\GameObject\StaticObject.h" />
     <ClInclude Include="Public\GameObject\TestTextureObject.h" />
+    <ClInclude Include="Public\GameObject\UI_Dialog.h" />
     <ClInclude Include="Public\GameObject\UI_Lockon.h" />
     <ClInclude Include="Public\GameObject\UI_Player.h" />
     <ClInclude Include="Public\GameObject\Weapon_Blade.h" />
@@ -384,6 +385,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\GameObject\Player.cpp" />
     <ClCompile Include="Private\GameObject\StaticObject.cpp" />
     <ClCompile Include="Private\GameObject\TestTextureObject.cpp" />
+    <ClCompile Include="Private\GameObject\UI_Dialog.cpp" />
     <ClCompile Include="Private\GameObject\UI_Lockon.cpp" />
     <ClCompile Include="Private\GameObject\UI_Player.cpp" />
     <ClCompile Include="Private\GameObject\Weapon_Blade.cpp" />
@@ -416,8 +418,9 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\Runtime\FX_ExplosionLine.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
@@ -425,8 +428,9 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\Runtime\FX_ParticlePoint.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
@@ -434,8 +438,9 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\Runtime\FX_ViewShape.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
@@ -443,8 +448,9 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

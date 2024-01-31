@@ -11,9 +11,11 @@ CColliderComponent::CColliderComponent(const CColliderComponent& rhs)
     : Base(rhs)
     , m_iCollisionLayer_Flag(rhs.m_iCollisionLayer_Flag)
     , m_iCollisionMask_Flag(rhs.m_iCollisionMask_Flag)
+#ifdef _DEBUG
     , m_pEffect(rhs.m_pEffect)
     , m_pBatch(rhs.m_pBatch)
     , m_pInputLayout(rhs.m_pInputLayout)
+#endif
 {
     // 충돌체 깊은 복사
     switch (rhs.m_pCollisionShape->Get_Type())
@@ -313,7 +315,9 @@ void CColliderComponent::Tick(const _float& fTimeDelta)
     for (auto iter = m_listColliderObject.begin(); iter != m_listColliderObject.end(); ++iter)
         iter->second = false;
 
+#ifdef _DEBUG
     m_bIsCollision = false;
+#endif
     //Update_Physics();
 }
 
@@ -403,7 +407,9 @@ void CColliderComponent::OnCollision(void* pDst, const FContact* pContact)
         // 오너 객체가 있어야 해당 객체를 주인에게 넘겨준다.
         if (CGameObject* pObj = pDstCollider->Get_OwnerObject())
         {
+#ifdef _DEBUG
             m_bIsCollision = true;
+#endif
             m_Collision_Event(pObj, pContact);
         }
     }

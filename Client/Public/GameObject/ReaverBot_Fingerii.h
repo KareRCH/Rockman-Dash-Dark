@@ -42,6 +42,9 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void BeginPlay() override;
+
+public:
 	static CReaverBot_Fingerii* Create();
 	static CReaverBot_Fingerii* Create(FSerialData& InputData);
 	virtual CGameObject* Clone(void* Arg = nullptr);
@@ -96,15 +99,17 @@ private:
 	_bool					m_bCanControl = { true };
 
 public:
-	enum class EState_Act { Idle, Walk, Barrier, Concentration, Dead };
+	enum class EState_Act { Idle, Walk, Barrier, Concentration, Dead, Squat };
 
 	void Register_State();
+	void SquatBonus() { m_bIsSquatBonus = true; }
 
 private:		// 약식 상태머신
 	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
 	SState_Act		m_State_Act;
 
 	FGauge m_fEnergyBallAttack = FGauge(5.f);
+	_bool m_bIsSquatBonus = { false };
 
 private:
 	void ActState_Idle(const _float& fTimeDelta);
@@ -112,6 +117,7 @@ private:
 	void ActState_Barrier(const _float& fTimeDelta);
 	void ActState_Concentration(const _float& fTimeDelta);
 	void ActState_Dead(const _float& fTimeDelta);
+	void ActState_Squat(const _float& fTimeDelta);
 
 private:
 	void Create_EnergyBall();

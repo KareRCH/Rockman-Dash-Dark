@@ -29,7 +29,6 @@ HRESULT CDoor_Common::Initialize_Prototype()
     m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
     m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
     m_pColliderComp->Bind_Collision(ECollisionType::OBB);
-    m_pColliderComp->EnterToPhysics(0);
     m_pColliderComp->Set_CollisionLayer(COLLAYER_OBJECT);
 
     return S_OK;
@@ -70,7 +69,6 @@ HRESULT CDoor_Common::Initialize_Prototype(FSerialData& InputData)
             m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-            //m_pColliderComp->EnterToPhysics(0);
             break;
         }
     }
@@ -118,7 +116,6 @@ void CDoor_Common::Late_Tick(const _float& fTimeDelta)
 
     m_pModelComp->Add_AnimTime(fTimeDelta);
     m_pModelComp->Invalidate_Animation();
-
     m_pModelComp->Late_Tick(fTimeDelta);
 }
 
@@ -133,6 +130,14 @@ HRESULT CDoor_Common::Render()
 #endif
 
     return S_OK;
+}
+
+void CDoor_Common::BeginPlay()
+{
+    SUPER::BeginPlay();
+
+    if (m_pColliderComp)
+        m_pColliderComp->EnterToPhysics(0);
 }
 
 CDoor_Common* CDoor_Common::Create()
@@ -250,7 +255,6 @@ HRESULT CDoor_Common::Initialize_Component(FSerialData& InputData)
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
             m_pColliderComp->Set_CollisionKinematic();
-            m_pColliderComp->EnterToPhysics(0);
             break;
         }
     }
