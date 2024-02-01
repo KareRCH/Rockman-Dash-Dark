@@ -69,7 +69,7 @@ PS_OUTPUT PS_MAIN(VPS_INOUT In)
         discard;
     
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vDiffuse.a = g_fAlpha;
+    Out.vDiffuse.a = min(Out.vDiffuse.a, g_fAlpha);
     
     return Out;
 }
@@ -85,7 +85,7 @@ PS_OUTPUT PS_MAIN_INNER(VPS_INOUT In)
         discard;
     
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vDiffuse.a = g_fAlpha;
+    Out.vDiffuse.a = min(Out.vDiffuse.a, g_fAlpha);
     
     return Out;
 }

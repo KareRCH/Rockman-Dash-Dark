@@ -57,6 +57,18 @@ public:		// 충돌 이벤트
 	virtual void OnCollision(CGameObject* pDst, const FContact* pContact);
 	virtual void OnCollisionEntered(CGameObject* pDst, const FContact* pContact);
 	virtual void OnCollisionExited(CGameObject* pDst);
+
+private:
+	CCommonModelComp* m_pModelComp = { nullptr };
+
+public:
+	// 트랩 타입에 따라
+	enum class ETrapType : _uint { Linear, Circle, Rect };
+
+private:
+	ETrapType	m_eTrapType = { ETrapType::Circle };
+	_float		m_fRadiusRange = { 5.f };		// 트랩이 움직이는 범위 반경
+
 };
 
 template <>

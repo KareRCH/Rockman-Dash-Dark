@@ -440,6 +440,11 @@
                 "CollisionLayer": 1,
                 "CollisionMask": 55
             },
+			{
+				"ComponentID": 8,
+				"Name": "CloudStation",
+				"ProtoName": "HanmuruDoll"
+			},
             {
                 "ComponentID": 2,
                 "Name": "Model",
@@ -15117,6 +15122,11 @@
                         "CollisionType": 2,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
+                    },
+					{
+                        "ComponentID": 8,
+                        "Name": "CloudStation",
+                        "ProtoName": "HanmuruDoll"
                     }
                 ],
                 "HP": 20.0
@@ -35629,6 +35639,11 @@
                         "CollisionType": 2,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
+                    },
+					{
+                        "ComponentID": 8,
+                        "Name": "CloudStation",
+                        "ProtoName": "HanmuruDoll"
                     }
                 ],
                 "HP": 20.0
@@ -36621,6 +36636,11 @@
                         "CollisionType": 2,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
+                    },
+					{
+                        "ComponentID": 8,
+                        "Name": "CloudStation",
+                        "ProtoName": "HanmuruDoll"
                     }
                 ],
                 "HP": 20.0
@@ -57133,6 +57153,11 @@
                         "CollisionType": 2,
                         "CollisionLayer": 1,
                         "CollisionMask": 55
+                    },
+					{
+                        "ComponentID": 8,
+                        "Name": "CloudStation",
+                        "ProtoName": "HanmuruDoll"
                     }
                 ],
                 "HP": 20.0

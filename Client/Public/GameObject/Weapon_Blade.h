@@ -33,6 +33,9 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void BeginPlay() override;
+
+public:
 	static CWeapon_Blade* Create();
 	static CWeapon_Blade* Create(const _float3 vPos);
 	CGameObject* Clone(void* Arg = nullptr);

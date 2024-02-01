@@ -109,6 +109,9 @@
     <Filter Include="02. GameObject\05. Object\04. Trap">
       <UniqueIdentifier>{0fe4ebc6-0e33-4033-9783-94f946fec795}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. CloudStation\02. BossCloud">
+      <UniqueIdentifier>{5355afb4-45cf-4438-8eb0-0b7f52458aaf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -252,6 +255,12 @@
     <ClInclude Include="Public\GameObject\PillarTrap.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\CloudStation\CloudStation_Boss.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\UI_Boss.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -381,6 +390,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\PillarTrap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\CloudStation\CloudStation_Boss.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\UI_Boss.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

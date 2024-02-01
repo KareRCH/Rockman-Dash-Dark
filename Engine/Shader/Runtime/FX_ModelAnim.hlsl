@@ -134,6 +134,26 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(VPS_INOUT In)
     return Out;
 }
 
+
+struct PS_OUT_NONLIGHT
+{
+    vector vColor : SV_TARGET0;
+};
+
+PS_OUT_NONLIGHT PS_MAIN_NONLIGHT(VPS_INOUT In)
+{
+    PS_OUT_NONLIGHT Out = (PS_OUT_NONLIGHT) 0;
+
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexCoord);
+
+    if (vMtrlDiffuse.a < 0.3f)
+        discard;
+    
+    Out.vColor = vMtrlDiffuse;
+	
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     // 기본 패스
@@ -174,5 +194,18 @@ technique11 DefaultTechnique
         HullShader = NULL;
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+    }
+
+    pass NonLight
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_NONLIGHT();
     }
 }

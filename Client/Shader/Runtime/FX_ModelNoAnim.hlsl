@@ -66,23 +66,42 @@ VPS_INOUT VS_MAIN(VS_INPUT input)
 
 //-------------------------------------------------
 
-PS_OUTPUT PS_MAIN(VPS_INOUT input)
+PS_OUTPUT PS_MAIN(VPS_INOUT In)
 {
-    PS_OUTPUT output;
+    PS_OUTPUT Out = (PS_OUTPUT) 0;
     
     // 베이스 컬러 세팅
-    float4 vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, input.vTexCoord);
+    float4 vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexCoord);
     
     if (vMtrlDiffuse.a < 0.3f)
         discard;
     
-    output.vDiffuse = vMtrlDiffuse;
-    output.vNormal = vector(input.vNormal * 0.5f + 0.5f, 0.f);
-    output.vDepth = vector(input.vProjPos.z / input.vProjPos.w, input.vProjPos.w / g_fFar, (float) g_iObjectID, 1.f);
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = vector(In.vNormal * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, (float) g_iObjectID, 1.f);
     
-    return output;
+    return Out;
 }
 
+struct PS_OUTPUT_NONLIGHT
+{
+    float4 vColor : SV_TARGET0;
+};
+
+PS_OUTPUT_NONLIGHT PS_MAIN_NONLIGHT(VPS_INOUT In)
+{
+    PS_OUTPUT_NONLIGHT Out = (PS_OUTPUT_NONLIGHT) 0;
+    
+    // 베이스 컬러 세팅
+    float4 vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexCoord);
+    
+    if (vMtrlDiffuse.a < 0.3f)
+        discard;
+    
+    Out.vColor = vMtrlDiffuse;
+    
+    return Out;
+}
 
 technique11 DefaultTechnique
 {
@@ -97,5 +116,17 @@ technique11 DefaultTechnique
         HullShader = NULL;
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+    pass NonLight
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend_Add, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_NONLIGHT();
     }
 }

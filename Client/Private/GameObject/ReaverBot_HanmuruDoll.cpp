@@ -3,9 +3,11 @@
 #include "Component/EffectComponent.h"
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
+#include "Component/CloudStationComp.h"
 
 #include "GameObject/DamageCollision.h"
 #include "GameObject/Door_Common.h"
+#include "CloudStation/CloudStation_Boss.h"
 
 CReaverBot_HanmuruDoll::CReaverBot_HanmuruDoll()
 {
@@ -39,6 +41,8 @@ HRESULT CReaverBot_HanmuruDoll::Initialize_Prototype()
     m_pColliderComp->Set_CollisionLayer(COLLAYER_CHARACTER);
     m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
         | COLLAYER_ATTACKER | COLLAYER_OBJECT);
+
+    FAILED_CHECK_RETURN(Add_Component(L"CloudStation", m_pCloudStationComp = CCloudStationComp::Create()), E_FAIL);
 
     TeamAgentComp().Set_TeamID(ETEAM_ENEMY);
 
@@ -81,7 +85,11 @@ HRESULT CReaverBot_HanmuruDoll::Initialize_Prototype(FSerialData& InputData)
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
             m_pColliderComp->Set_CollisionKinematic();
-            //m_pColliderComp->EnterToPhysics(0);
+            break;
+        case ECast(EComponentID::CloudStation):
+            NULL_CHECK_RETURN(m_pCloudStationComp = CCloudStationComp::Create(ProtoData), E_FAIL);
+            if (FAILED(Add_Component(ConvertToWstring(strName), m_pCloudStationComp)))
+                return E_FAIL;
             break;
         }
     }
@@ -178,6 +186,11 @@ void CReaverBot_HanmuruDoll::BeginPlay()
     SUPER::BeginPlay();
 
     m_pColliderComp->EnterToPhysics(0);
+
+    m_pCloudStationComp->Open_CloudStation_Session(TEXT("Boss"), CCloudStation_Boss::Create());
+    m_pCloudStationComp->Connect_CloudStation(TEXT("Boss"));
+    m_pBossCloud = m_pCloudStationComp->Get_LastCloudStation<CCloudStation_Boss>();
+    Safe_AddRef(m_pBossCloud);
 }
 
 FSerialData CReaverBot_HanmuruDoll::SerializeData_Prototype()
@@ -255,6 +268,8 @@ CGameObject* CReaverBot_HanmuruDoll::Clone(FSerialData& InputData)
 void CReaverBot_HanmuruDoll::Free()
 {
     SUPER::Free();
+
+    Safe_Release(m_pBossCloud);
 }
 
 HRESULT CReaverBot_HanmuruDoll::Initialize_Component()
@@ -299,6 +314,10 @@ HRESULT CReaverBot_HanmuruDoll::Initialize_Component(FSerialData& InputData)
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
             m_pColliderComp->Set_CollisionKinematic();
+            break;
+        case ECast(EComponentID::CloudStation):
+            FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
+                m_pCloudStationComp = DynCast<CCloudStationComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
             break;
         }
     }
@@ -361,6 +380,14 @@ void CReaverBot_HanmuruDoll::Move_Update(const _float& fTimeDelta)
     if (m_ActionKey.IsAct(EActionKey::LookTarget)
         && nullptr != m_pTarget)
         Transform().Look_At_OnLand(m_pTarget->Transform().Get_PositionVector(), 5.f * fTimeDelta);
+}
+
+void CReaverBot_HanmuruDoll::Update_CloudStation()
+{
+    if (nullptr == m_pBossCloud)
+        return;
+
+    m_pBossCloud->Access_HP(CCloudStation::EMode::Upload, m_fHP);
 }
 
 void CReaverBot_HanmuruDoll::Register_State()

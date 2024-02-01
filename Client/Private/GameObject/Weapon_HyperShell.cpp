@@ -1,13 +1,10 @@
 #include "GameObject/Weapon_HyperShell.h"
 
 #include "Component/EffectComponent.h"
-#include "Component/ModelShaderComp.h"
-#include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 
-#include "GameObject/Effect_Explosion.h"
-#include "GameObject/LoadingScreen.h"
+#include "GameObject/DamageCollision.h"
 #include "GameObject/StaticObject.h"
 #include "GameObject/Door_Common.h"
 
@@ -222,9 +219,9 @@ void CWeapon_HyperShell::OnCollisionExited(CGameObject* pDst)
 
 void CWeapon_HyperShell::Create_Effect()
 {
-	for(_uint i = 0; i < 5; ++i)
+	for(_uint i = 0; i < 20; ++i)
 	{
-		CEffect_Explosion* pEffect = CEffect_Explosion::Create();
+		CDamageCollision* pEffect = CDamageCollision::Create();
 		if (FAILED(GI()->Add_GameObject(pEffect)))
 			return;
 
@@ -232,12 +229,25 @@ void CWeapon_HyperShell::Create_Effect()
 			return;
 
 		uniform_real_distribution<_float> RandomTime(0.f, 0.25f);
-		uniform_real_distribution<_float> RandomPosX(-3.f, 3.f);
-		uniform_real_distribution<_float> RandomPosY(-2.f, 2.f);
-		uniform_real_distribution<_float> RandomPosZ(-3.f, 3.f);
+		uniform_real_distribution<_float> RandomRadius(0.f, 10.0f);
+		uniform_real_distribution<_float> RandomRadius2(-1.f, 5.0f);
+		uniform_real_distribution<_float> RandomPosY(-2.0f, 4.f);
+		uniform_real_distribution<_float> RandomAngle(0.f, 360.0f);
+		uniform_real_distribution<_float> RandomAngleZ(0.f, 180.0f);
+
+		_vector vPos = XMVectorSet(0.f, 0.f, 1.f * RandomRadius(m_RandomNumber), 1.f);
+		_vector vAxisY = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+		_matrix RotationMatrix = XMMatrixRotationAxis(vAxisY, XMConvertToRadians(RandomAngle(m_RandomNumber)));
+		vPos = XMVector3TransformCoord(vPos, RotationMatrix);
+
+		_vector vPosY = XMVectorSet(1.f * RandomRadius2(m_RandomNumber), 0.f, 0.f, 1.f);
+		_vector vAxisZ = XMVectorSet(0.f, 0.f, 1.f, 0.f);
+		_matrix RotationZMatrix = XMMatrixRotationAxis(vAxisZ, XMConvertToRadians(RandomAngleZ(m_RandomNumber)));
+		vPosY = XMVector3TransformCoord(vPosY, RotationZMatrix);
 
 		pEffect->Transform().Set_Position(Transform().Get_PositionVector()
-			+ XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));
-		pEffect->Set_StartTime(RandomTime(m_RandomNumber) + i * 0.05f);
+			+ XMVectorSet(XMVectorGetX(vPos), XMVectorGetY(vPosY), XMVectorGetZ(vPos), 0.f));
+		pEffect->Transform().Set_Scale(3.f, 3.f, 3.f);
+		pEffect->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 	}
 }

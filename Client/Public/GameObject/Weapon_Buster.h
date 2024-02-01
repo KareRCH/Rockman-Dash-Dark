@@ -33,6 +33,10 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void OnCreated() override;
+	virtual void BeginPlay() override;
+
+public:
 	static CWeapon_Buster* Create();
 	static CWeapon_Buster* Create(const _float3 vPos);
 	CGameObject* Clone(void* Arg = nullptr);
@@ -58,11 +62,13 @@ public:
 	GETSET_2(_float, m_fSpeed, Speed, GET_C_REF, SET_C_REF)
 	GETSET_2(_float3, m_vLookDir, LookDir, GET_C_REF, SET_C_REF)
 	void Set_LifeTime(_float fLifeTime) { m_fLifeTime.Readjust(fLifeTime); }
+	void Set_Damage(_float fDamage) { m_fDamage = fDamage; }
 
 private:
 	FGauge		m_fLifeTime = FGauge(3.f);
 	_float		m_fSpeed = 5.f;
 	_float3		m_vLookDir = {};
+	_float		m_fDamage = { 1.f };
 
 public:
 	void Create_Effect();

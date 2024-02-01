@@ -37,6 +37,9 @@ public:
 private:
     _bool   m_bExpired = false;             // 클라우드 스테이션 만료시 모든 참조포인터들이 연결을 끊을 수 있게 해준다.
     
+public:
+    enum class EMode { Upload, Download };
+
 };
 
 END
