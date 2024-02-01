@@ -4,6 +4,9 @@
 #include "Component/EffectComponent.h"
 #include "Component/RectBufferComp.h"
 
+_uint		g_iSizeX = 8192;
+_uint		g_iSizeY = 4608;
+
 CRenderMgr::CRenderMgr(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext), m_hReadyResult(E_FAIL)
 {
@@ -50,6 +53,10 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Specular"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	/* Target_LightDepth */
+	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_LightDepth"), g_iSizeX, g_iSizeY, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
 	/* Target_Final */
 	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Final"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -65,6 +72,8 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
+		return E_FAIL;
+	if (FAILED(GI()->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_LightDepth"))))
 		return E_FAIL;
 	if (FAILED(GI()->Add_MRT(TEXT("MRT_Final"), TEXT("Target_Final"))))
 		return E_FAIL;
@@ -87,6 +96,49 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_vecViewport[0].Width, m_vecViewport[0].Height, 0.f, 1.f));
 
+
+#pragma region 스텐실 뷰
+	if (nullptr == m_pDevice)
+		return E_FAIL;
+
+	ID3D11Texture2D* pDepthStencilTexture = nullptr;
+
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = g_iSizeX;
+	TextureDesc.Height = g_iSizeY;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL
+		/*| D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE*/;
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr,
+		&pDepthStencilTexture)))
+		return E_FAIL;
+
+	/* RenderTarget */
+	/* ShaderResource */
+	/* DepthStencil */
+
+	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr,
+		m_pLightDepthDSV.GetAddressOf())))
+		return E_FAIL;
+
+	Safe_Release(pDepthStencilTexture);
+#pragma endregion
+
+
+
+
 #ifdef _DEBUG
 	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Diffuse"), 50.f, 50.f, 100.f, 100.f)))
 		return E_FAIL;
@@ -100,6 +152,8 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 		return E_FAIL;
 	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Final"), 150.f, 250.f, 100.f, 100.f)))
 		return E_FAIL;
+	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_LightDepth"), 1130.f, 150.f, 300.f, 300.f)))
+		return E_FAIL;
 #endif
 
 	return m_hReadyResult = S_OK;
@@ -109,6 +163,8 @@ HRESULT CRenderMgr::Render()
 {
 	// 렌더처리를 하는 종류에 따라 따로 모아서 처리한다.
 	if (FAILED(Render_Priority()))
+		return E_FAIL;
+	if (FAILED(Render_Shadow()))
 		return E_FAIL;
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
@@ -188,6 +244,39 @@ HRESULT CRenderMgr::Render_Priority()
 		pObj->Render();
 		Safe_Release(pObj);
 	}
+
+	return S_OK;
+}
+
+HRESULT CRenderMgr::Render_Shadow()
+{
+	if (FAILED(GI()->Begin_MRT(TEXT("MRT_Shadow"), m_pLightDepthDSV.Get())))
+		return E_FAIL;
+
+	D3D11_VIEWPORT			ViewPortDesc;
+	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
+	ViewPortDesc.TopLeftX = 0;
+	ViewPortDesc.TopLeftY = 0;
+	ViewPortDesc.Width = g_iSizeX;
+	ViewPortDesc.Height = g_iSizeY;
+	ViewPortDesc.MinDepth = 0.f;
+	ViewPortDesc.MaxDepth = 1.f;
+
+	GI()->Get_GraphicContext()->RSSetViewports(1, &ViewPortDesc);
+
+	for (auto& pGameObject : m_RenderGroup[ECast(ERenderGroup::Shadow)])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_Shadow();
+			Safe_Release(pGameObject);
+		}
+	}
+
+	if (FAILED(GI()->End_MRT()))
+		return E_FAIL;
+
+	GI()->Get_GraphicContext()->RSSetViewports(1, &m_vecViewport[0]);
 
 	return S_OK;
 }
@@ -292,9 +381,6 @@ HRESULT CRenderMgr::Render_LightAcc()
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Normal"), m_pEffect[ECast(EEffect::Deferred)], "g_NormalTexture")))
-		return E_FAIL;
-
 	_float4x4 matTemp = {};
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ViewMatrixInv",
 		&(matTemp = PipelineComp().Get_CamInvFloat4x4(ECamType::Persp, ECamMatrix::View, ECamNum::One)))))
@@ -306,6 +392,11 @@ HRESULT CRenderMgr::Render_LightAcc()
 	_float4 vCamPos = {};
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_RawValue("g_vCamPosition",
 		&(vCamPos = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Normal"), m_pEffect[ECast(EEffect::Deferred)], "g_NormalTexture")))
+		return E_FAIL;
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::Deferred)], "g_DepthTexture")))
 		return E_FAIL;
 
 	GI()->Render_Lights(m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
@@ -331,12 +422,27 @@ HRESULT CRenderMgr::Render_Deferred()
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
+	_float4x4		ViewMatrix, ProjMatrix;
+
+	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(150.f, 200.f, 150.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), 1280.0f / 720.0f, 0.1f, 1000.f));
+
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_LightViewMatrix", &ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_LightProjMatrix", &ProjMatrix)))
+		return E_FAIL;
+
 	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Diffuse"), m_pEffect[ECast(EEffect::Deferred)], "g_DiffuseTexture")))
 		return E_FAIL;
 	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Shade"), m_pEffect[ECast(EEffect::Deferred)], "g_ShadeTexture")))
 		return E_FAIL;
 	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Specular"), m_pEffect[ECast(EEffect::Deferred)], "g_SpecularTexture")))
 		return E_FAIL;
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::Deferred)], "g_DepthTexture")))
+		return E_FAIL;
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_LightDepth"), m_pEffect[ECast(EEffect::Deferred)], "g_LightDepthTexture")))
+		return E_FAIL;
+
 
 	m_pEffect[ECast(EEffect::Deferred)]->Begin(3);
 
@@ -349,9 +455,6 @@ HRESULT CRenderMgr::Render_Deferred()
 		if (FAILED(GI()->End_MRT()))
 			return E_FAIL;
 	}
-
-	ID3D11ShaderResourceView* pSRV = { nullptr };
-	m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
 
 	return S_OK;
 }
@@ -423,6 +526,7 @@ HRESULT CRenderMgr::Render_Debug()
 
 	GI()->Render_Debug_RTVs(TEXT("MRT_GameObjects"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
 	GI()->Render_Debug_RTVs(TEXT("MRT_LightAcc"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	GI()->Render_Debug_RTVs(TEXT("MRT_Shadow"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
 	GI()->Render_Debug_RTVs(TEXT("MRT_Final"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
 
 	return S_OK;

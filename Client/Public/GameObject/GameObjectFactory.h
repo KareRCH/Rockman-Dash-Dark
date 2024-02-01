@@ -22,7 +22,9 @@ enum class EObjectIDExt : _uint
 	ItemChest,
 	SkyBox,
 	HanmuruDoll,
-	Door_Common
+	Door_Common,
+	Trigger,
+	PillarTrap,
 };
 
 template <_uint T>

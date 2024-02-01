@@ -334,6 +334,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\GameObject\ItemChest.h" />
     <ClInclude Include="Public\GameObject\Item_Deflector.h" />
     <ClInclude Include="Public\GameObject\LoadingScreen.h" />
+    <ClInclude Include="Public\GameObject\PillarTrap.h" />
     <ClInclude Include="Public\GameObject\ReaverBot_Balfura.h" />
     <ClInclude Include="Public\GameObject\ReaverBot_Fingerii.h" />
     <ClInclude Include="Public\GameObject\ReaverBot_HanmuruDoll.h" />
@@ -342,6 +343,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\GameObject\Player.h" />
     <ClInclude Include="Public\GameObject\StaticObject.h" />
     <ClInclude Include="Public\GameObject\TestTextureObject.h" />
+    <ClInclude Include="Public\GameObject\Trigger.h" />
     <ClInclude Include="Public\GameObject\UI_Dialog.h" />
     <ClInclude Include="Public\GameObject\UI_Lockon.h" />
     <ClInclude Include="Public\GameObject\UI_Player.h" />
@@ -377,6 +379,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\GameObject\ItemChest.cpp" />
     <ClCompile Include="Private\GameObject\Item_Deflector.cpp" />
     <ClCompile Include="Private\GameObject\LoadingScreen.cpp" />
+    <ClCompile Include="Private\GameObject\PillarTrap.cpp" />
     <ClCompile Include="Private\GameObject\ReaverBot_Balfura.cpp" />
     <ClCompile Include="Private\GameObject\ReaverBot_Fingerii.cpp" />
     <ClCompile Include="Private\GameObject\ReaverBot_HanmuruDoll.cpp" />
@@ -385,6 +388,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\GameObject\Player.cpp" />
     <ClCompile Include="Private\GameObject\StaticObject.cpp" />
     <ClCompile Include="Private\GameObject\TestTextureObject.cpp" />
+    <ClCompile Include="Private\GameObject\Trigger.cpp" />
     <ClCompile Include="Private\GameObject\UI_Dialog.cpp" />
     <ClCompile Include="Private\GameObject\UI_Lockon.cpp" />
     <ClCompile Include="Private\GameObject\UI_Player.cpp" />

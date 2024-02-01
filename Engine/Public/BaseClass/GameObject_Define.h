@@ -31,7 +31,8 @@ enum class EGObjectState : _uint
 	Render = EBIT_FLAG32_5,				// 렌더링 유무
 	RenderZBuffer = EBIT_FLAG32_6,		// ZBuffer로 렌더링하는 옵션
 	Cull = EBIT_FLAG32_7,				// 컬링 옵션
-	Drawing = EBIT_FLAG32_8				// 현재 그려지고 있는가
+	Drawing = EBIT_FLAG32_8,			// 현재 그려지고 있는가
+	Shadow = EBIT_FLAG32_9,				// 그림자 그리기 옵션
 };
 
 END

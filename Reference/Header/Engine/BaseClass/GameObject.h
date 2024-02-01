@@ -42,6 +42,7 @@ public:
 	virtual void	Tick(const _float& fTimeDelta);
 	virtual void	Late_Tick(const _float& fTimeDelta);
 	virtual HRESULT	Render();
+	virtual HRESULT Render_Shadow() { return S_OK; }
 
 public:
 	// 실제 게임에 추가되었을 때 작동하는 이벤트 함수. ObjectMgr에서 작동시킴

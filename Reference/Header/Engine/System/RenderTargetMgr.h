@@ -15,7 +15,7 @@ private:
 
 public:
 	HRESULT		Initialize();
-	HRESULT		Begin_MRT(const wstring& strMRTTag);
+	HRESULT		Begin_MRT(const wstring& strMRTTag, ID3D11DepthStencilView* pDSV);
 	HRESULT		End_MRT();
 	HRESULT		Bind_ShaderResource(const wstring& strTargetTag, class CEffectComponent* pEffect, const _char* pConstantName);
 

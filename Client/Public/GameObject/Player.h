@@ -9,11 +9,9 @@
 #include "GameObject/GameObjectFactory.h"
 
 BEGIN(Engine)
-
 class CCommonModelComp;
 class CNavigationComponent;
 class CCloudStationComp;
-
 END
 
 
@@ -48,8 +46,10 @@ public:
 	virtual void	Tick(const _float& fTimeDelta) override;
 	virtual void	Late_Tick(const _float& fTimeDelta) override;
 	virtual HRESULT	Render() override;
+	virtual HRESULT Render_Shadow() override;
 
 public:
+	virtual void OnCreated() override;
 	virtual void BeginPlay() override;
 
 public:

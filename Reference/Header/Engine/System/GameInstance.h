@@ -308,7 +308,7 @@ public:
 	HRESULT	Initialize_RenderTargetMgr(const DX11DEVICE_T tDevice);
 	HRESULT	Add_RenderTarget(const wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
 	HRESULT	Add_MRT(const wstring& strMRTTag, const wstring& strTargetTag);
-	HRESULT Begin_MRT(const wstring& strMRTTag);
+	HRESULT Begin_MRT(const wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT End_MRT();
 	HRESULT Bind_RenderTarget_ShaderResource(const wstring& strTargetTag, class CEffectComponent* pEffect, const _char* pConstantName);
 	HRESULT Resize_RenderTargets(_uint iResizeWidth, _uint iResizeHeight);

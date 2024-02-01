@@ -1357,12 +1357,12 @@ HRESULT CGameInstance::Add_MRT(const wstring& strMRTTag, const wstring& strTarge
 	return m_pRenderTargetMgr->Add_MRT(strMRTTag, strTargetTag);
 }
 
-HRESULT CGameInstance::Begin_MRT(const wstring& strMRTTag)
+HRESULT CGameInstance::Begin_MRT(const wstring& strMRTTag, ID3D11DepthStencilView* pDSV)
 {
 	if (nullptr == m_pRenderTargetMgr)
 		return E_FAIL;
 
-	return m_pRenderTargetMgr->Begin_MRT(strMRTTag);
+	return m_pRenderTargetMgr->Begin_MRT(strMRTTag, pDSV);
 }
 
 HRESULT CGameInstance::End_MRT()

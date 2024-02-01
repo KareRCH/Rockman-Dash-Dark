@@ -39,6 +39,7 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void OnCreated() override;
 	virtual void BeginPlay() override;
 
 public:

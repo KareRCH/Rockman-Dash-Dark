@@ -14,6 +14,7 @@
 #include "GameObject/DynamicCamera.h"
 #include "GameObject/ReaverBot_HanmuruDoll.h"
 #include "GameObject/Door_Common.h"
+#include "GameObject/Trigger.h"
 
 HRESULT CImGuiWin_ClassBrowser::Initialize()
 {
@@ -110,6 +111,10 @@ void CImGuiWin_ClassBrowser::Layout_Browser(const _float& fTimeDelta)
         {
             m_iSelected_Object = iIndex;
         }
+        if (ImGui::Selectable(u8"10. Trigger", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
+        }
 
 		ImGui::EndListBox();
 	}
@@ -165,6 +170,9 @@ void CImGuiWin_ClassBrowser::Create_Object()
         break;
     case 9:
         GI()->Add_GameObject(m_pGameObject = CDoor_Common::Create());
+        break;
+    case 10:
+        GI()->Add_GameObject(m_pGameObject = CTrigger::Create());
         break;
     }
 

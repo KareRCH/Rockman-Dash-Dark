@@ -11,7 +11,7 @@ CReaverBot_HanmuruDoll::CReaverBot_HanmuruDoll()
 {
     Set_Name(TEXT("ReaverBot_HanmuruDoll"));
     Set_RenderGroup(ERenderGroup::NonBlend);
-    Register_State();
+    
     m_fHP = FGauge(20.f, true);
     m_RandomNumber = mt19937_64(m_RandomDevice());
 }
@@ -19,7 +19,6 @@ CReaverBot_HanmuruDoll::CReaverBot_HanmuruDoll()
 CReaverBot_HanmuruDoll::CReaverBot_HanmuruDoll(const CReaverBot_HanmuruDoll& rhs)
     : Base(rhs)
 {
-    Register_State();
     m_RandomNumber = mt19937_64(m_RandomDevice());
 }
 
@@ -165,6 +164,13 @@ HRESULT CReaverBot_HanmuruDoll::Render()
 #endif
 
     return S_OK;
+}
+
+void CReaverBot_HanmuruDoll::OnCreated()
+{
+    SUPER::OnCreated();
+
+    Register_State();
 }
 
 void CReaverBot_HanmuruDoll::BeginPlay()

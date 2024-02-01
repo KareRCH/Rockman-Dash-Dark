@@ -103,6 +103,12 @@
     <Filter Include="02. GameObject\05. Object\02. Door">
       <UniqueIdentifier>{ca5d096c-c0f6-4808-8c3f-218c1a65322e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. Object\03. Trigger">
+      <UniqueIdentifier>{df09e2e7-3946-499d-9a29-569354584fca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. Object\04. Trap">
+      <UniqueIdentifier>{0fe4ebc6-0e33-4033-9783-94f946fec795}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -240,6 +246,12 @@
     <ClInclude Include="Public\GameObject\UI_Dialog.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\Trigger.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\PillarTrap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -363,6 +375,12 @@
       <Filter>02. GameObject\05. Object\02. Door</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\UI_Dialog.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Trigger.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\PillarTrap.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

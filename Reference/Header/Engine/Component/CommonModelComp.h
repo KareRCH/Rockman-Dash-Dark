@@ -86,6 +86,7 @@ public:
 	void Deactive_AllMeshes();
 	// 외부 수동 바인드용
 	void BindAndRender_Mesh(_uint iIndex);
+	void BindAndRender_Meshes(_uint iPass, _bool bIsUseBones = false);
 
 private:		// 메쉬 관련
 	_uint								m_iNumMeshes = { 0 };

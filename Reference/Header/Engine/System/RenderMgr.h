@@ -41,6 +41,7 @@ public:
 	void			Clear_RenderGroup();
 
 	HRESULT			Render_Priority();
+	HRESULT			Render_Shadow();
 	HRESULT			Render_NonLight();
 	HRESULT			Render_NonBlend();
 	HRESULT			Render_Blend();
@@ -68,7 +69,7 @@ private:
 	ComPtr<ID3D11Device>			m_pDevice = { nullptr };
 	ComPtr<ID3D11DeviceContext>		m_pDeviceContext = { nullptr };
 	class CGameInstance*			m_pGI = { nullptr };
-	list<class CGameObject*>		m_RenderObjects[RENDER_END];
+	ComPtr<ID3D11DepthStencilView>	m_pLightDepthDSV = { nullptr };
 
 public:
 	void Toggle_Deferred() { m_bIsDeferred = !m_bIsDeferred; }

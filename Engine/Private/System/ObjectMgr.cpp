@@ -459,6 +459,8 @@ void CObjectMgr::RegistToTick_GameObjects()
 						pObj->Transform().Get_TransformInverseMatrix()), pObj->Get_CullRadius()))
 					{
 						GI()->Add_RenderGroup(pObj->Get_RenderGroup(), pObj);
+						if (pObj->IsState(EGObjectState::Shadow))
+							GI()->Add_RenderGroup(ERenderGroup::Shadow, pObj);
 						pObj->TurnOn_State(EGObjectState::Drawing);
 					}
 					else
@@ -467,6 +469,8 @@ void CObjectMgr::RegistToTick_GameObjects()
 				else
 				{
 					GI()->Add_RenderGroup(pObj->Get_RenderGroup(), pObj);
+					if (pObj->IsState(EGObjectState::Shadow))
+						GI()->Add_RenderGroup(ERenderGroup::Shadow, pObj);
 					pObj->TurnOn_State(EGObjectState::Drawing);
 				}
 			}

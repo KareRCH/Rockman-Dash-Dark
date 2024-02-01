@@ -220,6 +220,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\SkyBox.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\StaticObject.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\Trigger.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Dialog.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Lockon.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Player.cpp" />

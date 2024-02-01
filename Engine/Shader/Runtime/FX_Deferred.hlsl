@@ -2,6 +2,7 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ProjMatrixInv, g_ViewMatrixInv;
+matrix g_LightViewMatrix, g_LightProjMatrix;
 
 vector g_vLightDir;
 vector g_vLightPos;
@@ -21,6 +22,7 @@ Texture2D g_ShadeTexture;
 Texture2D g_NormalTexture;
 Texture2D g_DepthTexture;
 Texture2D g_SpecularTexture;
+Texture2D g_LightDepthTexture;
 
 float g_fStair = 3.f;
 
@@ -189,6 +191,41 @@ PS_OUT PS_MAIN_FINAL(PS_IN In)
     
     vShade = vector(ceil(vShade.xyz * g_fStair), g_fStair) / g_fStair;
     Out.vColor = vDiffuse * vShade;
+    
+    // ----- 그림자 ------
+    vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
+    float fViewZ = vDepthDesc.y * 1000.f;
+
+    vector vWorldPos;
+
+	/* 투영스페이스 상의 위치. */
+	/* 로컬위치 * 월드행렬 * 뷰행렬* 투영행렬 / View.z */
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+
+	/* 뷰스페이스 상의 위치를 구하자. */
+	/* 로컬위치 * 월드행렬 * 뷰행렬 */
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
+
+	/* 월드 상의 위치를 구하자. */
+	/* 로컬위치 * 월드행렬 */
+    vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
+
+    vWorldPos = mul(vWorldPos, g_LightViewMatrix);
+    vWorldPos = mul(vWorldPos, g_LightProjMatrix);
+
+    float2 vUV = (float2) 0.0f;
+
+    vUV.x = (vWorldPos.x / vWorldPos.w) * 0.5f + 0.5f;
+    vUV.y = (vWorldPos.y / vWorldPos.w) * -0.5f + 0.5f;
+
+    float4 vLightDepth = g_LightDepthTexture.Sample(LinearSampler, vUV);
+
+    if (vWorldPos.w - 0.1f > vLightDepth.x * 1000.f)
+        Out.vColor = Out.vColor * 0.7f;
 
     return Out;
 }

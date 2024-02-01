@@ -1,5 +1,6 @@
 #include "GameObject/Player.h"
 
+#include "Component/EffectComponent.h"
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 #include "Component/NavigationComponent.h"
@@ -28,13 +29,12 @@
 CPlayer::CPlayer()
 {
     Set_Name(L"Player");
-    Register_State();
 }
 
 CPlayer::CPlayer(const CPlayer& rhs)
     : Base(rhs)
 {
-    Register_State();
+    
 }
 
 HRESULT CPlayer::Initialize_Prototype()
@@ -232,8 +232,39 @@ HRESULT CPlayer::Render()
     return S_OK;
 }
 
+HRESULT CPlayer::Render_Shadow()
+{
+    auto pEffect = m_pModelComp->EffectComp();
+    _float4x4 TempFloat4x4 = m_pModelComp->Calculate_TransformFloat4x4FromParent();
+
+    if (FAILED(pEffect->Bind_Matrix("g_WorldMatrix", &TempFloat4x4)))
+        return E_FAIL;
+
+    _float4x4		ViewMatrix, ProjMatrix;
+
+    XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(150.f, 200.f, 150.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+    XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), g_iWindowSizeX / (float)g_iWindowSizeY, 0.1f, 1000.f));
+
+    if (FAILED(pEffect->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
+        return E_FAIL;
+    if (FAILED(pEffect->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
+        return E_FAIL;
+
+    m_pModelComp->BindAndRender_Meshes(2, true);
+
+    return S_OK;
+}
+
+void CPlayer::OnCreated()
+{
+    TurnOn_State(EGObjectState::Shadow);
+    Register_State();
+}
+
 void CPlayer::BeginPlay()
 {
+    m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
+        | COLLAYER_ITEM | COLLAYER_OBJECT | COLLAYER_ATTACKER);
     if (m_pColliderComp)
         m_pColliderComp->EnterToPhysics(0);
 

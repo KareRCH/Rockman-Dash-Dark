@@ -36,6 +36,9 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void BeginPlay() override;
+
+public:
 	static CDamageCollision* Create();
 	static CDamageCollision* Create(const _float3 vPos);
 	CGameObject* Clone(void* Arg = nullptr);

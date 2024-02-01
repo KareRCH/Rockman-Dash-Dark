@@ -5,6 +5,7 @@
 
 #include "GameObject/Effect_Common.h"
 #include "GameObject/LoadingScreen.h"
+#include "GameObject/Effect_Explosion.h"
 
 
 CDamageCollision::CDamageCollision()
@@ -89,6 +90,18 @@ HRESULT CDamageCollision::Render()
 #endif
 
 	return S_OK;
+}
+
+void CDamageCollision::BeginPlay()
+{
+	CEffect_Explosion* pEffect = CEffect_Explosion::Create();
+	if (nullptr == pEffect)
+		return;
+
+	pEffect->Transform().Set_Position(Transform().Get_PositionFloat3());
+
+	if (FAILED(GI()->Add_GameObject(pEffect)))
+		return;
 }
 
 CDamageCollision* CDamageCollision::Create()

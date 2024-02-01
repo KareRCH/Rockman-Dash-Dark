@@ -326,6 +326,9 @@
     <ClCompile Include="..\Client\Private\GameObject\Weapon_SpreadBuster.cpp">
       <Filter>98 Client</Filter>
     </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Trigger.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Include\Tool.rc">

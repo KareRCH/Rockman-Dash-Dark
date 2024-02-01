@@ -1,0 +1,36 @@
+{
+    "Name": "Trigger",
+    "ProtoName": "Trigger1",
+    "ClassID": 10011,
+    "StateFlag": 308,
+    "PriorityTick": 0.0,
+    "PriorityRender": 0.0,
+    "PosX": 0.0,
+    "PosY": 0.0,
+    "PosZ": 0.0,
+    "RotX": 0.0,
+    "RotY": 0.0,
+    "RotZ": 0.0,
+    "ScaleX": 1.0,
+    "ScaleY": 1.0,
+    "ScaleZ": 1.0,
+    "Components": [
+        {
+            "ComponentID": 1,
+            "Name": "ColliderComp",
+            "ProtoName": "Trigger1Collider",
+            "PosX": 0.0,
+            "PosY": 0.0,
+            "PosZ": 0.0,
+            "RotX": 0.0,
+            "RotY": 0.0,
+            "RotZ": 0.0,
+            "ScaleX": 1.0,
+            "ScaleY": 1.0,
+            "ScaleZ": 1.0,
+            "CollisionType": 7,
+            "CollisionLayer": 4,
+            "CollisionMask": 1
+        }
+    ]
+}

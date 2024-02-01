@@ -12,6 +12,8 @@
 #include "GameObject/SkyBox.h"
 #include "GameObject/Door_Common.h"
 #include "GameObject/ItemChest.h"
+#include "GameObject/Trigger.h"
+#include "GameObject/PillarTrap.h"
 
 #include "BaseClass/Terrain.h"
 #include "BaseClass/Navigation.h"
@@ -64,6 +66,12 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 			break;
 		case EObjectIDExt::ItemChest:
 			pObj = TObjectExtTrait< ECast(EObjectIDExt::ItemChest)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::Trigger:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::Trigger)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::PillarTrap:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::PillarTrap)>::Class::Create(Data);
 			break;
 		}
 		break;

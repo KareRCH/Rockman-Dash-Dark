@@ -506,6 +506,33 @@ void CCommonModelComp::BindAndRender_Mesh(_uint iIndex)
 	m_pMeshComps[iIndex]->Render_Buffer();
 }
 
+void CCommonModelComp::BindAndRender_Meshes(_uint iPass, _bool bIsUseBones)
+{
+	if (iPass < 0)
+		return;
+
+	for (_uint i = 0; i < m_iNumActiveMeshes; ++i)
+	{
+		_uint iIndex = m_ActiveMeshes[i];
+
+		if (bIsUseBones)
+			m_pMeshComps[iIndex]->Bind_BoneMatricesToEffect(m_pEffectComp, "g_BoneMatrices", *m_pSkeletalComp->Get_BoneGroup());
+
+		_uint iMatIndex = m_pMeshComps[iIndex]->Get_MeshMaterialIndex();
+		m_pMaterialComps[iMatIndex]->Bind_TextureToEffect(m_pEffectComp, "g_DiffuseTexture", aiTextureType_DIFFUSE);
+
+		m_pEffectComp->Begin(iPass);
+
+		// 버퍼를 장치에 바인드
+		m_pMeshComps[iIndex]->Bind_Buffer();
+
+		// 바인딩된 정점, 인덱스 그리기
+		m_pMeshComps[iIndex]->Render_Buffer();
+	}
+
+	
+}
+
 void CCommonModelComp::Bind_MeshMaterial(_uint iMeshIndex, aiTextureType eType, const _char* pConstName)
 {
 	if (iMeshIndex < 0 || iMeshIndex >= m_iNumMeshes)

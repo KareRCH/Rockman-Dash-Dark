@@ -119,6 +119,21 @@ PS_OUTPUT PS_MAIN_BLEND_ADD(VPS_INOUT In)
     return Out;
 }
 
+
+struct PS_OUT_SHADOW
+{
+    vector vLightDepth : SV_TARGET0;
+};
+
+PS_OUT_SHADOW PS_MAIN_SHADOW(VPS_INOUT In)
+{
+    PS_OUT_SHADOW Out = (PS_OUT_SHADOW) 0;
+
+    Out.vLightDepth = In.vProjPos.w / 1000.0f;
+	
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     // 기본 패스
@@ -146,5 +161,18 @@ technique11 DefaultTechnique
         HullShader = NULL;
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLEND_ADD();
+    }
+
+    pass Shadow
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 }
