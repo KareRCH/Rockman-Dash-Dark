@@ -8,6 +8,7 @@ float g_fFar = 1000.f;
 
 Texture2D g_DepthTexture;
 Texture2D g_FinalTexture;
+Texture2D g_BloomTexture;
 
 float g_fStart = 30.f;          // 안개 시작 범위
 float g_fRange = 100.f;         // 선형 함수용 안개 범위
@@ -70,6 +71,7 @@ PS_OUT PS_MAIN_LINEAR(PS_IN In)
 
     vector vFinal = g_FinalTexture.Sample(LinearSampler, In.vTexcoord);
     vector vDepth = g_DepthTexture.Sample(LinearSampler, In.vTexcoord);
+    vector vBloom = g_BloomTexture.Sample(LinearSampler, In.vTexcoord);
     
     float fViewZ = vDepth.y * g_fFar;
     float fFarFogFactor = floor(vDepth.y) * g_fFarMinFog;   // 0, 1값에 살짝 보여야 하는 가중치
@@ -94,7 +96,7 @@ PS_OUT PS_MAIN_LINEAR(PS_IN In)
     //float fLength = length((vWorldPos - g_vCamPosition).xyz);
     float fFogFactor = saturate((g_fRange - fViewZ) / (g_fRange - g_fStart)) - fFarFogFactor;
     
-    Out.vColor = vector(fFogFactor * vFinal.xyz + (1.f - fFogFactor) * g_vColor.xyz, 1.f);
+    Out.vColor = max(vector(fFogFactor * vFinal.xyz + (1.f - fFogFactor) * g_vColor.xyz, 1.f), vBloom);
 
     return Out;
 }

@@ -1,4 +1,11 @@
 
+sampler ClampSampler = sampler_state
+{
+    filter = min_mag_mip_linear;
+    AddressU = clamp;
+    AddressV = clamp;
+};
+
 sampler LinearSampler = sampler_state
 {
     filter = min_mag_mip_linear;

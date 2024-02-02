@@ -1,7 +1,5 @@
 #include "GameObject/Weapon_HomingMissile.h"
 
-#include "Component/ModelShaderComp.h"
-#include "Component/ModelBufferComp.h"
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 
@@ -11,6 +9,7 @@
 #include "GameObject/StaticObject.h"
 #include "GameObject/Door_Common.h"
 #include "GameObject/Effect_Explosion.h"
+#include "GameObject/DamageCollision.h"
 
 
 CWeapon_HomingMissile::CWeapon_HomingMissile()
@@ -242,14 +241,17 @@ void CWeapon_HomingMissile::OnCollisionExited(CGameObject* pDst)
 
 void CWeapon_HomingMissile::Create_Effect()
 {
-	CEffect_Explosion* pEffect = CEffect_Explosion::Create();
+	CDamageCollision* pEffect = CDamageCollision::Create();
 	if (nullptr == pEffect)
 		return;
 
 	pEffect->Transform().Set_Position(Transform().Get_PositionFloat3());
+	pEffect->Transform().Set_Scale(3.f, 3.f, 3.f);
 
 	if (FAILED(GI()->Add_GameObject(pEffect)))
 		return;
+
+	pEffect->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 }
 
 CCharacter_Common* CWeapon_HomingMissile::Find_Target(_float fRange)

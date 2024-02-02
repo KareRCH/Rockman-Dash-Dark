@@ -93,6 +93,13 @@ HRESULT CWeapon_Blade::Render()
 	return S_OK;
 }
 
+void CWeapon_Blade::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	m_pColliderComp->EnterToPhysics(0);
+}
+
 CWeapon_Blade* CWeapon_Blade::Create()
 {
 	ThisClass* pInstance = new ThisClass();
@@ -163,7 +170,6 @@ HRESULT CWeapon_Blade::Initialize_Component()
 	m_pColliderComp->Set_CollisionKinematic();
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR | COLLAYER_OBJECT);
-	m_pColliderComp->EnterToPhysics(0);
 	
 	return S_OK;
 }

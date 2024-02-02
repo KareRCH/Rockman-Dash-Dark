@@ -242,7 +242,7 @@ HRESULT CPlayer::Render_Shadow()
 
     _float4x4		ViewMatrix, ProjMatrix;
 
-    XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(150.f, 200.f, 150.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+    XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(150.f, 200.f, 150.f, 1.f), XMVectorSet(150.f, 0.f, 150.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
     XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), g_iWindowSizeX / (float)g_iWindowSizeY, 0.1f, 1000.f));
 
     if (FAILED(pEffect->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
@@ -1959,7 +1959,9 @@ void CPlayer::ShootBusterCannon()
 
     GI()->Add_GameObject(pBuster);
     pBuster->Set_LifeTime(1.f);
-    pBuster->Set_Speed(20.f);
+    pBuster->Set_Speed(80.f);
+    pBuster->Set_Damage(5.f);
+    pBuster->Transform().Set_Scale(1.1f, 1.1f, 1.1f);
     pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
     pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 }

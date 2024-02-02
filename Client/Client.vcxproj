@@ -320,6 +320,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Default\Resource.h" />
     <ClInclude Include="Default\targetver.h" />
     <ClInclude Include="Public\Client_Define.h" />
+    <ClInclude Include="Public\CloudStation\CloudStation_Boss.h" />
     <ClInclude Include="Public\CloudStation\CloudStation_Player.h" />
     <ClInclude Include="Public\GameObject\Character.h" />
     <ClInclude Include="Public\GameObject\Character_Common.h" />
@@ -344,6 +345,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\GameObject\StaticObject.h" />
     <ClInclude Include="Public\GameObject\TestTextureObject.h" />
     <ClInclude Include="Public\GameObject\Trigger.h" />
+    <ClInclude Include="Public\GameObject\UI_Boss.h" />
     <ClInclude Include="Public\GameObject\UI_Dialog.h" />
     <ClInclude Include="Public\GameObject\UI_Lockon.h" />
     <ClInclude Include="Public\GameObject\UI_Player.h" />
@@ -365,6 +367,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp" />
+    <ClCompile Include="Private\CloudStation\CloudStation_Boss.cpp" />
     <ClCompile Include="Private\CloudStation\CloudStation_Player.cpp" />
     <ClCompile Include="Private\GameObject\Character.cpp" />
     <ClCompile Include="Private\GameObject\Character_Common.cpp" />
@@ -389,6 +392,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\GameObject\StaticObject.cpp" />
     <ClCompile Include="Private\GameObject\TestTextureObject.cpp" />
     <ClCompile Include="Private\GameObject\Trigger.cpp" />
+    <ClCompile Include="Private\GameObject\UI_Boss.cpp" />
     <ClCompile Include="Private\GameObject\UI_Dialog.cpp" />
     <ClCompile Include="Private\GameObject\UI_Lockon.cpp" />
     <ClCompile Include="Private\GameObject\UI_Player.cpp" />

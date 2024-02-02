@@ -12,6 +12,7 @@
 CWeapon_Buster::CWeapon_Buster()
 {
 	Set_Name(TEXT("Weapon_Buster"));
+	Set_RenderGroup(ERenderGroup::Blend);
 }
 
 CWeapon_Buster::CWeapon_Buster(const CWeapon_Buster& rhs)
@@ -99,6 +100,27 @@ HRESULT CWeapon_Buster::Render()
 	return S_OK;
 }
 
+void CWeapon_Buster::OnCreated()
+{
+	SUPER::OnCreated();
+
+
+}
+
+void CWeapon_Buster::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	if (m_pColliderComp)
+		m_pColliderComp->EnterToPhysics(0);
+
+	if (m_pModelComp)
+	{
+		m_pModelComp->Reset_ActivePass();
+		m_pModelComp->Set_ActivePass(1);
+	}
+}
+
 CWeapon_Buster* CWeapon_Buster::Create()
 {
 	ThisClass* pInstance = new ThisClass();
@@ -164,9 +186,7 @@ HRESULT CWeapon_Buster::Initialize_Component()
 	m_pColliderComp->Set_CollisionKinematic();
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR | COLLAYER_OBJECT);
-	m_pColliderComp->EnterToPhysics(0);
 	
-
 	return S_OK;
 }
 
@@ -186,7 +206,7 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 		if (CTeamAgentComp::ERelation::Hostile == 
 			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
 		{
-			pEnemy->Damage_HP(1.f);
+			pEnemy->Damage_HP(m_fDamage);
 			Create_Effect();
 			Set_Dead();
 		}

@@ -8,7 +8,7 @@
 BEGIN(Engine)
 
 class CCommonModelComp;
-
+class CCloudStationComp;
 END
 
 
@@ -66,6 +66,10 @@ public:		// 충돌 이벤트
 
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
+	CCloudStationComp* m_pCloudStationComp = { nullptr };
+
+private:
+	class CCloudStation_Boss* m_pBossCloud = { nullptr };
 
 private:
 	random_device				m_RandomDevice;
@@ -79,6 +83,7 @@ private:
 
 private:
 	void Move_Update(const _float& fTimeDelta);
+	void Update_CloudStation();
 
 private:
 	_float m_fMoveSpeed = { 5.f };

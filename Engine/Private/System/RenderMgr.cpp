@@ -10,6 +10,8 @@ _uint		g_iSizeY = 4608;
 CRenderMgr::CRenderMgr(const DX11DEVICE_T tDevice)
 	: m_pDevice(tDevice.pDevice), m_pDeviceContext(tDevice.pDeviceContext), m_hReadyResult(E_FAIL)
 {
+	NULL_CHECK(m_pGI = GI());
+	Safe_AddRef(m_pGI);
 	NULL_CHECK(m_pPipelineComp = DynCast<CPipelineComp*>(GI()->Reference_PrototypeComp(TEXT("CamViewComp"))));
 }
 
@@ -61,21 +63,41 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	if (FAILED(GI()->Add_RenderTarget(TEXT("Target_Final"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+
+
+#pragma region 블룸 타겟
+	if (FAILED(m_pGI->Add_RenderTarget(TEXT("Target_Effect"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(m_pGI->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_Effect"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGI->Add_RenderTarget(TEXT("Target_Blur_X"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(m_pGI->Add_MRT(TEXT("MRT_Blur_X"), TEXT("Target_Blur_X"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGI->Add_RenderTarget(TEXT("Target_Blur_Y"), m_vecViewport[0].Width, m_vecViewport[0].Height, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(m_pGI->Add_MRT(TEXT("MRT_Blur_Y"), TEXT("Target_Blur_Y"))))
+		return E_FAIL;
+#pragma endregion
+
 	
 
-	if (FAILED(GI()->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
+
+	if (FAILED(m_pGI->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
-	if (FAILED(GI()->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
+	if (FAILED(m_pGI->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
 		return E_FAIL;
-	if (FAILED(GI()->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
+	if (FAILED(m_pGI->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
 		return E_FAIL;
-	if (FAILED(GI()->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
+	if (FAILED(m_pGI->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
-	if (FAILED(GI()->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
+	if (FAILED(m_pGI->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
-	if (FAILED(GI()->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_LightDepth"))))
+	if (FAILED(m_pGI->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_LightDepth"))))
 		return E_FAIL;
-	if (FAILED(GI()->Add_MRT(TEXT("MRT_Final"), TEXT("Target_Final"))))
+	if (FAILED(m_pGI->Add_MRT(TEXT("MRT_Final"), TEXT("Target_Final"))))
 		return E_FAIL;
 	
 
@@ -140,19 +162,25 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 
 
 #ifdef _DEBUG
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Diffuse"), 50.f, 50.f, 100.f, 100.f)))
+	if (FAILED(m_pGI->Ready_RenderTarget_Debug(TEXT("Target_Diffuse"), 50.f, 50.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Normal"), 50.f, 150.f, 100.f, 100.f)))
+	if (FAILED(m_pGI->Ready_RenderTarget_Debug(TEXT("Target_Normal"), 50.f, 150.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Depth"), 50.f, 250.f, 100.f, 100.f)))
+	if (FAILED(m_pGI->Ready_RenderTarget_Debug(TEXT("Target_Depth"), 50.f, 250.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Shade"), 150.f, 50.f, 100.f, 100.f)))
+	if (FAILED(m_pGI->Ready_RenderTarget_Debug(TEXT("Target_Shade"), 150.f, 50.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Specular"), 150.f, 150.f, 100.f, 100.f)))
+	if (FAILED(m_pGI->Ready_RenderTarget_Debug(TEXT("Target_Specular"), 150.f, 150.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_Final"), 150.f, 250.f, 100.f, 100.f)))
+	if (FAILED(m_pGI->Ready_RenderTarget_Debug(TEXT("Target_Final"), 150.f, 250.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(GI()->Ready_RenderTarget_Debug(TEXT("Target_LightDepth"), 1130.f, 150.f, 300.f, 300.f)))
+	if (FAILED(m_pGI->Ready_RenderTarget_Debug(TEXT("Target_LightDepth"), 1130.f, 150.f, 300.f, 300.f)))
+		return E_FAIL;
+	if (FAILED(m_pGI->Ready_RenderTarget_Debug(TEXT("Target_Effect"), 50.f, 350.f, 100.f, 100.f)))
+		return E_FAIL;
+	if (FAILED(m_pGI->Ready_RenderTarget_Debug(TEXT("Target_Blur_X"), 50.f, 450.f, 100.f, 100.f)))
+		return E_FAIL;
+	if (FAILED(m_pGI->Ready_RenderTarget_Debug(TEXT("Target_Blur_Y"), 150.f, 450.f, 100.f, 100.f)))
 		return E_FAIL;
 #endif
 
@@ -166,17 +194,20 @@ HRESULT CRenderMgr::Render()
 		return E_FAIL;
 	if (FAILED(Render_Shadow()))
 		return E_FAIL;
-	if (FAILED(Render_NonLight()))
-		return E_FAIL;
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
+	
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 	if (FAILED(Render_Fog()))
 		return E_FAIL;
+	if (FAILED(Render_NonLight()))
+		return E_FAIL;
 	if (FAILED(Render_Blend()))
+		return E_FAIL;
+	if (FAILED(Render_Bloom()))
 		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
@@ -217,6 +248,7 @@ void CRenderMgr::Free()
 	}
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pPipelineComp);
+	Safe_Release(m_pGI);
 }
 
 void CRenderMgr::Add_RenderGroup(ERenderGroup eType, CGameObject* pGameObject)
@@ -283,7 +315,8 @@ HRESULT CRenderMgr::Render_Shadow()
 
 HRESULT CRenderMgr::Render_NonLight()
 {
-	//GameInstance()->TurnOff_ZBuffer();
+	if (FAILED(m_pGI->Begin_MRT(TEXT("MRT_Effect"))))
+		return E_FAIL;
 
 	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::NonLight)])
 	{
@@ -291,13 +324,14 @@ HRESULT CRenderMgr::Render_NonLight()
 		Safe_Release(pObj);
 	}
 
+	if (FAILED(m_pGI->End_MRT()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CRenderMgr::Render_NonBlend()
 {
-	//GameInstance()->TurnOn_ZBuffer();
-
 	/* 기존에 셋팅되어있던 백버퍼를 빼내고 Diffuse와 Normal을 장치에 바인딩한다. */
 	if (FAILED(GI()->Begin_MRT(TEXT("MRT_GameObjects"))))
 		return E_FAIL;
@@ -317,7 +351,8 @@ HRESULT CRenderMgr::Render_NonBlend()
 
 HRESULT CRenderMgr::Render_Blend()
 {
-	//GameInstance()->TurnOn_ZBuffer();
+	if (FAILED(m_pGI->Begin_MRT(TEXT("MRT_Effect"))))
+		return E_FAIL;
 
 	_vector vCamPos = PipelineComp().Get_CamPositionVector(ECamType::Persp, ECamNum::One);
 	m_RenderGroup[ECast(ERenderGroup::Blend)].sort(
@@ -338,13 +373,14 @@ HRESULT CRenderMgr::Render_Blend()
 		Safe_Release(pObj);
 	}
 
+	if (FAILED(m_pGI->End_MRT()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CRenderMgr::Render_UI()
 {
-	//GameInstance()->TurnOff_ZBuffer();
-
 	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::UI)])
 	{
 		pObj->Render();
@@ -356,8 +392,6 @@ HRESULT CRenderMgr::Render_UI()
 
 HRESULT CRenderMgr::Render_PostProcess()
 {
-	//GameInstance()->TurnOff_ZBuffer();
-
 	for (auto& pObj : m_RenderGroup[ECast(ERenderGroup::PostProcess)])
 	{
 		pObj->Render();
@@ -399,7 +433,7 @@ HRESULT CRenderMgr::Render_LightAcc()
 	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::Deferred)], "g_DepthTexture")))
 		return E_FAIL;
 
-	GI()->Render_Lights(m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	m_pGI->Render_Lights(m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
 
 	if (FAILED(GI()->End_MRT()))
 		return E_FAIL;
@@ -424,7 +458,7 @@ HRESULT CRenderMgr::Render_Deferred()
 
 	_float4x4		ViewMatrix, ProjMatrix;
 
-	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(150.f, 200.f, 150.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(150.f, 200.f, 150.f, 1.f), XMVectorSet(150.f, 0.f, 150.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
 	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), 1280.0f / 720.0f, 0.1f, 1000.f));
 
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_LightViewMatrix", &ViewMatrix)))
@@ -432,16 +466,21 @@ HRESULT CRenderMgr::Render_Deferred()
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_LightProjMatrix", &ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Diffuse"), m_pEffect[ECast(EEffect::Deferred)], "g_DiffuseTexture")))
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Diffuse"), m_pEffect[ECast(EEffect::Deferred)], "g_DiffuseTexture")))
 		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Shade"), m_pEffect[ECast(EEffect::Deferred)], "g_ShadeTexture")))
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Shade"), m_pEffect[ECast(EEffect::Deferred)], "g_ShadeTexture")))
 		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Specular"), m_pEffect[ECast(EEffect::Deferred)], "g_SpecularTexture")))
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Specular"), m_pEffect[ECast(EEffect::Deferred)], "g_SpecularTexture")))
 		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::Deferred)], "g_DepthTexture")))
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::Deferred)], "g_DepthTexture")))
 		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_LightDepth"), m_pEffect[ECast(EEffect::Deferred)], "g_LightDepthTexture")))
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_LightDepth"), m_pEffect[ECast(EEffect::Deferred)], "g_LightDepthTexture")))
 		return E_FAIL;
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Blur_Y"), m_pEffect[ECast(EEffect::Deferred)], "g_BlurTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Effect"), m_pEffect[ECast(EEffect::Deferred)], "g_EffectTexture")))
+		return E_FAIL;
+
 
 
 	m_pEffect[ECast(EEffect::Deferred)]->Begin(3);
@@ -455,6 +494,53 @@ HRESULT CRenderMgr::Render_Deferred()
 		if (FAILED(GI()->End_MRT()))
 			return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CRenderMgr::Render_Bloom()
+{
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+#pragma region X 블러
+	if (FAILED(m_pGI->Begin_MRT(TEXT("MRT_Blur_X"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Effect"), m_pEffect[ECast(EEffect::Deferred)], "g_EffectTexture")))
+		return E_FAIL;
+
+	m_pVIBuffer->Bind_Buffer();
+
+	m_pEffect[ECast(EEffect::Deferred)]->Begin(4);
+
+	m_pVIBuffer->Render_Buffer();
+
+	if (FAILED(m_pGI->End_MRT()))
+		return E_FAIL;
+#pragma endregion
+
+
+#pragma region Y 블러
+	if (FAILED(m_pGI->Begin_MRT(TEXT("MRT_Blur_Y"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Blur_X"), m_pEffect[ECast(EEffect::Deferred)], "g_EffectTexture")))
+		return E_FAIL;
+
+	m_pVIBuffer->Bind_Buffer();
+
+	m_pEffect[ECast(EEffect::Deferred)]->Begin(5);
+
+	m_pVIBuffer->Render_Buffer();
+
+	if (FAILED(m_pGI->End_MRT()))
+		return E_FAIL;
+#pragma endregion
 
 	return S_OK;
 }
@@ -497,6 +583,8 @@ HRESULT CRenderMgr::Render_Fog()
 		return E_FAIL;
 	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Final"), m_pEffect[ECast(EEffect::PostProcess)], "g_FinalTexture")))
 		return E_FAIL;
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Blur_Y"), m_pEffect[ECast(EEffect::PostProcess)], "g_BloomTexture")))
+		return E_FAIL;
 
 	m_pEffect[ECast(EEffect::PostProcess)]->Begin(ECast(m_eFogType));
 
@@ -524,10 +612,13 @@ HRESULT CRenderMgr::Render_Debug()
 	if (!m_bIsDeferred)
 		return S_OK;
 
-	GI()->Render_Debug_RTVs(TEXT("MRT_GameObjects"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
-	GI()->Render_Debug_RTVs(TEXT("MRT_LightAcc"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
-	GI()->Render_Debug_RTVs(TEXT("MRT_Shadow"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
-	GI()->Render_Debug_RTVs(TEXT("MRT_Final"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	m_pGI->Render_Debug_RTVs(TEXT("MRT_GameObjects"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	m_pGI->Render_Debug_RTVs(TEXT("MRT_LightAcc"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	m_pGI->Render_Debug_RTVs(TEXT("MRT_Shadow"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	m_pGI->Render_Debug_RTVs(TEXT("MRT_Final"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	m_pGI->Render_Debug_RTVs(TEXT("MRT_Effect"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	m_pGI->Render_Debug_RTVs(TEXT("MRT_Blur_X"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
+	m_pGI->Render_Debug_RTVs(TEXT("MRT_Blur_Y"), m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
 
 	return S_OK;
 }
