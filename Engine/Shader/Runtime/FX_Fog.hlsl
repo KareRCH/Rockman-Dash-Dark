@@ -9,10 +9,11 @@ float g_fFar = 1000.f;
 Texture2D g_DepthTexture;
 Texture2D g_FinalTexture;
 
-float g_fStart = 30.f;
-float g_fRange = 100.f;
-float g_fDensity = 0.01f;
-float4 g_vColor = vector(0.f, 0.f, 0.f, 1.f);
+float g_fStart = 30.f;          // 안개 시작 범위
+float g_fRange = 100.f;         // 선형 함수용 안개 범위
+float g_fDensity = 0.01f;       // 지수 함수용 안개 두께
+float g_fFarMinFog = 0.1f;      // Far값에 해당하는 픽셀에 대해 보이는 최소치
+float4 g_vColor = vector(0.f, 0.f, 0.f, 1.f);       // 안개 색
 
 struct VS_IN
 {
@@ -71,26 +72,27 @@ PS_OUT PS_MAIN_LINEAR(PS_IN In)
     vector vDepth = g_DepthTexture.Sample(LinearSampler, In.vTexcoord);
     
     float fViewZ = vDepth.y * g_fFar;
-    vector vWorldPos;
+    float fFarFogFactor = floor(vDepth.y) * g_fFarMinFog;   // 0, 1값에 살짝 보여야 하는 가중치
+    //vector vWorldPos;
 
 	/* 투영스페이스 상의 위치. */
 	/* 로컬위치 * 월드행렬 * 뷰행렬* 투영행렬 / View.z */
-    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
-    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
-    vWorldPos.z = vDepth.x;
-    vWorldPos.w = 1.f;
-
-	/* 뷰스페이스 상의 위치를 구하자. */
-	/* 로컬위치 * 월드행렬 * 뷰행렬 */
-    vWorldPos = vWorldPos * fViewZ;
-    vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-
-	/* 월드 상의 위치를 구하자. */
-	/* 로컬위치 * 월드행렬 */
-    vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
-    
-    float fLength = length((vWorldPos - g_vCamPosition).xyz);
-    float fFogFactor = saturate((g_fRange - fViewZ) / (g_fRange - g_fStart));
+    //vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    //vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    //vWorldPos.z = vDepth.x;
+    //vWorldPos.w = 1.f;
+    //
+	///* 뷰스페이스 상의 위치를 구하자. */
+	///* 로컬위치 * 월드행렬 * 뷰행렬 */
+    //vWorldPos = vWorldPos * fViewZ;
+    //vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
+    //
+	///* 월드 상의 위치를 구하자. */
+	///* 로컬위치 * 월드행렬 */
+    //vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
+    //
+    //float fLength = length((vWorldPos - g_vCamPosition).xyz);
+    float fFogFactor = saturate((g_fRange - fViewZ) / (g_fRange - g_fStart)) - fFarFogFactor;
     
     Out.vColor = vector(fFogFactor * vFinal.xyz + (1.f - fFogFactor) * g_vColor.xyz, 1.f);
 
