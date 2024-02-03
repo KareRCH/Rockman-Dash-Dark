@@ -54,6 +54,13 @@ public:		// 충돌 이벤트
 	virtual void OnCollision(CGameObject* pDst, const FContact* pContact);
 	virtual void OnCollisionEntered(CGameObject* pDst, const FContact* pContact);
 	virtual void OnCollisionExited(CGameObject* pDst);
+
+public:
+	enum class EType : _uint { Boss };
+
+private:
+	EType		m_eTriggerType = { EType::Boss };
+
 };
 
 template <>

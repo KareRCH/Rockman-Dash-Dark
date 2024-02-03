@@ -49,6 +49,7 @@ HRESULT CSoundMgr::Initialize(const string& strMainPath)
 	Load_SoundFile_GroupAsync(TEXT("RockmanDash2"), (strMainPath + "Rockman-Dash-2/UsageBGM/"));
 	Load_SoundFile_GroupAsync(TEXT("RockmanDash2"), (strMainPath + "Rockman-Dash-2/SFX/rockman/"));
 	Load_SoundFile_GroupAsync(TEXT("RockmanDash2"), (strMainPath + "Rockman-Dash-2/SFX/general/"));
+	Load_SoundFile_GroupAsync(TEXT("RockmanDash2"), (strMainPath + "Rockman-Dash-2/SFX/weapons/"));
 
 	Wait_GroupAsync();
 
@@ -109,7 +110,7 @@ void CSoundMgr::Play_Sound(const wstring& strGroupKey, const wstring& strSoundKe
 		FMOD_System_PlaySound(m_pSystem, iter->second, m_pChannelGroup[SND1_GROUP], FALSE, &m_pChannelArr[eID]);
 	}
 
-	FMOD_Channel_SetVolume(m_pChannelArr[eID], 0.1f);//fVolume);
+	FMOD_Channel_SetVolume(m_pChannelArr[eID], fVolume);
 
 	FMOD_System_Update(m_pSystem);
 }
@@ -131,7 +132,7 @@ void CSoundMgr::Play_BGM(const wstring& strGroupKey, const wstring& strSoundKey,
 	Stop_Sound(SOUND_BGM);
 	FMOD_System_PlaySound(m_pSystem, iter->second, m_pChannelGroup[BGM_GROUP], FALSE, &m_pChannelArr[SOUND_BGM]);
 	FMOD_Channel_SetMode(m_pChannelArr[SOUND_BGM], FMOD_LOOP_NORMAL);
-	FMOD_Channel_SetVolume(m_pChannelArr[SOUND_BGM], 0.1f);//fVolume);
+	FMOD_Channel_SetVolume(m_pChannelArr[SOUND_BGM], fVolume);
 	FMOD_System_Update(m_pSystem);
 }
 

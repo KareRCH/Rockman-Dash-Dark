@@ -125,6 +125,7 @@ private:		// 약식 상태머신
 	FGauge			m_fIdleTime = FGauge(3.f);
 	FGauge			m_fTurnTime = FGauge(1.f);
 	_bool			m_fTurnLeft = { true };
+	_uint			m_fPhase	= { 0 };
 
 private:
 	void AIState_Idle(const _float& fTimeDelta);

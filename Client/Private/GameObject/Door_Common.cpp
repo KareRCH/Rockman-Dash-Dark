@@ -315,6 +315,7 @@ void CDoor_Common::ActState_Open(const _float& fTimeDelta)
     {
         m_fDoorClose.Reset();
         m_pModelComp->Set_Animation(1, 1.f, false);
+        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("ruin_door_open.mp3"), CHANNELID::SOUND_VFX3, 1.f);
         
     }
 
@@ -339,6 +340,7 @@ void CDoor_Common::ActState_Close(const _float& fTimeDelta)
     {
         m_pModelComp->Set_Animation(2, 1.f, false);
         m_pColliderComp->EnterToPhysics(0);
+        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("ruin_door_close.mp3"), CHANNELID::SOUND_VFX3, 1.f);
     }
 
     if (m_State_Act.Can_Update())

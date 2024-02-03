@@ -41,6 +41,7 @@ namespace Client
 		ShieldArm,
 		SpreadBusterArm,
 		Money,
+		SubWeapons,
 	};
 
 	enum class EMainWeapon : _uint

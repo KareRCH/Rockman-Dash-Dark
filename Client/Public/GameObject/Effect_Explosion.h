@@ -50,7 +50,7 @@ public:
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
 
-	FGauge			m_fLifeTime = FGauge(0.7f);
+	FGauge			m_fLifeTime = FGauge(1.2f);
 	FGauge			m_fScale = FGauge(200.f);
 	FGauge			m_fAlpha = FGauge(1.f, true);
 	_float			m_fOffset = 0.f;

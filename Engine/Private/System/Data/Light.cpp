@@ -3,9 +3,10 @@
 #include "Component/EffectComponent.h"
 #include "Component/RectBufferComp.h"
 
-HRESULT CLight::Initialize(const TLIGHT_DESC& LightDesc)
+HRESULT CLight::Initialize(const TLIGHT_DESC& LightDesc, const _uint iID)
 {
 	m_LightDesc = LightDesc;
+	m_iID = iID;
 
     return S_OK;
 }
@@ -23,7 +24,7 @@ HRESULT CLight::Render(CEffectComponent* pEffect, CVIBufferComp* pVIBuffer)
 	else
 	{
 		pEffect->Bind_RawValue("g_vLightPos", &m_LightDesc.vPosition, sizeof(_float4));
-		pEffect->Bind_RawValue("g_vLightRange", &m_LightDesc.fRange, sizeof(_float));
+		pEffect->Bind_RawValue("g_fLightRange", &m_LightDesc.fRange, sizeof(_float));
 
 		iPassIndex = 2;
 	}
@@ -42,11 +43,11 @@ HRESULT CLight::Render(CEffectComponent* pEffect, CVIBufferComp* pVIBuffer)
 	return pVIBuffer->Render_Buffer();
 }
 
-CLight* CLight::Create(const TLIGHT_DESC& LightDesc)
+CLight* CLight::Create(const TLIGHT_DESC& LightDesc, const _uint iID)
 {
 	CLight* pInstance = new CLight();
 
-	if (FAILED(pInstance->Initialize(LightDesc)))
+	if (FAILED(pInstance->Initialize(LightDesc, iID)))
 	{
 		MSG_BOX("Failed to Created : CLight");
 		Safe_Release(pInstance);

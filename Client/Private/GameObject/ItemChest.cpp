@@ -340,7 +340,7 @@ void CItemChest::Give_Item()
 {
 	if (!m_GiveItemEvent.empty())
 	{
-		m_GiveItemEvent(true, EItemObtain::BladeArm);
+		m_GiveItemEvent(true, EItemObtain::SubWeapons);
 		GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("gotcha.mp3"), CHANNELID::SOUND_VFX, 1.f);
 	}
 	m_GiveItemEvent.clear();

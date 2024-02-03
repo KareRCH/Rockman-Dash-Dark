@@ -15,10 +15,15 @@ HRESULT CObjectMgr::Initialize(_uint iNumLevels)
 
 void CObjectMgr::Priority_Tick(const _float& fTimeDelta)
 {
+	// BeginPlay 작동
 	m_EventBeginPlay.Broadcast();
 	m_EventBeginPlay.Clear();
 
 	RegistToTick_GameObjects();
+
+	// EndPlay로 인해 추가된 객체에 대한 BeginPlay 작동
+	m_EventBeginPlay.Broadcast();
+	m_EventBeginPlay.Clear();
 
 	for (auto pObj : m_listTickObjects)
 	{
@@ -64,7 +69,10 @@ void CObjectMgr::Free()
 {
 	// 인스턴스 해제
 	for (auto pObj : m_vecGameObjects)
+	{
+		pObj->OnDeleted();
 		Safe_Release(pObj);
+	}
 	m_vecGameObjects.clear();
 
 	// 프로토타입 해제
@@ -441,6 +449,7 @@ void CObjectMgr::RegistToTick_GameObjects()
 				m_setObjectNames.erase(iter);
 
 			pObj->EndPlay();
+			pObj->OnDeleted();
 			_uint iRefCount = Safe_Release(pObj);
 			m_vecGameObjects[i] = nullptr;
 			bChanged = true;

@@ -5,8 +5,10 @@
 
 CGameObject::CGameObject()
 	: m_pPipelineComp(Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp")))
+	, m_pGI(GI())
 {
 	m_pTransformComp = CTransformComponent::Create();
+	Safe_AddRef(m_pGI);
 
 	TurnOn_State(EGObjectState::Priority_Tick);
 	TurnOn_State(EGObjectState::Tick);
@@ -18,9 +20,11 @@ CGameObject::CGameObject(const CGameObject& rhs)
 	: m_pPipelineComp(rhs.m_pPipelineComp)
 	, m_iStateFlag(rhs.m_iStateFlag)
 	, m_strPrototypeName(rhs.m_strPrototypeName)
+	, m_pGI(rhs.m_pGI)
 {
 	// 파이프라인 참조
 	Safe_AddRef(m_pPipelineComp);
+	Safe_AddRef(m_pGI);
 
 	for (_uint i = 0; i < ECast(EGObjTickPriority::Size); i++)
 		m_fPriority[i] = rhs.m_fPriority[i];
@@ -265,6 +269,7 @@ void CGameObject::Free()
 
 	Release_Transform();
 	Safe_Release(m_pPipelineComp);
+	Safe_Release(m_pGI);
 }
 
 void CGameObject::Delete_Tag(const EGObjTag eTagType, const wstring& strTag)

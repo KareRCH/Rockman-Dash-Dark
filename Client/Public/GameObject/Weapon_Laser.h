@@ -36,6 +36,10 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void OnCreated() override;
+	virtual void BeginPlay() override;
+
+public:
 	static CWeapon_Laser* Create();
 	static CWeapon_Laser* Create(const _float3 vPos);
 	CGameObject* Clone(void* Arg = nullptr);

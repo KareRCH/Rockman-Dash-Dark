@@ -20,6 +20,8 @@
 #include "GameObject/Weapon_Blade.h"
 #include "GameObject/ReaverBot_Fingerii.h"
 #include "GameObject/ItemChest.h"
+#include "GameObject/Item_Deflector.h"
+#include "GameObject/DynamicCamera.h"
 
 #include "CloudStation/CloudStation_Player.h"
 
@@ -172,14 +174,6 @@ void CPlayer::Priority_Tick(const _float& fTimeDelta)
 {
     SUPER::Priority_Tick(fTimeDelta);
 
-    if (nullptr == m_pPlayerCloud && nullptr != m_pCloudStationComp)
-    {
-        if (SUCCEEDED(m_pCloudStationComp->Connect_CloudStation(TEXT("Player"))))
-        {
-            m_pPlayerCloud = m_pCloudStationComp->Get_LastCloudStation<CCloudStation_Player>();
-            Safe_AddRef(m_pPlayerCloud);
-        }
-    }
 }
 
 void CPlayer::Tick(const _float& fTimeDelta)
@@ -261,8 +255,17 @@ void CPlayer::OnCreated()
     Register_State();
 }
 
+void CPlayer::OnDeleted()
+{
+    // 상호참조 문제로 여기서 해제
+    Safe_Release(m_pDynamicCamera);
+}
+
 void CPlayer::BeginPlay()
 {
+    m_pDynamicCamera = DynCast<CDynamicCamera*>(m_pGI->Find_GameObjectByName(TEXT("DynamicCamera")));
+    Safe_AddRef(m_pDynamicCamera);
+
     m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR
         | COLLAYER_ITEM | COLLAYER_OBJECT | COLLAYER_ATTACKER);
     if (m_pColliderComp)
@@ -270,6 +273,26 @@ void CPlayer::BeginPlay()
 
     m_pCloudStationComp->Open_CloudStation_Session(TEXT("Player"), CCloudStation_Player::Create());
     m_pCloudStationComp->Connect_CloudStation(TEXT("Player"));
+
+    if (nullptr == m_pPlayerCloud && nullptr != m_pCloudStationComp)
+    {
+        if (SUCCEEDED(m_pCloudStationComp->Connect_CloudStation(TEXT("Player"))))
+        {
+            m_pPlayerCloud = m_pCloudStationComp->Get_LastCloudStation<CCloudStation_Player>();
+            Safe_AddRef(m_pPlayerCloud);
+        }
+    }
+
+    if (m_pPlayerCloud)
+    {
+        m_pPlayerCloud->Access_HP(CCloudStation::EMode::Download, m_fHP);
+        m_pPlayerCloud->Access_Money(CCloudStation::EMode::Download, m_iMoney);
+    }
+}
+
+void CPlayer::EndPlay()
+{
+    
 }
 
 CPlayer* CPlayer::Create()
@@ -552,6 +575,14 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
 
 
     }
+
+    CItem_Deflector* pDeflector = DynCast<CItem_Deflector*>(pDst);
+    if (pDeflector)
+    {
+        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("get_reflector_shard.mp3"), CHANNELID::SOUND_VFX2, 1.f);
+        pDeflector->Obtain_Money(m_iMoney);
+        pDeflector->Set_Dead();
+    }
 }
 
 void CPlayer::OnCollisionEntered(CGameObject* pDst, const FContact* pContact)
@@ -782,12 +813,15 @@ void CPlayer::Input_Weapon(const _float& fTimeDelta)
             ChangeMainWeapon(Cast<EMainWeapon>(ECast(m_eMainWeapon) + 1));
     }
 
-    if (GI()->IsKey_Pressed(DIK_C))
+    //if (m_bIsCanUseSubWeapons)
     {
-        if (ECast(ESubWeapon::SpreadBusterArm) == ECast(m_eSubWeapon))
-            ChangeSubWeapon(ESubWeapon::ThrowArm);
-        else
-            ChangeSubWeapon(Cast<ESubWeapon>(ECast(m_eSubWeapon) + 1));
+        if (GI()->IsKey_Pressed(DIK_C))
+        {
+            if (ECast(ESubWeapon::SpreadBusterArm) == ECast(m_eSubWeapon))
+                ChangeSubWeapon(ESubWeapon::ThrowArm);
+            else
+                ChangeSubWeapon(Cast<ESubWeapon>(ECast(m_eSubWeapon) + 1));
+        }
     }
 
     switch (m_eMainWeapon)
@@ -1629,7 +1663,8 @@ void CPlayer::ActState_BladeAttack1(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(20, 1.f, false, false, 0.2f);
+        m_pModelComp->Set_Animation(20, 1.5f, false, false, 0.2f);
+        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack1.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
         m_ActionKey.Act(EActionKey::MoveForward);
         m_ActionKey.Act(EActionKey::MoveFast);
         CreateBlade();
@@ -1661,6 +1696,7 @@ void CPlayer::ActState_BladeAttack2(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(21, 1.3f, false, false, 0.2f);
+        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack1.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
         m_fGauge.Readjust(0.2f);
         
     }
@@ -1671,7 +1707,15 @@ void CPlayer::ActState_BladeAttack2(const _float& fTimeDelta)
         AttachBlade();
         m_fGauge.Increase(fTimeDelta);
         if (m_fGauge.IsMax_Once())
+        {
+            m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
             m_ActionKey.Act(EActionKey::Jump);
+        }
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Range(34.f, 35.f))
+        {
+            m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack2.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+        }
 
         m_ActionKey.Act(EActionKey::MoveForward);
         m_ActionKey.Act(EActionKey::JumpLow);
@@ -1855,10 +1899,12 @@ void CPlayer::ShootBuster()
     if (pBuster == nullptr)
         return;
 
+    _vector vLook = Calculate_ShootLookVector(vPos);
+
     GI()->Add_GameObject(pBuster);
     pBuster->Set_LifeTime(1.f);
     pBuster->Set_Speed(20.f);
-    pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + vLook);
     pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 }
 
@@ -1876,11 +1922,15 @@ void CPlayer::ShootMissile()
     if (m_pLockon_Target)
         pMissile->Set_Target(m_pLockon_Target);
 
+    _vector vLook = Calculate_ShootLookVector(vPos);
+
     pMissile->Set_Speed(20.f);
     pMissile->Set_LifeTime(1.f);
-    pMissile->Transform().Look_At(pMissile->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    pMissile->Transform().Look_At(pMissile->Transform().Get_PositionVector() + vLook);
     pMissile->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
-    GI()->Add_GameObject(pMissile);
+    m_pGI->Add_GameObject(pMissile);
+
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("homming_shoot.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
 }
 
 void CPlayer::ShootSpreadBuster()
@@ -1894,17 +1944,20 @@ void CPlayer::ShootSpreadBuster()
         if (pBuster == nullptr)
             return;
 
+        _vector vLook = Calculate_ShootLookVector(vPos);
+
         _int iCont = i - 2;
         _float fRadian = XMConvertToRadians(Cast<_float>(iCont * 20));
 
-        pBuster->Set_LifeTime(0.3f);
-        pBuster->Set_Speed(20.f);
-        pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+        pBuster->Set_LifeTime(0.6f);
+        pBuster->Set_Speed(30.f);
+        pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + vLook);
         pBuster->Transform().TurnRight(fRadian);
         pBuster->Transform().MoveForward(0.5f);
         pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
-        GI()->Add_GameObject(pBuster);
+        m_pGI->Add_GameObject(pBuster);
     }
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("spreadgun_shoot.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
 }
 
 void CPlayer::ShootLaser()
@@ -1920,10 +1973,12 @@ void CPlayer::ShootLaser()
     if (m_pLaserEmission == nullptr)
         return;
 
+    _vector vLook = Calculate_ShootLookVector(vPos);
+
     // 초기에만 세팅
-    m_pLaserEmission->Transform().Look_At(m_pLaserEmission->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    m_pLaserEmission->Transform().Look_At(m_pLaserEmission->Transform().Get_PositionVector() + vLook);
     m_pLaserEmission->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
-    GI()->Add_GameObject(m_pLaserEmission);
+    m_pGI->Add_GameObject(m_pLaserEmission);
     Safe_AddRef(m_pLaserEmission);
 }
 
@@ -1933,8 +1988,9 @@ void CPlayer::AttachLaser()
     {
         _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
         _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.4f;
+        _vector vLook = Calculate_ShootLookVector(vPos);
         m_pLaserEmission->Transform().Set_Position(vPos);
-        m_pLaserEmission->Transform().Look_At(m_pLaserEmission->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+        m_pLaserEmission->Transform().Look_At(m_pLaserEmission->Transform().Get_PositionVector() + vLook);
     }
 }
 
@@ -1957,13 +2013,17 @@ void CPlayer::ShootBusterCannon()
     if (pBuster == nullptr)
         return;
 
-    GI()->Add_GameObject(pBuster);
+    _vector vLook = Calculate_ShootLookVector(vPos);
+
+    m_pGI->Add_GameObject(pBuster);
     pBuster->Set_LifeTime(1.f);
     pBuster->Set_Speed(80.f);
     pBuster->Set_Damage(5.f);
     pBuster->Transform().Set_Scale(1.1f, 1.1f, 1.1f);
-    pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + vLook);
     pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_cannon_shoot.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
 }
 
 void CPlayer::ShootHyperShell()
@@ -1976,11 +2036,15 @@ void CPlayer::ShootHyperShell()
     if (pBuster == nullptr)
         return;
 
-    GI()->Add_GameObject(pBuster);
-    pBuster->Set_LifeTime(1.f);
-    pBuster->Set_Speed(20.f);
-    pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    _vector vLook = Calculate_ShootLookVector(vPos);
+
+    m_pGI->Add_GameObject(pBuster);
+    pBuster->Set_LifeTime(1.5f);
+    pBuster->Set_Speed(0.01f);
+    pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + vLook);
     pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("hyper_shell_shoot.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
 }
 
 void CPlayer::ShootMachinegun()
@@ -1993,11 +2057,15 @@ void CPlayer::ShootMachinegun()
     if (pMachinegun == nullptr)
         return;
 
-    GI()->Add_GameObject(pMachinegun);
+    _vector vLook = Calculate_ShootLookVector(vPos);
+
+    m_pGI->Add_GameObject(pMachinegun);
     pMachinegun->Set_LifeTime(0.8f);
     pMachinegun->Set_Speed(30.f);
-    pMachinegun->Transform().Look_At(pMachinegun->Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+    pMachinegun->Transform().Look_At(pMachinegun->Transform().Get_PositionVector() + vLook);
     pMachinegun->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("machinegun_shoot.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
 }
 
 void CPlayer::CreateBlade()
@@ -2045,9 +2113,13 @@ void CPlayer::GrabingUnit()
         _matrix RightHandMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
         _matrix LeftHandMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(110);
 
+        _vector vRightHandLook = XMVector3Normalize(RightHandMatrix.r[0]);
+        _vector vLeftHandLook = XMVector3Normalize(LeftHandMatrix.r[0]);
+        _vector vLook = XMVector3Normalize(XMVectorLerp(vRightHandLook, -vLeftHandLook, 0.5f));
+
         _vector vPos = (RightHandMatrix.r[3] + LeftHandMatrix.r[3]) * 0.5f;
         m_pGrabUnit->Transform().Set_Position(vPos);
-        m_pGrabUnit->Transform().Look_At(vPos + Transform().Get_LookNormalizedVector());
+        m_pGrabUnit->Transform().Look_At(vPos + vLook);
     }
 }
 
@@ -2062,10 +2134,11 @@ void CPlayer::ThrowUnit()
         m_pGrabUnit->Set_Velocity(vfVelocity);
         m_pGrabUnit->Set_Grabbed(false);
         m_pGrabUnit->Set_Throwing(true);
+        m_pGrabUnit->Transform().Look_At_OnLand(Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
 
         Safe_ReleaseAndUnlink(m_pGrabUnit);
 
-        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_throw.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_throw.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
     }
 }
 
@@ -2073,6 +2146,8 @@ void CPlayer::Gotcha(_bool bIsGetItem, EItemObtain eItem)
 {
     if (bIsGetItem)
     {
+        if (eItem == EItemObtain::SubWeapons)
+            m_bIsCanUseSubWeapons = true;
         m_State_Act.Set_State(EState_Act::ItemGet);
     }
     else
@@ -2136,6 +2211,38 @@ void CPlayer::Lockon_Untarget()
 
     m_pLockon_UI->Clear_Target();
     Safe_ReleaseAndUnlink(m_pLockon_UI);
+}
+
+_matrix CPlayer::Lockon_TargetMatrix()
+{
+    return m_pLockon_Target->ColliderComp()->Calculate_TransformMatrixFromParent();
+}
+
+_vector CPlayer::Camera_LookVector()
+{
+    _vector vLook = {};
+    _vector vRight = Transform().Get_RightNormalizedVector();
+    _vector qtRotate = XMQuaternionRotationAxis(vRight, XMConvertToRadians(-10.f));
+    vLook = m_pDynamicCamera->Transform().Get_LookNormalizedVector();
+    vLook = XMVector3Normalize(XMVector3Rotate(vLook, qtRotate));
+
+    return vLook;
+}
+
+_vector CPlayer::Calculate_ShootLookVector(_fvector vPos)
+{
+    _vector vLook = Transform().Get_LookNormalizedVector();
+    if (m_pLockon_Target)
+    {
+        _matrix TargetMatrix = Lockon_TargetMatrix();
+        vLook = XMVector3Normalize(TargetMatrix.r[3] - vPos);
+    }
+    else if (m_pDynamicCamera)
+    {
+        vLook = Camera_LookVector();
+    }
+
+    return vLook;
 }
 
 CCharacter_Common* CPlayer::Find_Target(_float fRange)

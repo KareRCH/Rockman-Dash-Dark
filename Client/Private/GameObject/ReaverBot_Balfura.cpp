@@ -6,22 +6,19 @@
 
 #include "GameObject/Door_Common.h"
 #include "GameObject/Effect_Common.h"
+#include "GameObject/Item_Deflector.h"
 
 CReaverBot_Balfura::CReaverBot_Balfura()
 {
     Set_Name(TEXT("ReaverBot_Balfura"));
-    TurnOn_State(EGObjectState::Cull);
     m_fHP = FGauge(8.f, true);
-    Register_State();
-    m_RandomNumber = mt19937_64(m_RandomDevice());
+    
 }
 
 CReaverBot_Balfura::CReaverBot_Balfura(const CReaverBot_Balfura& rhs)
     : Base(rhs)
 {
-    TurnOn_State(EGObjectState::Cull);
-    Register_State();
-    m_RandomNumber = mt19937_64(m_RandomDevice());
+    
 }
 
 HRESULT CReaverBot_Balfura::Initialize_Prototype()
@@ -168,12 +165,38 @@ HRESULT CReaverBot_Balfura::Render()
     return S_OK;
 }
 
+void CReaverBot_Balfura::OnCreated()
+{
+    SUPER::OnCreated();
+
+    Register_State();
+    TurnOn_State(EGObjectState::Cull);
+    m_RandomNumber = mt19937_64(m_RandomDevice());
+}
+
 void CReaverBot_Balfura::BeginPlay()
 {
     SUPER::BeginPlay();
 
     if (m_pColliderComp)
         m_pColliderComp->EnterToPhysics(0);
+}
+
+void CReaverBot_Balfura::EndPlay()
+{
+    SUPER::EndPlay();
+
+    for (_uint i = 0; i < 4; i++)
+    {
+        auto pDeflector = CItem_Deflector::Create();
+        m_pGI->Add_GameObject(pDeflector);
+
+        uniform_int_distribution<_int> RandomType(0, 4);
+
+        pDeflector->Transform().Set_Position(Transform().Get_PositionFloat3());
+        pDeflector->Transform().Look_At_OnLand(Transform().Get_PositionVector() + Transform().Get_LookNormalizedVector());
+        pDeflector->Set_Type(Cast<CItem_Deflector::EType>(RandomType(m_RandomNumber)));
+    }
 }
 
 FSerialData CReaverBot_Balfura::SerializeData_Prototype()
@@ -356,7 +379,7 @@ void CReaverBot_Balfura::Dead_Effect()
     uniform_real_distribution<_float> RandomPosZ(-0.5f, 0.5f);
     pEffect->Transform().Set_Position(Transform().Get_PositionVector()
         + XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));
-    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("boom_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
 }
 
 void CReaverBot_Balfura::Register_State()

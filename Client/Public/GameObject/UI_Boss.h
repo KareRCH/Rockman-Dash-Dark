@@ -72,6 +72,8 @@ private:
 	_float3				m_vOriginPos[TYPE_END] = {};
 
 	FGauge				m_fHP;						// HP
+
+	FRoundTripGauge		m_fFontDisplayTime = FRoundTripGauge(0.f, 2.5f);
 };
 
 END

@@ -37,6 +37,7 @@ public:
 
 public:
 	virtual void BeginPlay() override;
+	virtual void EndPlay() override;
 
 public:
 	static CDamageCollision* Create();
@@ -62,9 +63,12 @@ private:
 
 public:
 	void Set_LifeTime(_float Value) { m_fLifeTime = FGauge(Value); }
+	void Set_EffectCreateTime(_float Value) { m_fEffectCreateTime = FGauge(Value); }
 
 private:
 	FGauge		m_fLifeTime = FGauge(0.1f);
+	_bool		m_bIsEffectCreated = { false };
+	FGauge		m_fEffectCreateTime = FGauge(0.1f);
 };
 
 END

@@ -93,6 +93,13 @@ HRESULT CWeapon_Blade::Render()
 	return S_OK;
 }
 
+void CWeapon_Blade::OnCreated()
+{
+	SUPER::OnCreated();
+
+	Set_RenderGroup(ERenderGroup::Blend);
+}
+
 void CWeapon_Blade::BeginPlay()
 {
 	SUPER::BeginPlay();

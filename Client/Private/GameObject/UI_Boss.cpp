@@ -33,15 +33,6 @@ void CUI_Boss::Priority_Tick(const _float& fTimeDelta)
 {
     SUPER::Priority_Tick(fTimeDelta);
 
-    //m_pCloudStationComp->Priority_Tick(fTimeDelta);
-    if (nullptr == m_pBossCloud)
-    {
-        if (SUCCEEDED(m_pCloudStationComp->Connect_CloudStation(TEXT("Player"))))
-        {
-            m_pBossCloud = m_pCloudStationComp->Get_LastCloudStation<CCloudStation_Boss>();
-            Safe_AddRef(m_pBossCloud);
-        }
-    }
 }
 
 void CUI_Boss::Tick(const _float& fTimeDelta)
@@ -50,44 +41,48 @@ void CUI_Boss::Tick(const _float& fTimeDelta)
 
     Update_CloudStation();
 
-    if (GI()->IsKey_Pressed(DIK_RETURN))
-        m_bIsDisplay = !m_bIsDisplay;
+    m_pImage[HP_BAR]->Set_MinUV({ 1.f - m_fHP.Get_Percent(), 0.f});
+    m_bIsDisplay = !(m_fHP.Get_Percent() > 0.f);
 
-    m_pImage[HP_BAR]->Set_MinUV({ 0.f, 1.f - m_fHP.Get_Percent() });
+    if (m_fFontDisplayTime.Update(fTimeDelta))
+    {
+
+    }
 
     if (m_bIsDisplay)
     {
         if (!m_fDisplayLerp.Increase(fTimeDelta * 1.f))
         {
-            _vector vOutScreenRight = XMVectorSet(200.f, 0.f, 0.f, 0.f);
-            _vector vOutScreenLeft = XMVectorSet(-200.f, 0.f, 0.f, 0.f);
+            _vector vOutScreenRight = XMVectorSet(500.f, 0.f, 0.f, 0.f);
             _vector vTemp = {};
 
             // 왼쪽
             vTemp = XMVectorLerp(XMLoadFloat3(&m_vOriginPos[HP_CONTAINER]),
-                XMLoadFloat3(&m_vOriginPos[HP_CONTAINER]) + vOutScreenLeft, m_fDisplayLerp.Get_Percent());
+                XMLoadFloat3(&m_vOriginPos[HP_CONTAINER]) + vOutScreenRight, m_fDisplayLerp.Get_Percent());
             m_pImage[HP_CONTAINER]->Transform().Set_Position(vTemp);
 
             vTemp = XMVectorLerp(XMLoadFloat3(&m_vOriginPos[HP_BAR]),
-                XMLoadFloat3(&m_vOriginPos[HP_BAR]) + vOutScreenLeft, m_fDisplayLerp.Get_Percent());
+                XMLoadFloat3(&m_vOriginPos[HP_BAR]) + vOutScreenRight, m_fDisplayLerp.Get_Percent());
             m_pImage[HP_BAR]->Transform().Set_Position(vTemp);
         }
+
+        if (m_fDisplayLerp.IsMax())
+            Set_Dead();
     }
     else
     {
         if (!m_fDisplayLerp.Decrease(fTimeDelta * 1.f))
         {
-            _vector vOutScreenRight = XMVectorSet(200.f, 0.f, 0.f, 0.f);
-            _vector vOutScreenLeft = XMVectorSet(-200.f, 0.f, 0.f, 0.f);
+            _vector vOutScreenRight = XMVectorSet(500.f, 0.f, 0.f, 0.f);
             _vector vTemp = {};
 
             // 왼쪽
             vTemp = XMVectorLerp(XMLoadFloat3(&m_vOriginPos[HP_CONTAINER]),
-                XMLoadFloat3(&m_vOriginPos[HP_CONTAINER]) + vOutScreenLeft, m_fDisplayLerp.Get_Percent());
+                XMLoadFloat3(&m_vOriginPos[HP_CONTAINER]) + vOutScreenRight, m_fDisplayLerp.Get_Percent());
             m_pImage[HP_CONTAINER]->Transform().Set_Position(vTemp);
 
             vTemp = XMVectorLerp(XMLoadFloat3(&m_vOriginPos[HP_BAR]),
-                XMLoadFloat3(&m_vOriginPos[HP_BAR]) + vOutScreenLeft, m_fDisplayLerp.Get_Percent());
+                XMLoadFloat3(&m_vOriginPos[HP_BAR]) + vOutScreenRight, m_fDisplayLerp.Get_Percent());
             m_pImage[HP_BAR]->Transform().Set_Position(vTemp);
         }
     }
@@ -104,15 +99,36 @@ HRESULT CUI_Boss::Render()
     m_pImage[HP_CONTAINER]->Render();
     m_pImage[HP_BAR]->Render();
 
+    if (!m_fFontDisplayTime.IsFinished())
+    {
+        m_pGI->Render_Font(L"Boss", L"유적의 문지기", _float2(465.f, 100.f), XMVectorSet(1.f, 1.f, 1.f, m_fFontDisplayTime.ClampPercent(1.5f)), 1.2f * 0.62f);
+        m_pGI->Render_Font(L"Boss", L"한길 인형", _float2(440.f, 180.f), XMVectorSet(1.f, 1.f, 1.f, m_fFontDisplayTime.ClampPercent(1.5f)), 2.f * 0.62f);
+    }
+
     return S_OK;
 }
 
 void CUI_Boss::OnCreated()
 {
+    SUPER::OnCreated();
+
+    Set_RenderGroup(ERenderGroup::UI);
 }
 
 void CUI_Boss::BeginPlay()
 {
+    SUPER::BeginPlay();
+
+    if (nullptr == m_pBossCloud)
+    {
+        if (SUCCEEDED(m_pCloudStationComp->Connect_CloudStation(TEXT("Boss"))))
+        {
+            m_pBossCloud = m_pCloudStationComp->Get_LastCloudStation<CCloudStation_Boss>();
+            Safe_AddRef(m_pBossCloud);
+        }
+    }
+
+    m_fDisplayLerp.Set_Max();
 }
 
 CUI_Boss* CUI_Boss::Create()
@@ -161,9 +177,9 @@ HRESULT CUI_Boss::Initialize_Component()
         return E_FAIL;
 
     m_pImage[HP_CONTAINER]->Set_Mode(CPlaneModelComp::ORTHO);
-    m_pImage[HP_CONTAINER]->Transform().Set_Position(-560.f, -139.f, 1.f);
-    m_pImage[HP_CONTAINER]->Transform().Set_Scale(36.f * 1.5f, 116.f * 1.5f, 1.f);
-    m_pImage[HP_CONTAINER]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/HP_Container.png"), 1);
+    m_pImage[HP_CONTAINER]->Transform().Set_Position(360.f, 300.f, 1.f);
+    m_pImage[HP_CONTAINER]->Transform().Set_Scale(512.f * 1.f, 64.f * 1.f, 1.f);
+    m_pImage[HP_CONTAINER]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/BossHP/BossHP_Container.png"), 1);
     m_pImage[HP_CONTAINER]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[HP_CONTAINER]->Reset_ActivePass();
     m_pImage[HP_CONTAINER]->Set_ActivePass(1);
@@ -175,9 +191,9 @@ HRESULT CUI_Boss::Initialize_Component()
         return E_FAIL;
 
     m_pImage[HP_BAR]->Set_Mode(CPlaneModelComp::ORTHO);
-    m_pImage[HP_BAR]->Transform().Set_Position(-560.f, -133.f, 0.f);
-    m_pImage[HP_BAR]->Transform().Set_Scale(12.f * 1.5f, 56.f * 1.5f, 1.f);
-    m_pImage[HP_BAR]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/HP_Bar.png"), 1);
+    m_pImage[HP_BAR]->Transform().Set_Position(392.f, 302.f, 1.f);
+    m_pImage[HP_BAR]->Transform().Set_Scale(320.f * 1.f, 20.f * 1.f, 1.f);
+    m_pImage[HP_BAR]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/BossHP/BossHP_Bar.png"), 1);
     m_pImage[HP_BAR]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[HP_BAR]->Reset_ActivePass();
     m_pImage[HP_BAR]->Set_ActivePass(1);

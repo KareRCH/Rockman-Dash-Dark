@@ -70,14 +70,17 @@ HRESULT CLevel_Logo::Ready_Objects()
 	pModel->Transform().Set_Scale(XMVectorSet(fX, fY, 1.f, 0.f));
 	pModel->Transform().Set_Position(XMVectorSet(0.f, 0.f, 10.f, 1.f));
 
+	_uint iID = 0;
 	TLIGHT_DESC			LightDesc{};
 	LightDesc.eType = TLIGHT_DESC::TYPE_DIRECTIONAL;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+	LightDesc.vPosition = { 0.f, 1.f, 0.f, 1.f };
+	LightDesc.fRange = 30.f;
 	LightDesc.vDiffuse = _float4(0.6f, 0.6f, 0.6f, 1.f);
 	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 
-	if (FAILED(m_pGI->Add_Light(LightDesc)))
+	if (FAILED(m_pGI->Add_Light(LightDesc, iID)))
 		return E_FAIL;
 
 	return S_OK;

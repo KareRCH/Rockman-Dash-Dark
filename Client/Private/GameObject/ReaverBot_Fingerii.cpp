@@ -11,6 +11,7 @@
 #include "GameObject/Effect_Common.h"
 #include "GameObject/Fingerii_EnergyBall.h"
 #include "GameObject/Door_Common.h"
+#include "GameObject/Item_Deflector.h"
 #include "Utility/ClassID.h"
 
 
@@ -459,7 +460,7 @@ void CReaverBot_Fingerii::Move_Update(const _float& fTimeDelta)
 void CReaverBot_Fingerii::Dead_Effect()
 {
 	CEffect_Common* pEffect = CEffect_Common::Create();
-	if (FAILED(GI()->Add_GameObject(pEffect)))
+	if (FAILED(m_pGI->Add_GameObject(pEffect)))
 		return;
 
 	if (nullptr == pEffect)
@@ -470,7 +471,7 @@ void CReaverBot_Fingerii::Dead_Effect()
 	uniform_real_distribution<_float> RandomPosZ(-0.5f, 0.5f);
 	pEffect->Transform().Set_Position(Transform().Get_PositionVector()
 		+ XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));
-	GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("boom_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
+	m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
 }
 
 void CReaverBot_Fingerii::Register_State()
@@ -561,6 +562,7 @@ void CReaverBot_Fingerii::ActState_Barrier(const _float& fTimeDelta)
 	if (m_State_Act.IsState_Entered())
 	{
 		m_pModelComp->Set_Animation(2, 1.0f, true);
+		m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("fingerii_barrier_electric.mp3"), CHANNELID::SOUND_VFX3, 1.f);
 	}
 
 	if (m_State_Act.Can_Update())
@@ -640,10 +642,16 @@ void CReaverBot_Fingerii::ActState_Squat(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		if (m_pModelComp->AnimationComp()->IsAnimation_Range(30.f, 31.f))
+		if (m_pModelComp->AnimationComp()->IsAnimation_Range(29.f, 31.f))
 		{
 			if (m_bIsSquatBonus)
-				Dead_Effect();
+			{
+				auto pDeflector = CItem_Deflector::Create();
+				m_pGI->Add_GameObject(pDeflector);
+
+				pDeflector->Transform().Set_Position(Transform().Get_PositionFloat3());
+				pDeflector->Set_Type(CItem_Deflector::EType::Purple);
+			}
 		}
 
 		if (!m_bIsGrabbed)

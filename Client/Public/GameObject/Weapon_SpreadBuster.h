@@ -30,6 +30,10 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void OnCreated() override;
+	virtual void BeginPlay() override;
+
+public:
 	static CWeapon_SpreadBuster* Create();
 	static CWeapon_SpreadBuster* Create(const _float3 vPos);
 	CGameObject* Clone(void* Arg = nullptr);

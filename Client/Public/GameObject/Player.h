@@ -50,7 +50,9 @@ public:
 
 public:
 	virtual void OnCreated() override;
+	virtual void OnDeleted() override;
 	virtual void BeginPlay() override;
+	virtual void EndPlay() override;
 
 public:
 	static CPlayer* Create();
@@ -102,7 +104,7 @@ private:
 	_float3		m_vLookDirection_Blend = { 0.f, 0.f, 1.f};	// 캐릭터가 바라보는 방향 블렌딩용
 	_float		m_fDirectionAngle = 0.f;				// 캐릭터가 바라보는 방향각도
 
-	FGauge		m_fFootSound = FGauge(0.26f);
+	FGauge		m_fFootSound = FGauge(0.26f);			// 발소리 딜레이
 	FGauge		m_fDamageKnockback = FGauge(0.5f);		// 넉백 시간
 	FGauge		m_fStrongKnockback = FGauge(1.f);		// 강하게 넉백
 
@@ -214,6 +216,9 @@ private:
 	void Lockon_Active(const _float& fTimeDelta);
 	void Lockon_Target();
 	void Lockon_Untarget();
+	_matrix Lockon_TargetMatrix();
+	_vector Camera_LookVector();
+	_vector Calculate_ShootLookVector(_fvector vPos);
 
 public:
 	void Set_Target(class CCharacter_Common* pTarget) { m_pLockon_Target = pTarget; Safe_AddRef(m_pLockon_Target); }
@@ -233,12 +238,17 @@ private:
 	EMainWeapon			m_eMainWeapon = { EMainWeapon::None };
 
 private:
+	_bool				m_bIsCanUseSubWeapons = { false };
 	ESubWeapon			m_eSubWeapon = { ESubWeapon::ThrowArm };
 
 private:
+	class CDynamicCamera*				m_pDynamicCamera = { nullptr };
 	class CWeapon_LaserEmission*		m_pLaserEmission = { nullptr };
 	class CWeapon_Blade*				m_pBlade = { nullptr };
 	CCharacter_Common*					m_pGrabUnit = { nullptr };
+
+private:
+	_uint m_iMoney = { 0 };
 
 };
 

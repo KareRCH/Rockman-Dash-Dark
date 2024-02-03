@@ -53,6 +53,7 @@ HRESULT CMainApp::Initialize()
 	DX11DEVICE_T tDevice = { m_pGI->Get_GraphicDev(), m_pGI->Get_GraphicContext() };
 
 	FAILED_CHECK_RETURN(m_pGI->Add_Font(TEXT("Default"), TEXT("DungGeunMo-30.spritefont")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGI->Add_Font(TEXT("Boss"), TEXT("HeirofLightBold-52.spritefont")), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 60.f), E_FAIL);
 
@@ -97,6 +98,8 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 	m_pGI->Tick_Frustum();
 	m_pGI->Tick_PhysicsMgr(fTimeDelta);
 
+	if (m_pGI->IsKey_Pressed(DIK_F6))
+		m_pGI->Toggle_Deferred();
 	if (m_pGI->IsKey_Pressed(DIK_F7))
 		m_pGI->Toggle_DebugDraw();
 	if (m_pGI->IsKey_Pressed(DIK_F8))

@@ -3,6 +3,7 @@
 #include "Client_Define.h"
 #include "GameObject/Character_Common.h"
 #include "Utility/LogicDeviceBasic.h"
+#include "System/Data/Light.h"
 
 BEGIN(Engine)
 class CCommonModelComp;
@@ -35,6 +36,7 @@ public:
 public:
 	virtual void OnCreated() override;
 	virtual void BeginPlay() override;
+	virtual void EndPlay() override;
 
 public:
 	static CWeapon_Buster* Create();
@@ -69,6 +71,8 @@ private:
 	_float		m_fSpeed = 5.f;
 	_float3		m_vLookDir = {};
 	_float		m_fDamage = { 1.f };
+	CLight*		m_pLight = { nullptr };
+	_uint		m_iLightID = { 0 };
 
 public:
 	void Create_Effect();

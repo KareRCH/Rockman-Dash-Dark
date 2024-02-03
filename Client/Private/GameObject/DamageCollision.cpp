@@ -69,6 +69,23 @@ void CDamageCollision::Tick(const _float& fTimeDelta)
 		return;
 	}
 
+	if (m_fEffectCreateTime.Increase(fTimeDelta))
+	{
+		if (!m_bIsEffectCreated)
+		{
+			CEffect_Explosion* pEffect = CEffect_Explosion::Create();
+			if (nullptr == pEffect)
+				return;
+
+			pEffect->Transform().Set_Position(Transform().Get_PositionFloat3());
+
+			if (FAILED(GI()->Add_GameObject(pEffect)))
+				return;
+
+			m_bIsEffectCreated = true;
+		}
+	}
+
 	m_pColliderComp->Tick(fTimeDelta);
 }
 
@@ -86,7 +103,7 @@ HRESULT CDamageCollision::Render()
 	//m_pModelComp->Render();
 
 #ifdef _DEBUG
-	GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
+	m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
 	return S_OK;
@@ -95,15 +112,22 @@ HRESULT CDamageCollision::Render()
 void CDamageCollision::BeginPlay()
 {
 	m_pColliderComp->EnterToPhysics(0);
+	m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion.mp3"), CHANNELID::SOUND_VFX3, 1.f);
+}
 
-	CEffect_Explosion* pEffect = CEffect_Explosion::Create();
-	if (nullptr == pEffect)
-		return;
+void CDamageCollision::EndPlay()
+{
+	if (!m_bIsEffectCreated)
+	{
+		CEffect_Explosion* pEffect = CEffect_Explosion::Create();
+		if (nullptr == pEffect)
+			return;
 
-	pEffect->Transform().Set_Position(Transform().Get_PositionFloat3());
+		pEffect->Transform().Set_Position(Transform().Get_PositionFloat3());
 
-	if (FAILED(GI()->Add_GameObject(pEffect)))
-		return;
+		if (FAILED(m_pGI->Add_GameObject(pEffect)))
+			return;
+	}
 }
 
 CDamageCollision* CDamageCollision::Create()

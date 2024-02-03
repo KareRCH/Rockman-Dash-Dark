@@ -101,6 +101,20 @@ HRESULT CWeapon_Machinegun::Render()
 	return S_OK;
 }
 
+void CWeapon_Machinegun::OnCreated()
+{
+	SUPER::OnCreated();
+
+	Set_RenderGroup(ERenderGroup::Blend);
+}
+
+void CWeapon_Machinegun::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	m_pColliderComp->EnterToPhysics(0);
+}
+
 CWeapon_Machinegun* CWeapon_Machinegun::Create()
 {
 	ThisClass* pInstance = new ThisClass();
@@ -168,8 +182,7 @@ HRESULT CWeapon_Machinegun::Initialize_Component()
 	m_pColliderComp->Set_CollisionKinematic();
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR | COLLAYER_OBJECT);
-	m_pColliderComp->EnterToPhysics(0);
-
+	
 
 	return S_OK;
 }

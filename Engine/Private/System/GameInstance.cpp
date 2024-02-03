@@ -29,6 +29,7 @@
 #include "Component/RectBufferComp.h"
 #include "Utility/RapidJsonSerial.h"
 #include "System/Data/RenderTarget.h"
+#include "System/Data/Light.h"
 #include "System/Frustum.h"
 
 
@@ -1432,12 +1433,20 @@ HRESULT CGameInstance::Initialize_LightMgr()
 	return S_OK;
 }
 
-HRESULT CGameInstance::Add_Light(const TLIGHT_DESC& LightDesc)
+HRESULT CGameInstance::Add_Light(const TLIGHT_DESC& LightDesc, _uint& iReturnID, CLight** GetLight)
 {
 	if (nullptr == m_pLightMgr)
 		return E_FAIL;
 
-	return m_pLightMgr->Add_Light(LightDesc);
+	return m_pLightMgr->Add_Light(LightDesc, iReturnID, GetLight);
+}
+
+HRESULT CGameInstance::Remove_Light(const _uint iID)
+{
+	if (nullptr == m_pLightMgr)
+		return E_FAIL;
+
+	return m_pLightMgr->Remove_Light(iID);
 }
 
 HRESULT CGameInstance::Render_Lights(CEffectComponent* pEffect, CRectBufferComp* pVIBuffer)

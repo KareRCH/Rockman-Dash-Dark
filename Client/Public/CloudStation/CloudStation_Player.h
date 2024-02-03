@@ -30,9 +30,10 @@ private:
 
 public:
     GETSET_2(FGauge, m_fHP, HP, GET_C_REF, SET_C_REF)
+    void Access_HP(EMode eMode, FGauge& fHP);
 
 private:    // 현재 상태
-    FGauge          m_fHP;
+    FGauge          m_fHP = FGauge(100.f, true);
     FGauge          m_fSubWeapon_Main;
     FGauge          m_fSubWeapon_Usage;
 
@@ -52,6 +53,9 @@ private:    // 인벤토리
     vector<_uint>       m_vecFootParts;     // 풋 파츠
     
     vector<_uint>       m_vecBusterParts;   // 버스터 파츠
+
+public:
+    void Access_Money(EMode eMode, _uint& iMoney);
 
 private:    // 돈
     _uint       m_iMoney = { 0 };

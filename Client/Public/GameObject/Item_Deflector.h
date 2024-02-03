@@ -5,6 +5,10 @@
 #include "GameObject/GameObjectFactory.h"
 
 
+BEGIN(Engine)
+class CCommonModelComp;
+END
+
 BEGIN(Client)
 
 /// <summary>
@@ -60,6 +64,50 @@ public:		// 충돌 이벤트
 
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
+
+private:
+	_bool m_bIsOnGround = { false };
+
+	_float3		m_vMaxMoveSpeed = {};					// 최대 움직임 속도
+	_float3		m_vMoveSpeed = {};						// 움직임 속도
+	_float3		m_vVelocity = {};						// 속도
+	_float3		m_vAcceleration = {};					// 가속도
+
+private:
+	random_device				m_RandomDevice;
+	mt19937_64					m_RandomNumber;
+
+public:
+	enum class EActionKey : _uint { MoveForward, MoveBackward, TurnRight, TurnLeft, Size };
+
+private:
+	ACTION_SET<EActionKey>	m_ActionKey;
+
+public:
+	enum class EState_Act { Idle, Ready_Floor, Flooring };
+
+	void Register_State();
+	void Update_Move(const _float& fTimeDelta);
+
+private:		// 약식 상태머신
+	using SState_Act = STATE_SET<EState_Act, void(ThisClass*, const _float&)>;
+	SState_Act		m_State_Act;
+
+private:
+	void ActState_Idle(const _float& fTimeDelta);
+	void ActState_Ready_Floor(const _float& fTimeDelta);
+	void ActState_Flooring(const _float& fTimeDelta);
+
+public:
+	enum EType : _uint { White, Yellow, Green, Blue, Purple };
+
+public:
+	void Obtain_Money(_uint& iMoney);
+	void Set_Type(EType eType) { m_eType = eType; };
+
+private:
+	_uint m_eType = { EType::White };
+	_uint m_iGiveMoney = { 100 };
 };
 
 template <>

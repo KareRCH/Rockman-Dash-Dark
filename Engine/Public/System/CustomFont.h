@@ -4,6 +4,7 @@
 
 #include "SpriteBatch.h"
 #include "SpriteFont.h"
+#include "CommonStates.h"
 
 BEGIN(Engine)
 
@@ -31,6 +32,7 @@ private:
 	ComPtr<ID3D11DeviceContext>	m_pContext = { nullptr };
 	SpriteBatch*				m_pBatch = { nullptr };
 	SpriteFont*					m_pFont = { nullptr };
+	CommonStates*				m_pStates = { nullptr };
 
 };
 

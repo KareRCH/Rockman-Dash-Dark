@@ -7,6 +7,7 @@
 #include "GameObject/Effect_Common.h"
 #include "GameObject/Door_Common.h"
 #include "Utility/ClassID.h"
+#include "GameObject/Item_Deflector.h"
 
 CReaverBot_Horokko::CReaverBot_Horokko()
 {
@@ -179,6 +180,16 @@ void CReaverBot_Horokko::BeginPlay()
 	m_bIsCanGrab = true;
 	if (m_pColliderComp)
 		m_pColliderComp->EnterToPhysics(0);
+}
+
+void CReaverBot_Horokko::EndPlay()
+{
+	SUPER::EndPlay();
+
+	auto pDeflector = CItem_Deflector::Create();
+	m_pGI->Add_GameObject(pDeflector);
+
+	pDeflector->Transform().Set_Position(Transform().Get_PositionFloat3());
 }
 
 CReaverBot_Horokko* CReaverBot_Horokko::Create()
@@ -472,13 +483,13 @@ void CReaverBot_Horokko::Explosion_Effect(_float3 vPos)
 		return;
 
 	pEffect->Transform().Set_Position(vPos);
-	GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("boom_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
+	m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
 }
 
 void CReaverBot_Horokko::Dead_Effect()
 {
 	CEffect_Common* pEffect = CEffect_Common::Create();
-	if (FAILED(GI()->Add_GameObject(pEffect)))
+	if (FAILED(m_pGI->Add_GameObject(pEffect)))
 		return;
 
 	if (nullptr == pEffect)
@@ -489,7 +500,7 @@ void CReaverBot_Horokko::Dead_Effect()
 	uniform_real_distribution<_float> RandomPosZ(-0.5f, 0.5f);
 	pEffect->Transform().Set_Position(Transform().Get_PositionVector()
 		+ XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));
-	GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("boom_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
+	m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
 }
 
 void CReaverBot_Horokko::Register_State()

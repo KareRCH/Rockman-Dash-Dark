@@ -104,6 +104,11 @@ public:
 		fPrevCur = fCur;
 	}
 
+	void Set_Max()
+	{
+		Reset(fMax);
+	}
+
 	// fMax 값 재설정 및 현재값 초기화
 	void Readjust(_float _fMax)
 	{
@@ -154,38 +159,69 @@ using FDelay = FGauge;
 /// 저 사이를 fCur이 왕복하는 형태의 클래스이다.
 /// 
 /// </summary>
-class FCircuitGauge
+class FRoundTripGauge
 {
 public:
-	explicit FCircuitGauge() : fMax(_float()), fCur(_float()), fPrevCur(fCur) {}
-	explicit FCircuitGauge(_float _fMax, _bool bMax = false) : fMax(_fMax), fCur(_float(_float(bMax)* _float(_fMax))), fPrevCur(fCur) {}
-	explicit FCircuitGauge(const FCircuitGauge& rhs) : fMax(rhs.fMax), fCur(rhs.fCur), fPrevCur(rhs.fPrevCur) {}
-	~FCircuitGauge() = default;
+	explicit FRoundTripGauge() {}
+	explicit FRoundTripGauge(_float _fMin, _float _fMax) 
+		: fMax(_fMax), fMin(_fMin) {}
+	FRoundTripGauge(const FRoundTripGauge& rhs) 
+		: fMax(rhs.fMax), fCur(rhs.fCur), fPrevCur(rhs.fPrevCur) 
+		, fMin(rhs.fMin), bIsLoop(rhs.bIsLoop)
+	{}
+	~FRoundTripGauge() = default;
 
 public:
-	_float fMin, fMax, fCur;
+	_float fMin = { 0.f }, fMax = { 0.f }, fCur = { 0.f };
+
 private:
-	_float	fPrevCur;
-	_byte	bSign;
+	_float	fPrevCur = { 0.f };			// 이전값
+	_byte	bSign = { 1 };				// 방향성
+	_bool	bIsLoop = { false };		// 반복 설정
+	_bool	bIsEnd = { false };			// 종료
 
 public:
-	// 값 업데이트 및 맥스값 도달시 반환
-	_bool Increase(_float increase)
+	// 값 업데이트, Max지점, Min 지점에서 한번씩 True를 반환함
+	_bool Update(_float value)
 	{
 		fPrevCur = fCur;
-		fCur += increase * _float(bSign);
-		if (fCur >= fMax)
+		if (!bIsEnd)
 		{
-			fCur = fMax;
-			return true;
+			// 방향성에 따라 값을 업데이트
+			fCur += value * _float(bSign);
+			if (fCur >= fMax && bSign == 1)
+			{
+				fCur = fMax;
+				bSign = -1;
+
+				return true;
+			}
+			else if (fCur <= fMin && bSign == -1)
+			{
+				fCur = fMin;
+				bSign = 1;
+
+				// 루프 설정이 꺼져있으면 끝낸다.
+				if (!bIsLoop)
+					bIsEnd = true;
+
+				return true;
+			}
 		}
 
 		return false;
 	}
 
+	void Loop(_bool bLoop)
+	{
+		bIsEnd = false;
+		bIsLoop = bLoop;
+	}
+
 	// 현재값 초기화
 	void Reset()
 	{
+		bIsEnd = false;
 		fCur = _float();
 		fPrevCur = fCur;
 	}
@@ -210,6 +246,11 @@ public:
 		return ((fCur >= point - increase * 0.5f) && (fCur < point + increase * 0.5f));
 	}
 
+	_bool IsFinished()
+	{
+		return bIsEnd;
+	}
+
 	// 맥스일 경우 계속 트루
 	_bool IsMax()
 	{
@@ -223,13 +264,23 @@ public:
 	}
 
 	// 퍼센트 값 반환
-	_float Get_Percent()
+	_float Percent() const
 	{
 		return (Cast<_float>(fCur) / Cast<_float>(fMax));
 	}
-};
 
-using FDelay = FGauge;
+	// 1을 기준으로 퍼센트를 구함, Max값 무시
+	_float SaturatedPercent() const
+	{
+		return max(0.f, min(Cast<_float>(fCur), 1.f));
+	}
+
+	// Value값 기준으로 퍼센트를 구함, Max값 무시
+	_float ClampPercent(const _float fValue) const
+	{
+		return max(0.f, min(Cast<_float>(fCur) / fValue, 1.f));
+	}
+};
 
 #pragma endregion
 

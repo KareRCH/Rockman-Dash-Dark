@@ -206,11 +206,9 @@ PS_OUT PS_MAIN_FINAL(PS_IN In)
 
     vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexcoord);
     vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexcoord);
-    vector vBlur = g_BlurTexture.Sample(LinearSampler, In.vTexcoord);
-    vector vEffect = g_EffectTexture.Sample(LinearSampler, In.vTexcoord);
     
     vShade = vector(ceil(vShade.xyz * g_fStair), g_fStair) / g_fStair;
-    Out.vColor = vDiffuse * vShade + vEffect + vBlur;
+    Out.vColor = vDiffuse * vShade;
     
     // ----- ±×¸²ÀÚ ------
     vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);

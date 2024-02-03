@@ -210,8 +210,8 @@ namespace Engine
 	{
 		enum TYPE { TYPE_DIRECTIONAL, TYPE_POINT, TYPE_END };
 		TYPE			eType;
-		_float4		vDirection;
-		_float4		vPosition;
+		_float4			vDirection;
+		_float4			vPosition;
 
 		float			fRange;
 		float			fPower;

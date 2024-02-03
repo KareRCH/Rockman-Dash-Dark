@@ -23,9 +23,11 @@ private:
 	virtual void		Free();
 
 public:
-	HRESULT Add_Light(const TLIGHT_DESC& LightDesc);
+	HRESULT Add_Light(const TLIGHT_DESC& LightDesc, _uint& iReturnID, class CLight** GetLight);
+	HRESULT Remove_Light(const _uint iID);
 
 private:
+	static _uint g_iID;
 	list<class CLight*>			m_Lights;
 };
 

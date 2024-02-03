@@ -198,17 +198,19 @@ HRESULT CRenderMgr::Render()
 		return E_FAIL;
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
-	
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
-	if (FAILED(Render_Fog()))
-		return E_FAIL;
+
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 	if (FAILED(Render_Bloom()))
 		return E_FAIL;
+
+	if (FAILED(Render_Fog()))
+		return E_FAIL;
+
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 	if (FAILED(Render_PostProcess()))
@@ -405,7 +407,7 @@ HRESULT CRenderMgr::Render_LightAcc()
 {
 	/* Shade */
 	/* 여러개 빛의 연산 결과를 저장해 준다. */
-	if (FAILED(GI()->Begin_MRT(TEXT("MRT_LightAcc"))))
+	if (FAILED(m_pGI->Begin_MRT(TEXT("MRT_LightAcc"))))
 		return E_FAIL;
 
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -428,14 +430,14 @@ HRESULT CRenderMgr::Render_LightAcc()
 		&(vCamPos = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Normal"), m_pEffect[ECast(EEffect::Deferred)], "g_NormalTexture")))
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Normal"), m_pEffect[ECast(EEffect::Deferred)], "g_NormalTexture")))
 		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::Deferred)], "g_DepthTexture")))
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::Deferred)], "g_DepthTexture")))
 		return E_FAIL;
 
 	m_pGI->Render_Lights(m_pEffect[ECast(EEffect::Deferred)], m_pVIBuffer);
 
-	if (FAILED(GI()->End_MRT()))
+	if (FAILED(m_pGI->End_MRT()))
 		return E_FAIL;
 
 	return S_OK;
@@ -445,7 +447,7 @@ HRESULT CRenderMgr::Render_Deferred()
 {
 	if (m_bIsPostProcess)
 	{
-		if (FAILED(GI()->Begin_MRT(TEXT("MRT_Final"))))
+		if (FAILED(m_pGI->Begin_MRT(TEXT("MRT_Final"))))
 			return E_FAIL;
 	}
 
@@ -491,7 +493,7 @@ HRESULT CRenderMgr::Render_Deferred()
 
 	if (m_bIsPostProcess)
 	{
-		if (FAILED(GI()->End_MRT()))
+		if (FAILED(m_pGI->End_MRT()))
 			return E_FAIL;
 	}
 
@@ -583,7 +585,9 @@ HRESULT CRenderMgr::Render_Fog()
 		return E_FAIL;
 	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Final"), m_pEffect[ECast(EEffect::PostProcess)], "g_FinalTexture")))
 		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Blur_Y"), m_pEffect[ECast(EEffect::PostProcess)], "g_BloomTexture")))
+	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Blur_Y"), m_pEffect[ECast(EEffect::PostProcess)], "g_BlurTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Effect"), m_pEffect[ECast(EEffect::PostProcess)], "g_EffectTexture")))
 		return E_FAIL;
 
 	m_pEffect[ECast(EEffect::PostProcess)]->Begin(ECast(m_eFogType));

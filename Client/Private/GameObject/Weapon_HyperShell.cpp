@@ -12,12 +12,10 @@
 CWeapon_HyperShell::CWeapon_HyperShell()
 {
 	Set_Name(TEXT("Weapon_HyperShell"));
-	m_RandomNumber = mt19937_64(m_RandomDevice());
 }
 
 CWeapon_HyperShell::CWeapon_HyperShell(const CWeapon_HyperShell& rhs)
 {
-	m_RandomNumber = mt19937_64(m_RandomDevice());
 }
 
 HRESULT CWeapon_HyperShell::Initialize_Prototype()
@@ -73,7 +71,7 @@ void CWeapon_HyperShell::Tick(const _float& fTimeDelta)
 		return;
 	}
 
-
+	m_fSpeed += 30.f * fTimeDelta;
 	Transform().MoveForward(m_fSpeed * fTimeDelta);
 	Transform().TurnLook(XMConvertToRadians(360.f * 10.f * fTimeDelta));
 
@@ -98,6 +96,21 @@ HRESULT CWeapon_HyperShell::Render()
 #endif
 
 	return S_OK;
+}
+
+void CWeapon_HyperShell::OnCreated()
+{
+	SUPER::OnCreated();
+
+	Set_RenderGroup(ERenderGroup::Blend);
+	m_RandomNumber = mt19937_64(m_RandomDevice());
+}
+
+void CWeapon_HyperShell::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	m_pColliderComp->EnterToPhysics(0);
 }
 
 CWeapon_HyperShell* CWeapon_HyperShell::Create()
@@ -167,9 +180,7 @@ HRESULT CWeapon_HyperShell::Initialize_Component()
 	m_pColliderComp->Set_CollisionKinematic();
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR | COLLAYER_OBJECT);
-	m_pColliderComp->EnterToPhysics(0);
-
-
+	
 	return S_OK;
 }
 
@@ -229,7 +240,7 @@ void CWeapon_HyperShell::Create_Effect()
 			return;
 
 		uniform_real_distribution<_float> RandomTime(0.f, 0.25f);
-		uniform_real_distribution<_float> RandomRadius(0.f, 10.0f);
+		uniform_real_distribution<_float> RandomRadius(i * 0.5f, (i + 1.f) * 0.5f);
 		uniform_real_distribution<_float> RandomRadius2(-1.f, 5.0f);
 		uniform_real_distribution<_float> RandomPosY(-2.0f, 4.f);
 		uniform_real_distribution<_float> RandomAngle(0.f, 360.0f);
@@ -249,5 +260,7 @@ void CWeapon_HyperShell::Create_Effect()
 			+ XMVectorSet(XMVectorGetX(vPos), XMVectorGetY(vPosY), XMVectorGetZ(vPos), 0.f));
 		pEffect->Transform().Set_Scale(3.f, 3.f, 3.f);
 		pEffect->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+		pEffect->Set_LifeTime(0.7f);
+		pEffect->Set_EffectCreateTime(RandomTime(m_RandomNumber) + i * 0.01f);
 	}
 }

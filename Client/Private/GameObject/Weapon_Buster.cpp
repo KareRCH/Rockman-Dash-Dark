@@ -77,6 +77,15 @@ void CWeapon_Buster::Tick(const _float& fTimeDelta)
 	Transform().MoveForward(m_fSpeed * fTimeDelta);
 	Transform().TurnAxis(vfLook, XMConvertToRadians(90.f * fTimeDelta));
 
+	if (m_pLight)
+	{
+		_float4 vPos = {};
+		XMStoreFloat4(&vPos, Transform().Get_PositionVector());
+		TLIGHT_DESC LightDesc = m_pLight->Get_Desc();
+		LightDesc.vPosition = vPos;
+		m_pLight->Update_Light(LightDesc);
+	}
+
 	m_pColliderComp->Tick(fTimeDelta);
 }
 
@@ -119,6 +128,27 @@ void CWeapon_Buster::BeginPlay()
 		m_pModelComp->Reset_ActivePass();
 		m_pModelComp->Set_ActivePass(1);
 	}
+
+
+	TLIGHT_DESC LightDesc = {};
+	LightDesc.eType = TLIGHT_DESC::TYPE_POINT;
+	XMStoreFloat4(&LightDesc.vPosition, Transform().Get_PositionVector());
+	LightDesc.fPower = 10.f;
+	LightDesc.fRange = 0.8f;
+	//LightDesc.fDamping = 1.f;
+	LightDesc.vDiffuse = { 0.f, 1.f, 0.f, 1.f };
+	LightDesc.vAmbient = { 0.f, 1.f, 0.f, 1.f };
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+
+	m_pGI->Add_Light(LightDesc, m_iLightID, &m_pLight);
+	Safe_AddRef(m_pLight);
+}
+
+void CWeapon_Buster::EndPlay()
+{
+	SUPER::EndPlay();
+
+	
 }
 
 CWeapon_Buster* CWeapon_Buster::Create()
@@ -163,6 +193,12 @@ CGameObject* CWeapon_Buster::Clone(void* Arg)
 void CWeapon_Buster::Free()
 {
 	SUPER::Free();
+
+	if (m_pLight)
+	{
+		m_pGI->Remove_Light(m_iLightID);
+		Safe_Release(m_pLight);
+	}
 }
 
 FSerialData CWeapon_Buster::SerializeData()
@@ -173,7 +209,7 @@ FSerialData CWeapon_Buster::SerializeData()
 HRESULT CWeapon_Buster::Initialize_Component()
 {
 	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
-	m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(90.f));
+	m_pModelComp->Transform().Set_RotationFixedY(XMConvertToRadians(90.f));
 	m_pModelComp->Transform().Set_Scale(_float3(0.3f, 0.3f, 0.3f));
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelNoAnim.hlsl", SHADER_VTX_MODEL::Elements, SHADER_VTX_MODEL::iNumElements);
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_NONANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Buster/Buster.amodel");
@@ -209,6 +245,7 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 			pEnemy->Damage_HP(m_fDamage);
 			Create_Effect();
 			Set_Dead();
+			m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_hit.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
 		}
 	}
 
@@ -217,6 +254,7 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 	{
 		Create_Effect();
 		Set_Dead();
+		m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_hit_somwhere.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
 	}
 
 	CDoor_Common* pDoor = DynCast<CDoor_Common*>(pDst);
@@ -224,6 +262,7 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 	{
 		Create_Effect();
 		Set_Dead();
+		m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_hit_somwhere.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
 	}
 }
 
@@ -243,6 +282,5 @@ void CWeapon_Buster::Create_Effect()
 	if (nullptr == pEffect)
 		return;
 
-	//CPlaneModelComp* pModel = pEffect->Get_Component<CPlaneModelComp>(TEXT("PlaneComp"));
 	pEffect->Transform().Set_Position(Transform().Get_PositionFloat3());
 }

@@ -44,6 +44,7 @@ public:
 
 public:
 	virtual void BeginPlay() override;
+	virtual void EndPlay() override;
 
 public:
 	static CReaverBot_Horokko* Create();

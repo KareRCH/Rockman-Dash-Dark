@@ -105,6 +105,20 @@ HRESULT CWeapon_SpreadBuster::Render()
 	return S_OK;
 }
 
+void CWeapon_SpreadBuster::OnCreated()
+{
+	SUPER::OnCreated();
+
+	Set_RenderGroup(ERenderGroup::Blend);
+}
+
+void CWeapon_SpreadBuster::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	m_pColliderComp->EnterToPhysics(0);
+}
+
 CWeapon_SpreadBuster* CWeapon_SpreadBuster::Create()
 {
 	ThisClass* pInstance = new ThisClass();
@@ -163,7 +177,7 @@ HRESULT CWeapon_SpreadBuster::Initialize_Component()
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_NONANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Weapons/SpreadBuster.amodel");
 
 	FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
-	m_pColliderComp->Transform().Set_Scale(_float3(0.5f, 0.5f, 0.5f));
+	m_pColliderComp->Transform().Set_Scale(_float3(0.75f, 0.75f, 0.75f));
 	m_pColliderComp->Bind_Collision(ECollisionType::Sphere);
 	m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
 	m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
@@ -171,9 +185,7 @@ HRESULT CWeapon_SpreadBuster::Initialize_Component()
 	m_pColliderComp->Set_CollisionKinematic();
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR | COLLAYER_OBJECT);
-	m_pColliderComp->EnterToPhysics(0);
-
-
+	
 	return S_OK;
 }
 

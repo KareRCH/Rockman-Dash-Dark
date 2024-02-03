@@ -52,7 +52,7 @@ void CEffect_Explosion::Tick(const _float& fTimeDelta)
 		if (m_fOffset > 7.f)
 			m_fOffset = 0.f;
 
-		m_fAlpha.Decrease(fTimeDelta * 3.f);
+		m_fAlpha.Decrease(fTimeDelta * 2.f);
 		m_fScale.Increase(900.f * fTimeDelta);
 
 		Transform().Set_Scale(_float3(m_fScale.fCur, m_fScale.fCur, m_fScale.fCur));
@@ -70,7 +70,7 @@ HRESULT CEffect_Explosion::Render()
 {
 	SUPER::Render();
 
-	if (m_pModelComp && m_fStartTime.IsMax())
+	if (m_pModelComp && m_fStartTime.IsMax() && m_fAlpha.fCur > 0.f)
 	{
 		_float4x4 WorldFloat4x4 = m_pModelComp->Calculate_TransformFloat4x4FromParent();
 		_float4x4 TempFloat4x4 = {};

@@ -30,6 +30,10 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void OnCreated() override;
+	virtual void BeginPlay() override;
+
+public:
 	static CWeapon_HyperShell* Create();
 	static CWeapon_HyperShell* Create(const _float3 vPos);
 	CGameObject* Clone(void* Arg = nullptr);
@@ -63,8 +67,8 @@ public:
 		void Set_LifeTime(_float fLifeTime) { m_fLifeTime.Readjust(fLifeTime); }
 
 private:
-	FGauge		m_fLifeTime = FGauge(3.f);
-	_float		m_fSpeed = 5.f;
+	FGauge		m_fLifeTime = FGauge(5.f);
+	_float		m_fSpeed = 1.f;
 };
 
 END

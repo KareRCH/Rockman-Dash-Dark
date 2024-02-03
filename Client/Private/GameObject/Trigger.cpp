@@ -5,6 +5,7 @@
 
 #include "GameObject/Player.h"
 #include "Utility/ClassID.h"
+#include "GameObject/UI_Boss.h"
 
 
 
@@ -114,7 +115,7 @@ HRESULT CTrigger::Render()
 
 
 #ifdef _DEBUG
-	GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
+	m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
 	return S_OK;
@@ -190,6 +191,7 @@ FSerialData CTrigger::SerializeData_Prototype()
 	FSerialData Data = SUPER::SerializeData();
 
 	Data.Add_Member("ClassID", g_ClassID);
+	Data.Add_Member("Type", ECast(m_eTriggerType));
 
 	return Data;
 }
@@ -199,6 +201,7 @@ FSerialData CTrigger::SerializeData()
 	FSerialData Data = SUPER::SerializeData();
 
 	Data.Add_Member("ClassID", g_ClassID);
+	Data.Add_Member("Type", ECast(m_eTriggerType));
 
 	return Data;
 }
@@ -233,7 +236,7 @@ HRESULT CTrigger::Initialize_Component(FSerialData& InputData)
 		{
 		case ECast(EComponentID::Collider):
 			FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
-				m_pColliderComp = DynCast<CColliderComponent*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
+				m_pColliderComp = DynCast<CColliderComponent*>(m_pGI->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
 			m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
 			m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
 			m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
@@ -261,6 +264,15 @@ void CTrigger::OnCollisionExited(CGameObject* pDst)
 	CPlayer* pPlayer = DynCast<CPlayer*>(pDst);
 	if (pPlayer)
 	{
+		switch (m_eTriggerType)
+		{
+		case EType::Boss:
+			m_pGI->Add_GameObject(CUI_Boss::Create());
+			m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("13. Forbidden Island - Rush Mammoo.mp3"), 1.f);
+			break;
+		default:
+			break;
+		}
 
 		Set_Dead();
 	}

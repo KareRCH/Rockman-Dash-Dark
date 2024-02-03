@@ -4,6 +4,7 @@
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 #include "Component/CloudStationComp.h"
+#include "GameObject/UI_Boss.h"
 
 #include "GameObject/DamageCollision.h"
 #include "GameObject/Door_Common.h"
@@ -13,15 +14,11 @@ CReaverBot_HanmuruDoll::CReaverBot_HanmuruDoll()
 {
     Set_Name(TEXT("ReaverBot_HanmuruDoll"));
     Set_RenderGroup(ERenderGroup::NonBlend);
-    
-    m_fHP = FGauge(20.f, true);
-    m_RandomNumber = mt19937_64(m_RandomDevice());
 }
 
 CReaverBot_HanmuruDoll::CReaverBot_HanmuruDoll(const CReaverBot_HanmuruDoll& rhs)
     : Base(rhs)
 {
-    m_RandomNumber = mt19937_64(m_RandomDevice());
 }
 
 HRESULT CReaverBot_HanmuruDoll::Initialize_Prototype()
@@ -128,8 +125,20 @@ void CReaverBot_HanmuruDoll::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
+    if (m_fHP.Get_Percent() <= 0.3f)
+    {
+        if (m_fPhase == 0)
+        {
+            m_fPhase = 1;
+            m_fHP = FGauge(40.f, true);
+            m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("08. Calinca - Tundra Reaverbots.mp3"), 1.f);
+        }
+    }
+
     if (!m_State_Act.IsOnState(EState_Act::Dead) && m_fHP.Get_Percent() <= 0.f)
+    {
         m_State_Act.Set_State(EState_Act::Dead);
+    }
 
     if (!m_fHitTime.Increase(fTimeDelta))
         m_fHitStrength = 0.3f;
@@ -140,6 +149,8 @@ void CReaverBot_HanmuruDoll::Tick(const _float& fTimeDelta)
     m_State_AI.Get_StateFunc()(this, fTimeDelta);
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
     m_ActionKey.Reset();
+
+    Update_CloudStation();
 
     m_pColliderComp->Tick(fTimeDelta);
 }
@@ -179,11 +190,14 @@ void CReaverBot_HanmuruDoll::OnCreated()
     SUPER::OnCreated();
 
     Register_State();
+    m_RandomNumber = mt19937_64(m_RandomDevice());
 }
 
 void CReaverBot_HanmuruDoll::BeginPlay()
 {
     SUPER::BeginPlay();
+
+    m_fHP = FGauge(20.f, true);
 
     m_pColliderComp->EnterToPhysics(0);
 
@@ -191,6 +205,8 @@ void CReaverBot_HanmuruDoll::BeginPlay()
     m_pCloudStationComp->Connect_CloudStation(TEXT("Boss"));
     m_pBossCloud = m_pCloudStationComp->Get_LastCloudStation<CCloudStation_Boss>();
     Safe_AddRef(m_pBossCloud);
+
+    //m_pGI->Add_GameObject(CUI_Boss::Create());
 }
 
 FSerialData CReaverBot_HanmuruDoll::SerializeData_Prototype()
@@ -510,7 +526,7 @@ void CReaverBot_HanmuruDoll::ActState_Smash(const _float& fTimeDelta)
         // 원상태로 돌아감
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
-            if (m_fHP.Get_Percent() > 0.5f)
+            if (m_fPhase == 0)
                 Create_DamageCollision();
             else
                 Create_DamageCollisionBig();
@@ -541,6 +557,7 @@ void CReaverBot_HanmuruDoll::ActState_WalkAndSmash(const _float& fTimeDelta)
         if (m_fWalkAndSmash.Increase(fTimeDelta))
         {
             Create_DamageCollision();
+            m_fWalkAndSmash.Reset();
         }
 
         // 원상태로 돌아감
@@ -639,7 +656,7 @@ void CReaverBot_HanmuruDoll::AIState_Chase(const _float& fTimeDelta)
             _float fFindDistance = 4.f;
             _float fWalkAndSmashDistance = 5.f;
             _bool   bIsInverse = false;
-            if (m_fHP.Get_Percent() < 0.5f)
+            if (m_fPhase == 1)
             {
                 fFindDistance = 10.f;
                 fWalkAndSmashDistance = -5.f;
@@ -683,7 +700,7 @@ void CReaverBot_HanmuruDoll::AIState_Smash(const _float& fTimeDelta)
 {
     if (m_State_AI.IsState_Entered())
     {
-        if (m_fHP.Get_Percent() >= 0.5f)
+        if (m_fPhase == 0)
             m_fIdleTime.Readjust(4.f);
         else
             m_fIdleTime.Readjust(1.f);
@@ -828,7 +845,7 @@ CCharacter_Common* CReaverBot_HanmuruDoll::Find_Target()
 void CReaverBot_HanmuruDoll::Create_DamageCollision()
 {
     _vector vPos = Transform().Get_PositionVector()
-        + Transform().Get_LookNormalizedVector() * 3.f;
+        + Transform().Get_LookNormalizedVector() * 4.f;
     _float3 vfPos = {};
     XMStoreFloat3(&vfPos, vPos);
     auto pDamageCollision = CDamageCollision::Create(vfPos);

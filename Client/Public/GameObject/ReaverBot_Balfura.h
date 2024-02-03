@@ -38,7 +38,9 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void OnCreated() override;
 	virtual void BeginPlay() override;
+	virtual void EndPlay() override;
 
 public:
 	virtual FSerialData SerializeData_Prototype() override;

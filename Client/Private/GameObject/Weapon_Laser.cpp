@@ -105,6 +105,20 @@ HRESULT CWeapon_Laser::Render()
 	return S_OK;
 }
 
+void CWeapon_Laser::OnCreated()
+{
+	SUPER::OnCreated();
+
+	Set_RenderGroup(ERenderGroup::Blend);
+}
+
+void CWeapon_Laser::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	m_pColliderComp->EnterToPhysics(0);
+}
+
 CWeapon_Laser* CWeapon_Laser::Create()
 {
 	ThisClass* pInstance = new ThisClass();
@@ -173,8 +187,6 @@ HRESULT CWeapon_Laser::Initialize_Component()
 	m_pColliderComp->Set_CollisionKinematic();
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER | COLLAYER_WALL | COLLAYER_FLOOR | COLLAYER_OBJECT);
-	m_pColliderComp->EnterToPhysics(0);
-
 
 	return S_OK;
 }

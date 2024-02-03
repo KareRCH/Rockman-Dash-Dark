@@ -323,7 +323,8 @@ public:
 #pragma region 라이트 매니저
 public: /* For.Light_Manager */
 	HRESULT Initialize_LightMgr();
-	HRESULT Add_Light(const TLIGHT_DESC& LightDesc);
+	HRESULT Add_Light(const TLIGHT_DESC& LightDesc, _uint& iReturnID, class CLight** GetLight = nullptr);
+	HRESULT Remove_Light(const _uint iID);
 	HRESULT Render_Lights(class CEffectComponent* pEffect, class CRectBufferComp* pVIBuffer);
 #pragma endregion
 

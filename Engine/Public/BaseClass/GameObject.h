@@ -45,11 +45,13 @@ public:
 	virtual HRESULT Render_Shadow() { return S_OK; }
 
 public:
-	// 실제 게임에 추가되었을 때 작동하는 이벤트 함수. ObjectMgr에서 작동시킴
+	// 실제 게임에 추가되었을 때 작동하는 이벤트 함수. ObjectMgr에서 작동시킴. BeginPlay 전에 작동함
 	virtual void OnCreated() {}
+	// 게임에서 제거될 때 작동하는 이벤트 함수. 게임이 종료될 때도 작동됨. EndPlay 후로 작동함. 상호참조로 문제되는 코드를 여기에 넣습니다.
+	virtual void OnDeleted() {}
 	// 실제 게임에 추가된 뒤 처음 Tick을 실행할 때 작동하는 함수. ObjectMgr에서 작동시킴
 	virtual void BeginPlay() {}
-	// 실제 게임에서 죽어없어질 때 작동하는 이벤트 함수. ObjectMgr에서 작동시킴
+	// 실제 게임에서 죽어없어질 때 작동하는 이벤트 함수. ObjectMgr에서 작동시킴. 해제코드는 여기 넣지 말것.
 	virtual void EndPlay() {}
 
 public:
@@ -110,6 +112,9 @@ public:		// 각 오브젝트는 자식 오브젝트를 가질 수 있음
 
 private:
 	CGameObject* m_pOwner = { nullptr };
+
+protected:
+	CGameInstance* m_pGI = { nullptr };
 #pragma endregion
 
 
