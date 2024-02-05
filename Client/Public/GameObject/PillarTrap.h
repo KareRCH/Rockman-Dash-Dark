@@ -3,6 +3,7 @@
 #include "Client_Define.h"
 #include "BaseClass/CollisionObject.h"
 #include "GameObject/GameObjectFactory.h"
+#include "Utility/LogicDeviceBasic.h"
 
 BEGIN(Engine)
 class CCommonModelComp;
@@ -61,14 +62,22 @@ public:		// 충돌 이벤트
 private:
 	CCommonModelComp* m_pModelComp = { nullptr };
 
+
 public:
-	// 트랩 타입에 따라
+	// 트랩 타입에 따라 움직임이 다름
 	enum class ETrapType : _uint { Linear, Circle, Rect };
 
-private:
-	ETrapType	m_eTrapType = { ETrapType::Circle };
-	_float		m_fRadiusRange = { 5.f };		// 트랩이 움직이는 범위 반경
+public:
+	void MoveUpdate(const _float& fTimeDelta);
 
+private:
+	ETrapType	m_eTrapType = { ETrapType::Linear };
+	_float		m_fRadiusRange = { 5.f };				// 트랩이 움직이는 범위 반경
+	_uint		m_iCurrentMoveIndex = { 0 };
+	vector<_float3> m_vMovePoints;
+	FGauge		m_fLerp = FGauge(1.f);
+	_float		m_fMoveSpeed = { 4.f };					// 움직임 속도
+	_float3		m_vOriginPos = {};
 };
 
 template <>

@@ -121,6 +121,17 @@ PS_OUTPUT PS_MAIN_BLEND_ADD(VPS_INOUT In)
     return Out;
 }
 
+PS_OUTPUT PS_MAIN_SINGLE_COLOR(VPS_INOUT In)
+{
+    PS_OUTPUT Out = (PS_OUTPUT) 0;
+    
+    Out.vDiffuse = g_vColorAdd;
+    Out.vNormal = vector(In.vNormal * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, (float) g_iObjectID, 0.f);
+    
+    return Out;
+}
+
 
 struct PS_OUT_SHADOW
 {
@@ -212,5 +223,19 @@ technique11 DefaultTechnique
         HullShader = NULL;
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_NONLIGHT();
+    }
+
+    // 단일 색 덮어쓰기용
+    pass SingleColor
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_SINGLE_COLOR();
     }
 }

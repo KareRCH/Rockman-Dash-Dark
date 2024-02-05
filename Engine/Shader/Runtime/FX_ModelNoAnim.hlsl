@@ -14,6 +14,8 @@ float g_fFar = 1000.f;
 // ≈ÿΩ∫√≥
 Texture2D g_DiffuseTexture;
 
+float4 g_vColorAdd = vector(1.f, 1.f, 1.f, 1.f);
+
 int g_iObjectID = -1;
 
 //-------------------------------------------------
@@ -103,6 +105,15 @@ PS_OUTPUT_NONLIGHT PS_MAIN_NONLIGHT(VPS_INOUT In)
     return Out;
 }
 
+PS_OUTPUT_NONLIGHT PS_MAIN_SINGLE_COLOR(VPS_INOUT In)
+{
+    PS_OUTPUT_NONLIGHT Out = (PS_OUTPUT_NONLIGHT) 0;
+    
+    Out.vColor = g_vColorAdd;
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     pass Model
@@ -128,5 +139,17 @@ technique11 DefaultTechnique
         HullShader = NULL;
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_NONLIGHT();
+    }
+    pass SingleColor
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend_Add, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_SINGLE_COLOR();
     }
 }

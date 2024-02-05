@@ -1,5 +1,6 @@
 #include "GameObject/Weapon_BusterCannon.h"
 
+#include "Component/EffectComponent.h"
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
 
@@ -12,7 +13,6 @@
 CWeapon_BusterCannon::CWeapon_BusterCannon()
 {
 	Set_Name(TEXT("Weapon_Buster"));
-	Set_RenderGroup(ERenderGroup::Blend);
 }
 
 CWeapon_BusterCannon::CWeapon_BusterCannon(const CWeapon_BusterCannon& rhs)
@@ -100,10 +100,23 @@ HRESULT CWeapon_BusterCannon::Render()
 {
 	SUPER::Render();
 
-	m_pModelComp->Render();
+	if (m_pModelComp)
+	{
+		auto pEffectComp = m_pModelComp->EffectComp();
+		_float fStrength = 1.f;
+
+		_float4 vColor = {
+			0.4f, 0.4f, 1.0f, 1.f
+		};
+
+		pEffectComp->Bind_RawValue("g_vColorAdd", VPCast(&vColor), sizeof(_float4));
+		//pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&fStrength), sizeof(_float));
+
+		m_pModelComp->Render();
+	}
 
 #ifdef _DEBUG
-	GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
+	m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
 	return S_OK;
@@ -113,7 +126,7 @@ void CWeapon_BusterCannon::OnCreated()
 {
 	SUPER::OnCreated();
 
-
+	Set_RenderGroup(ERenderGroup::Blend);
 }
 
 void CWeapon_BusterCannon::BeginPlay()
@@ -126,7 +139,7 @@ void CWeapon_BusterCannon::BeginPlay()
 	if (m_pModelComp)
 	{
 		m_pModelComp->Reset_ActivePass();
-		m_pModelComp->Set_ActivePass(1);
+		m_pModelComp->Set_ActivePass(2);
 	}
 
 
