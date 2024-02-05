@@ -623,6 +623,7 @@ void CReaverBot_HanmuruDoll::ActState_Dead(const _float& fTimeDelta)
         m_fDeadEffect.Reset();
         m_fDeadTime.Reset();
         m_pGI->Stop_Sound(SOUND_BGM);
+        m_bIsDead = true;
     }
 
     if (m_State_Act.Can_Update())

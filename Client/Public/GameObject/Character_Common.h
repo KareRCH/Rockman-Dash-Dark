@@ -62,9 +62,10 @@ public:
 	void	Set_Grabbed(_bool bIsGrabbed) { m_bIsGrabbed = bIsGrabbed; }
 	void	Set_Throwing(_bool bIsThrowing) { m_bIsThrowing = bIsThrowing; }
 	void	Set_Velocity(_float3 vVelocity) { m_vVelocity = vVelocity; }
-
+	_bool	Get_IsCharacterDead() const { return m_bIsDead; }
 
 protected:
+	_bool		m_bIsDead = { false };					// object의 죽는 것과 별개로 사망 처리용 변수
 	_bool		m_bIsOnGround = { true };
 	_bool		m_bIsCanGrab = { false };
 	_bool		m_bIsGrabbed = { false };

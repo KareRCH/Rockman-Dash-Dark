@@ -612,6 +612,7 @@ void CReaverBot_Fingerii::ActState_Dead(const _float& fTimeDelta)
 	if (m_State_Act.IsState_Entered())
 	{
 		m_pModelComp->Set_Animation(2, 2.f, true);
+		m_bIsDead = true;
 	}
 
 	if (m_State_Act.Can_Update())

@@ -2171,7 +2171,8 @@ void CPlayer::Lockon_Active(const _float& fTimeDelta)
 {
     if (m_pLockon_Target)
     {
-        if (m_pLockon_Target == m_pGrabUnit || m_pLockon_Target->IsDead() || GI()->IsKey_Pressed(DIK_R))
+        if (m_pLockon_Target == m_pGrabUnit || m_pLockon_Target->IsDead() || GI()->IsKey_Pressed(DIK_R)
+            || m_pLockon_Target->Get_IsCharacterDead())
         {
             Lockon_Untarget();
             return;
