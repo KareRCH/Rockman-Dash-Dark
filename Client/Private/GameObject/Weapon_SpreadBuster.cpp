@@ -96,7 +96,7 @@ HRESULT CWeapon_SpreadBuster::Render()
 		_float fStrength = 1.f;
 
 		_float4 vColor = {
-			1.0f, 1.f, 1.f, 1.f
+			0.7f, 1.f, 1.f, 1.f
 		};
 
 		pEffectComp->Bind_RawValue("g_vColorAdd", VPCast(&vColor), sizeof(_float4));

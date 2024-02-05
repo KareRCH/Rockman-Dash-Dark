@@ -176,6 +176,14 @@ HRESULT CReaverBot_HanmuruDoll::Render()
     {
         auto pEffectComp = m_pModelComp->EffectComp();
 
+        _float4 vColor = {
+            1.f, 1.f, 1.f, 1.f
+        };
+        
+        if (m_bIsDead)
+            vColor = {};
+
+        pEffectComp->Bind_RawValue("g_vColorAdd", VPCast(&vColor), sizeof(_float4));
         pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&m_fHitStrength), sizeof(_float));
 
         m_pModelComp->Render();
@@ -421,7 +429,7 @@ void CReaverBot_HanmuruDoll::DeadEffect()
         return;
 
     uniform_real_distribution<_float> RandomPosX(-2.5f, 2.5f);
-    uniform_real_distribution<_float> RandomPosY(0.f, 1.f);
+    uniform_real_distribution<_float> RandomPosY(0.f, 4.f);
     uniform_real_distribution<_float> RandomPosZ(-2.5f, 2.5f);
     pEffect->Transform().Set_Position(Transform().Get_PositionVector()
         + XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));

@@ -172,6 +172,11 @@ HRESULT CReaverBot_Fingerii::Render()
 	{
 		auto pEffectComp = m_pModelComp->EffectComp();
 
+		_float4 vColor = {
+			1.f, 1.f, 1.f, 1.f
+		};
+
+		pEffectComp->Bind_RawValue("g_vColorAdd", VPCast(&vColor), sizeof(_float4));
 		pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&m_fHitStrength), sizeof(_float));
 
 		m_pModelComp->Render();

@@ -213,6 +213,8 @@ void CPlayer::Late_Tick(const _float& fTimeDelta)
         m_pModelComp->Invalidate_Animation();
 
     m_pModelComp->Late_Tick(fTimeDelta);
+
+    AttachBlade();
 }
 
 HRESULT CPlayer::Render()
@@ -265,6 +267,8 @@ void CPlayer::OnDeleted()
 
 void CPlayer::BeginPlay()
 {
+    SUPER::BeginPlay();
+
     m_pDynamicCamera = DynCast<CDynamicCamera*>(m_pGI->Find_GameObjectByName(TEXT("DynamicCamera")));
     Safe_AddRef(m_pDynamicCamera);
 
@@ -526,7 +530,7 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
 
             if (!bIsGrab)
             {
-                if (m_fKnockDownDelay.IsMax() && !m_bInvisible)
+                if (m_fKnockDownDelay.IsMax() && !m_bInvisible && !pEnemy->Get_IsCharacterDead())
                 {
                     m_fKnockDownDelay.Reset();
                     if (m_fKnockDownValue.Increase(2.5f))
@@ -1263,6 +1267,8 @@ void CPlayer::ActState_DamagedHeavy(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
+        Lockon_Untarget();
+
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
             m_State_Act.Set_State(EState_Act::KnockDown);
@@ -1286,6 +1292,8 @@ void CPlayer::ActState_KnockDown(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
+        Lockon_Untarget();
+
         m_fInvisibleTime.Reset();
         if (m_fKnockDownTime.Increase(fTimeDelta))
         {
@@ -1684,7 +1692,7 @@ void CPlayer::ActState_BladeAttack1(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(20, 1.5f, false, false, 0.2f);
+        m_pModelComp->Set_Animation(20, 1.3f, false, false, 0.5f);
         m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack1.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
         m_ActionKey.Act(EActionKey::MoveForward);
         m_ActionKey.Act(EActionKey::MoveFast);
@@ -1694,7 +1702,7 @@ void CPlayer::ActState_BladeAttack1(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
         Look_Update(fTimeDelta);
-        AttachBlade();
+        //AttachBlade();
         m_ActionKey.Act(EActionKey::LowFrict);
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
@@ -1716,7 +1724,7 @@ void CPlayer::ActState_BladeAttack2(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(21, 1.3f, false, false, 0.2f);
+        m_pModelComp->Set_Animation(21, 1.3f, false, false, 0.5f);
         m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack1.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
         m_fGauge.Readjust(0.2f);
         
@@ -1733,7 +1741,7 @@ void CPlayer::ActState_BladeAttack2(const _float& fTimeDelta)
             m_ActionKey.Act(EActionKey::Jump);
         }
 
-        if (m_pModelComp->AnimationComp()->IsAnimation_Range(34.f, 35.f))
+        if (m_pModelComp->AnimationComp()->IsAnimation_Range(29.f, 30.f))
         {
             m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack2.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
         }
@@ -2229,10 +2237,13 @@ void CPlayer::Lockon_Target()
 
 void CPlayer::Lockon_Untarget()
 {
-    Safe_ReleaseAndUnlink(m_pLockon_Target);
+    if (m_pLockon_Target)
+    {
+        Safe_ReleaseAndUnlink(m_pLockon_Target);
 
-    m_pLockon_UI->Clear_Target();
-    Safe_ReleaseAndUnlink(m_pLockon_UI);
+        m_pLockon_UI->Clear_Target();
+        Safe_ReleaseAndUnlink(m_pLockon_UI);
+    }
 }
 
 _matrix CPlayer::Lockon_TargetMatrix()
@@ -2278,13 +2289,16 @@ CCharacter_Common* CPlayer::Find_Target(_float fRange)
         if (pObj == m_pGrabUnit)
             continue;
 
+        auto pChr = DynCast<CCharacter_Common*>(pObj);
+        if (nullptr == pChr || pChr == this || pChr->Get_IsCharacterDead())
+            continue;
+
         auto& ContactData = iter->second;
         _float fObjDistance = XMVectorGetX(XMVector3Length((Transform().Get_PositionVector() - pObj->Transform().Get_PositionVector())));
-        if (fObjDistance <= fDistance
-            && pObj != this && nullptr != DynCast<CCharacter_Common*>(pObj))
+        if (fObjDistance <= fDistance)
         {
             if (ETeamRelation::Hostile ==
-                CTeamAgentComp::Check_Relation(&DynCast<CCharacter_Common*>(pObj)->TeamAgentComp(), &TeamAgentComp()))
+                CTeamAgentComp::Check_Relation(&pChr->TeamAgentComp(), &TeamAgentComp()))
             {
                 fDistance = fObjDistance;
                 pClosestObj = pObj;

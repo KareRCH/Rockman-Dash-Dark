@@ -23,8 +23,6 @@ HRESULT CCharacter_Common::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-	if (FAILED(Initialize_Component()))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -106,6 +104,14 @@ HRESULT CCharacter_Common::Render()
 	return S_OK;
 }
 
+void CCharacter_Common::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	// 필드 유닛 태그를 달아 일시정지에 씀
+	Add_Tag(EGObjTag::Common, TEXT("Field"));
+}
+
 void CCharacter_Common::Free()
 {
 	SUPER::Free();
@@ -137,7 +143,10 @@ void CCharacter_Common::OnCollision(CGameObject* pDst, const FContact* pContact)
 			vSimNormal = XMLoadFloat3(&vNormal);
 			Transform().Set_Position((Transform().Get_PositionVector() - vSimNormal * Cast<_float>(pContact->fPenetration)));
 			if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
+			{
 				m_bIsOnGround = true;
+				m_vVelocity.y = 0.f;
+			}
 		}
 	}
 }

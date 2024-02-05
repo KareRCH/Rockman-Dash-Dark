@@ -4,6 +4,7 @@
 #include "Component/ColliderComponent.h"
 #include "Level/Level_Loading.h"
 #include "CloudStation/CloudStation_Player.h"
+#include "GameObject/UI_FadeOut.h"
 
 CDoor_Common::CDoor_Common()
 {
@@ -374,7 +375,19 @@ void CDoor_Common::ActState_Open(const _float& fTimeDelta)
             m_pColliderComp->ExitFromPhysics(0);
 
             // 맵을 옮겨갈 수 있으면 여기에서 처리
-            TransitionLevel();
+            if (!m_strTransitionLevel.empty())
+            {
+                if (!m_bIsTransitioning)
+                {
+                    m_bIsTransitioning = true;
+
+                    m_pGI->Pause_ObjectsByCommonTag(TEXT("Field"), true);
+
+                    auto pFadeOut = CUI_FadeOut::Create();
+                    m_pGI->Add_GameObject(pFadeOut);
+                    pFadeOut->Add_Event(MakeDelegate(this, &ThisClass::TransitionLevel), MakeDelegate(this, &ThisClass::TransitionLevel));
+                }
+            }
         }
 
         if (m_fDoorClose.Increase(fTimeDelta))
@@ -398,7 +411,6 @@ void CDoor_Common::ActState_Close(const _float& fTimeDelta)
 
     if (m_State_Act.Can_Update())
     {
-
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
             m_State_Act.Set_State(EState_Act::Idle);
     }

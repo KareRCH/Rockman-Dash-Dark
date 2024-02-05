@@ -60,7 +60,7 @@ void CWeapon_Blade::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
 
-	if (m_fColor.Increase(360.f * 10.f * fTimeDelta))
+	if (m_fColor.Increase(360.f * 5.f * fTimeDelta))
 		m_fColor.Reset();
 
 	m_pColliderComp->Tick(fTimeDelta);
@@ -86,7 +86,7 @@ HRESULT CWeapon_Blade::Render()
 
 		_float4 vHSV = {
 			m_fColor.fCur / 360.f,
-			1.f, 0.3f, 1.f
+			0.7f, 1.f, 1.f
 		};
 		
 		_vector vSimRGB = XMColorHSVToRGB(XMLoadFloat4(&vHSV));

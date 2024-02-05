@@ -475,6 +475,14 @@ void CGameInstance::Toggle_LockMouseCenter()
 	m_pInputDev->Toggle_LockMouseCenter();
 }
 
+void CGameInstance::OnOff_LockMouseCenter(_bool bIsOnOff)
+{
+	if (nullptr == m_pInputDev)
+		return;
+
+	m_pInputDev->OnOff_LockMouseCenter(bIsOnOff);
+}
+
 #pragma endregion
 
 
@@ -1066,6 +1074,22 @@ vector<class CGameObject*> CGameInstance::Get_AllGameObjectFromLevel(const wstri
 		return vector<class CGameObject*>();
 
 	return m_pObjectMgr->Get_AllGameObjectFromLevel(strLevelTag);
+}
+
+void CGameInstance::Pause_ObjectsByCommonTag(const wstring& strCommonTag, _bool bJustTick)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->Pause_ObjectsByCommonTag(strCommonTag, bJustTick);
+}
+
+void CGameInstance::Resume_ObjectsByCommonTag(const wstring& strCommonTag, _bool bJustTick)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->Pause_ObjectsByCommonTag(strCommonTag, bJustTick);
 }
 
 void CGameInstance::Pause_ObjectsByLevelTag(const wstring& strLevelTag)

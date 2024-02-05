@@ -15,6 +15,8 @@
 #include "GameObject/Trigger.h"
 #include "GameObject/PillarTrap.h"
 #include "GameObject/InvisibleObject.h"
+#include "GameObject/Npc_Man1.h"
+#include "GameObject/SpikeTrap.h"
 
 #include "BaseClass/Terrain.h"
 #include "BaseClass/Navigation.h"
@@ -76,6 +78,12 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 			break;
 		case EObjectIDExt::InvisibleObject:
 			pObj = TObjectExtTrait< ECast(EObjectIDExt::InvisibleObject)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::NpcMan1:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::NpcMan1)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::SpikeTrap:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::SpikeTrap)>::Class::Create(Data);
 			break;
 		}
 		break;

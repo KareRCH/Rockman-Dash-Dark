@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GameObject/Character_Common.h"
 #include "Client_Define.h"
+#include "GameObject/Character_Common.h"
 
 #include "Utility/LogicDeviceBasic.h"
 #include "Component/PivotComponent.h"
@@ -13,7 +13,6 @@ class CCommonModelComp;
 class CNavigationComponent;
 class CCloudStationComp;
 END
-
 
 
 BEGIN(Client)

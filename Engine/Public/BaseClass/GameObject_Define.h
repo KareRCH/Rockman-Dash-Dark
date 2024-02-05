@@ -24,7 +24,7 @@ enum class EGObjTag : _uint
 enum class EGObjectState : _uint
 {
 	Dead = EBIT_FLAG32_0,
-	Pause = EBIT_FLAG32_1,
+	Pause = EBIT_FLAG32_1,				// 완전 정지
 	Priority_Tick = EBIT_FLAG32_2,		// 우선 틱
 	Tick = EBIT_FLAG32_3,				// 틱
 	Late_Tick = EBIT_FLAG32_4,			// 레이트 틱
@@ -35,6 +35,7 @@ enum class EGObjectState : _uint
 	Shadow = EBIT_FLAG32_9,				// 그림자 그리기 옵션
 	Tool = EBIT_FLAG32_10,				// 툴 태그
 	InstantDelete = EBIT_FLAG32_11,		// 즉시 삭제 태그, EndPlay 작동 안하도록함.
+	Tick_Pause = EBIT_FLAG32_12,		// 틱만 정지
 };
 
 END

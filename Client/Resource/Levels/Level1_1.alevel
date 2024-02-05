@@ -4035,10 +4035,10 @@
                         "CollisionMask": 0
                     }
                 ],
-                "TransitionLevel": "",
-                "StartPosX": 0.0,
+                "TransitionLevel": "Levels/Level1_2.alevel",
+                "StartPosX": 53.0,
                 "StartPosY": 0.0,
-                "StartPosZ": 0.0,
+                "StartPosZ": 137.0,
                 "StartLookX": 0.0,
                 "StartLookY": 0.0,
                 "StartLookZ": 1.0

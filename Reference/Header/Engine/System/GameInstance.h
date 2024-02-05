@@ -111,6 +111,7 @@ public:			// 인풋 디바이스
 	_byte		Get_DIMouseState(MOUSEKEYSTATE eMouse);
 	_long		Get_DIMouseMove(MOUSEMOVESTATE eMouseState);
 	void		Toggle_LockMouseCenter();
+	void		OnOff_LockMouseCenter(_bool bIsOnOff);
 #pragma endregion
 
 
@@ -243,6 +244,8 @@ public:		// 매니지먼트
 	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);
 	class CGameObject*	Find_GameObjectByName(const wstring& strName);
 	vector<class CGameObject*> Get_AllGameObjectFromLevel(const wstring& strLevelTag);
+	void				Pause_ObjectsByCommonTag(const wstring& strCommonTag, _bool bJustTick);
+	void				Resume_ObjectsByCommonTag(const wstring& strCommonTag, _bool bJustTick);
 	void				Pause_ObjectsByLevelTag(const wstring& strLevelTag);
 	void				Resume_ObjectsByLevelTag(const wstring& strLevelTag);
 	void				Clear_GameObject(const wstring& strLayerTag);
