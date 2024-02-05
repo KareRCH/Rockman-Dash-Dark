@@ -8,6 +8,8 @@ matrix g_ProjMatrix;
 // 뼈 행렬들
 matrix g_BoneMatrices[200];
 
+float g_fLightFar = 300.f;
+
 vector g_vCamPosition = vector(0.f, 0.f, 0.f, 0.f);
 float g_fFar = 1000.f;
 
@@ -34,7 +36,7 @@ struct VS_INPUT
 
 struct VPS_INOUT
 {
-    float4 vPosition : SV_POSITION0;
+    float4 vPosition : SV_POSITION;
     float3 vNormal : NORMAL;
     float2 vTexCoord : TEXCOORD0;
     float4 vWorldPos : TEXCOORD1;
@@ -56,30 +58,30 @@ VPS_INOUT VS_MAIN(VS_INPUT In)
 {
     VPS_INOUT Out = (VPS_INOUT) 0;
     
-    float4x4 matBoneTransform = { 1.f, 0.f, 0.f, 0.f,
-                                  0.f, 1.f, 0.f, 0.f,
-                                  0.f, 0.f, 1.f, 0.f,
-                                  0.f, 0.f, 0.f, 1.f };
+    float4x4 BoneMatrix = { 1.f, 0.f, 0.f, 0.f,
+                            0.f, 1.f, 0.f, 0.f,
+                            0.f, 0.f, 1.f, 0.f,
+                            0.f, 0.f, 0.f, 1.f };
     
     // 하나라도 값이 들어가 있음
     //if (!all(input.vBoneID))
     {
-        matBoneTransform = g_BoneMatrices[In.vBoneID[0]] * In.vWeight[0];
-        matBoneTransform += g_BoneMatrices[In.vBoneID[1]] * In.vWeight[1];
-        matBoneTransform += g_BoneMatrices[In.vBoneID[2]] * In.vWeight[2];
-        matBoneTransform += g_BoneMatrices[In.vBoneID[3]] * In.vWeight[3];
+        BoneMatrix = g_BoneMatrices[In.vBoneID[0]] * In.vWeight[0];
+        BoneMatrix += g_BoneMatrices[In.vBoneID[1]] * In.vWeight[1];
+        BoneMatrix += g_BoneMatrices[In.vBoneID[2]] * In.vWeight[2];
+        BoneMatrix += g_BoneMatrices[In.vBoneID[3]] * In.vWeight[3];
     }
     
-    matrix BoneWorldMatrix = mul(matBoneTransform, g_WorldMatrix);
+    matrix BoneWorldMatrix = mul(BoneMatrix, g_WorldMatrix);
     matrix WVMatrix = mul(BoneWorldMatrix, g_ViewMatrix);
     matrix WVPMatrix = mul(WVMatrix, g_ProjMatrix);
     
-    Out.vPosition = mul(float4(In.vPosition.xyz, 1.f), WVPMatrix);
-    Out.vNormal = normalize(mul(In.vNormal, (float3x3) BoneWorldMatrix));
+    Out.vPosition = mul(vector(In.vPosition.xyz, 1.f), WVPMatrix);
+    Out.vNormal = normalize(mul(vector(In.vNormal.xyz, 0.f), BoneWorldMatrix)).xyz;
     Out.vTexCoord = In.vTexCoord;
     
     // 월드 정점 위치 계산
-    Out.vWorldPos = mul(float4(In.vPosition.xyz, 1.f), BoneWorldMatrix);
+    Out.vWorldPos = mul(vector(In.vPosition.xyz, 1.f), BoneWorldMatrix);
     Out.vProjPos = Out.vPosition;
     
     return Out;
@@ -129,7 +131,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(VPS_INOUT In)
 {
     PS_OUT_SHADOW Out = (PS_OUT_SHADOW) 0;
 
-    Out.vLightDepth = In.vProjPos.w / 1000.0f;
+    Out.vLightDepth = In.vProjPos.w / g_fLightFar;
 	
     return Out;
 }
@@ -170,6 +172,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN();
     }
     
+    // 텍스처에 색 더하는 패스
     pass BlendAdd
     {
         SetRasterizerState(RS_Default);
@@ -182,7 +185,8 @@ technique11 DefaultTechnique
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLEND_ADD();
     }
-
+    
+    // LightDepth 패스
     pass Shadow
     {
         SetRasterizerState(RS_Default);
@@ -196,6 +200,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
+    // 이펙트용 패스
     pass NonLight
     {
         SetRasterizerState(RS_Default);

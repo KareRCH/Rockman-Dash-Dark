@@ -79,6 +79,9 @@
     <Filter Include="01. ImGuiWin\03. ObjectTool\02. PrototypeProperty">
       <UniqueIdentifier>{ec306c43-a2be-4ed3-841f-7673e9fb0cc9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98 Client\NewFilter1">
+      <UniqueIdentifier>{82c81495-21c0-4b0f-af9d-3feb1811def1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\framework.h">
@@ -327,6 +330,36 @@
       <Filter>98 Client</Filter>
     </ClCompile>
     <ClCompile Include="..\Client\Private\GameObject\Trigger.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\CloudStation\CloudStation_Boss.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\PillarTrap.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\UI_Boss.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\Weapon_BusterCannon.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\GameObject\InvisibleObject.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\Level\Level_GamePlay.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\Level\Level_Loading.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\Level\Level_Logo.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\Level\Level_Parsed.cpp">
+      <Filter>98 Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Client\Private\Loader.cpp">
       <Filter>98 Client</Filter>
     </ClCompile>
   </ItemGroup>

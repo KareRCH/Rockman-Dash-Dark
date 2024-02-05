@@ -18,8 +18,6 @@ HRESULT CLoadingScreen::Initialize_Prototype()
 {
     FAILED_CHECK_RETURN(Initialize_Component(), E_FAIL);
 
-    Set_RenderGroup(ERenderGroup::UI);              // UI 그룹에서 렌더링, 나중에 그려지며 깊이 버퍼를 쓰지 않음
-
     return S_OK;
 }
 
@@ -63,6 +61,13 @@ HRESULT CLoadingScreen::Render()
     m_pPlaneModelComp->Render();
 
     return S_OK;
+}
+
+void CLoadingScreen::BeginPlay()
+{
+    SUPER::BeginPlay();
+
+    Set_RenderGroup(ERenderGroup::UI);              // UI 그룹에서 렌더링, 나중에 그려지며 깊이 버퍼를 쓰지 않음
 }
 
 CLoadingScreen* CLoadingScreen::Create()

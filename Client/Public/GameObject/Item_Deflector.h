@@ -108,6 +108,9 @@ public:
 private:
 	_uint m_eType = { EType::White };
 	_uint m_iGiveMoney = { 100 };
+	FGauge m_fLifeTime = FGauge(9.f);
+	FGauge m_fBlinkTime = FGauge(0.05f, true);
+	_bool m_bIsDisplay = { true };
 };
 
 template <>

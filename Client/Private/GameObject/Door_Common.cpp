@@ -2,6 +2,8 @@
 
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
+#include "Level/Level_Loading.h"
+#include "CloudStation/CloudStation_Player.h"
 
 CDoor_Common::CDoor_Common()
 {
@@ -73,6 +75,18 @@ HRESULT CDoor_Common::Initialize_Prototype(FSerialData& InputData)
         }
     }
 
+    string strTransitionLevel = "";
+    InputData.Get_Data("TransitionLevel", strTransitionLevel);
+    m_strTransitionLevel = ConvertToWstring(strTransitionLevel);
+
+    InputData.Get_Data("StartPosX", m_vStartPos.x);
+    InputData.Get_Data("StartPosY", m_vStartPos.y);
+    InputData.Get_Data("StartPosZ", m_vStartPos.z);
+
+    InputData.Get_Data("StartLookX", m_vStartLook.x);
+    InputData.Get_Data("StartLookY", m_vStartLook.y);
+    InputData.Get_Data("StartLookZ", m_vStartLook.z);
+
     return S_OK;
 }
 
@@ -135,6 +149,8 @@ HRESULT CDoor_Common::Render()
 void CDoor_Common::BeginPlay()
 {
     SUPER::BeginPlay();
+
+    //m_strTransitionLevel = TEXT("Levels/Level1.alevel");
 
     if (m_pColliderComp)
         m_pColliderComp->EnterToPhysics(0);
@@ -203,6 +219,16 @@ FSerialData CDoor_Common::SerializeData_Prototype()
 
     Data.Add_Member("ClassID", g_ClassID);
 
+    string strTransitionLevel = ConvertToString(m_strTransitionLevel);
+    Data.Add_MemberString("TransitionLevel", strTransitionLevel);
+    Data.Add_Member("StartPosX", m_vStartPos.x);
+    Data.Add_Member("StartPosY", m_vStartPos.y);
+    Data.Add_Member("StartPosZ", m_vStartPos.z);
+
+    Data.Add_Member("StartLookX", m_vStartLook.x);
+    Data.Add_Member("StartLookY", m_vStartLook.y);
+    Data.Add_Member("StartLookZ", m_vStartLook.z);
+
     return Data;
 }
 
@@ -211,6 +237,16 @@ FSerialData CDoor_Common::SerializeData()
     FSerialData Data = SUPER::SerializeData();
 
     Data.Add_Member("ClassID", g_ClassID);
+
+    string strTransitionLevel = ConvertToString(m_strTransitionLevel);
+    Data.Add_MemberString("TransitionLevel", strTransitionLevel);
+    Data.Add_Member("StartPosX", m_vStartPos.x);
+    Data.Add_Member("StartPosY", m_vStartPos.y);
+    Data.Add_Member("StartPosZ", m_vStartPos.z);
+
+    Data.Add_Member("StartLookX", m_vStartLook.x);
+    Data.Add_Member("StartLookY", m_vStartLook.y);
+    Data.Add_Member("StartLookZ", m_vStartLook.z);
 
     return Data;
 }
@@ -258,6 +294,18 @@ HRESULT CDoor_Common::Initialize_Component(FSerialData& InputData)
             break;
         }
     }
+
+    string strTransitionLevel = "";
+    InputData.Get_Data("TransitionLevel", strTransitionLevel);
+    m_strTransitionLevel = ConvertToWstring(strTransitionLevel);
+
+    InputData.Get_Data("StartPosX", m_vStartPos.x);
+    InputData.Get_Data("StartPosY", m_vStartPos.y);
+    InputData.Get_Data("StartPosZ", m_vStartPos.z);
+
+    InputData.Get_Data("StartLookX", m_vStartLook.x);
+    InputData.Get_Data("StartLookY", m_vStartLook.y);
+    InputData.Get_Data("StartLookZ", m_vStartLook.z);
 
     return S_OK;
 }
@@ -322,7 +370,12 @@ void CDoor_Common::ActState_Open(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
             m_pColliderComp->ExitFromPhysics(0);
+
+            // 맵을 옮겨갈 수 있으면 여기에서 처리
+            TransitionLevel();
+        }
 
         if (m_fDoorClose.Increase(fTimeDelta))
             m_State_Act.Set_State(EState_Act::Close);
@@ -353,5 +406,22 @@ void CDoor_Common::ActState_Close(const _float& fTimeDelta)
     if (m_State_Act.IsState_Exit())
     {
 
+    }
+}
+
+void CDoor_Common::TransitionLevel()
+{
+    if (!m_strTransitionLevel.empty())
+    {
+        auto pPlayerCloud = DynCast<CCloudStation_Player*>(m_pGI->Find_CloudStation(TEXT("Player")));
+
+        if (pPlayerCloud)
+        {
+            pPlayerCloud->Access_StartPos(CCloudStation::EMode::Upload, m_vStartPos);
+            pPlayerCloud->Access_StartLook(CCloudStation::EMode::Upload, m_vStartLook);
+
+            m_pGI->Open_Level(LEVEL_LOADING,
+                CLevel_Loading::Create(LEVEL_PARSED, m_pGI->Get_TextureMainPath() + m_strTransitionLevel));
+        }
     }
 }

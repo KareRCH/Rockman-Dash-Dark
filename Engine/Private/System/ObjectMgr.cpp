@@ -406,6 +406,7 @@ void CObjectMgr::Clear_GameObject(const wstring& strLevelTag)
 			(*ppObj)->Delete_Tag(EGObjTag::Level, strLevelTag);
 			if ((*ppObj)->Tag_Size(EGObjTag::Level) == 0U)
 			{
+				(*ppObj)->TurnOn_State(EGObjectState::InstantDelete);
 				(*ppObj)->Set_Dead();
 				auto iter = m_setObjectNames.find((*ppObj)->Get_Name());
 				if (iter != m_setObjectNames.end())
@@ -448,7 +449,8 @@ void CObjectMgr::RegistToTick_GameObjects()
 			if (iter != m_setObjectNames.end())
 				m_setObjectNames.erase(iter);
 
-			pObj->EndPlay();
+			if (!pObj->IsState(EGObjectState::Tool) && !pObj->IsState(EGObjectState::InstantDelete))
+				pObj->EndPlay();
 			pObj->OnDeleted();
 			_uint iRefCount = Safe_Release(pObj);
 			m_vecGameObjects[i] = nullptr;

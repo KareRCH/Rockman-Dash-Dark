@@ -460,8 +460,8 @@ HRESULT CRenderMgr::Render_Deferred()
 
 	_float4x4		ViewMatrix, ProjMatrix;
 
-	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(150.f, 200.f, 150.f, 1.f), XMVectorSet(150.f, 0.f, 150.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), 1280.0f / 720.0f, 0.1f, 1000.f));
+	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(40.f, 30.f, 40.f, 1.f), XMVectorSet(40.f, 0.f, 40.f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f)));
+	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), 1280.0f / 720.0f, 0.1f, 300.f));
 
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_LightViewMatrix", &ViewMatrix)))
 		return E_FAIL;

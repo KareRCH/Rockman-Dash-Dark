@@ -8,6 +8,7 @@
 
 #include "GameObject/DamageCollision.h"
 #include "GameObject/Door_Common.h"
+#include "GameObject/Effect_Common.h"
 #include "CloudStation/CloudStation_Boss.h"
 
 CReaverBot_HanmuruDoll::CReaverBot_HanmuruDoll()
@@ -135,7 +136,9 @@ void CReaverBot_HanmuruDoll::Tick(const _float& fTimeDelta)
         }
     }
 
-    if (!m_State_Act.IsOnState(EState_Act::Dead) && m_fHP.Get_Percent() <= 0.f)
+    if (!m_State_Act.IsOnState(EState_Act::Dead) 
+        && !m_State_Act.IsOnState(EState_Act::Stopped)
+        && m_fHP.Get_Percent() <= 0.f)
     {
         m_State_Act.Set_State(EState_Act::Dead);
     }
@@ -205,6 +208,8 @@ void CReaverBot_HanmuruDoll::BeginPlay()
     m_pCloudStationComp->Connect_CloudStation(TEXT("Boss"));
     m_pBossCloud = m_pCloudStationComp->Get_LastCloudStation<CCloudStation_Boss>();
     Safe_AddRef(m_pBossCloud);
+
+    Set_Priority(0, -1);
 
     //m_pGI->Add_GameObject(CUI_Boss::Create());
 }
@@ -406,6 +411,23 @@ void CReaverBot_HanmuruDoll::Update_CloudStation()
     m_pBossCloud->Access_HP(CCloudStation::EMode::Upload, m_fHP);
 }
 
+void CReaverBot_HanmuruDoll::DeadEffect()
+{
+    CEffect_Common* pEffect = CEffect_Common::Create();
+    if (FAILED(m_pGI->Add_GameObject(pEffect)))
+        return;
+
+    if (nullptr == pEffect)
+        return;
+
+    uniform_real_distribution<_float> RandomPosX(-2.5f, 2.5f);
+    uniform_real_distribution<_float> RandomPosY(0.f, 1.f);
+    uniform_real_distribution<_float> RandomPosZ(-2.5f, 2.5f);
+    pEffect->Transform().Set_Position(Transform().Get_PositionVector()
+        + XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion_small.mp3"), CHANNELID::SOUND_ENEMY1, 1.f);
+}
+
 void CReaverBot_HanmuruDoll::Register_State()
 {
     for (_uint i = 0; i < ECast(EActionKey::Size); i++)
@@ -418,6 +440,7 @@ void CReaverBot_HanmuruDoll::Register_State()
     m_State_Act.Add_Func(EState_Act::WalkAndSmash, &ThisClass::ActState_WalkAndSmash);
     m_State_Act.Add_Func(EState_Act::Damaged, &ThisClass::ActState_Damaged);
     m_State_Act.Add_Func(EState_Act::Dead, &ThisClass::ActState_Dead);
+    m_State_Act.Add_Func(EState_Act::Stopped, &ThisClass::ActState_Stopped);
     m_State_Act.Set_State(EState_Act::Idle);
 
     m_State_AI.Add_Func(EState_AI::Idle, &ThisClass::AIState_Idle);
@@ -594,7 +617,60 @@ void CReaverBot_HanmuruDoll::ActState_Damaged(const _float& fTimeDelta)
 
 void CReaverBot_HanmuruDoll::ActState_Dead(const _float& fTimeDelta)
 {
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(0, 1.f, true);
+        m_fDeadEffect.Reset();
+        m_fDeadTime.Reset();
+        m_pGI->Stop_Sound(SOUND_BGM);
+    }
 
+    if (m_State_Act.Can_Update())
+    {
+        if (m_fDeadEffect.Increase(fTimeDelta))
+        {
+            m_fDeadEffect.Reset();
+            DeadEffect();
+        }
+
+        if (m_fDeadTime.Increase(fTimeDelta))
+        {
+            m_State_Act.Set_State(EState_Act::Stopped);
+        }
+
+        _vector vPos = m_pColliderComp->Calculate_TransformMatrixFromParent().r[3];
+        _vector vLook = Transform().Get_LookNormalizedVector();
+
+        _matrix ViewMatrix = XMMatrixLookAtLH(vPos + vLook * 5.f, vPos, XMVectorSet(0.f, 1.f, 0.f, 0.f));
+        _matrix ProjMatrix = XMMatrixPerspectiveFovLH(
+            XMConvertToRadians(60.0f), g_iWindowSizeX / (_float)g_iWindowSizeY, 0.1f, 1000.f);
+
+        PipelineComp().Set_CamMatrix(ECamType::Persp, ECamMatrix::View, ECamNum::One, ViewMatrix);
+        PipelineComp().Set_CamMatrix(ECamType::Persp, ECamMatrix::Proj, ECamNum::One, ProjMatrix);
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+void CReaverBot_HanmuruDoll::ActState_Stopped(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(0, 0.f, false);
+        m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("44. Calbania - Kito Caverns.mp3"), 1.f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
 }
 #pragma endregion
 

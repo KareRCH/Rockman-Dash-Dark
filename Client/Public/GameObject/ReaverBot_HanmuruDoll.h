@@ -76,7 +76,7 @@ private:
 	mt19937_64					m_RandomNumber;
 
 private:
-	FGauge m_fDeadTime = FGauge(2.f);
+	FGauge m_fDeadTime = FGauge(5.f);
 	FGauge m_fDeadEffect = FGauge(0.1f);
 	FGauge m_fHitTime = FGauge(0.1f);
 	_float m_fHitStrength = { 0.3f };
@@ -84,6 +84,7 @@ private:
 private:
 	void Move_Update(const _float& fTimeDelta);
 	void Update_CloudStation();
+	void DeadEffect();
 
 private:
 	_float m_fMoveSpeed = { 5.f };
@@ -96,7 +97,7 @@ private:
 	_bool					m_bCanControl = { true };
 
 public:
-	enum class EState_Act { Idle, Walk, Ready_Smash, Smash, WalkAndSmash, Damaged, Dead };
+	enum class EState_Act { Idle, Walk, Ready_Smash, Smash, WalkAndSmash, Damaged, Dead, Stopped };
 
 	void Register_State();
 
@@ -114,6 +115,7 @@ private:
 	void ActState_WalkAndSmash(const _float& fTimeDelta);
 	void ActState_Damaged(const _float& fTimeDelta);
 	void ActState_Dead(const _float& fTimeDelta);
+	void ActState_Stopped(const _float& fTimeDelta);
 
 public:
 	enum class EState_AI { Idle, Chase, Smash, WalkAndSmash, WalkAndSmash_LookAt, OverHit, Dead, Escape };

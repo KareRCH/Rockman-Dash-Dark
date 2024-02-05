@@ -64,6 +64,13 @@ private:    // 위치 정보
     wstring       m_strWorld;
     wstring       m_strLocation;
 
+public:
+    void Access_StartPos(EMode eMode, _float3& vStartPos);
+    void Access_StartLook(EMode eMode, _float3& vStartLook);
+
+private:
+    _float3 m_vStartPos = { 55.f, 0.f, 20.f };      // 맵 옮겨갈 때 위치
+    _float3 m_vStartLook = {};                      // 맵 옮겨갈 때 바라보는 방향
 
 };
 

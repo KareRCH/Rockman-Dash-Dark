@@ -8,6 +8,7 @@ matrix g_LightViewMatrix, g_LightProjMatrix;
 // ºí·¯
 float g_fTexW = 1280.0f;
 float g_fTexH = 720.0f;
+float g_fLightFar = 300.f;
 
 static const float fWeight[13] =
 {
@@ -242,7 +243,7 @@ PS_OUT PS_MAIN_FINAL(PS_IN In)
 
     float4 vLightDepth = g_LightDepthTexture.Sample(LinearSampler, vUV);
 
-    if (vWorldPos.w - 0.1f > vLightDepth.x * 1000.f)
+    if (vWorldPos.w - 0.1f > vLightDepth.x * g_fLightFar)
         Out.vColor = Out.vColor * 0.7f;
 
     return Out;

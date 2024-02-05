@@ -43,6 +43,9 @@ public:
 	virtual HRESULT	Render() override;
 
 public:
+	virtual void BeginPlay() override;
+
+public:
 	static CLoadingScreen*	Create();
 	CGameObject*			Clone(void* Arg = nullptr);
 

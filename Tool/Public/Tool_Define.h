@@ -3,6 +3,10 @@
 namespace Tool {}
 using namespace Tool;
 
+#ifndef TOOL
+#define TOOL
+#endif
+
 #include "System/GameInstance.h"
 
 

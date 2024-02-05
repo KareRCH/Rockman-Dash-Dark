@@ -330,7 +330,7 @@ void CUI_Dialog::ActState_Dialog(const _float& fTimeDelta)
 			if (m_iCurDialogIndex > iMaxIndex)
 				m_iCurDialogIndex = iMaxIndex;
 			else
-				GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("dialog_process.mp3"), CHANNELID::SOUND_UI, 1.f);
+				GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("dialog_process.mp3"), CHANNELID::SOUND_UI1, 1.f);
 			m_fDelay.Reset();
 		}
 		

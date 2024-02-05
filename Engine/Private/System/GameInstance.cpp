@@ -87,6 +87,8 @@ void CGameInstance::Clear(const wstring& strLevelTag)
 		return;
 
 	m_pObjectMgr->Clear_GameObject(strLevelTag);
+	m_pObjectMgr->Clear_Prototypes(strLevelTag);
+	m_pComponentMgr->Clear_Prototypes(strLevelTag);
 }
 
 void CGameInstance::Free()
@@ -1115,20 +1117,20 @@ void CGameInstance::Update_CloudStationMgr()
 	m_pCloudStationMgr->Tick();
 }
 
-HRESULT CGameInstance::Add_CloudStation(const wstring& strBoardName, CCloudStation* pCloudStation)
+HRESULT CGameInstance::Add_CloudStation(const wstring& strCloudName, CCloudStation* pCloudStation)
 {
 	if (nullptr == m_pCloudStationMgr)
 		return E_FAIL;
 
-	return m_pCloudStationMgr->Add_CloudStation(strBoardName, pCloudStation);
+	return m_pCloudStationMgr->Add_CloudStation(strCloudName, pCloudStation);
 }
 
-CCloudStation* CGameInstance::Get_CloudStation(const wstring& strBoardName)
+CCloudStation* CGameInstance::Find_CloudStation(const wstring& strCloudName)
 {
 	if (nullptr == m_pCloudStationMgr)
 		return nullptr;
 
-	return m_pCloudStationMgr->Find_CloudStation(strBoardName);
+	return m_pCloudStationMgr->Find_CloudStation(strCloudName);
 }
 
 CCloudStationMgr* CGameInstance::Get_CloudStationMgr()

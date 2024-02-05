@@ -245,7 +245,7 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 			pEnemy->Damage_HP(m_fDamage);
 			Create_Effect();
 			Set_Dead();
-			m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_hit.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+			m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_hit.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
 		}
 	}
 
@@ -254,7 +254,7 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 	{
 		Create_Effect();
 		Set_Dead();
-		m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_hit_somwhere.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+		m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_hit_somwhere.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
 	}
 
 	CDoor_Common* pDoor = DynCast<CDoor_Common*>(pDst);
@@ -262,7 +262,7 @@ void CWeapon_Buster::OnCollisionEntered(CGameObject* pDst, const FContact* pCont
 	{
 		Create_Effect();
 		Set_Dead();
-		m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_hit_somwhere.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+		m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_hit_somwhere.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
 	}
 }
 

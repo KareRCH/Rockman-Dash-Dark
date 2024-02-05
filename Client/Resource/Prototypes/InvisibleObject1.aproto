@@ -1,0 +1,58 @@
+{
+    "Name": "InvisibleObject",
+    "ProtoName": "InvisibleObject1",
+    "ClassID": 10004,
+    "StateFlag": 1460,
+    "PriorityTick": 0.0,
+    "PriorityRender": 0.0,
+    "PosX": 0.0,
+    "PosY": 0.0,
+    "PosZ": 0.0,
+    "RotX": 0.0,
+    "RotY": 0.0,
+    "RotZ": 0.0,
+    "ScaleX": 1.0,
+    "ScaleY": 1.0,
+    "ScaleZ": 1.0,
+    "Components": [
+        {
+            "ComponentID": 2,
+            "Name": "Model",
+            "ProtoName": "InvisibleModel",
+            "PosX": -0.5,
+            "PosY": 0.0,
+            "PosZ": 0.0,
+            "RotX": 90.0,
+            "RotY": 180.0,
+            "RotZ": 0.0,
+            "ScaleX": 1.0,
+            "ScaleY": 4.0,
+            "ScaleZ": 0.5,
+            "ActivePasses": [
+                {
+                    "PassNum": 0
+                }
+            ],
+            "ModelType": 0,
+            "ModelPath": "Model/Map/Main/Door-Left.amodel",
+            "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
+        },
+        {
+            "ComponentID": 1,
+            "Name": "ColliderComp",
+            "ProtoName": "InvisibleCollider",
+            "PosX": 0.0,
+            "PosY": 0.0,
+            "PosZ": 0.0,
+            "RotX": 0.0,
+            "RotY": 0.0,
+            "RotZ": 0.0,
+            "ScaleX": 1.0,
+            "ScaleY": 1.0,
+            "ScaleZ": 1.0,
+            "CollisionType": 7,
+            "CollisionLayer": 16,
+            "CollisionMask": 0
+        }
+    ]
+}

@@ -22,6 +22,7 @@
 #include "GameObject/ItemChest.h"
 #include "GameObject/Item_Deflector.h"
 #include "GameObject/DynamicCamera.h"
+#include "GameObject/Weapon_BusterCannon.h"
 
 #include "CloudStation/CloudStation_Player.h"
 
@@ -236,8 +237,8 @@ HRESULT CPlayer::Render_Shadow()
 
     _float4x4		ViewMatrix, ProjMatrix;
 
-    XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(150.f, 200.f, 150.f, 1.f), XMVectorSet(150.f, 0.f, 150.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-    XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), g_iWindowSizeX / (float)g_iWindowSizeY, 0.1f, 1000.f));
+    XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(40.f, 30.f, 40.f, 1.f), XMVectorSet(40.f, 0.f, 40.f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f)));
+    XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), g_iWindowSizeX / (float)g_iWindowSizeY, 0.1f, 300.f));
 
     if (FAILED(pEffect->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
         return E_FAIL;
@@ -287,6 +288,13 @@ void CPlayer::BeginPlay()
     {
         m_pPlayerCloud->Access_HP(CCloudStation::EMode::Download, m_fHP);
         m_pPlayerCloud->Access_Money(CCloudStation::EMode::Download, m_iMoney);
+
+        _float3 vPos = {}, vLook = {};
+        m_pPlayerCloud->Access_StartPos(CCloudStation::EMode::Download, vPos);
+        m_pPlayerCloud->Access_StartLook(CCloudStation::EMode::Download, vLook);
+
+        Transform().Set_Position(vPos);
+        Transform().Look_At_OnLand(XMLoadFloat3(&vPos) + XMLoadFloat3(&vLook));
     }
 }
 
@@ -526,7 +534,7 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
                         DeleteLaser();
                         DeleteBlade();
                         ThrowUnit();
-                        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+                        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
                     }
                     else
                     {
@@ -534,7 +542,7 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
                         DeleteLaser();
                         DeleteBlade();
                         ThrowUnit();
-                        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+                        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
                     }
                     m_fHP.Increase(-5.f);
                 }
@@ -554,7 +562,7 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
                 DeleteLaser();
                 DeleteBlade();
                 ThrowUnit();
-                GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+                GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
                 m_fHP.Increase(-5.f);
             }
         }
@@ -1027,7 +1035,7 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
 
         if (m_fFootSound.Increase(fTimeDelta))
         {
-            GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_run.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+            GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_run.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
             m_fFootSound.Reset();
         }
 
@@ -1096,7 +1104,7 @@ void CPlayer::ActState_Ready_Jump(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(3, 1.f, false, false, 0.5f);
-        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
     }
 
     if (m_State_Act.Can_Update())
@@ -1163,7 +1171,7 @@ void CPlayer::ActState_Landing(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(6, 1.f, false, false, 0.3f);
-        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_landing.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_landing.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
     }
 
     if (m_State_Act.Can_Update())
@@ -1186,7 +1194,7 @@ void CPlayer::ActState_Buster(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(7, 2.f, false, false, 0.8f);
-        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_buster.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_buster.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
         ShootBuster();
     }
 
@@ -1259,7 +1267,7 @@ void CPlayer::ActState_KnockDown(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(16, 1.f, false, false, 0.1f);
-        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+        GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
         m_bInvisible = true;
     }
 
@@ -1664,7 +1672,7 @@ void CPlayer::ActState_BladeAttack1(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(20, 1.5f, false, false, 0.2f);
-        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack1.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack1.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
         m_ActionKey.Act(EActionKey::MoveForward);
         m_ActionKey.Act(EActionKey::MoveFast);
         CreateBlade();
@@ -1696,7 +1704,7 @@ void CPlayer::ActState_BladeAttack2(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(21, 1.3f, false, false, 0.2f);
-        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack1.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack1.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
         m_fGauge.Readjust(0.2f);
         
     }
@@ -1708,13 +1716,13 @@ void CPlayer::ActState_BladeAttack2(const _float& fTimeDelta)
         m_fGauge.Increase(fTimeDelta);
         if (m_fGauge.IsMax_Once())
         {
-            m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+            m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_jump.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
             m_ActionKey.Act(EActionKey::Jump);
         }
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Range(34.f, 35.f))
         {
-            m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack2.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+            m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("blade_attack2.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
         }
 
         m_ActionKey.Act(EActionKey::MoveForward);
@@ -1930,7 +1938,7 @@ void CPlayer::ShootMissile()
     pMissile->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
     m_pGI->Add_GameObject(pMissile);
 
-    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("homming_shoot.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("homming_shoot.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
 }
 
 void CPlayer::ShootSpreadBuster()
@@ -1957,7 +1965,7 @@ void CPlayer::ShootSpreadBuster()
         pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
         m_pGI->Add_GameObject(pBuster);
     }
-    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("spreadgun_shoot.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("spreadgun_shoot.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
 }
 
 void CPlayer::ShootLaser()
@@ -2009,7 +2017,7 @@ void CPlayer::ShootBusterCannon()
     _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.9f;
     _float3 vfPos = {};
     XMStoreFloat3(&vfPos, vPos);
-    auto pBuster = CWeapon_Buster::Create(vfPos);
+    auto pBuster = CWeapon_BusterCannon::Create(vfPos);
     if (pBuster == nullptr)
         return;
 
@@ -2023,7 +2031,7 @@ void CPlayer::ShootBusterCannon()
     pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + vLook);
     pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 
-    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_cannon_shoot.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_cannon_shoot.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
 }
 
 void CPlayer::ShootHyperShell()
@@ -2044,7 +2052,7 @@ void CPlayer::ShootHyperShell()
     pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + vLook);
     pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 
-    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("hyper_shell_shoot.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("hyper_shell_shoot.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
 }
 
 void CPlayer::ShootMachinegun()
@@ -2065,7 +2073,7 @@ void CPlayer::ShootMachinegun()
     pMachinegun->Transform().Look_At(pMachinegun->Transform().Get_PositionVector() + vLook);
     pMachinegun->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 
-    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("machinegun_shoot.mp3"), CHANNELID::SOUND_PLAYER_EFFECT, 1.f);
+    m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("machinegun_shoot.mp3"), CHANNELID::SOUND_PLAYER2, 1.f);
 }
 
 void CPlayer::CreateBlade()
@@ -2138,7 +2146,7 @@ void CPlayer::ThrowUnit()
 
         Safe_ReleaseAndUnlink(m_pGrabUnit);
 
-        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_throw.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+        m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_throw.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
     }
 }
 
@@ -2202,7 +2210,7 @@ void CPlayer::Lockon_Target()
     m_pLockon_UI = pLockon;
     Safe_AddRef(m_pLockon_UI);
 
-    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("lockon.mp3"), CHANNELID::SOUND_SYSTEM_EFFECT, 1.f);
+    GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("lockon.mp3"), CHANNELID::SOUND_SYSTEM1, 1.f);
 }
 
 void CPlayer::Lockon_Untarget()
@@ -2222,7 +2230,7 @@ _vector CPlayer::Camera_LookVector()
 {
     _vector vLook = {};
     _vector vRight = Transform().Get_RightNormalizedVector();
-    _vector qtRotate = XMQuaternionRotationAxis(vRight, XMConvertToRadians(-10.f));
+    _vector qtRotate = XMQuaternionRotationAxis(vRight, XMConvertToRadians(-5.f));
     vLook = m_pDynamicCamera->Transform().Get_LookNormalizedVector();
     vLook = XMVector3Normalize(XMVector3Rotate(vLook, qtRotate));
 

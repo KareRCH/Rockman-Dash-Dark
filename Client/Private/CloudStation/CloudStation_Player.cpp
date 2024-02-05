@@ -55,3 +55,29 @@ void CCloudStation_Player::Access_Money(EMode eMode, _uint& iMoney)
         break;
     }
 }
+
+void CCloudStation_Player::Access_StartPos(EMode eMode, _float3& vStartPos)
+{
+    switch (eMode)
+    {
+    case EMode::Download:
+        vStartPos = m_vStartPos;
+        break;
+    case EMode::Upload:
+        m_vStartPos = vStartPos;
+        break;
+    }
+}
+
+void CCloudStation_Player::Access_StartLook(EMode eMode, _float3& vStartLook)
+{
+    switch (eMode)
+    {
+    case EMode::Download:
+        vStartLook = m_vStartLook;
+        break;
+    case EMode::Upload:
+        m_vStartLook = vStartLook;
+        break;
+    }
+}

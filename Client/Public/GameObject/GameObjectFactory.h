@@ -25,6 +25,7 @@ enum class EObjectIDExt : _uint
 	Door_Common,
 	Trigger,
 	PillarTrap,
+	InvisibleObject
 };
 
 template <_uint T>

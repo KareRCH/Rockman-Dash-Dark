@@ -113,6 +113,20 @@ void CItem_Deflector::Tick(const _float& fTimeDelta)
     m_ActionKey.Reset();
 
 
+    // 라이프 타임에 따라 깜빡임 처리
+    if (m_fLifeTime.Increase(fTimeDelta))
+    {
+        Set_Dead();
+    }
+    else if (m_fLifeTime.Get_Percent() > 0.8f)
+    {
+        if (m_fBlinkTime.Increase(fTimeDelta))
+        {
+            m_fBlinkTime.Reset();
+            m_bIsDisplay = !m_bIsDisplay;
+        }
+    }
+
     m_State_Act.Get_StateFunc()(this, fTimeDelta);
 
     Update_Move(fTimeDelta);
@@ -134,7 +148,8 @@ HRESULT CItem_Deflector::Render()
 {
     SUPER::Render();
 
-    m_pModelComp->Render();
+    if (m_bIsDisplay)
+        m_pModelComp->Render();
 
 #ifdef _DEBUG
     m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));

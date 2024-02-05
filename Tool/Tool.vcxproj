@@ -198,6 +198,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\Tool_Define.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Client\Private\CloudStation\CloudStation_Boss.cpp" />
     <ClCompile Include="..\Client\Private\CloudStation\CloudStation_Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Character.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Character_Common.cpp" />
@@ -209,9 +210,11 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\Effect_Explosion.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Fingerii_EnergyBall.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\GameObjectFactory.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\InvisibleObject.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ItemChest.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Item_Deflector.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\LoadingScreen.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\PillarTrap.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Balfura.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\ReaverBot_Fingerii.cpp" />
@@ -221,17 +224,24 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\StaticObject.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Trigger.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\UI_Boss.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Dialog.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Lockon.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_Blade.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_Buster.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\Weapon_BusterCannon.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_HomingMissile.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_HyperShell.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_Laser.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_LaserEmission.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_Machinegun.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_SpreadBuster.cpp" />
+    <ClCompile Include="..\Client\Private\Level\Level_GamePlay.cpp" />
+    <ClCompile Include="..\Client\Private\Level\Level_Loading.cpp" />
+    <ClCompile Include="..\Client\Private\Level\Level_Logo.cpp" />
+    <ClCompile Include="..\Client\Private\Level\Level_Parsed.cpp" />
+    <ClCompile Include="..\Client\Private\Loader.cpp" />
     <ClCompile Include="..\Reference\Header\ImGuiFileSystem\ImGuiFileDialog.cpp" />
     <ClCompile Include="..\Reference\Header\ImGuiGizmo\GraphEditor.cpp" />
     <ClCompile Include="..\Reference\Header\ImGuiGizmo\ImCurveEdit.cpp" />

@@ -1,0 +1,58 @@
+{
+    "Name": "StaticObject1",
+    "ProtoName": "Floor1_1",
+    "ClassID": 10004,
+    "StateFlag": 436,
+    "PriorityTick": 0.0,
+    "PriorityRender": 0.0,
+    "PosX": 0.0,
+    "PosY": 0.0,
+    "PosZ": 0.0,
+    "RotX": 0.0,
+    "RotY": 0.0,
+    "RotZ": 0.0,
+    "ScaleX": 1.0,
+    "ScaleY": 1.0,
+    "ScaleZ": 1.0,
+    "Components": [
+        {
+            "ComponentID": 2,
+            "Name": "Model",
+            "ProtoName": "Floor1_1Model",
+            "PosX": 0.0,
+            "PosY": 0.0,
+            "PosZ": 0.0,
+            "RotX": 90.0,
+            "RotY": 0.0,
+            "RotZ": 0.0,
+            "ScaleX": 1.0,
+            "ScaleY": 1.0,
+            "ScaleZ": 1.0,
+            "ActivePasses": [
+                {
+                    "PassNum": 0
+                }
+            ],
+            "ModelType": 0,
+            "ModelPath": "Model\\Map\\Main\\Floor1-1.amodel",
+            "EffectPath": "Runtime/FX_ModelNoAnim.hlsl"
+        },
+        {
+            "ComponentID": 1,
+            "Name": "ColliderComp",
+            "ProtoName": "Floor1_1Collider",
+            "PosX": 0.0,
+            "PosY": 0.0,
+            "PosZ": 0.0,
+            "RotX": 0.0,
+            "RotY": 0.0,
+            "RotZ": 0.0,
+            "ScaleX": 4.0,
+            "ScaleY": 0.009999999776482582,
+            "ScaleZ": 4.0,
+            "CollisionType": 7,
+            "CollisionLayer": 16,
+            "CollisionMask": 0
+        }
+    ]
+}

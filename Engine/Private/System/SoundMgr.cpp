@@ -50,6 +50,7 @@ HRESULT CSoundMgr::Initialize(const string& strMainPath)
 	Load_SoundFile_GroupAsync(TEXT("RockmanDash2"), (strMainPath + "Rockman-Dash-2/SFX/rockman/"));
 	Load_SoundFile_GroupAsync(TEXT("RockmanDash2"), (strMainPath + "Rockman-Dash-2/SFX/general/"));
 	Load_SoundFile_GroupAsync(TEXT("RockmanDash2"), (strMainPath + "Rockman-Dash-2/SFX/weapons/"));
+	Load_SoundFile_GroupAsync(TEXT("RockmanDash2"), (strMainPath + "Rockman-Dash-2/SFX/reaverbots/"));
 
 	Wait_GroupAsync();
 

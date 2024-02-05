@@ -28,7 +28,7 @@ struct VS_INPUT
 
 struct VPS_INOUT
 {
-    float4 vPosition : SV_POSITION0;
+    float4 vPosition : SV_POSITION;
     float3 vNormal : NORMAL;
     float2 vTexCoord : TEXCOORD0;
     float4 vWorldPos : TEXCOORD1;
@@ -44,24 +44,24 @@ struct PS_OUTPUT
 
 //-------------------------------------------------
 
-VPS_INOUT VS_MAIN(VS_INPUT input)
+VPS_INOUT VS_MAIN(VS_INPUT In)
 {
-    VPS_INOUT output = (VPS_INOUT) 0;
+    VPS_INOUT Out = (VPS_INOUT) 0;
     
-    output.vPosition = mul(float4(input.vPosition.xyz, 1.f), g_WorldMatrix);
-    output.vPosition = mul(output.vPosition, g_ViewMatrix);
-    output.vPosition = mul(output.vPosition, g_ProjMatrix);
+    Out.vPosition = mul(float4(In.vPosition.xyz, 1.f), g_WorldMatrix);
+    Out.vPosition = mul(Out.vPosition, g_ViewMatrix);
+    Out.vPosition = mul(Out.vPosition, g_ProjMatrix);
     
-    output.vNormal = mul(input.vNormal, (float3x3) g_WorldMatrix);
-    output.vNormal = normalize(output.vNormal);
+    Out.vNormal = mul(In.vNormal, (float3x3) g_WorldMatrix);
+    Out.vNormal = normalize(Out.vNormal);
     
-    output.vTexCoord = input.vTexCoord;
+    Out.vTexCoord = In.vTexCoord;
     
     // 월드 정점 위치 계산
-    output.vWorldPos = mul(float4(input.vPosition.xyz, 1.f), g_WorldMatrix);
-    output.vProjPos = output.vPosition;
+    Out.vWorldPos = mul(float4(In.vPosition.xyz, 1.f), g_WorldMatrix);
+    Out.vProjPos = Out.vPosition;
     
-    return output;
+    return Out;
 }
 
 //-------------------------------------------------

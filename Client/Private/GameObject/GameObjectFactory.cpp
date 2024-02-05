@@ -14,6 +14,7 @@
 #include "GameObject/ItemChest.h"
 #include "GameObject/Trigger.h"
 #include "GameObject/PillarTrap.h"
+#include "GameObject/InvisibleObject.h"
 
 #include "BaseClass/Terrain.h"
 #include "BaseClass/Navigation.h"
@@ -72,6 +73,9 @@ CGameObject* CGameObjectFactory::Create(FSerialData& Data)
 			break;
 		case EObjectIDExt::PillarTrap:
 			pObj = TObjectExtTrait< ECast(EObjectIDExt::PillarTrap)>::Class::Create(Data);
+			break;
+		case EObjectIDExt::InvisibleObject:
+			pObj = TObjectExtTrait< ECast(EObjectIDExt::InvisibleObject)>::Class::Create(Data);
 			break;
 		}
 		break;

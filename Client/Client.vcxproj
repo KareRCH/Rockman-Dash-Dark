@@ -332,6 +332,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\GameObject\Effect_Explosion.h" />
     <ClInclude Include="Public\GameObject\Fingerii_EnergyBall.h" />
     <ClInclude Include="Public\GameObject\GameObjectFactory.h" />
+    <ClInclude Include="Public\GameObject\InvisibleObject.h" />
     <ClInclude Include="Public\GameObject\ItemChest.h" />
     <ClInclude Include="Public\GameObject\Item_Deflector.h" />
     <ClInclude Include="Public\GameObject\LoadingScreen.h" />
@@ -351,6 +352,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClInclude Include="Public\GameObject\UI_Player.h" />
     <ClInclude Include="Public\GameObject\Weapon_Blade.h" />
     <ClInclude Include="Public\GameObject\Weapon_Buster.h" />
+    <ClInclude Include="Public\GameObject\Weapon_BusterCannon.h" />
     <ClInclude Include="Public\GameObject\Weapon_HomingMissile.h" />
     <ClInclude Include="Public\GameObject\Weapon_HyperShell.h" />
     <ClInclude Include="Public\GameObject\Weapon_Laser.h" />
@@ -379,6 +381,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\GameObject\Effect_Explosion.cpp" />
     <ClCompile Include="Private\GameObject\Fingerii_EnergyBall.cpp" />
     <ClCompile Include="Private\GameObject\GameObjectFactory.cpp" />
+    <ClCompile Include="Private\GameObject\InvisibleObject.cpp" />
     <ClCompile Include="Private\GameObject\ItemChest.cpp" />
     <ClCompile Include="Private\GameObject\Item_Deflector.cpp" />
     <ClCompile Include="Private\GameObject\LoadingScreen.cpp" />
@@ -398,6 +401,7 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="Private\GameObject\UI_Player.cpp" />
     <ClCompile Include="Private\GameObject\Weapon_Blade.cpp" />
     <ClCompile Include="Private\GameObject\Weapon_Buster.cpp" />
+    <ClCompile Include="Private\GameObject\Weapon_BusterCannon.cpp" />
     <ClCompile Include="Private\GameObject\Weapon_HomingMissile.cpp" />
     <ClCompile Include="Private\GameObject\Weapon_HyperShell.cpp" />
     <ClCompile Include="Private\GameObject\Weapon_Laser.cpp" />

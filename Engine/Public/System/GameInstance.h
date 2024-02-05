@@ -267,8 +267,8 @@ public:		// 컴포넌트 매니저
 public:		// 클라우드 스테이션 매니저
 	HRESULT			Initialize_CloudStationMgr();
 	void			Update_CloudStationMgr();
-	HRESULT			Add_CloudStation(const wstring& strBoardName, class CCloudStation* pCloudStation);
-	CCloudStation*	Get_CloudStation(const wstring& strBoardName);
+	HRESULT			Add_CloudStation(const wstring& strCloudName, class CCloudStation* pCloudStation);
+	CCloudStation*	Find_CloudStation(const wstring& strCloudName);
 
 private:
 	class CCloudStationMgr*		Get_CloudStationMgr();

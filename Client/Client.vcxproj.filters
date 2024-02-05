@@ -261,6 +261,12 @@
     <ClInclude Include="Public\GameObject\UI_Boss.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GameObject\Weapon_BusterCannon.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\GameObject\InvisibleObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -396,6 +402,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Private\GameObject\UI_Boss.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\Weapon_BusterCannon.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GameObject\InvisibleObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

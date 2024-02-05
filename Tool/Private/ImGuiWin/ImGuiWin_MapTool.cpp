@@ -18,6 +18,7 @@ HRESULT CImGuiWin_MapTool::Initialize()
 
     m_pPipelineComp = Cast<CPipelineComp*>(GI()->Reference_PrototypeComp(L"CamViewComp"));
 
+    _uint iID = { 0 };
     TLIGHT_DESC			LightDesc{};
     LightDesc.eType = TLIGHT_DESC::TYPE_DIRECTIONAL;
     LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
@@ -25,7 +26,7 @@ HRESULT CImGuiWin_MapTool::Initialize()
     LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.2f, 1.f);
     LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 
-    if (FAILED(GI()->Add_Light(LightDesc)))
+    if (FAILED(GI()->Add_Light(LightDesc, iID, nullptr)))
         return E_FAIL;
 
 	return S_OK;
@@ -549,6 +550,7 @@ void CImGuiWin_MapTool::Load_Level(const wstring& strLoadPath)
     {
         GI()->Add_GameObject((*iter));
         (*iter)->TurnOff_State(EGObjectState::Tick);
+        (*iter)->TurnOn_State(EGObjectState::Tool);
 
         if (pWinHierarchi)
             pWinHierarchi->Pushback_GameObject((*iter));
@@ -612,6 +614,7 @@ void CImGuiWin_MapTool::Save_Level(const wstring& strSavePath)
 
     FSerialData PrototypeData;
     
+    // 프로토타입 저장
     for (size_t i = 0; i < vecGameObjects.size(); i++)
     {
         auto ObjData = vecGameObjects[i]->SerializeData_Prototype();
@@ -626,13 +629,35 @@ void CImGuiWin_MapTool::Save_Level(const wstring& strSavePath)
             return;
         }
 
+        _bool bIsExistsProtoObj = { false };
+        _uint iNumPrototypes = PrototypeData.Get_ArraySize("Objects");
+        for (_uint i = 0; i < iNumPrototypes; i++)
+        {
+            string strCmpProtoName;
+            FSerialData CmpProtoObj;
+            if (FAILED(PrototypeData.Get_ObjectFromArray("Objects", i, CmpProtoObj)))
+                return;
+
+            if (FAILED(CmpProtoObj.Get_Data("ProtoName", strCmpProtoName)))
+                return;
+
+            if (strProtoName == strCmpProtoName)
+            {
+                bIsExistsProtoObj = true;
+                break;
+            }
+        }
+
+        if (bIsExistsProtoObj)
+            continue;
+
+        // 오브젝트의 컴포넌트 프로토타입 저장
         _uint iNumComponents = ObjData.Get_ArraySize("Components");
         for (_uint j = 0; j < iNumComponents; j++)
         {
             FSerialData ComponentData;
             ObjData.Get_ObjectFromArray("Components", j, ComponentData);
-            PrototypeData.Pushback_Member("Components", ComponentData);
-
+            
             string strCompProtoName;
             if (FAILED(ComponentData.Get_Data("ProtoName", strCompProtoName)))
                 return;
@@ -642,12 +667,37 @@ void CImGuiWin_MapTool::Save_Level(const wstring& strSavePath)
                 MSG_BOX("프로토 이름이 비어있음");
                 return;
             }
+
+            _bool bIsExistsProtoComp = { false };
+            _uint iNumPrototypeComps = PrototypeData.Get_ArraySize("Components");
+            for (_uint i = 0; i < iNumPrototypeComps; i++)
+            {
+                string strCmpProtoCompName;
+                FSerialData CmpProtoComp;
+                if (FAILED(PrototypeData.Get_ObjectFromArray("Components", i, CmpProtoComp)))
+                    return;
+
+                if (FAILED(CmpProtoComp.Get_Data("ProtoName", strCmpProtoCompName)))
+                    return;
+
+                if (strCompProtoName == strCmpProtoCompName)
+                {
+                    bIsExistsProtoComp = true;
+                    break;
+                }
+            }
+
+            if (bIsExistsProtoComp)
+                continue;
+
+            PrototypeData.Pushback_Member("Components", ComponentData);
         }
 
         PrototypeData.Pushback_Member("Objects", ObjData);
     }
     LevelData.Add_Member("Prototypes", PrototypeData);
 
+    // 클론 데이터 저장
     FSerialData CloneData;
     for (size_t i = 0; i < vecGameObjects.size(); i++)
     {

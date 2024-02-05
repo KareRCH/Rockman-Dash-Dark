@@ -94,6 +94,14 @@ private:
 	void ActState_Open(const _float& fTimeDelta);
 	void ActState_Close(const _float& fTimeDelta);
 
+private:
+	void TransitionLevel();
+
+private:
+	wstring m_strTransitionLevel = { TEXT("") };	// 옮겨갈 레벨
+	_float3 m_vStartPos = {};						// 시작시 위치
+	_float3 m_vStartLook = { 0.f, 0.f, 1.f };		// 시작시 보는 방향
+
 };
 
 template <>

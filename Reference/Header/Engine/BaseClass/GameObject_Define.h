@@ -33,6 +33,8 @@ enum class EGObjectState : _uint
 	Cull = EBIT_FLAG32_7,				// 컬링 옵션
 	Drawing = EBIT_FLAG32_8,			// 현재 그려지고 있는가
 	Shadow = EBIT_FLAG32_9,				// 그림자 그리기 옵션
+	Tool = EBIT_FLAG32_10,				// 툴 태그
+	InstantDelete = EBIT_FLAG32_11,		// 즉시 삭제 태그, EndPlay 작동 안하도록함.
 };
 
 END

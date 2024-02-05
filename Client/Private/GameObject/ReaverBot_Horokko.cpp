@@ -343,7 +343,7 @@ void CReaverBot_Horokko::OnCollision(CGameObject* pDst, const FContact* pContact
 
 				m_bIsThrowing = false;
 				m_fHitTime.Reset();
-				GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_EFFECT, 1.f);
+				GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
 			}
 		}
 	}
@@ -483,7 +483,7 @@ void CReaverBot_Horokko::Explosion_Effect(_float3 vPos)
 		return;
 
 	pEffect->Transform().Set_Position(vPos);
-	m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
+	m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion_small.mp3"), CHANNELID::SOUND_ENEMY1, 1.f);
 }
 
 void CReaverBot_Horokko::Dead_Effect()
@@ -500,7 +500,7 @@ void CReaverBot_Horokko::Dead_Effect()
 	uniform_real_distribution<_float> RandomPosZ(-0.5f, 0.5f);
 	pEffect->Transform().Set_Position(Transform().Get_PositionVector()
 		+ XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));
-	m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion_small.mp3"), CHANNELID::SOUND_ENEMY_EFFECT, 1.f);
+	m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion_small.mp3"), CHANNELID::SOUND_ENEMY1, 1.f);
 }
 
 void CReaverBot_Horokko::Register_State()

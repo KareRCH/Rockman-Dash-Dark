@@ -195,7 +195,7 @@ FSerialData CStaticObject::SerializeData_Prototype()
 {
     FSerialData Data = SUPER::SerializeData_Prototype();
 
-    Data.Add_Member("ClassID", ECast(EObjectIDExt::StaticObject));
+    Data.Add_Member("ClassID", g_ClassID);
 
     return Data;
 }
@@ -204,7 +204,7 @@ FSerialData CStaticObject::SerializeData()
 {
     FSerialData Data = SUPER::SerializeData();
 
-    Data.Add_Member("ClassID", ECast(EObjectIDExt::StaticObject));
+    Data.Add_Member("ClassID", g_ClassID);
 
     return Data;
 }

@@ -15,6 +15,8 @@
 #include "GameObject/ReaverBot_HanmuruDoll.h"
 #include "GameObject/Door_Common.h"
 #include "GameObject/Trigger.h"
+#include "GameObject/InvisibleObject.h"
+#include "GameObject/PillarTrap.h"
 
 HRESULT CImGuiWin_ClassBrowser::Initialize()
 {
@@ -115,6 +117,14 @@ void CImGuiWin_ClassBrowser::Layout_Browser(const _float& fTimeDelta)
         {
             m_iSelected_Object = iIndex;
         }
+        if (ImGui::Selectable(u8"11. InvisibleObject", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
+        }
+        if (ImGui::Selectable(u8"12. PillarTrap", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
+        }
 
 		ImGui::EndListBox();
 	}
@@ -174,11 +184,18 @@ void CImGuiWin_ClassBrowser::Create_Object()
     case 10:
         GI()->Add_GameObject(m_pGameObject = CTrigger::Create());
         break;
+    case 11:
+        GI()->Add_GameObject(m_pGameObject = CInvisibleObject::Create());
+        break;
+    case 12:
+        GI()->Add_GameObject(m_pGameObject = CPillarTrap::Create());
+        break;
     }
 
     if (nullptr != m_pGameObject)
     {
         m_pGameObject->TurnOff_State(EGObjectState::Tick);
+        m_pGameObject->TurnOn_State(EGObjectState::Tool);
         Safe_AddRef(m_pGameObject);
         if (m_pParentWin)
         {
