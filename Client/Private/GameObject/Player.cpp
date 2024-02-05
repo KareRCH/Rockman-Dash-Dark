@@ -23,6 +23,7 @@
 #include "GameObject/Item_Deflector.h"
 #include "GameObject/DynamicCamera.h"
 #include "GameObject/Weapon_BusterCannon.h"
+#include "GameObject/PillarTrap.h"
 
 #include "CloudStation/CloudStation_Player.h"
 
@@ -580,8 +581,20 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
         Transform().Set_Position((Transform().Get_PositionVector() - vSimNormal * Cast<_float>(pContact->fPenetration)));
         if (XMVectorGetX(XMVector3Dot(-vSimNormal, XMVectorSet(0.f, 1.f, 0.f, 0.f))) < 0.f)
             m_bIsOnGround = true;
+    }
 
-
+    CPillarTrap* pTrap = DynCast<CPillarTrap*>(pDst);
+    if (pTrap)
+    {
+        if (!m_bInvisible)
+        {
+            m_State_Act.Set_State(EState_Act::DamagedHeavy);
+            DeleteLaser();
+            DeleteBlade();
+            ThrowUnit();
+            m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
+            m_fHP.Increase(-5.f);
+        }
     }
 
     CItem_Deflector* pDeflector = DynCast<CItem_Deflector*>(pDst);

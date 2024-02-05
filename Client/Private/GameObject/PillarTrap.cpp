@@ -28,7 +28,7 @@ HRESULT CPillarTrap::Initialize_Prototype()
     m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
     m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
     m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
-    m_pColliderComp->Bind_Collision(ECollisionType::Capsule);
+    m_pColliderComp->Bind_Collision(ECollisionType::OBB);
     m_pColliderComp->Set_CollisionLayer(COLLAYER_OBJECT);
 
     return S_OK;
@@ -104,6 +104,8 @@ void CPillarTrap::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
+    MoveUpdate(fTimeDelta);
+
     m_pColliderComp->Tick(fTimeDelta);
 }
 
@@ -111,9 +113,9 @@ void CPillarTrap::Late_Tick(const _float& fTimeDelta)
 {
     SUPER::Late_Tick(fTimeDelta);
 
-    m_pModelComp->Add_AnimTime(fTimeDelta);
+    /*m_pModelComp->Add_AnimTime(fTimeDelta);
     m_pModelComp->Invalidate_Animation();
-    m_pModelComp->Late_Tick(fTimeDelta);
+    m_pModelComp->Late_Tick(fTimeDelta);*/
 }
 
 HRESULT CPillarTrap::Render()
@@ -123,7 +125,7 @@ HRESULT CPillarTrap::Render()
     m_pModelComp->Render();
 
 #ifdef _DEBUG
-    GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
+    m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
     return S_OK;
@@ -133,8 +135,33 @@ void CPillarTrap::BeginPlay()
 {
     SUPER::BeginPlay();
 
+    m_vOriginPos = Transform().Get_PositionFloat3();
+
+    m_pColliderComp->Set_CollisionLayer(COLLAYER_OBJECT);
+    m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER);
+
     if (m_pColliderComp)
         m_pColliderComp->EnterToPhysics(0);
+
+    switch (m_eTrapType)
+    {
+    case ETrapType::Linear:
+        m_vMovePoints.push_back({ -m_fRadiusRange, 0.f, 0.f });
+        m_vMovePoints.push_back({ 0.f, 0.f, 0.f });
+        break;
+    case ETrapType::Circle:
+        m_vMovePoints.push_back({ 0.f, 0.f, m_fRadiusRange });
+        m_vMovePoints.push_back({ -m_fRadiusRange, 0.f, -m_fRadiusRange });
+        m_vMovePoints.push_back({ -m_fRadiusRange, 0.f, m_fRadiusRange });
+        m_vMovePoints.push_back({ 0.f, 0.f, 0.f });
+        break;
+    case ETrapType::Rect:
+        m_vMovePoints.push_back({ 0.f, 0.f, -m_fRadiusRange });
+        m_vMovePoints.push_back({ -m_fRadiusRange, 0.f, -m_fRadiusRange });
+        m_vMovePoints.push_back({ -m_fRadiusRange, 0.f, 0.f });
+        m_vMovePoints.push_back({ 0.f, 0.f, 0.f });
+        break;
+    }
 }
 
 CPillarTrap* CPillarTrap::Create()
@@ -246,12 +273,12 @@ HRESULT CPillarTrap::Initialize_Component(FSerialData& InputData)
         {
         case ECast(EComponentID::CommonModel):
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
-                m_pModelComp = DynCast<CCommonModelComp*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
+                m_pModelComp = DynCast<CCommonModelComp*>(m_pGI->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
             m_pModelComp->Set_Animation(0, 1.f, true);
             break;
         case ECast(EComponentID::Collider):
             FAILED_CHECK_RETURN(Add_Component(ConvertToWstring(strName),
-                m_pColliderComp = DynCast<CColliderComponent*>(GI()->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
+                m_pColliderComp = DynCast<CColliderComponent*>(m_pGI->Clone_PrototypeComp(ConvertToWstring(strProtoName), InputProto))), E_FAIL);
             m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
             m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
             m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
@@ -259,6 +286,11 @@ HRESULT CPillarTrap::Initialize_Component(FSerialData& InputData)
             break;
         }
     }
+
+    _uint iTemp = {};
+    InputData.Get_Data("TrapType", iTemp);
+    m_eTrapType = Cast<ETrapType>(iTemp);
+    InputData.Get_Data("Range", m_fRadiusRange);
 
     return S_OK;
 }
@@ -273,4 +305,35 @@ void CPillarTrap::OnCollisionEntered(CGameObject* pDst, const FContact* const pC
 
 void CPillarTrap::OnCollisionExited(CGameObject* pDst)
 {
+}
+
+void CPillarTrap::MoveUpdate(const _float& fTimeDelta)
+{
+    _vector vOriginPos = XMLoadFloat3(&m_vOriginPos);
+    _vector vStartPos = {};
+    _vector vEndPos = {};
+
+    if (m_fLerp.Increase(m_fMoveSpeed * fTimeDelta))
+    {
+        m_fLerp.Reset();
+        ++m_iCurrentMoveIndex;
+        if (m_iCurrentMoveIndex >= m_vMovePoints.size())
+            m_iCurrentMoveIndex = 0;
+    }
+    
+    if (m_iCurrentMoveIndex + 1 >= m_vMovePoints.size())
+    {
+        vStartPos = XMLoadFloat3(&m_vMovePoints[m_iCurrentMoveIndex]);
+        vEndPos = XMLoadFloat3(&m_vMovePoints[0]);
+    }
+    else
+    {
+        vStartPos = XMLoadFloat3(&m_vMovePoints[m_iCurrentMoveIndex]);
+        vEndPos = XMLoadFloat3(&m_vMovePoints[m_iCurrentMoveIndex + 1]);
+    }
+
+    _vector vFinalPos = XMVectorLerp(vStartPos, vEndPos, m_fLerp.fCur);
+    Transform().Set_Position(vOriginPos + vFinalPos);
+
+    Transform().TurnRight(m_fMoveSpeed * 4.f * fTimeDelta);
 }

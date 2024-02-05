@@ -60,6 +60,9 @@ void CWeapon_Blade::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
 
+	if (m_fColor.Increase(360.f * 10.f * fTimeDelta))
+		m_fColor.Reset();
+
 	m_pColliderComp->Tick(fTimeDelta);
 }
 
@@ -81,13 +84,23 @@ HRESULT CWeapon_Blade::Render()
 		auto pEffectComp = m_pModelComp->EffectComp();
 		_float fStrength = 1.f;
 
-		pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&fStrength), sizeof(_float));
+		_float4 vHSV = {
+			m_fColor.fCur / 360.f,
+			1.f, 0.3f, 1.f
+		};
+		
+		_vector vSimRGB = XMColorHSVToRGB(XMLoadFloat4(&vHSV));
+		XMStoreFloat4(&vHSV, vSimRGB);
+		
+
+		pEffectComp->Bind_RawValue("g_vColorAdd", VPCast(&vHSV), sizeof(_float4));
+		//pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&fStrength), sizeof(_float));
 
 		m_pModelComp->Render();
 	}
 
 #ifdef _DEBUG
-	GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
+	m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
 	return S_OK;
@@ -164,7 +177,7 @@ HRESULT CWeapon_Blade::Initialize_Component()
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelAnim.hlsl", SHADER_VTX_MODEL::Elements, SHADER_VTX_MODEL::iNumElements);
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Weapons/Blade.amodel");
 	m_pModelComp->Reset_ActivePass();
-	m_pModelComp->Set_ActivePass(1);
+	m_pModelComp->Set_ActivePass(4);
 	m_pModelComp->Set_Animation(0, 1.f, false);
 
 	FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);

@@ -92,10 +92,23 @@ HRESULT CWeapon_Machinegun::Render()
 {
 	SUPER::Render();
 
-	m_pModelComp->Render();
+	if (m_pModelComp)
+	{
+		auto pEffectComp = m_pModelComp->EffectComp();
+		_float fStrength = 1.f;
+
+		_float4 vColor = {
+			1.0f, 1.f, 0.f, 1.f
+		};
+
+		pEffectComp->Bind_RawValue("g_vColorAdd", VPCast(&vColor), sizeof(_float4));
+		//pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&fStrength), sizeof(_float));
+
+		m_pModelComp->Render();
+	}
 
 #ifdef _DEBUG
-	GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
+	m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
 	return S_OK;
@@ -113,6 +126,12 @@ void CWeapon_Machinegun::BeginPlay()
 	SUPER::BeginPlay();
 
 	m_pColliderComp->EnterToPhysics(0);
+
+	if (m_pModelComp)
+	{
+		m_pModelComp->Reset_ActivePass();
+		m_pModelComp->Set_ActivePass(2);
+	}
 }
 
 CWeapon_Machinegun* CWeapon_Machinegun::Create()
