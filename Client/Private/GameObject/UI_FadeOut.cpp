@@ -5,7 +5,7 @@
 
 CUI_FadeOut::CUI_FadeOut()
 {
-	Set_Name(TEXT("UI_Dialog"));
+	Set_Name(TEXT("UI_FadeOut"));
 }
 
 CUI_FadeOut::CUI_FadeOut(const CUI_FadeOut& rhs)
@@ -65,15 +65,16 @@ void CUI_FadeOut::OnCreated()
 
 	Register_State();
 	Set_RenderGroup(ERenderGroup::UI);
-	Set_Priority(0, -1.f);
+	Set_Priority(1, -1.f);
+	Add_Tag(EGObjTag::Level, TEXT("Static"));
 }
 
 void CUI_FadeOut::BeginPlay()
 {
 	SUPER::BeginPlay();
 
-	Transform().Set_Scale((_float)g_iWindowSizeX, (_float)g_iWindowSizeY, 1.f);
-	m_fUVSize.Increase(1.f);
+	Transform().Set_Scale((_float)g_iWindowSizeX, (_float)g_iWindowSizeX, 1.f);
+	//m_fUVSize.Increase(1.f);
 }
 
 CUI_FadeOut* CUI_FadeOut::Create()
@@ -148,7 +149,7 @@ HRESULT CUI_FadeOut::Bind_ShaderResources()
 				return E_FAIL;
 			if (FAILED(pEffect->Bind_RawValue("g_vMaxUV", &(TempFloat2 = { 1.f, 1.f }), sizeof(_float2))))
 				return E_FAIL;
-			if (FAILED(pEffect->Bind_RawValue("g_vUVScale", &(TempFloat2 = { m_fUVSize.fCur + 0.001f, m_fUVSize.fCur + 0.001f }), sizeof(_float2))))
+			if (FAILED(pEffect->Bind_RawValue("g_vUVScale", &(TempFloat2 = { m_fUVSize.fCur, m_fUVSize.fCur }), sizeof(_float2))))
 				return E_FAIL;
 		}
 	}
@@ -192,13 +193,18 @@ void CUI_FadeOut::ActState_FadeOut(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		if (m_fUVSize.Increase(50.f * fTimeDelta))
+		if (m_fUVSize.Increase(0.5f * fTimeDelta))
 		{
 			if (!m_EndEvent.empty())
 			{
 				m_EndEvent();
-				Set_Dead();
+				m_EndEvent.clear();
 			}
+		}
+
+		if (m_pGI->IsLevelTransitioned() && m_pGI->IsNotLoadingLevel())
+		{
+			Set_Dead();
 		}
 	}
 
@@ -208,8 +214,11 @@ void CUI_FadeOut::ActState_FadeOut(const _float& fTimeDelta)
 	}
 }
 
-void CUI_FadeOut::Add_Event(StartDelegate StartEvent, EndDelegate EndEvent)
+void CUI_FadeOut::Add_Event(StartDelegate StartEvent, EndDelegate EndEvent, const wstring& strReservedLevelTag)
 {
 	m_StartEvent = StartEvent;
 	m_EndEvent = EndEvent;
+
+	Add_Tag(EGObjTag::Level, strReservedLevelTag);
+	m_strNextLevelTag = strReservedLevelTag;
 }

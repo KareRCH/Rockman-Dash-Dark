@@ -13,6 +13,8 @@ void CLevelMgr::Tick(const _float& fTimeDelta)
 	if (nullptr == m_pCurrentLevel)
 		return;
 
+	m_bIsLevelTransitioned = false;
+
 	m_pCurrentLevel->Tick(fTimeDelta);
 }
 
@@ -42,7 +44,7 @@ void CLevelMgr::Free()
 	Safe_Release(m_pCurrentLevel);
 }
 
-HRESULT CLevelMgr::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel)
+HRESULT CLevelMgr::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel, _bool bIsNotLoading)
 {
 	if (nullptr == pNewLevel)
 		return E_FAIL;
@@ -57,6 +59,9 @@ HRESULT CLevelMgr::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel)
 	m_pCurrentLevel = pNewLevel;
 
 	m_iCurrentLevelIndex = iCurrentLevelIndex;
+
+	m_bIsLevelTransitioned = true;
+	m_bIsNotLoading = bIsNotLoading;
 
 	return S_OK;
 }

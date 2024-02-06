@@ -1,5 +1,6 @@
 #include "GameObject/Effect_Common.h"
 
+#include "Component/PlaneModelComp.h"
 #include "Component/EffectComponent.h"
 #include "Component/TextureComponent.h"
 

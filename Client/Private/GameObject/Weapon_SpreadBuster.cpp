@@ -218,7 +218,7 @@ void CWeapon_SpreadBuster::OnCollisionEntered(CGameObject* pDst, const FContact*
 		if (CTeamAgentComp::ERelation::Hostile ==
 			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
 		{
-			pEnemy->Damage_HP(1.f);
+			pEnemy->Damage_HP(0.25f);
 			Create_Effect();
 			Set_Dead();
 		}

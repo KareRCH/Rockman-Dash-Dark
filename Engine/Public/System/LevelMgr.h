@@ -27,11 +27,15 @@ private:
 	virtual void Free() override;
 
 public:
-	HRESULT Open_Level(_uint iCurrentLevelIndex, class CLevel* pNewLevel);
+	HRESULT			Open_Level(_uint iCurrentLevelIndex, class CLevel* pNewLevel, _bool bIsNotLoading);
+	const _bool		IsLevelTransitioned() const { return m_bIsLevelTransitioned; }
+	const _bool		IsNotLoadingLevelTransition() const { return m_bIsNotLoading; }
 
 private:
 	_uint			m_iCurrentLevelIndex = { 0 };
 	class CLevel*	m_pCurrentLevel = { nullptr };
+	_bool			m_bIsLevelTransitioned = { false };
+	_bool			m_bIsNotLoading = { false };
 };
 
 END

@@ -67,6 +67,7 @@ public:
 private:
 	FGauge		m_fLifeTime = FGauge(3.f);
 	_float		m_fSpeed = 5.f;
+	FGauge		m_fSmokeTime = FGauge(0.01f);
 
 public:
 	void Set_Target(CCharacter_Common* pTarget) { m_pTarget = pTarget; Safe_AddRef(m_pTarget); }

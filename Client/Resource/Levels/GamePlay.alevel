@@ -976,7 +976,7 @@
                 "ScaleZ": 3.0,
                 "CollisionType": 7,
                 "CollisionLayer": 4,
-                "CollisionMask": 0
+                "CollisionMask": 1
             }
         ],
         "Objects": [
@@ -2402,7 +2402,7 @@
                 "Name": "PillarTrap0",
                 "ProtoName": "PillarTrap",
                 "ClassID": 10012,
-                "StateFlag": 308,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 57.0,
@@ -2452,11 +2452,11 @@
                         "ScaleZ": 3.0,
                         "CollisionType": 7,
                         "CollisionLayer": 4,
-                        "CollisionMask": 0
+                        "CollisionMask": 1
                     }
                 ],
                 "TrapType": 1,
-                "Range": 5.0
+                "Range": 8.0
             }
         ]
     },
@@ -4771,7 +4771,7 @@
                 "PriorityRender": 0.0,
                 "PosX": 53.0,
                 "PosY": 0.009999999776482582,
-                "PosZ": 133.6999969482422,
+                "PosZ": 130.3000030517578,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -4894,7 +4894,7 @@
                 "PriorityRender": 0.0,
                 "PosX": 53.0,
                 "PosY": 0.009999999776482582,
-                "PosZ": 130.3000030517578,
+                "PosZ": 133.6999969482422,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -11289,6 +11289,43 @@
                 "Type": 0
             },
             {
+                "Name": "Trigger1",
+                "ProtoName": "Trigger1",
+                "ClassID": 10011,
+                "StateFlag": 1332,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "Trigger1Collider",
+                        "PosX": 0.0,
+                        "PosY": 1.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.5,
+                        "ScaleY": 2.0,
+                        "ScaleZ": 2.0,
+                        "CollisionType": 7,
+                        "CollisionLayer": 4,
+                        "CollisionMask": 1
+                    }
+                ],
+                "Type": 1
+            },
+            {
                 "Name": "StaticObject3",
                 "ProtoName": "Wall1_8",
                 "ClassID": 10004,
@@ -16744,7 +16781,7 @@
                 "Name": "PillarTrap0",
                 "ProtoName": "PillarTrap",
                 "ClassID": 10012,
-                "StateFlag": 308,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 57.0,
@@ -16794,7 +16831,7 @@
                         "ScaleZ": 3.0,
                         "CollisionType": 7,
                         "CollisionLayer": 4,
-                        "CollisionMask": 0
+                        "CollisionMask": 1
                     }
                 ],
                 "TrapType": 1,
@@ -16804,7 +16841,7 @@
                 "Name": "PillarTrap1",
                 "ProtoName": "PillarTrap",
                 "ClassID": 10012,
-                "StateFlag": 316,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 57.0,
@@ -16854,7 +16891,7 @@
                         "ScaleZ": 3.0,
                         "CollisionType": 7,
                         "CollisionLayer": 4,
-                        "CollisionMask": 0
+                        "CollisionMask": 1
                     }
                 ],
                 "TrapType": 0,
@@ -16864,7 +16901,7 @@
                 "Name": "PillarTrap2",
                 "ProtoName": "PillarTrap",
                 "ClassID": 10012,
-                "StateFlag": 316,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 57.0,
@@ -16914,7 +16951,7 @@
                         "ScaleZ": 3.0,
                         "CollisionType": 7,
                         "CollisionLayer": 4,
-                        "CollisionMask": 0
+                        "CollisionMask": 1
                     }
                 ],
                 "TrapType": 2,

@@ -68,8 +68,9 @@ private:
 	_float		m_fSpeed = 5.f;
 	_float3		m_vLookDir = {};
 	_float		m_fDamage = { 1.f };
-	CLight* m_pLight = { nullptr };
+	CLight*		m_pLight = { nullptr };
 	_uint		m_iLightID = { 0 };
+	FGauge		m_fParticleTime = FGauge(0.01f);
 
 public:
 	void Create_Effect();

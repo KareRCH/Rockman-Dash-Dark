@@ -385,7 +385,11 @@ void CDoor_Common::ActState_Open(const _float& fTimeDelta)
 
                     auto pFadeOut = CUI_FadeOut::Create();
                     m_pGI->Add_GameObject(pFadeOut);
-                    pFadeOut->Add_Event(MakeDelegate(this, &ThisClass::TransitionLevel), MakeDelegate(this, &ThisClass::TransitionLevel));
+                    pFadeOut->Add_Event(
+                        MakeDelegate(this, &ThisClass::TransitionLevel), 
+                        MakeDelegate(this, &ThisClass::TransitionLevel),
+                        m_strTransitionLevel.substr(m_strTransitionLevel.find_first_of(L"/") + 1, 
+                            m_strTransitionLevel.find_first_of(L".") - (m_strTransitionLevel.find_first_of(L"/") + 1)));
                 }
             }
         }
@@ -433,7 +437,8 @@ void CDoor_Common::TransitionLevel()
             pPlayerCloud->Access_StartLook(CCloudStation::EMode::Upload, m_vStartLook);
 
             m_pGI->Open_Level(LEVEL_LOADING,
-                CLevel_Loading::Create(LEVEL_PARSED, m_pGI->Get_TextureMainPath() + m_strTransitionLevel));
+                CLevel_Loading::Create(LEVEL_PARSED, m_pGI->Get_TextureMainPath() + m_strTransitionLevel)
+            , false);
         }
     }
 }

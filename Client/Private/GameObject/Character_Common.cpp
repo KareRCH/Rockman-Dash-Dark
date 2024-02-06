@@ -2,6 +2,8 @@
 
 #include "GameObject/StaticObject.h"
 #include "GameObject/InvisibleObject.h"
+#include "GameObject/PillarTrap.h"
+#include "GameObject/SpikeTrap.h"
 #include "GameObject/Trigger.h"
 #include "Physics/Contact.h"
 
@@ -108,8 +110,7 @@ void CCharacter_Common::BeginPlay()
 {
 	SUPER::BeginPlay();
 
-	// 필드 유닛 태그를 달아 일시정지에 씀
-	Add_Tag(EGObjTag::Common, TEXT("Field"));
+	
 }
 
 void CCharacter_Common::Free()
@@ -135,6 +136,11 @@ void CCharacter_Common::OnCollision(CGameObject* pDst, const FContact* pContact)
 
 	if (nullptr == pChr && nullptr == pTrigger)
 	{
+		if (DynCast<CPillarTrap*>(pChr))
+			return;
+		if (DynCast<CSpikeTrap*>(pChr))
+			return;
+
 		CCollisionObject* pSolid = DynCast<CCollisionObject*>(pDst);
 		if (nullptr != pSolid)
 		{

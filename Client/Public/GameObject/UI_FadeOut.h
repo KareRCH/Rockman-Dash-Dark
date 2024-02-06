@@ -64,15 +64,16 @@ private:
 	void ActState_FadeOut(const _float& fTimeDelta);
 
 public:
-	void Add_Event(StartDelegate StartEvent, EndDelegate EndEvent);
+	void Add_Event(StartDelegate StartEvent, EndDelegate EndEvent, const wstring& strReservedLevelTag);
 
 private:
 	StartDelegate		m_StartEvent = nullptr;
 	EndDelegate			m_EndEvent = nullptr;
 
+	wstring				m_strNextLevelTag = TEXT("");
 
 private:
-	FGauge			m_fUVSize = FGauge(100.f);
+	FGauge			m_fUVSize = FGauge(1.f);
 };
 
 END

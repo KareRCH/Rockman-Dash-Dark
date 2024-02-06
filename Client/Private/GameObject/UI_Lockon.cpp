@@ -105,6 +105,13 @@ HRESULT CUI_Lockon::Render()
     return S_OK;
 }
 
+void CUI_Lockon::BeginPlay()
+{
+    SUPER::BeginPlay();
+
+    Set_Priority(1, -2.f);
+}
+
 CUI_Lockon* CUI_Lockon::Create()
 {
     ThisClass* pInstance = new ThisClass();

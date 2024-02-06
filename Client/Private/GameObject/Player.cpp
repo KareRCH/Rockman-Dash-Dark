@@ -24,6 +24,9 @@
 #include "GameObject/DynamicCamera.h"
 #include "GameObject/Weapon_BusterCannon.h"
 #include "GameObject/PillarTrap.h"
+#include "GameObject/SpikeTrap.h"
+#include "GameObject/Effect_Particle.h"
+#include "GameObject/Weapon_ChargeShot.h"
 
 #include "CloudStation/CloudStation_Player.h"
 
@@ -240,8 +243,14 @@ HRESULT CPlayer::Render_Shadow()
 
     _float4x4		ViewMatrix, ProjMatrix;
 
-    XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(40.f, 30.f, 40.f, 1.f), XMVectorSet(40.f, 0.f, 40.f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f)));
+    XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(
+        XMVectorSet(0.f, 30.f, 0.f, 1.f) + Transform().Get_PositionVector(),
+        XMVectorSet(0.f, 0.f, 0.f, 1.f) + Transform().Get_PositionVector(), 
+        XMVectorSet(0.f, 0.f, 1.f, 0.f)));
     XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), g_iWindowSizeX / (float)g_iWindowSizeY, 0.1f, 300.f));
+
+    m_pGI->Set_ShadowViewMatrix(ViewMatrix);
+    m_pGI->Set_ShadowProjMatrix(ProjMatrix);
 
     if (FAILED(pEffect->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
         return E_FAIL;
@@ -300,6 +309,13 @@ void CPlayer::BeginPlay()
 
         Transform().Set_Position(vPos);
         Transform().Look_At_OnLand(XMLoadFloat3(&vPos) + XMLoadFloat3(&vLook));
+
+        m_pPlayerCloud->Access_MainWeapon(CCloudStation::EMode::Download, m_eMainWeapon);
+        m_pPlayerCloud->Access_SubWeapon(CCloudStation::EMode::Download, m_eSubWeapon);
+        ChangeMainWeapon(m_eMainWeapon);
+        ChangeSubWeapon(m_eSubWeapon);
+
+        m_pPlayerCloud->Access_IsCanUseSubWeapons(CCloudStation::EMode::Download, m_bIsCanUseSubWeapons);
     }
 }
 
@@ -540,6 +556,7 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
                         DeleteBlade();
                         ThrowUnit();
                         GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
+                        Create_HitEffect(pContact->vContactPoint);
                     }
                     else
                     {
@@ -548,6 +565,7 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
                         DeleteBlade();
                         ThrowUnit();
                         GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
+                        Create_HitEffect(pContact->vContactPoint);
                     }
                     m_fHP.Increase(-5.f);
                 }
@@ -569,6 +587,7 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
                 ThrowUnit();
                 GI()->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
                 m_fHP.Increase(-5.f);
+                Create_HitEffect(pContact->vContactPoint);
             }
         }
     }
@@ -598,6 +617,22 @@ void CPlayer::OnCollision(CGameObject* pDst, const FContact* pContact)
             ThrowUnit();
             m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
             m_fHP.Increase(-5.f);
+            Create_HitEffect(pContact->vContactPoint);
+        }
+    }
+
+    CSpikeTrap* pSpike = DynCast<CSpikeTrap*>(pDst);
+    if (pSpike)
+    {
+        if (!m_bInvisible)
+        {
+            m_State_Act.Set_State(EState_Act::DamagedHeavy);
+            DeleteLaser();
+            DeleteBlade();
+            ThrowUnit();
+            m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("rockman_hit_strong.mp3"), CHANNELID::SOUND_COMMON1, 1.f);
+            m_fHP.Increase(-5.f);
+            Create_HitEffect(pContact->vContactPoint);
         }
     }
 
@@ -626,7 +661,13 @@ void CPlayer::Update_ToCloudStation()
 {
     if (nullptr != m_pPlayerCloud)
     {
-        m_pPlayerCloud->Set_HP(m_fHP);
+        m_pPlayerCloud->Access_HP(CCloudStation::EMode::Upload, m_fHP);
+        m_pPlayerCloud->Access_Money(CCloudStation::EMode::Upload, m_iMoney);
+
+        m_pPlayerCloud->Access_MainWeapon(CCloudStation::EMode::Upload, m_eMainWeapon);
+        m_pPlayerCloud->Access_SubWeapon(CCloudStation::EMode::Upload, m_eSubWeapon);
+
+        m_pPlayerCloud->Access_IsCanUseSubWeapons(CCloudStation::EMode::Upload, m_bIsCanUseSubWeapons);
     }
 }
 
@@ -650,8 +691,14 @@ void CPlayer::Register_State()
     m_State_Act.Add_Func(EState_Act::ReadyLaser, &ThisClass::ActState_ReadyLaser);
     m_State_Act.Add_Func(EState_Act::ShootingLaser, &ThisClass::ActState_ShootingLaser);
     m_State_Act.Add_Func(EState_Act::EndLaser, &ThisClass::ActState_EndLaser);
-    m_State_Act.Add_Func(EState_Act::Homing, &ThisClass::ActState_Homing);
+
+    m_State_Act.Add_Func(EState_Act::ReadyHomming, &ThisClass::ActState_ReadyHomming);
+    m_State_Act.Add_Func(EState_Act::Homming, &ThisClass::ActState_Homming);
+
+    m_State_Act.Add_Func(EState_Act::ReadySpreadBuster, &ThisClass::ActState_ReadySpreadBuster);
     m_State_Act.Add_Func(EState_Act::SpreadBuster, &ThisClass::ActState_SpreadBuster);
+
+    m_State_Act.Add_Func(EState_Act::ReadyChargeShot, &ThisClass::ActState_ReadyChargeShot);
     m_State_Act.Add_Func(EState_Act::ChargeShot, &ThisClass::ActState_ChargeShot);
 
     m_State_Act.Add_Func(EState_Act::ReadyBusterCannon, &ThisClass::ActState_ReadyBusterCannon);
@@ -807,22 +854,25 @@ void CPlayer::Look_Update(const _float& fTimeDelta)
 
 void CPlayer::Input_Move(const _float& fTimeDelta)
 {
-    if (GI()->IsKey_Pressing(DIK_W))
+    if (m_pGI->IsKey_Pressing(DIK_W))
         m_ActionKey.Act(EActionKey::MoveForward);
-    else if (GI()->IsKey_Pressing(DIK_S))
+    else if (m_pGI->IsKey_Pressing(DIK_S))
         m_ActionKey.Act(EActionKey::MoveBackward);
 
-    if (GI()->IsKey_Pressing(DIK_D))
+    if (m_pGI->IsKey_Pressing(DIK_D))
         m_ActionKey.Act(EActionKey::MoveRight);
-    else if (GI()->IsKey_Pressing(DIK_A))
+    else if (m_pGI->IsKey_Pressing(DIK_A))
         m_ActionKey.Act(EActionKey::MoveLeft);
 
-    if (m_bIsOnGround && GI()->IsKey_Pressed(DIK_SPACE))
+    if (m_pGI->IsKey_Pressing(DIK_G))
+        m_ActionKey.Act(EActionKey::MoveFast);
+
+    if (m_bIsOnGround && m_pGI->IsKey_Pressed(DIK_SPACE))
     {
         m_ActionKey.Act(EActionKey::Jump);
     }
 
-    if (m_bIsOnGround && GI()->IsKey_Pressed(DIK_E))
+    if (m_bIsOnGround && m_pGI->IsKey_Pressed(DIK_E))
     {
         m_ActionKey.Act(EActionKey::Interaction);
     }
@@ -898,7 +948,7 @@ void CPlayer::Input_Weapon(const _float& fTimeDelta)
             m_ActionKey.Act(EActionKey::Drill);
         break;
     case ESubWeapon::HomingArm:
-        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
             m_ActionKey.Act(EActionKey::Homing);
         break;
     case ESubWeapon::HyperShellArm:
@@ -914,7 +964,7 @@ void CPlayer::Input_Weapon(const _float& fTimeDelta)
             m_ActionKey.Act(EActionKey::Shield);
         break;
     case ESubWeapon::SpreadBusterArm:
-        if (GI()->IsMouse_Pressed(MOUSEKEYSTATE::DIM_RB))
+        if (GI()->IsMouse_Pressing(MOUSEKEYSTATE::DIM_RB))
             m_ActionKey.Act(EActionKey::SpreadBuster);
         break;
     default:
@@ -951,12 +1001,14 @@ void CPlayer::ActState_Idle(const _float& fTimeDelta)
         {
             if (m_ActionKey.IsAct(EActionKey::Buster))
                 m_State_Act.Set_State(EState_Act::Buster);
+            if (m_ActionKey.IsAct(EActionKey::ChargeBuster))
+                m_State_Act.Set_State(EState_Act::ReadyChargeShot);
             if (m_ActionKey.IsAct(EActionKey::Laser))
                 m_State_Act.Set_State(EState_Act::ReadyLaser);
             if (m_ActionKey.IsAct(EActionKey::Homing))
-                m_State_Act.Set_State(EState_Act::Homing);
+                m_State_Act.Set_State(EState_Act::ReadyHomming);
             if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
-                m_State_Act.Set_State(EState_Act::SpreadBuster);
+                m_State_Act.Set_State(EState_Act::ReadySpreadBuster);
             if (m_ActionKey.IsAct(EActionKey::Blade))
                 m_State_Act.Set_State(EState_Act::BladeAttack1);
             if (m_ActionKey.IsAct(EActionKey::BusterCannon))
@@ -1064,12 +1116,14 @@ void CPlayer::ActState_Run(const _float& fTimeDelta)
         {
             if (m_ActionKey.IsAct(EActionKey::Buster))
                 m_State_Act.Set_State(EState_Act::Buster);
+            if (m_ActionKey.IsAct(EActionKey::ChargeBuster))
+                m_State_Act.Set_State(EState_Act::ReadyChargeShot);
             if (m_ActionKey.IsAct(EActionKey::Laser))
                 m_State_Act.Set_State(EState_Act::ReadyLaser);
             if (m_ActionKey.IsAct(EActionKey::Homing))
-                m_State_Act.Set_State(EState_Act::Homing);
+                m_State_Act.Set_State(EState_Act::ReadyHomming);
             if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
-                m_State_Act.Set_State(EState_Act::SpreadBuster);
+                m_State_Act.Set_State(EState_Act::ReadySpreadBuster);
             if (m_ActionKey.IsAct(EActionKey::Blade))
                 m_State_Act.Set_State(EState_Act::BladeAttack1);
             if (m_ActionKey.IsAct(EActionKey::BusterCannon))
@@ -1400,11 +1454,34 @@ void CPlayer::ActState_EndLaser(const _float& fTimeDelta)
     }
 }
 
-void CPlayer::ActState_Homing(const _float& fTimeDelta)
+void CPlayer::ActState_ReadyHomming(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(19, 1.f, false, false, 0.2f);
+        m_pModelComp->Set_Animation(22, 1.5f, false, false, 0.5f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::Homming);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_Homming(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(23, 0.25f, false, false, 0.2f);
         ShootMissile();
     }
 
@@ -1414,7 +1491,33 @@ void CPlayer::ActState_Homing(const _float& fTimeDelta)
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
-            m_State_Act.Set_State(EState_Act::Idle);
+            if (m_ActionKey.IsAct(EActionKey::Homing))
+                m_State_Act.Set_State(EState_Act::Homming);
+            else
+                m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ReadySpreadBuster(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(18, 1.5f, false, false, 0.5f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::SpreadBuster);
         }
     }
 
@@ -1438,7 +1541,57 @@ void CPlayer::ActState_SpreadBuster(const _float& fTimeDelta)
 
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
-            m_State_Act.Set_State(EState_Act::Idle);
+            if (m_ActionKey.IsAct(EActionKey::SpreadBuster))
+                m_State_Act.Set_State(EState_Act::SpreadBuster);
+            else
+                m_State_Act.Set_State(EState_Act::Idle);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+
+void CPlayer::ActState_ReadyChargeShot(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(35, 0.f, false, false, 0.2f);
+        m_fGauge.Readjust(1.f);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+        Look_Update(fTimeDelta);
+
+        _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(110);
+        _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.1f;
+
+        auto pParticle = CEffect_Particle::Create();
+        m_pGI->Add_GameObject(pParticle);
+
+        CEffect_Particle::TParticleDesc Desc = {};
+        Desc.InstancingDesc = {
+            { 0.f, 0.f, 0.f },	// Center
+            { 1.1f },			// Range
+            { -3.3f, -1.3f },	// Speed
+            { 0.015f, 0.035f },	// Scale
+            { 0.5f, 1.0f }		// LifeTime
+        };
+        Desc.iNumInstances = 10;
+        Desc.strTexturePath = TEXT("Textures/RockmanDash2/Effects/CommonExplosion/Explosion%d.png");
+        Desc.iNumTextures = 8;
+        Desc.fBlendStrength = 0.8f;
+        Desc.vBlendColor = { -1.f, 1.f, 0.f, 1.f };
+
+        pParticle->Create_Instancing(Desc);
+        pParticle->Transform().Set_Position(vPos);
+
+        if (m_fGauge.Increase(fTimeDelta))
+        {
+            m_State_Act.Set_State(EState_Act::ChargeShot);
         }
     }
 
@@ -1452,7 +1605,8 @@ void CPlayer::ActState_ChargeShot(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(19, 1.f, false, false, 0.2f);
+        m_pModelComp->Set_Animation(35, 1.f, false, false, 0.2f);
+        ShootChargeShot();
     }
 
     if (m_State_Act.Can_Update())
@@ -1937,6 +2091,26 @@ void CPlayer::ShootBuster()
     pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
 }
 
+void CPlayer::ShootChargeShot()
+{
+    _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(110);
+    _vector vPos = BoneMatrix.r[3] + XMVector3Normalize(BoneMatrix.r[1]) * 0.1f;
+    _float3 vfPos = {};
+    XMStoreFloat3(&vfPos, vPos);
+    auto pBuster = CWeapon_ChargeShot::Create(vfPos);
+    if (pBuster == nullptr)
+        return;
+
+    _vector vLook = Calculate_ShootLookVector(vPos);
+
+    GI()->Add_GameObject(pBuster);
+    pBuster->Set_LifeTime(1.f);
+    pBuster->Set_Speed(40.f);
+    pBuster->Set_Damage(4.f);
+    pBuster->Transform().Look_At(pBuster->Transform().Get_PositionVector() + vLook);
+    pBuster->TeamAgentComp().Set_TeamID(TeamAgentComp().Get_TeamID());
+}
+
 void CPlayer::ShootMissile()
 {
     _matrix BoneMatrix = m_pModelComp->Get_BoneTransformMatrixWithParents(135);
@@ -2244,6 +2418,29 @@ void CPlayer::Lockon_Untarget()
         m_pLockon_UI->Clear_Target();
         Safe_ReleaseAndUnlink(m_pLockon_UI);
     }
+}
+
+void CPlayer::Create_HitEffect(_float3 vPos)
+{
+    auto pParticle = CEffect_Particle::Create();
+    m_pGI->Add_GameObject(pParticle);
+
+    CEffect_Particle::TParticleDesc Desc = {};
+    Desc.InstancingDesc = {
+        { 0.f, 0.f, 0.f },	// Center
+        { 0.4f },			// Range
+        { 5.3f, 10.3f },	// Speed
+        { 0.025f, 0.075f },	// Scale
+        { 0.1f, 0.25f }		// LifeTime
+    };
+    Desc.iNumInstances = 50;
+    Desc.strTexturePath = TEXT("Textures/RockmanDash2/Effects/CommonExplosion/Explosion%d.png");
+    Desc.iNumTextures = 8;
+    Desc.fBlendStrength = 0.5f;
+    Desc.vBlendColor = { -1.f, 0.f, 1.f, 1.f };
+
+    pParticle->Create_Instancing(Desc);
+    pParticle->Transform().Set_Position(vPos);
 }
 
 _matrix CPlayer::Lockon_TargetMatrix()

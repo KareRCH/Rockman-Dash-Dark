@@ -173,6 +173,11 @@ void CObjectMgr::Set_LevelTag(const wstring& strLevelTag)
 	m_strLevelTag = strLevelTag;
 }
 
+const wstring CObjectMgr::Get_CurrentLevelTag()
+{
+	return m_strLevelTag;
+}
+
 HRESULT CObjectMgr::Add_GameObject(CGameObject* pObj)
 {
 	if (nullptr == pObj)

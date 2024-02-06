@@ -227,8 +227,11 @@ xcopy "$(SolutionDir)Reference\Library\Rttr\$(PlatformTarget)\$(Configuration)\r
     <ClCompile Include="..\Client\Private\GameObject\StaticObject.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\TestTextureObject.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Trigger.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\UI_Blink.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Boss.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Dialog.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\UI_FadeIn.cpp" />
+    <ClCompile Include="..\Client\Private\GameObject\UI_FadeOut.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Lockon.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\UI_Player.cpp" />
     <ClCompile Include="..\Client\Private\GameObject\Weapon_Blade.cpp" />

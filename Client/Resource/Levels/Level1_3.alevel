@@ -1,5 +1,5 @@
 {
-    "Name": "GamePlay",
+    "Name": "Level1_3",
     "Prototypes": {
         "Components": [
             {
@@ -1043,7 +1043,7 @@
                 "PriorityRender": 0.0,
                 "PosX": 55.54615783691406,
                 "PosY": 0.0,
-                "PosZ": 125.65484619140625,
+                "PosZ": 98.65484619140625,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -2413,7 +2413,7 @@
                 "PriorityRender": 0.0,
                 "PosX": 55.54615783691406,
                 "PosY": 0.0,
-                "PosZ": 125.65484619140625,
+                "PosZ": 98.65484619140625,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -3560,10 +3560,10 @@
                         "CollisionMask": 0
                     }
                 ],
-                "TransitionLevel": "Levels/GamePlay.alevel",
+                "TransitionLevel": "Levels/Level1_1.alevel",
                 "StartPosX": 53.0,
                 "StartPosY": 0.0,
-                "StartPosZ": 128.0,
+                "StartPosZ": 151.0,
                 "StartLookX": 0.0,
                 "StartLookY": 0.0,
                 "StartLookZ": -1.0
@@ -12167,13 +12167,13 @@
                         "CollisionMask": 0
                     }
                 ],
-                "TransitionLevel": "Levels/Level1_3.alevel",
-                "StartPosX": 46.0,
+                "TransitionLevel": "Levels/Level1_4.alevel",
+                "StartPosX": 53.0,
                 "StartPosY": 0.0,
-                "StartPosZ": 144.0,
-                "StartLookX": 1.0,
+                "StartPosZ": 137.0,
+                "StartLookX": 0.0,
                 "StartLookY": 0.0,
-                "StartLookZ": 0.0
+                "StartLookZ": 1.0
             },
             {
                 "Name": "InvisibleObject36",
@@ -12771,70 +12771,6 @@
                         "CollisionMask": 0
                     }
                 ]
-            },
-            {
-                "Name": "ReaverBot_Balfura6",
-                "ProtoName": "Balfura1",
-                "ClassID": 10003,
-                "StateFlag": 1460,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 49.76800537109375,
-                "PosY": 2.0,
-                "PosZ": 154.78672790527344,
-                "RotX": 0.0,
-                "RotY": -45.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": "BalfuraTeamAgent"
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "BalfuraModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.3199999928474426,
-                        "ScaleY": 0.3199999928474426,
-                        "ScaleZ": 0.3199999928474426,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Balfura/Balfura.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "BalfuraCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 0.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 1.0,
-                        "ScaleY": 1.0,
-                        "ScaleZ": 1.0,
-                        "CollisionType": 0,
-                        "CollisionLayer": 1,
-                        "CollisionMask": 55
-                    }
-                ],
-                "HP": 8.0
             },
             {
                 "Name": "ReaverBot_Balfura8",

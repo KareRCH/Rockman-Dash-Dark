@@ -136,7 +136,7 @@ private:
 public:
 	enum class EState_Act { Idle, Run, Walk, Ready_Jump, Jump_Up, Jump_Down, Landing, Buster, 
 		DamagedLight, DamagedHeavy, KnockDown, StandUp, ReadyLaser, ShootingLaser, EndLaser,
-		Homing, SpreadBuster, ChargeShot,
+		ReadyHomming, Homming, ReadySpreadBuster, SpreadBuster, ReadyChargeShot, ChargeShot,
 		ReadyBusterCannon, ShootBusterCannon, EndBusterCannon,
 		ReadyHyperShell, ShootHyperShell, EndHyperShell,
 		ReadyMachinegun, ShootingMachinegun, EndMachinegun,
@@ -167,9 +167,13 @@ private:
 	void ActState_ShootingLaser(const _float& fTimeDelta);
 	void ActState_EndLaser(const _float& fTimeDelta);
 
-	void ActState_Homing(const _float& fTimeDelta);
+	void ActState_ReadyHomming(const _float& fTimeDelta);
+	void ActState_Homming(const _float& fTimeDelta);
 
+	void ActState_ReadySpreadBuster(const _float& fTimeDelta);
 	void ActState_SpreadBuster(const _float& fTimeDelta);
+
+	void ActState_ReadyChargeShot(const _float& fTimeDelta);
 	void ActState_ChargeShot(const _float& fTimeDelta);
 
 	void ActState_ReadyBusterCannon(const _float& fTimeDelta);
@@ -197,6 +201,7 @@ private:
 
 private:
 	void ShootBuster();
+	void ShootChargeShot();
 	void ShootMissile();
 	void ShootSpreadBuster();
 	void ShootLaser();
@@ -215,6 +220,7 @@ private:
 	void Lockon_Active(const _float& fTimeDelta);
 	void Lockon_Target();
 	void Lockon_Untarget();
+	void Create_HitEffect(_float3 vPos);
 	_matrix Lockon_TargetMatrix();
 	_vector Camera_LookVector();
 	_vector Calculate_ShootLookVector(_fvector vPos);

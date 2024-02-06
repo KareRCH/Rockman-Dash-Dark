@@ -162,6 +162,7 @@ public:		// 사운드 매니저
 	HRESULT Initialize_SoundMgr(const string& strMainPath);
 	void	Play_Sound(const wstring& strGroupKey, const wstring& strSoundKey, CHANNELID eID, _float fVolume);
 	void	Play_BGM(const wstring& strGroupKey, const wstring& strSoundKey, _float fVolume);
+	void	Play_BGM_LoopRange(const wstring& strGroupKey, const wstring& strSoundKey, _float fVolume, _uint iStart, _uint iEnd);
 	void	Stop_Sound(CHANNELID eID);
 	void	Stop_SoundAll();
 	void	Set_ChannelVolume(CHANNELID eID, _float fVolume);
@@ -219,7 +220,9 @@ private:
 public:
 	HRESULT Initialize_LevelMgr();
 	void	Tick_LevelMgr(const _float& fTimeDelta);
-	HRESULT Open_Level(_uint iCurrentLevelIndex, class CLevel* pNewLevel);
+	HRESULT Open_Level(_uint iCurrentLevelIndex, class CLevel* pNewLevel, _bool bIsNotLoading = true);
+	const _bool	IsLevelTransitioned();
+	const _bool IsNotLoadingLevel();
 #pragma endregion
 
 
@@ -238,6 +241,7 @@ public:		// 매니지먼트
 	void				Clear_PrototypeObejcts(const wstring& strContainTag);
 
 	void				Set_LevelTag(const wstring& strLevelTag);
+	const wstring		Get_CurrentLevelTag();
 	HRESULT				Add_GameObject(class CGameObject* pObj);
 	HRESULT				Add_GameObject(const wstring& strLevelTag, class CGameObject* pObj);
 	class CGameObject*	Find_GameObjectByID(_uint iFindID);
@@ -304,6 +308,8 @@ public:		// 렌더 매니저
 	void			Toggle_Deferred();
 	void			Toggle_DebugDraw();
 	void			Set_VeiwportSize(_uint iResizeWidth, _uint iResizeHeight);
+	void			Set_ShadowViewMatrix(_float4x4 Value);
+	void			Set_ShadowProjMatrix(_float4x4 Value);
 #pragma endregion
 
 #pragma region 렌더타겟 매니저

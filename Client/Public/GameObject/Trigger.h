@@ -56,7 +56,7 @@ public:		// 충돌 이벤트
 	virtual void OnCollisionExited(CGameObject* pDst);
 
 public:
-	enum class EType : _uint { Boss };
+	enum class EType : _uint { Boss, Sound };
 
 private:
 	EType		m_eTriggerType = { EType::Boss };

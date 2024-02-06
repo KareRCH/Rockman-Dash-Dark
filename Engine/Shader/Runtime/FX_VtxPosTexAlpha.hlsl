@@ -100,8 +100,9 @@ PS_OUT PS_MAIN_UV_SCALE(VPS_INOUT In)
     if (!bIsBetween)
         discard;
     
-    float2 vScaledUV = float2(In.vTexcoord.x + abs(In.vTexcoord.x - 0.5f) * 0.5f * g_vUVScale.x,
-                                In.vTexcoord.y + abs(In.vTexcoord.y - 0.5f) * 0.5f * g_vUVScale.y);
+    float2 vNormalUV = normalize(float2(In.vTexcoord.xy * 2.f - 1.f));
+    float2 vScaledUV = float2(In.vTexcoord.x + vNormalUV.x * g_vUVScale.x,
+                                In.vTexcoord.y + vNormalUV.y * g_vUVScale.y);
         
 	/* 첫번째 인자의 방식으로 두번째 인자의 위치에 있는 픽셀의 색을 얻어온다. */
     vector vSourColor = g_Texture.Sample(ClampSampler, vScaledUV);

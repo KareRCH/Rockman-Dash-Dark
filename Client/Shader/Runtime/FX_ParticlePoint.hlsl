@@ -2,11 +2,16 @@
 
 cbuffer WVP : register(b0)
 {
-    matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+    matrix g_WorldMatrix;
+    matrix g_ViewMatrix;
+    matrix g_ProjMatrix;
 }
 
 Texture2D g_Texture;
 vector g_vCamPosition = vector(0.f, 0.f, 0.f, 0.f);
+
+vector g_vBlendColor = vector(1.f, 1.f, 1.f, 1.f);
+float g_fBlendStrength = 0.f;
 
 struct VS_IN
 {
@@ -64,21 +69,21 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> OutStream)
     float3 vRight = normalize(cross(float3(0.f, 1.f, 0.f), vLook.xyz)) * In[0].vPSize.x * 0.5f;
     float3 vUp = normalize(cross(vLook.xyz, vRight)) * In[0].vPSize.y * 0.5f;
 
-    matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+    matrix VPMatrix = mul(g_ViewMatrix, g_ProjMatrix);
 
-    Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vRight + vUp, 1.f), matVP);
+    Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vRight + vUp, 1.f), VPMatrix);
     Out[0].vTexcoord = float2(0.f, 0.f);
     Out[0].vColor = In[0].vColor;
 
-    Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vRight + vUp, 1.f), matVP);
+    Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vRight + vUp, 1.f), VPMatrix);
     Out[1].vTexcoord = float2(1.f, 0.f);
     Out[1].vColor = In[0].vColor;
 
-    Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vRight - vUp, 1.f), matVP);
+    Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vRight - vUp, 1.f), VPMatrix);
     Out[2].vTexcoord = float2(1.f, 1.f);
     Out[2].vColor = In[0].vColor;
 
-    Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vRight - vUp, 1.f), matVP);
+    Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vRight - vUp, 1.f), VPMatrix);
     Out[3].vTexcoord = float2(0.f, 1.f);
     Out[3].vColor = In[0].vColor;
 
@@ -123,7 +128,7 @@ PS_OUT PS_MAIN(PS_IN In)
     if (Out.vColor.a < 0.8f)
         discard;
 
-    Out.vColor.rgb = float3(1.f, 0.f, 0.f);
+    Out.vColor.rgb += g_vBlendColor * g_fBlendStrength;
 
     Out.vColor.a = In.vColor.a;
 

@@ -19,6 +19,7 @@
 #include "GameObject/ReaverBot_Fingerii.h"
 #include "GameObject/StaticObject.h"
 #include "GameObject/Player.h"
+#include "GameObject/UI_FadeIn.h"
 
 CLevel_Parsed::CLevel_Parsed()
 {
@@ -118,6 +119,8 @@ HRESULT CLevel_Parsed::Ready_Objects(FSerialData& Data)
 
 	CNavigationComponent::TCloneDesc tDesc = { 0 };
 	GI()->Add_GameObject(CNavigation::Create());
+
+	GI()->Add_GameObject(CUI_FadeIn::Create());
 
     return S_OK;
 }

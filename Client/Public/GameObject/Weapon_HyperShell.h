@@ -69,6 +69,7 @@ public:
 private:
 	FGauge		m_fLifeTime = FGauge(5.f);
 	_float		m_fSpeed = 1.f;
+	FGauge		m_fParticleTime = FGauge(0.1f);
 };
 
 END

@@ -131,8 +131,14 @@ void CReaverBot_HanmuruDoll::Tick(const _float& fTimeDelta)
         if (m_fPhase == 0)
         {
             m_fPhase = 1;
-            m_fHP = FGauge(40.f, true);
-            m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("08. Calinca - Tundra Reaverbots.mp3"), 1.f);
+            m_fHP = FGauge(50.f, true);
+            
+        }
+        else if (m_fPhase == 1)
+        {
+            m_fPhase = 2;
+            m_fHP = FGauge(100.f, true);
+            m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("24. Manda - Gargarfummi.mp3"), 1.f);
         }
     }
 
@@ -190,7 +196,7 @@ HRESULT CReaverBot_HanmuruDoll::Render()
     }
 
 #ifdef _DEBUG
-    GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
+    m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
     return S_OK;

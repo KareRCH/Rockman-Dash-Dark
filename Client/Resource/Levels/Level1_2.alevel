@@ -1,5 +1,5 @@
 {
-    "Name": "GamePlay",
+    "Name": "Level1_2",
     "Prototypes": {
         "Components": [
             {
@@ -976,9 +976,9 @@
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
-                "ScaleX": 2.0,
+                "ScaleX": 4.0,
                 "ScaleY": 1.649999976158142,
-                "ScaleZ": 2.0,
+                "ScaleZ": 4.0,
                 "CollisionType": 7,
                 "CollisionLayer": 4,
                 "CollisionMask": 0
@@ -1121,7 +1121,7 @@
                 "PriorityRender": 0.0,
                 "PosX": 55.54615783691406,
                 "PosY": 0.0,
-                "PosZ": 125.65484619140625,
+                "PosZ": 100.65484619140625,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -2412,7 +2412,7 @@
                 "Name": "SpikeTrap",
                 "ProtoName": "SpikeTrap",
                 "ClassID": 10015,
-                "StateFlag": 308,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 53.0,
@@ -2457,9 +2457,9 @@
                         "RotX": 0.0,
                         "RotY": 0.0,
                         "RotZ": 0.0,
-                        "ScaleX": 2.0,
+                        "ScaleX": 4.0,
                         "ScaleY": 1.649999976158142,
-                        "ScaleZ": 2.0,
+                        "ScaleZ": 4.0,
                         "CollisionType": 7,
                         "CollisionLayer": 4,
                         "CollisionMask": 0
@@ -2607,7 +2607,7 @@
                 "PriorityRender": 0.0,
                 "PosX": 55.54615783691406,
                 "PosY": 0.0,
-                "PosZ": 125.65484619140625,
+                "PosZ": 100.65484619140625,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -3754,10 +3754,10 @@
                         "CollisionMask": 0
                     }
                 ],
-                "TransitionLevel": "Levels/GamePlay.alevel",
+                "TransitionLevel": "Levels/Level1_1.alevel",
                 "StartPosX": 53.0,
                 "StartPosY": 0.0,
-                "StartPosZ": 128.0,
+                "StartPosZ": 151.0,
                 "StartLookX": 0.0,
                 "StartLookY": 0.0,
                 "StartLookZ": -1.0
@@ -3877,7 +3877,7 @@
                         "CollisionMask": 0
                     }
                 ],
-                "TransitionLevel": "Levels/Level1_3.alevel",
+                "TransitionLevel": "Levels/Level1_2.alevel",
                 "StartPosX": 53.0,
                 "StartPosY": 0.0,
                 "StartPosZ": 137.0,
@@ -5109,7 +5109,7 @@
                         "CollisionMask": 0
                     }
                 ],
-                "TransitionLevel": "Levels/Level1_4.alevel",
+                "TransitionLevel": "Levels/Level1_3.alevel",
                 "StartPosX": 46.0,
                 "StartPosY": 0.0,
                 "StartPosZ": 144.0,
@@ -14637,7 +14637,7 @@
                 "Name": "SpikeTrap",
                 "ProtoName": "SpikeTrap",
                 "ClassID": 10015,
-                "StateFlag": 308,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 53.0,
@@ -14696,7 +14696,7 @@
                 "Name": "SpikeTrap0",
                 "ProtoName": "SpikeTrap",
                 "ClassID": 10015,
-                "StateFlag": 316,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 49.0,
@@ -14755,7 +14755,7 @@
                 "Name": "SpikeTrap1",
                 "ProtoName": "SpikeTrap",
                 "ClassID": 10015,
-                "StateFlag": 316,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 57.0,
@@ -14814,7 +14814,7 @@
                 "Name": "SpikeTrap2",
                 "ProtoName": "SpikeTrap",
                 "ClassID": 10015,
-                "StateFlag": 316,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 57.0,
@@ -14873,7 +14873,7 @@
                 "Name": "SpikeTrap3",
                 "ProtoName": "SpikeTrap",
                 "ClassID": 10015,
-                "StateFlag": 316,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 49.0,

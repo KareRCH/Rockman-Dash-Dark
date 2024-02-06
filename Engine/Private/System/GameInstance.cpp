@@ -722,6 +722,14 @@ void CGameInstance::Play_BGM(const wstring& strGroupKey, const wstring& strSound
 	m_pSoundMgr->Play_BGM(strGroupKey, strSoundKey, fVolume);
 }
 
+void CGameInstance::Play_BGM_LoopRange(const wstring& strGroupKey, const wstring& strSoundKey, _float fVolume, _uint iStart, _uint iEnd)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Play_BGM_LoopRange(strGroupKey, strSoundKey, fVolume, iStart, iEnd);
+}
+
 void CGameInstance::Stop_Sound(CHANNELID eID)
 {
 	if (nullptr == m_pSoundMgr)
@@ -929,12 +937,27 @@ void CGameInstance::Tick_LevelMgr(const _float& fTimeDelta)
 	return m_pLevelMgr->Tick(fTimeDelta);
 }
 
-HRESULT CGameInstance::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel)
+HRESULT CGameInstance::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel, _bool bIsNotLoading)
 {
 	if (nullptr == m_pLevelMgr)
 		return E_FAIL;
 
-	return m_pLevelMgr->Open_Level(iCurrentLevelIndex, pNewLevel);
+
+	return m_pLevelMgr->Open_Level(iCurrentLevelIndex, pNewLevel, bIsNotLoading);
+}
+const _bool CGameInstance::IsLevelTransitioned()
+{
+	if (nullptr == m_pLevelMgr)
+		return false;
+
+	return m_pLevelMgr->IsLevelTransitioned();
+}
+const _bool CGameInstance::IsNotLoadingLevel()
+{
+	if (nullptr == m_pLevelMgr)
+		return false;
+
+	return m_pLevelMgr->IsNotLoadingLevelTransition();
 }
 #pragma endregion
 
@@ -1026,6 +1049,14 @@ void CGameInstance::Set_LevelTag(const wstring& strLevelTag)
 		return;
 
 	m_pObjectMgr->Set_LevelTag(strLevelTag);
+}
+
+const wstring CGameInstance::Get_CurrentLevelTag()
+{
+	if (nullptr == m_pObjectMgr)
+		return wstring();
+
+	return m_pObjectMgr->Get_CurrentLevelTag();
 }
 
 HRESULT CGameInstance::Add_GameObject(CGameObject* pObj)
@@ -1350,6 +1381,22 @@ void CGameInstance::Set_VeiwportSize(_uint iResizeWidth, _uint iResizeHeight)
 		return;
 
 	m_pRenderMgr->Set_ViewportSize(iResizeWidth, iResizeHeight);
+}
+
+void CGameInstance::Set_ShadowViewMatrix(_float4x4 Value)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Set_ShadowViewMatrix(Value);
+}
+
+void CGameInstance::Set_ShadowProjMatrix(_float4x4 Value)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Set_ShadowProjMatrix(Value);
 }
 
 #pragma endregion

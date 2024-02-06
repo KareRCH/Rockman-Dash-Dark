@@ -316,6 +316,12 @@
     <Filter Include="01. System\01. Manager\02. GamePipeline\08. LightMgr\Light">
       <UniqueIdentifier>{2961a4c5-1c9f-4e00-89ad-39dac4f84789}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing\02. Particle_Point">
+      <UniqueIdentifier>{5792fbd2-aee5-4a7f-90c9-5393a308b5ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Utility\02. Component\01. SceneComponent\03. ModelComponent\06. InstancingModelComp">
+      <UniqueIdentifier>{2a3fcad0-b5c5-4c81-af86-f5f6b04df9e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Base.h">
@@ -693,6 +699,12 @@
     </ClInclude>
     <ClInclude Include="Public\System\Frustum.h" />
     <ClInclude Include="Public\Physics\BVHNode.h" />
+    <ClInclude Include="Public\Component\ParticlePointBufferComp.h">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing\02. Particle_Point</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Component\InstancingModelComp.h">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\06. InstancingModelComp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Public\Base.inl">
@@ -998,6 +1010,12 @@
     </ClCompile>
     <ClCompile Include="Private\System\Frustum.cpp" />
     <ClCompile Include="Private\Physics\BVHNode.cpp" />
+    <ClCompile Include="Private\Component\ParticlePointBufferComp.cpp">
+      <Filter>02. Utility\02. Component\03. InternalComponent\01. BufferComponent\08. Instancing\02. Particle_Point</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Component\InstancingModelComp.cpp">
+      <Filter>02. Utility\02. Component\01. SceneComponent\03. ModelComponent\06. InstancingModelComp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Runtime\FX_Deferred.hlsl">

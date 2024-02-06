@@ -196,7 +196,7 @@ HRESULT CMainApp::Open_Level(LEVEL eStartLevelID)
 	if (nullptr == pLevel)
 		return E_FAIL;
 
-	return m_pGI->Open_Level(LEVEL_LOADING, pLevel);
+	return m_pGI->Open_Level(LEVEL_LOADING, pLevel, false);
 }
 
 HRESULT CMainApp::Open_Level(LEVEL eStartLevelID, const wstring& strLevelPath)
@@ -209,5 +209,5 @@ HRESULT CMainApp::Open_Level(LEVEL eStartLevelID, const wstring& strLevelPath)
 	if (nullptr == pLevel)
 		return E_FAIL;
 
-	return m_pGI->Open_Level(LEVEL_LOADING, pLevel);
+	return m_pGI->Open_Level(LEVEL_LOADING, pLevel, false);
 }

@@ -55,6 +55,7 @@ private:
 public:
 	// 오브젝트를 추가할 때 자동으로 추가될 레벨 태그를 설정한다.
 	void				Set_LevelTag(const wstring& strLevelTag);
+	const wstring		Get_CurrentLevelTag();
 	// 게임 오브젝트를 추가한다. 
 	HRESULT				Add_GameObject(class CGameObject* pObj);
 	// 추가 레벨 태그와 함께 게임 오브젝트를 추가한다. 주로 영구적인 객체를 추가할 때 설정한다.

@@ -99,8 +99,8 @@ PS_OUT PS_MAIN_LINEAR(PS_IN In)
     float fFogFactor = saturate((g_fRange - fViewZ) / (g_fRange - g_fStart)) - fFarFogFactor;
     float fBloomExists = ceil(vBlur.a);
     
-    Out.vColor = vector(fFogFactor * vFinal.xyz + (1.f - fFogFactor) * g_vColor.xyz, 1.f) 
-                        + (vBlur + vEffect) * fBloomExists;
+    Out.vColor = vector(fFogFactor * vFinal.xyz + (1.f - fFogFactor) * g_vColor.xyz, 1.f)
+                        + (vBlur + vEffect);// * fBloomExists;
     Out.vColor.a = vFinal.a + (1.f - g_fFarMinFog);
 
     return Out;

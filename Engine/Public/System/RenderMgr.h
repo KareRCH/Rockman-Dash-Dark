@@ -88,6 +88,13 @@ private:
 	_float4x4				m_ViewMatrix, m_ProjMatrix;
 
 public:
+	void Set_ShadowViewMatrix(_float4x4 Value) { m_ShadowViewMatrix = Value; }
+	void Set_ShadowProjMatrix(_float4x4 Value) { m_ShadowProjMatrix = Value; }
+
+private:
+	_float4x4				m_ShadowViewMatrix, m_ShadowProjMatrix;
+
+public:
 	void Enable_PostProcess() { m_bIsPostProcess = true; }
 	void Disable_PostProcess() { m_bIsPostProcess = false; }
 
