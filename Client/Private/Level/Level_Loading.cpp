@@ -52,26 +52,29 @@ void CLevel_Loading::Tick(const _float& fTimeDelta)
 
 	if (m_pLoader->IsFinished())
 	{
-		CLevel* pNewLevel = { nullptr };
-
-		switch (m_eNextLevelID)
+		//if (m_pGI->IsKey_Pressed(DIK_RETURN))
 		{
-		case LEVEL_LOGO:
-			pNewLevel = CLevel_Logo::Create();
-			break;
-		case LEVEL_GAMEPLAY:
-			pNewLevel = CLevel_GamePlay::Create();
-			break;
-		case LEVEL_PARSED:
-			pNewLevel = CLevel_Parsed::Create(m_strParsedLevelDataPath);
-			break;
+			CLevel* pNewLevel = { nullptr };
+
+			switch (m_eNextLevelID)
+			{
+			case LEVEL_LOGO:
+				pNewLevel = CLevel_Logo::Create();
+				break;
+			case LEVEL_GAMEPLAY:
+				pNewLevel = CLevel_GamePlay::Create();
+				break;
+			case LEVEL_PARSED:
+				pNewLevel = CLevel_Parsed::Create(m_strParsedLevelDataPath);
+				break;
+			}
+
+			if (nullptr == pNewLevel)
+				return;
+
+			if (FAILED(m_pGI->Open_Level(m_eNextLevelID, pNewLevel)))
+				return;
 		}
-
-		if (nullptr == pNewLevel)
-			return;
-
-		if (FAILED(m_pGI->Open_Level(m_eNextLevelID, pNewLevel)))
-			return;
 	}
 }
 

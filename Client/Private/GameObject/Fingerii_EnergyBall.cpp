@@ -94,10 +94,30 @@ HRESULT CFingerii_EnergyBall::Render()
 	m_pModelComp->Render();
 
 #ifdef _DEBUG
-	GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
+	m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
 	return S_OK;
+}
+
+void CFingerii_EnergyBall::OnCreated()
+{
+	SUPER::OnCreated();
+
+	Set_RenderGroup(ERenderGroup::Blend);
+}
+
+void CFingerii_EnergyBall::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	m_pColliderComp->EnterToPhysics(0);
+
+	if (m_pModelComp)
+	{
+		m_pModelComp->Reset_ActivePass();
+		m_pModelComp->Set_ActivePass(1);
+	}
 }
 
 CFingerii_EnergyBall* CFingerii_EnergyBall::Create()
@@ -155,7 +175,7 @@ HRESULT CFingerii_EnergyBall::Initialize_Component()
 {
 	FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
 	m_pModelComp->Transform().Set_RotationEulerY(XMConvertToRadians(90.f));
-	m_pModelComp->Transform().Set_Scale(_float3(0.3f, 0.3f, 0.3f));
+	m_pModelComp->Transform().Set_Scale(_float3(0.9f, 0.9f, 0.9f));
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelNoAnim.hlsl", SHADER_VTX_MODEL::Elements, SHADER_VTX_MODEL::iNumElements);
 	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_NONANIM, EModelGroupIndex::Permanent, L"Model/Character/RockVolnutt/Buster/Buster.amodel");
 
@@ -165,7 +185,6 @@ HRESULT CFingerii_EnergyBall::Initialize_Component()
 	m_pColliderComp->Set_CollisionEntered_Event(MakeDelegate(this, &ThisClass::OnCollisionEntered));
 	m_pColliderComp->Set_CollisionExited_Event(MakeDelegate(this, &ThisClass::OnCollisionExited));
 	m_pColliderComp->Set_CollisionKinematic();
-	m_pColliderComp->EnterToPhysics(0);
 	m_pColliderComp->Set_CollisionLayer(COLLAYER_ATTACKER);
 	m_pColliderComp->Set_CollisionMask(COLLAYER_CHARACTER);
 

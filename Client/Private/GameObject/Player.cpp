@@ -185,6 +185,9 @@ void CPlayer::Tick(const _float& fTimeDelta)
 {
     SUPER::Tick(fTimeDelta);
 
+    if (m_fHP.fCur <= 0.f)
+        m_fHP.Set_Max();
+
     m_ActionKey.Reset();
     if (m_fInvisibleTime.Increase(fTimeDelta))
         m_bInvisible = false;
@@ -888,7 +891,7 @@ void CPlayer::Input_Weapon(const _float& fTimeDelta)
             ChangeMainWeapon(Cast<EMainWeapon>(ECast(m_eMainWeapon) + 1));
     }
 
-    //if (m_bIsCanUseSubWeapons)
+    if (m_bIsCanUseSubWeapons)
     {
         if (GI()->IsKey_Pressed(DIK_C))
         {

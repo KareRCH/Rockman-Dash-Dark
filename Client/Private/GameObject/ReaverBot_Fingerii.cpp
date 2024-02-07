@@ -740,7 +740,7 @@ void CReaverBot_Fingerii::AIState_Chase(const _float& fTimeDelta)
 {
 	if (m_State_AI.IsState_Entered())
 	{
-		m_fIdleTime.Readjust(4.f);
+		m_fIdleTime.Readjust(3.f);
 	}
 
 	if (m_State_AI.Can_Update())
@@ -756,13 +756,17 @@ void CReaverBot_Fingerii::AIState_Chase(const _float& fTimeDelta)
 			m_ActionKey.Act(EActionKey::LookTarget);
 			m_ActionKey.Act(EActionKey::MoveForward);
 
-			if (m_fIdleTime.Increase(fTimeDelta))
+			_vector vLook = m_pTarget->Transform().Get_PositionVector() - Transform().Get_PositionVector();
+			_float fDistance = XMVector3Length(vLook).m128_f32[0];
+
+			if (m_fIdleTime.Increase(fTimeDelta)
+				|| fDistance < 3.f)
 			{
 				uniform_int_distribution<_uint> RandomPattern(0, 1);
 				switch (RandomPattern(m_RandomNumber))
 				{
 				case 0:
-					m_State_AI.Set_State(EState_AI::Barrier);
+					m_State_AI.Set_State(EState_AI::EnergyBall);
 					break;
 				case 1:
 					m_State_AI.Set_State(EState_AI::EnergyBall);
@@ -857,8 +861,8 @@ void CReaverBot_Fingerii::AIState_EnergyBall(const _float& fTimeDelta)
 			if (fLength <= 3.f)
 			{
 				// 너무 가까우면 배리어를 치러간다.
-				if (m_fIdleTime.Increase(fTimeDelta))
-					m_State_AI.Set_State(EState_AI::Barrier);
+				//if (m_fIdleTime.Increase(fTimeDelta))
+					//m_State_AI.Set_State(EState_AI::Barrier);
 			}
 			if (fLength <= 8.f)
 			{
