@@ -151,8 +151,121 @@ using FDelay = FGauge;
 
 #pragma endregion
 
-
 #pragma region 게이지
+
+/// <summary>
+/// fCur, fMax값을 저장하고, 관련 기능을 가진 객체
+/// </summary>
+class FRangeGauge
+{
+public:
+	explicit FRangeGauge() {}
+	explicit FRangeGauge(_float _fMin, _float _fMax) : 
+		fMax(_fMax), fMin(_fMin) {}
+	FRangeGauge(const FRangeGauge& rhs)
+		: fMin(rhs.fMin), fMax(rhs.fMax), fCur(rhs.fCur), fPrevCur(rhs.fPrevCur) {}
+	~FRangeGauge() = default;
+
+public:
+	_float fMin = {}, fMax = {}, fCur = {};
+private:
+	_float fPrevCur = {};
+
+
+public:
+	// 값 업데이트 및 맥스값 도달시 반환
+	_bool Update(_float value)
+	{
+		fPrevCur = fCur;
+		fCur += value;
+		if (fCur >= fMax)
+		{
+			fCur = fMax;
+			return true;
+		}
+		else if (fCur <= fMin)
+			fCur = fMin;
+
+		return false;
+	}
+
+	_bool Decrease(_float increase)
+	{
+		fPrevCur = fCur;
+		fCur -= increase;
+		if (fCur <= fMin)
+		{
+			fCur = fMin;
+			return true;
+		}
+		else if (fCur >= fMax)
+			fCur = fMax;
+
+		return false;
+	}
+
+	// 현재값 초기화
+	void Reset()
+	{
+		fCur = fMin;
+		fPrevCur = fCur;
+	}
+
+	void Reset(_float vResetValue)
+	{
+		fCur = vResetValue;
+		fPrevCur = fCur;
+	}
+
+	void Set_Max()
+	{
+		Reset(fMax);
+	}
+
+	// fMax 값 재설정 및 현재값 초기화
+	void Readjust(_float _fMin, _float _fMax)
+	{
+		fMin = _fMin;
+		fMax = _fMax;
+		fCur = _float();
+	}
+
+	// 특정 포인트(지점)를 넘어가면 계속 트루
+	_bool IsUpTo(_float point)
+	{
+		return (fCur >= point);
+	}
+
+	// 증가값과 체크하고자 하는 값으로 한번만 지나갈 때를 체크합니다.
+	_bool IsUpTo_Once(_float point, _float increase)
+	{
+		return ((fCur >= point - increase * 0.5f) && (fCur < point + increase * 0.5f));
+	}
+
+	// 맥스일 경우 계속 트루
+	_bool IsMax()
+	{
+		return (fCur >= fMax);
+	}
+
+	// 맥스일 경우 한번만 트루
+	_bool IsMax_Once()
+	{
+		return (fCur >= fMax && fPrevCur != fCur);
+	}
+
+	// 퍼센트 값 반환
+	_float Get_Percent()
+	{
+		return (Cast<_float>(fCur) / Cast<_float>(fMax));
+	}
+};
+
+#pragma endregion
+
+
+
+#pragma region 왕복 게이지
 
 /// <summary>
 /// fCur, fMin, fMax값을 저장하고

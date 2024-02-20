@@ -8,6 +8,7 @@
 #include "GameObject/LoadingScreen.h"
 #include "GameObject/StaticObject.h"
 #include "GameObject/Door_Common.h"
+#include "GameObject/Effect_Particle.h"
 
 
 CWeapon_BusterCannon::CWeapon_BusterCannon()
@@ -69,6 +70,31 @@ void CWeapon_BusterCannon::Tick(const _float& fTimeDelta)
 	{
 		Set_Dead();
 		return;
+	}
+
+	if (m_fParticleTime.Increase(fTimeDelta))
+	{
+		m_fParticleTime.Reset();
+
+		auto pParticle = CEffect_Particle::Create();
+		m_pGI->Add_GameObject(pParticle);
+
+		CEffect_Particle::TParticleDesc Desc = {};
+		Desc.InstancingDesc = {
+			{ 0.f, 0.f, 0.f },	// Center
+			{ 0.3f },			// Range
+			{ 0.025f, 0.075f },	// Speed
+			{ 0.025f, 0.075f },	// Scale
+			{ 0.5f, 1.25f }		// LifeTime
+		};
+		Desc.iNumInstances = 10;
+		Desc.strTexturePath = TEXT("Textures/RockmanDash2/Effects/CommonExplosion/Explosion%d.png");
+		Desc.iNumTextures = 8;
+		Desc.vBlendColor = { 0.f, 0.f, 1.f, 1.f };
+		Desc.fBlendStrength = { 0.7f };
+
+		pParticle->Create_Instancing(Desc);
+		pParticle->Transform().Set_Position(Transform().Get_PositionFloat3());
 	}
 
 	_float3 vfLook = {};
@@ -259,6 +285,26 @@ void CWeapon_BusterCannon::OnCollisionEntered(CGameObject* pDst, const FContact*
 			Create_Effect();
 			Set_Dead();
 			m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("buster_cannon_hit.mp3"), CHANNELID::SOUND_PLAYER3, 2.f);
+
+			auto pParticle = CEffect_Particle::Create();
+			m_pGI->Add_GameObject(pParticle);
+
+			CEffect_Particle::TParticleDesc Desc = {};
+			Desc.InstancingDesc = {
+				{ 0.f, 0.f, 0.f },	// Center
+				{ 1.5f },			// Range
+				{ 10.f, 20.f },	// Speed
+				{ 0.1f, 0.2f },	// Scale
+				{ 0.1f, 0.25f }		// LifeTime
+			};
+			Desc.iNumInstances = 100;
+			Desc.strTexturePath = TEXT("Textures/RockmanDash2/Effects/CommonExplosion/Explosion%d.png");
+			Desc.iNumTextures = 8;
+			Desc.vBlendColor = { 0.f, 0.f, 1.f, 1.f };
+			Desc.fBlendStrength = { 0.7f };
+
+			pParticle->Create_Instancing(Desc);
+			pParticle->Transform().Set_Position(Transform().Get_PositionFloat3());
 		}
 	}
 

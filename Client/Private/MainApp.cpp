@@ -55,7 +55,7 @@ HRESULT CMainApp::Initialize()
 	FAILED_CHECK_RETURN(m_pGI->Add_Font(TEXT("Default"), TEXT("DungGeunMo-30.spritefont")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Add_Font(TEXT("Boss"), TEXT("HeirofLightBold-52.spritefont")), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 60.f), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGI->Create_Frame(L"Frame", 90.f), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_Immediate"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGI->Create_Timer(L"Timer_FPS"), E_FAIL);
@@ -107,19 +107,19 @@ _int CMainApp::Tick(const _float& fTimeDelta)
 		m_iTestLevel++;
 		if (m_iTestLevel == 0)
 		{
-			Open_Level(LEVEL_PARSED, TEXT("Levels/Level1.alevel"));
+			Open_Level(LEVEL_PARSED, TEXT("Levels/TestLevel1.alevel"));
 		}
 		else if (m_iTestLevel == 1)
 		{
-			Open_Level(LEVEL_PARSED, TEXT("Levels/Level2.alevel"));
+			Open_Level(LEVEL_PARSED, TEXT("Levels/TestLevel2.alevel"));
 		}
 		else if (m_iTestLevel == 2)
 		{
-			Open_Level(LEVEL_PARSED, TEXT("Levels/Level3.alevel"));
+			Open_Level(LEVEL_PARSED, TEXT("Levels/TestLevel3.alevel"));
 		}
 		else if (m_iTestLevel == 3)
 		{
-			Open_Level(LEVEL_PARSED, TEXT("Levels/LevelBoss.alevel"));
+			Open_Level(LEVEL_PARSED, TEXT("Levels/TestLevelBoss.alevel"));
 		}
 		else if (m_iTestLevel == 4)
 		{
@@ -196,7 +196,7 @@ HRESULT CMainApp::Open_Level(LEVEL eStartLevelID)
 	if (nullptr == pLevel)
 		return E_FAIL;
 
-	return m_pGI->Open_Level(LEVEL_LOADING, pLevel);
+	return m_pGI->Open_Level(LEVEL_LOADING, pLevel, false);
 }
 
 HRESULT CMainApp::Open_Level(LEVEL eStartLevelID, const wstring& strLevelPath)
@@ -209,5 +209,5 @@ HRESULT CMainApp::Open_Level(LEVEL eStartLevelID, const wstring& strLevelPath)
 	if (nullptr == pLevel)
 		return E_FAIL;
 
-	return m_pGI->Open_Level(LEVEL_LOADING, pLevel);
+	return m_pGI->Open_Level(LEVEL_LOADING, pLevel, false);
 }

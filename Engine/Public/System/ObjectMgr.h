@@ -55,6 +55,7 @@ private:
 public:
 	// 오브젝트를 추가할 때 자동으로 추가될 레벨 태그를 설정한다.
 	void				Set_LevelTag(const wstring& strLevelTag);
+	const wstring		Get_CurrentLevelTag();
 	// 게임 오브젝트를 추가한다. 
 	HRESULT				Add_GameObject(class CGameObject* pObj);
 	// 추가 레벨 태그와 함께 게임 오브젝트를 추가한다. 주로 영구적인 객체를 추가할 때 설정한다.
@@ -64,9 +65,13 @@ public:
 	// 오브젝트의 단순 인덱스 기반 검색, 툴에서 쓰임
 	class CGameObject*	Find_GameObjectByIndex(_uint iIndex);
 	// 이름 검색
-	class CGameObject* Find_GameObjectByName(const wstring& strName);
+	class CGameObject*	Find_GameObjectByName(const wstring& strName);
 	// 해당 레벨 태그가 달린 모든 게임 오브젝트를 반환하다. 툴에서 쓰인다.
 	vector<class CGameObject*> Get_AllGameObjectFromLevel(const wstring& strLevelTag);
+	// 해당 Common 태그가 달린 모든 게임 오브젝트를 정지시킨다.
+	void Pause_ObjectsByCommonTag(const wstring& strCommonTag, _bool bJustTick);
+	// 다시 재생
+	void Resume_ObjectsByCommonTag(const wstring& strCommonTag, _bool bJustTick);
 	// 해당 레벨 태그가 달린 모든 게임 오브젝트를 정지시킨다.
 	void Pause_ObjectsByLevelTag(const wstring& strLevelTag);
 	// 다시 재생

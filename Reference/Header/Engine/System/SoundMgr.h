@@ -62,6 +62,7 @@ public:
 	void Play_Sound(const wstring& strGroupKey, const wstring& strSoundKey, CHANNELID eID, float fVolume);
 	// 브금 재생
 	void Play_BGM(const wstring& strGroupKey, const wstring& strSoundKey, float fVolume);
+	void Play_BGM_LoopRange(const wstring& strGroupKey, const wstring& strSoundKey, float fVolume, _uint fStart, _uint fEnd);
 	// 사운드 정지
 	void Stop_Sound(CHANNELID eID);
 	// 모든 사운드 정지

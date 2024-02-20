@@ -17,6 +17,7 @@
 #include "GameObject/Trigger.h"
 #include "GameObject/InvisibleObject.h"
 #include "GameObject/PillarTrap.h"
+#include "GameObject/SpikeTrap.h"
 
 HRESULT CImGuiWin_ClassBrowser::Initialize()
 {
@@ -125,6 +126,10 @@ void CImGuiWin_ClassBrowser::Layout_Browser(const _float& fTimeDelta)
         {
             m_iSelected_Object = iIndex;
         }
+        if (ImGui::Selectable(u8"13. SpikeTrap", (m_iSelected_Object == ++iIndex), eFlag))
+        {
+            m_iSelected_Object = iIndex;
+        }
 
 		ImGui::EndListBox();
 	}
@@ -189,6 +194,9 @@ void CImGuiWin_ClassBrowser::Create_Object()
         break;
     case 12:
         GI()->Add_GameObject(m_pGameObject = CPillarTrap::Create());
+        break;
+    case 13:
+        GI()->Add_GameObject(m_pGameObject = CSpikeTrap::Create());
         break;
     }
 

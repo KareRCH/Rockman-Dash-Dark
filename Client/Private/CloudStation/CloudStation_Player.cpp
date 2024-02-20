@@ -43,6 +43,45 @@ void CCloudStation_Player::Access_HP(EMode eMode, FGauge& fHP)
     }
 }
 
+void CCloudStation_Player::Access_MainWeapon(EMode eMode, EMainWeapon& Value)
+{
+    switch (eMode)
+    {
+    case EMode::Download:
+        Value = m_eMainWeapon;
+        break;
+    case EMode::Upload:
+        m_eMainWeapon = Value;
+        break;
+    }
+}
+
+void CCloudStation_Player::Access_SubWeapon(EMode eMode, ESubWeapon& Value)
+{
+    switch (eMode)
+    {
+    case EMode::Download:
+        Value = m_eSubWeapon;
+        break;
+    case EMode::Upload:
+        m_eSubWeapon = Value;
+        break;
+    }
+}
+
+void CCloudStation_Player::Access_IsCanUseSubWeapons(EMode eMode, _bool& Value)
+{
+    switch (eMode)
+    {
+    case EMode::Download:
+        Value = m_bIsCanUseSubWeapons;
+        break;
+    case EMode::Upload:
+        m_bIsCanUseSubWeapons = Value;
+        break;
+    }
+}
+
 void CCloudStation_Player::Access_Money(EMode eMode, _uint& iMoney)
 {
     switch (eMode)

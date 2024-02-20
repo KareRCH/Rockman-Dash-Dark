@@ -5,6 +5,7 @@
 #include "Utility/RapidJsonSerial.h"
 #include "GameObject/GameObjectFactory.h"
 #include "GameObject/ComponentFactory.h"
+#include "GameObject/LoadingScreen.h"
 
 #include "process.h"
 

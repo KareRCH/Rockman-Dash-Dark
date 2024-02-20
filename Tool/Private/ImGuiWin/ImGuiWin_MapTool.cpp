@@ -609,8 +609,27 @@ void CImGuiWin_MapTool::Save_Level(const wstring& strSavePath)
 {
     auto vecGameObjects = GI()->Get_AllGameObjectFromLevel(TEXT("MapTool"));
 
+    /* ..\Á¤ÀÇÈÆ\139\Framework\Client\Bin\Resources\Textures\Default.jpg */
+    _tchar		szFullPath[MAX_PATH] = TEXT("");
+
+    wsprintf(szFullPath, strSavePath.c_str());
+
+    /* D:\ */
+    _tchar		szDrive[MAX_PATH] = TEXT("");
+
+    /* Á¤ÀÇÈÆ\139\Framework\Client\Bin\Resources\Textures\ */
+    _tchar		szDirectory[MAX_PATH] = TEXT("");
+
+    /* Default_0 */
+    _tchar		szFileName[MAX_PATH] = TEXT("");
+
+    /* .jpg */
+    _tchar		szExt[MAX_PATH] = TEXT("");
+
+    _wsplitpath_s(szFullPath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
+
     FSerialData LevelData;
-    LevelData.Add_MemberString("Name", "GamePlay");
+    LevelData.Add_MemberString("Name", ConvertToString(szFileName));
 
     FSerialData PrototypeData;
     

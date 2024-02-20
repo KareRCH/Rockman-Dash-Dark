@@ -17,6 +17,8 @@ float g_fAlpha = 1.f;
 float2 g_vMinUV = float2(0.f, 0.f);
 float2 g_vMaxUV = float2(1.f, 1.f);
 
+float2 g_vUVScale = float2(1.f, 1.f);
+
 Texture2D g_Texture;
 
 /* 정점의 변환(월드변환, 뷰변환, 투영변환.)을 수행한다. */
@@ -89,6 +91,32 @@ PS_OUT PS_MAIN(VPS_INOUT In)
 }
 
 
+/* 픽셀셰이더 : 픽셀의 색!!!! 을 결정한다. */
+PS_OUT PS_MAIN_UV_SCALE(VPS_INOUT In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    bool bIsBetween = all(In.vTexcoord >= g_vMinUV) && all(In.vTexcoord <= g_vMaxUV);
+    if (!bIsBetween)
+        discard;
+    
+    float2 vNormalUV = normalize(float2(In.vTexcoord.xy * 2.f - 1.f));
+    float2 vScaledUV = float2(In.vTexcoord.x + vNormalUV.x * g_vUVScale.x,
+                                In.vTexcoord.y + vNormalUV.y * g_vUVScale.y);
+        
+	/* 첫번째 인자의 방식으로 두번째 인자의 위치에 있는 픽셀의 색을 얻어온다. */
+    vector vSourColor = g_Texture.Sample(ClampSampler, vScaledUV);
+    
+    if (vSourColor.a < 0.3f)
+        discard;
+
+    Out.vDiffuse = vSourColor;
+    Out.vDiffuse.a = min(Out.vDiffuse.a, g_fAlpha);
+
+    return Out;
+}
+
+
 technique11 DefaultTechnique
 {
 	/* 내가 원하는 특정 셰이더들을 그리는 모델에 적용한다. */
@@ -116,5 +144,18 @@ technique11 DefaultTechnique
         HullShader = NULL;
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass ClampScale
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend_Add, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+		/* 렌더스테이츠 */
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_UV_SCALE();
     }
 }

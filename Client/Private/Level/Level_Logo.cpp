@@ -7,6 +7,8 @@
 #include "Component/RectBufferComp.h"
 #include "Component/EffectComponent.h"
 #include "Component/TextureComponent.h"
+#include "GameObject/TitleScreen.h"
+#include "GameObject/UI_FadeIn.h"
 
 CLevel_Logo::CLevel_Logo()
 {
@@ -25,7 +27,8 @@ void CLevel_Logo::Tick(const _float& fTimeDelta)
 {
 	if (m_pGI->IsKey_Pressed(DIK_RETURN))
 	{
-		if (FAILED(m_pGI->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(LEVEL_PARSED, GI()->Get_TextureMainPath() + TEXT("Levels/GamePlay.alevel")))))
+		if (FAILED(m_pGI->Open_Level(LEVEL_LOADING, 
+			CLevel_Loading::Create(LEVEL_PARSED, GI()->Get_TextureMainPath() + TEXT("Levels/GamePlay.alevel")), false)))
 			return;
 	}
 }
@@ -59,16 +62,11 @@ HRESULT CLevel_Logo::Ready_Objects()
 
 	m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("01. Title Screen.mp3"), 1.f);
 
-	CLoadingScreen* pLoadingScreen = { nullptr };
-
-	if (FAILED(m_pGI->Add_GameObject(pLoadingScreen = CLoadingScreen::Create())))
+	if (FAILED(m_pGI->Add_GameObject(CTitleScreen::Create())))
 		return E_FAIL;
 
-	CPlaneModelComp* pModel = pLoadingScreen->Get_Component<CPlaneModelComp>(TEXT("LoadingScreen"));
-	_float fX = 1024.f * (g_iWindowSizeX / 660.f);
-	_float fY = 660.f * (g_iWindowSizeY / 512.f);
-	pModel->Transform().Set_Scale(XMVectorSet(fX, fY, 1.f, 0.f));
-	pModel->Transform().Set_Position(XMVectorSet(0.f, 0.f, 10.f, 1.f));
+	if (FAILED(m_pGI->Add_GameObject(CUI_FadeIn::Create())))
+		return E_FAIL;
 
 	_uint iID = 0;
 	TLIGHT_DESC			LightDesc{};

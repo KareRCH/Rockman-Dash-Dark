@@ -96,7 +96,7 @@ HRESULT CWeapon_SpreadBuster::Render()
 		_float fStrength = 1.f;
 
 		_float4 vColor = {
-			1.0f, 1.f, 1.f, 1.f
+			0.7f, 1.f, 1.f, 1.f
 		};
 
 		pEffectComp->Bind_RawValue("g_vColorAdd", VPCast(&vColor), sizeof(_float4));
@@ -218,7 +218,7 @@ void CWeapon_SpreadBuster::OnCollisionEntered(CGameObject* pDst, const FContact*
 		if (CTeamAgentComp::ERelation::Hostile ==
 			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
 		{
-			pEnemy->Damage_HP(1.f);
+			pEnemy->Damage_HP(0.25f);
 			Create_Effect();
 			Set_Dead();
 		}

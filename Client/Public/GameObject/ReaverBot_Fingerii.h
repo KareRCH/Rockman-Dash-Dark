@@ -79,7 +79,7 @@ public:
 
 private:
 	_float m_fMoveSpeed = { 3.f };
-
+	_float m_fTurnRadian = { 0.f };
 
 private:
 	void Dead_Effect();

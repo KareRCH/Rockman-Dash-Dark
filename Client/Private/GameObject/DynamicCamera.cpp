@@ -115,7 +115,7 @@ HRESULT CDynamicCamera::Render()
 
 void CDynamicCamera::BeginPlay()
 {
-    m_pTarget = GI()->Find_GameObjectByName(TEXT("Player"));
+    m_pTarget = m_pGI->Find_GameObjectByName(TEXT("Player"));
     if (nullptr != m_pTarget)
     {
         Safe_AddRef(m_pTarget);
@@ -127,7 +127,7 @@ void CDynamicCamera::BeginPlay()
         Transform().Set_Transform(matTransform);
         Apply_ViewProjMatrix();
 
-        GI()->Toggle_LockMouseCenter();
+        m_pGI->OnOff_LockMouseCenter(true);
     }
     else
     {

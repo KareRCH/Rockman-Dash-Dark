@@ -90,14 +90,14 @@ private:
 	_float m_fMoveSpeed = { 5.f };
 
 public:
-	enum class EActionKey : _uint { MoveForward, MoveBackward, TurnRight, TurnLeft, LookTarget, Smash, WalkAndSmash, Size };
+	enum class EActionKey : _uint { MoveForward, MoveBackward, TurnRight, TurnLeft, LookTarget, Smash, WalkAndSmash, Dobal, SmashAll, Size };
 
 private:
 	ACTION_SET<EActionKey>	m_ActionKey;
 	_bool					m_bCanControl = { true };
 
 public:
-	enum class EState_Act { Idle, Walk, Ready_Smash, Smash, WalkAndSmash, Damaged, Dead, Stopped };
+	enum class EState_Act { Idle, Walk, Ready_Smash, Smash, WalkAndSmash, Damaged, Dead, Stopped, Dobal, DobalEnd };
 
 	void Register_State();
 
@@ -116,9 +116,11 @@ private:
 	void ActState_Damaged(const _float& fTimeDelta);
 	void ActState_Dead(const _float& fTimeDelta);
 	void ActState_Stopped(const _float& fTimeDelta);
+	void ActState_Dobal(const _float& fTimeDelta);
+	void ActState_DobalEnd(const _float& fTimeDelta);
 
 public:
-	enum class EState_AI { Idle, Chase, Smash, WalkAndSmash, WalkAndSmash_LookAt, OverHit, Dead, Escape };
+	enum class EState_AI { Idle, Chase, Smash, WalkAndSmash, WalkAndSmash_LookAt, OverHit, Dead, Escape, SmashAll };
 
 private:		// 약식 상태머신
 	using SState_AI = STATE_SET<EState_AI, void(ThisClass*, const _float&)>;
@@ -136,6 +138,7 @@ private:
 	void AIState_WalkAndSmash(const _float& fTimeDelta);
 	void AIState_WalkAndSmash_LookAt(const _float& fTimeDelta);
 	void AIState_OverHit(const _float& fTimeDelta);
+	void AIState_SmashAll(const _float& fTimeDelta);
 	void AIState_Dead(const _float& fTimeDelta);
 
 private:

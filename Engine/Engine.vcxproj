@@ -241,9 +241,11 @@
     <ClInclude Include="Public\Component\CylinderModelComp.h" />
     <ClInclude Include="Public\Component\Data\NaviCell.h" />
     <ClInclude Include="Public\Component\Data\NaviRegion.h" />
+    <ClInclude Include="Public\Component\InstancingModelComp.h" />
     <ClInclude Include="Public\Component\MeshComp.h" />
     <ClInclude Include="Public\Component\NaviCellBufferComp.h" />
     <ClInclude Include="Public\Component\NavigationComponent.h" />
+    <ClInclude Include="Public\Component\ParticlePointBufferComp.h" />
     <ClInclude Include="Public\Component\PivotComponent.h" />
     <ClInclude Include="Public\Component\PlaneModelComp.h" />
     <ClInclude Include="Public\Component\TerrainBufferComp.h" />
@@ -376,9 +378,11 @@
     <ClCompile Include="Private\Component\CylinderModelComp.cpp" />
     <ClCompile Include="Private\Component\Data\NaviCell.cpp" />
     <ClCompile Include="Private\Component\Data\NaviRegion.cpp" />
+    <ClCompile Include="Private\Component\InstancingModelComp.cpp" />
     <ClCompile Include="Private\Component\MeshComp.cpp" />
     <ClCompile Include="Private\Component\NaviCellBufferComp.cpp" />
     <ClCompile Include="Private\Component\NavigationComponent.cpp" />
+    <ClCompile Include="Private\Component\ParticlePointBufferComp.cpp" />
     <ClCompile Include="Private\Component\PipelineComp.cpp" />
     <ClCompile Include="Private\Component\ColliderComponent.cpp" />
     <ClCompile Include="Private\Component\ColorShaderComp.cpp" />

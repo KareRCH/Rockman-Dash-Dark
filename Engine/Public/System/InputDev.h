@@ -59,6 +59,10 @@ public:
 	{
 		m_bLockMouseCenter = !m_bLockMouseCenter;
 	}
+	void		OnOff_LockMouseCenter(_bool bIsOnOff)
+	{
+		m_bLockMouseCenter = bIsOnOff;
+	}
 
 private:
 	_bool		m_bLockMouseCenter = false;

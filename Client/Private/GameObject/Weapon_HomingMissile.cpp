@@ -9,6 +9,7 @@
 #include "GameObject/Door_Common.h"
 #include "GameObject/Effect_Explosion.h"
 #include "GameObject/DamageCollision.h"
+#include "GameObject/Effect_Particle.h"
 
 
 CWeapon_HomingMissile::CWeapon_HomingMissile()
@@ -95,6 +96,31 @@ void CWeapon_HomingMissile::Tick(const _float& fTimeDelta)
 
 	Transform().MoveForward(m_fSpeed * fTimeDelta);
 	//Transform().TurnRight(XMConvertToRadians(360.f * 10.f * fTimeDelta));
+
+	if (m_fSmokeTime.Increase(fTimeDelta))
+	{
+		m_fSmokeTime.Reset();
+
+		auto pParticle = CEffect_Particle::Create();
+		m_pGI->Add_GameObject(pParticle);
+
+		CEffect_Particle::TParticleDesc Desc = {};
+		Desc.InstancingDesc = {
+			{ 0.f, 0.f, 0.f },	// Center
+			{ 0.05f },			// Range
+			{ 0.025f, 0.075f },	// Speed
+			{ 0.025f, 0.075f },	// Scale
+			{ 0.5f, 1.25f }		// LifeTime
+		};
+		Desc.iNumInstances = 10;
+		Desc.strTexturePath = TEXT("Textures/RockmanDash2/Effects/CommonExplosion/Explosion%d.png");
+		Desc.iNumTextures = 8;
+		Desc.vBlendColor = { 1.f, 1.f, 1.f, 1.f };
+		Desc.fBlendStrength = { 1.f };
+
+		pParticle->Create_Instancing(Desc);
+		pParticle->Transform().Set_Position(Transform().Get_PositionFloat3());
+	}
 
 	m_pColliderComp->Tick(fTimeDelta);
 }
@@ -237,7 +263,7 @@ void CWeapon_HomingMissile::OnCollisionEntered(CGameObject* pDst, const FContact
 		if (CTeamAgentComp::ERelation::Hostile ==
 			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
 		{
-			pEnemy->Damage_HP(1.f);
+			pEnemy->Damage_HP(3.f);
 			Create_Effect();
 			Set_Dead();
 		}
@@ -298,12 +324,11 @@ CCharacter_Common* CWeapon_HomingMissile::Find_Target(_float fRange)
 			{
 				_float fDot = XMVector3Dot(XMVector3Normalize(pObj->Transform().Get_PositionVector() - Transform().Get_PositionVector()),
 					Transform().Get_LookNormalizedVector()).m128_f32[0];
-				_float fDir = XMVectorGetX(XMVector3Dot(Transform().Get_RightNormalizedVector(), Transform().Get_LookNormalizedVector()));
 				_float fRadian = acosf(fDot);
 				if (isnan(fRadian))
 					fRadian = 0.f;
 
-				if (fRadian < XMConvertToRadians(45.f) && fDir >= 0)
+				if (fRadian < XMConvertToRadians(60.f) && fDot > 0.f)
 				{
 					fDistance = fObjDistance;
 					pClosestObj = pObj;

@@ -131,8 +131,16 @@ void CReaverBot_HanmuruDoll::Tick(const _float& fTimeDelta)
         if (m_fPhase == 0)
         {
             m_fPhase = 1;
-            m_fHP = FGauge(40.f, true);
-            m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("08. Calinca - Tundra Reaverbots.mp3"), 1.f);
+            m_fHP = FGauge(50.f, true);
+            m_State_Act.Set_State(EState_Act::Damaged);
+            
+        }
+        else if (m_fPhase == 1)
+        {
+            m_fPhase = 2;
+            m_fHP = FGauge(160.f, true);
+            m_State_Act.Set_State(EState_Act::Dobal);
+            m_State_AI.Set_State(EState_AI::OverHit);
         }
     }
 
@@ -176,13 +184,21 @@ HRESULT CReaverBot_HanmuruDoll::Render()
     {
         auto pEffectComp = m_pModelComp->EffectComp();
 
+        _float4 vColor = {
+            1.f, 1.f, 1.f, 1.f
+        };
+        
+        if (m_bIsDead)
+            vColor = {};
+
+        pEffectComp->Bind_RawValue("g_vColorAdd", VPCast(&vColor), sizeof(_float4));
         pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&m_fHitStrength), sizeof(_float));
 
         m_pModelComp->Render();
     }
 
 #ifdef _DEBUG
-    GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
+    m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
     return S_OK;
@@ -421,7 +437,7 @@ void CReaverBot_HanmuruDoll::DeadEffect()
         return;
 
     uniform_real_distribution<_float> RandomPosX(-2.5f, 2.5f);
-    uniform_real_distribution<_float> RandomPosY(0.f, 1.f);
+    uniform_real_distribution<_float> RandomPosY(0.f, 4.f);
     uniform_real_distribution<_float> RandomPosZ(-2.5f, 2.5f);
     pEffect->Transform().Set_Position(Transform().Get_PositionVector()
         + XMVectorSet(RandomPosX(m_RandomNumber), RandomPosY(m_RandomNumber), RandomPosZ(m_RandomNumber), 0.f));
@@ -441,6 +457,8 @@ void CReaverBot_HanmuruDoll::Register_State()
     m_State_Act.Add_Func(EState_Act::Damaged, &ThisClass::ActState_Damaged);
     m_State_Act.Add_Func(EState_Act::Dead, &ThisClass::ActState_Dead);
     m_State_Act.Add_Func(EState_Act::Stopped, &ThisClass::ActState_Stopped);
+    m_State_Act.Add_Func(EState_Act::Dobal, &ThisClass::ActState_Dobal);
+    m_State_Act.Add_Func(EState_Act::DobalEnd, &ThisClass::ActState_DobalEnd);
     m_State_Act.Set_State(EState_Act::Idle);
 
     m_State_AI.Add_Func(EState_AI::Idle, &ThisClass::AIState_Idle);
@@ -450,6 +468,7 @@ void CReaverBot_HanmuruDoll::Register_State()
     m_State_AI.Add_Func(EState_AI::WalkAndSmash_LookAt, &ThisClass::AIState_WalkAndSmash_LookAt);
     m_State_AI.Add_Func(EState_AI::OverHit, &ThisClass::AIState_OverHit);
     m_State_AI.Add_Func(EState_AI::Dead, &ThisClass::AIState_Dead);
+    m_State_AI.Add_Func(EState_AI::SmashAll, &ThisClass::AIState_SmashAll);
     m_State_AI.Set_State(EState_AI::Idle);
 }
 
@@ -549,7 +568,7 @@ void CReaverBot_HanmuruDoll::ActState_Smash(const _float& fTimeDelta)
         // 원상태로 돌아감
         if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
         {
-            if (m_fPhase == 0)
+            if (m_fPhase == 0 || m_fPhase == 1)
                 Create_DamageCollision();
             else
                 Create_DamageCollisionBig();
@@ -579,7 +598,10 @@ void CReaverBot_HanmuruDoll::ActState_WalkAndSmash(const _float& fTimeDelta)
 
         if (m_fWalkAndSmash.Increase(fTimeDelta))
         {
-            Create_DamageCollision();
+            if (!m_ActionKey.IsAct(EActionKey::SmashAll))
+                Create_DamageCollision();
+            else
+                Create_DamageCollisionBig();
             m_fWalkAndSmash.Reset();
         }
 
@@ -598,7 +620,7 @@ void CReaverBot_HanmuruDoll::ActState_Damaged(const _float& fTimeDelta)
 {
     if (m_State_Act.IsState_Entered())
     {
-        m_pModelComp->Set_Animation(3, 1.f, true);
+        m_pModelComp->Set_Animation(3, 1.f, false);
     }
 
     if (m_State_Act.Can_Update())
@@ -611,7 +633,7 @@ void CReaverBot_HanmuruDoll::ActState_Damaged(const _float& fTimeDelta)
 
     if (m_State_Act.IsState_Exit())
     {
-
+        
     }
 }
 
@@ -623,6 +645,7 @@ void CReaverBot_HanmuruDoll::ActState_Dead(const _float& fTimeDelta)
         m_fDeadEffect.Reset();
         m_fDeadTime.Reset();
         m_pGI->Stop_Sound(SOUND_BGM);
+        m_bIsDead = true;
     }
 
     if (m_State_Act.Can_Update())
@@ -665,6 +688,48 @@ void CReaverBot_HanmuruDoll::ActState_Stopped(const _float& fTimeDelta)
     if (m_State_Act.Can_Update())
     {
 
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+void CReaverBot_HanmuruDoll::ActState_Dobal(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(6, 1.f, false);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::DobalEnd);
+        }
+    }
+
+    if (m_State_Act.IsState_Exit())
+    {
+
+    }
+}
+void CReaverBot_HanmuruDoll::ActState_DobalEnd(const _float& fTimeDelta)
+{
+    if (m_State_Act.IsState_Entered())
+    {
+        m_pModelComp->Set_Animation(6, 1.f, false, true);
+    }
+
+    if (m_State_Act.Can_Update())
+    {
+
+        if (m_pModelComp->AnimationComp()->IsAnimation_Finished())
+        {
+            m_State_Act.Set_State(EState_Act::Idle);
+        }
     }
 
     if (m_State_Act.IsState_Exit())
@@ -732,7 +797,7 @@ void CReaverBot_HanmuruDoll::AIState_Chase(const _float& fTimeDelta)
             _float fFindDistance = 4.f;
             _float fWalkAndSmashDistance = 5.f;
             _bool   bIsInverse = false;
-            if (m_fPhase == 1)
+            if (m_fPhase == 2)
             {
                 fFindDistance = 10.f;
                 fWalkAndSmashDistance = -5.f;
@@ -758,7 +823,14 @@ void CReaverBot_HanmuruDoll::AIState_Chase(const _float& fTimeDelta)
                 if (m_fIdleTime.Increase(fTimeDelta))
                 {
                     if (fDistance < fFindDistance + fWalkAndSmashDistance)
-                        m_State_AI.Set_State(EState_AI::WalkAndSmash_LookAt);
+                    {
+                        uniform_real_distribution<_float> Random(0.f, 1.0f);
+
+                        if (Random(m_RandomNumber) > 0.3f && m_fPhase != 2)
+                            m_State_AI.Set_State(EState_AI::WalkAndSmash_LookAt);
+                        else
+                            m_State_AI.Set_State(EState_AI::SmashAll);
+                    }
                     else
                         m_State_AI.Set_State(EState_AI::Smash);
                 }
@@ -778,6 +850,8 @@ void CReaverBot_HanmuruDoll::AIState_Smash(const _float& fTimeDelta)
     {
         if (m_fPhase == 0)
             m_fIdleTime.Readjust(4.f);
+        else if (m_fPhase == 1)
+            m_fIdleTime.Readjust(2.5f);
         else
             m_fIdleTime.Readjust(1.f);
         m_ActionKey.Act(EActionKey::Smash);
@@ -848,16 +922,40 @@ void CReaverBot_HanmuruDoll::AIState_OverHit(const _float& fTimeDelta)
 {
     if (m_State_AI.IsState_Entered())
     {
-        m_fIdleTime.Reset();
+        m_fIdleTime.Readjust(3.f);
     }
 
     if (m_State_AI.Can_Update())
     {
-        // 현재 필드에서 땅속으로 탈출한다.
+        if (m_fIdleTime.Increase(fTimeDelta))
+        {
+            m_State_AI.Set_State(EState_AI::Idle);
+        }
+    }
+
+    if (m_State_AI.IsState_Exit())
+    {
+        m_pGI->Play_BGM(TEXT("RockmanDash2"), TEXT("24. Manda - Gargarfummi.mp3"), 1.f);
+    }
+}
+
+void CReaverBot_HanmuruDoll::AIState_SmashAll(const _float& fTimeDelta)
+{
+    if (m_State_AI.IsState_Entered())
+    {
+        m_fIdleTime.Readjust(3.f);
+    }
+
+    if (m_State_AI.Can_Update())
+    {
+        // 전체 공격기
+        m_ActionKey.Act(EActionKey::SmashAll);
+        m_ActionKey.Act(EActionKey::WalkAndSmash);
+        m_ActionKey.Act(EActionKey::LookTarget);
 
         if (m_fIdleTime.Increase(fTimeDelta))
         {
-
+            m_State_AI.Set_State(EState_AI::Idle);
         }
     }
 

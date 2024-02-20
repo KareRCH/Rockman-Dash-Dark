@@ -7,6 +7,7 @@
 #include "GameObject/DamageCollision.h"
 #include "GameObject/StaticObject.h"
 #include "GameObject/Door_Common.h"
+#include "GameObject/Effect_Particle.h"
 
 
 CWeapon_HyperShell::CWeapon_HyperShell()
@@ -69,6 +70,31 @@ void CWeapon_HyperShell::Tick(const _float& fTimeDelta)
 		Set_Dead();
 		Create_Effect();
 		return;
+	}
+
+	if (m_fParticleTime.Increase(fTimeDelta))
+	{
+		m_fParticleTime.Reset();
+
+		auto pParticle = CEffect_Particle::Create();
+		m_pGI->Add_GameObject(pParticle);
+
+		CEffect_Particle::TParticleDesc Desc = {};
+		Desc.InstancingDesc = {
+			{ 0.f, 0.f, 0.f },	// Center
+			{ 0.5f },			// Range
+			{ 0.25f, 0.75f },	// Speed
+			{ 0.025f, 0.075f },	// Scale
+			{ 0.5f, 1.25f }		// LifeTime
+		};
+		Desc.iNumInstances = 10;
+		Desc.strTexturePath = TEXT("Textures/RockmanDash2/Effects/CommonExplosion/Explosion%d.png");
+		Desc.iNumTextures = 8;
+		Desc.vBlendColor = { 1.f, 1.f, 0.f, 1.f };
+		Desc.fBlendStrength = { 0.3f };
+
+		pParticle->Create_Instancing(Desc);
+		pParticle->Transform().Set_Position(Transform().Get_PositionFloat3());
 	}
 
 	m_fSpeed += 30.f * fTimeDelta;
@@ -219,7 +245,7 @@ void CWeapon_HyperShell::OnCollisionEntered(CGameObject* pDst, const FContact* p
 		if (CTeamAgentComp::ERelation::Hostile ==
 			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
 		{
-			pEnemy->Damage_HP(1.f);
+			pEnemy->Damage_HP(3.f);
 			Create_Effect();
 			Set_Dead();
 		}

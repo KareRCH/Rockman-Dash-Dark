@@ -119,6 +119,11 @@ HRESULT CRenderMgr::Initialize(const _uint iWidth, const _uint iHeight)
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_vecViewport[0].Width, m_vecViewport[0].Height, 0.f, 1.f));
 
 
+
+	XMStoreFloat4x4(&m_ShadowViewMatrix, XMMatrixLookAtLH(XMVectorSet(40.f, 30.f, 40.f, 1.f), XMVectorSet(40.f, 0.f, 40.f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f)));
+	XMStoreFloat4x4(&m_ShadowProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), 1280.0f / 720.0f, 0.1f, 300.f));
+
+
 #pragma region 스텐실 뷰
 	if (nullptr == m_pDevice)
 		return E_FAIL;
@@ -259,7 +264,22 @@ void CRenderMgr::Add_RenderGroup(ERenderGroup eType, CGameObject* pGameObject)
 		(0U > Cast<_uint>(eType) || ERenderGroup::Size <= eType))
 		return;
 
-	m_RenderGroup[ECast(eType)].push_back(pGameObject);
+	if (eType != ERenderGroup::UI && eType != ERenderGroup::PostProcess)
+		m_RenderGroup[ECast(eType)].push_back(pGameObject);
+	else
+	{
+		// UI의 경우 우선도 기반 정렬을 한다.
+		auto& RenderGroup = m_RenderGroup[ECast(eType)];
+		_float fPriority = pGameObject->Get_Priority(Cast<_uint>(EGObjTickPriority::Render));
+		auto iter = lower_bound(RenderGroup.begin(), RenderGroup.end(), fPriority,
+			[](CGameObject* const pObj, _float fPriority) {
+				return (pObj->Get_Priority(Cast<_uint>(EGObjTickPriority::Render)) >= fPriority);
+			});
+		if (iter != RenderGroup.end())
+			RenderGroup.insert(iter, pGameObject);
+		else
+			RenderGroup.push_back(pGameObject);
+	}
 	Safe_AddRef(pGameObject);
 }
 
@@ -458,14 +478,9 @@ HRESULT CRenderMgr::Render_Deferred()
 	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	_float4x4		ViewMatrix, ProjMatrix;
-
-	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(40.f, 30.f, 40.f, 1.f), XMVectorSet(40.f, 0.f, 40.f, 1.f), XMVectorSet(0.f, 0.f, 1.f, 0.f)));
-	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), 1280.0f / 720.0f, 0.1f, 300.f));
-
-	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_LightViewMatrix", &ViewMatrix)))
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_LightViewMatrix", &m_ShadowViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_LightProjMatrix", &ProjMatrix)))
+	if (FAILED(m_pEffect[ECast(EEffect::Deferred)]->Bind_Matrix("g_LightProjMatrix", &m_ShadowProjMatrix)))
 		return E_FAIL;
 
 	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Diffuse"), m_pEffect[ECast(EEffect::Deferred)], "g_DiffuseTexture")))
@@ -581,11 +596,11 @@ HRESULT CRenderMgr::Render_Fog()
 		&(vCamPos = PipelineComp().Get_CamPositionFloat4(ECamType::Persp, ECamNum::One)), sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::PostProcess)], "g_DepthTexture")))
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Depth"), m_pEffect[ECast(EEffect::PostProcess)], "g_DepthTexture")))
 		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Final"), m_pEffect[ECast(EEffect::PostProcess)], "g_FinalTexture")))
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Final"), m_pEffect[ECast(EEffect::PostProcess)], "g_FinalTexture")))
 		return E_FAIL;
-	if (FAILED(GI()->Bind_RenderTarget_ShaderResource(TEXT("Target_Blur_Y"), m_pEffect[ECast(EEffect::PostProcess)], "g_BlurTexture")))
+	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Blur_Y"), m_pEffect[ECast(EEffect::PostProcess)], "g_BlurTexture")))
 		return E_FAIL;
 	if (FAILED(m_pGI->Bind_RenderTarget_ShaderResource(TEXT("Target_Effect"), m_pEffect[ECast(EEffect::PostProcess)], "g_EffectTexture")))
 		return E_FAIL;
@@ -595,9 +610,6 @@ HRESULT CRenderMgr::Render_Fog()
 	m_pVIBuffer->Bind_Buffer();
 
 	m_pVIBuffer->Render_Buffer();
-
-	ID3D11ShaderResourceView* pSRV = { nullptr };
-	m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
 
 	return S_OK;
 }

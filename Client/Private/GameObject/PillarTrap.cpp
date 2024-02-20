@@ -6,7 +6,6 @@
 CPillarTrap::CPillarTrap()
 {
     Set_Name(TEXT("PillarTrap"));
-    Set_RenderGroup(ERenderGroup::NonBlend);
 }
 
 CPillarTrap::CPillarTrap(const CPillarTrap& rhs)
@@ -21,8 +20,8 @@ HRESULT CPillarTrap::Initialize_Prototype()
     FAILED_CHECK_RETURN(Add_Component(L"Model", m_pModelComp = CCommonModelComp::Create()), E_FAIL);
     m_pModelComp->Transform().Set_RotationFixedX(XMConvertToRadians(90.f));
     m_pModelComp->Transform().Set_RotationFixedY(XMConvertToRadians(180.f));
-    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelNoAnim.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
-    m_pModelComp->Bind_Model(CCommonModelComp::TYPE_NONANIM, EModelGroupIndex::Permanent, L"Model/Map/Object/Trap/PillarTrap.amodel");
+    m_pModelComp->Bind_Effect(L"Runtime/FX_ModelNoAnim.hlsl", SHADER_VTX_MODEL::Elements, SHADER_VTX_MODEL::iNumElements);
+    m_pModelComp->Bind_Model(CCommonModelComp::TYPE_NONANIM, EModelGroupIndex::Permanent, L"Model/Object/Trap/PillarTrap.amodel");
 
     FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);
     m_pColliderComp->Set_Collision_Event(MakeDelegate(this, &ThisClass::OnCollision));
@@ -72,6 +71,11 @@ HRESULT CPillarTrap::Initialize_Prototype(FSerialData& InputData)
             break;
         }
     }
+
+    _uint iTemp = {};
+    InputData.Get_Data("TrapType", iTemp);
+    m_eTrapType = Cast<ETrapType>(iTemp);
+    InputData.Get_Data("Range", m_fRadiusRange);
 
     return S_OK;
 }

@@ -69,6 +69,10 @@ HRESULT CTrigger::Initialize_Prototype(FSerialData& InputData)
 		}
 	}
 
+	_uint iType = { 0 };
+	InputData.Get_Data("Type", iType);
+	m_eTriggerType = Cast<EType>(iType);
+
 	return S_OK;
 }
 
@@ -99,6 +103,14 @@ void CTrigger::Priority_Tick(const _float& fTimeDelta)
 void CTrigger::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
+
+	switch (m_eTriggerType)
+	{
+	case EType::Sound:
+		m_pGI->Play_BGM_LoopRange(TEXT("RockmanDash2"), TEXT("44. Calbania - Kito Caverns.mp3"), 1.f, 0U, 65'454U);
+		Set_Dead();
+		break;
+	}
 
 	m_pColliderComp->Tick(fTimeDelta);
 }
@@ -245,6 +257,9 @@ HRESULT CTrigger::Initialize_Component(FSerialData& InputData)
 		}
 	}
 
+	_uint iType = { 0 };
+	InputData.Get_Data("Type", iType);
+	m_eTriggerType = Cast<EType>(iType);
 
 	return S_OK;
 }

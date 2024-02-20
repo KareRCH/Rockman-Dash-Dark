@@ -1,5 +1,5 @@
 {
-    "Name": "GamePlay",
+    "Name": "Level1_1",
     "Prototypes": {
         "Components": [
             {
@@ -92,45 +92,6 @@
                 "ComponentID": 9,
                 "Name": "TeamAgentComp",
                 "ProtoName": "EnemyTeamAgent"
-            },
-            {
-                "ComponentID": 2,
-                "Name": "Model",
-                "ProtoName": "HorokkoModel",
-                "PosX": 0.0,
-                "PosY": 0.0,
-                "PosZ": 0.0,
-                "RotX": 0.0,
-                "RotY": 180.0,
-                "RotZ": 0.0,
-                "ScaleX": 0.07999999821186066,
-                "ScaleY": 0.07999999821186066,
-                "ScaleZ": 0.07999999821186066,
-                "ActivePasses": [
-                    {
-                        "PassNum": 0
-                    }
-                ],
-                "ModelType": 1,
-                "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
-                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-            },
-            {
-                "ComponentID": 1,
-                "Name": "ColliderComp",
-                "ProtoName": "HorokkoCollider",
-                "PosX": 0.0,
-                "PosY": 0.6000000238418579,
-                "PosZ": 0.0,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 0.800000011920929,
-                "ScaleY": 0.20000000298023224,
-                "ScaleZ": 0.800000011920929,
-                "CollisionType": 2,
-                "CollisionLayer": 1,
-                "CollisionMask": 55
             },
             {
                 "ComponentID": 2,
@@ -375,6 +336,45 @@
                 "CollisionType": 7,
                 "CollisionLayer": 16,
                 "CollisionMask": 0
+            },
+            {
+                "ComponentID": 2,
+                "Name": "Model",
+                "ProtoName": "HorokkoModel",
+                "PosX": 0.0,
+                "PosY": 0.0,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 180.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.07999999821186066,
+                "ScaleY": 0.07999999821186066,
+                "ScaleZ": 0.07999999821186066,
+                "ActivePasses": [
+                    {
+                        "PassNum": 0
+                    }
+                ],
+                "ModelType": 1,
+                "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
+                "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+            },
+            {
+                "ComponentID": 1,
+                "Name": "ColliderComp",
+                "ProtoName": "HorokkoCollider",
+                "PosX": 0.0,
+                "PosY": 0.6000000238418579,
+                "PosZ": 0.0,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 0.800000011920929,
+                "ScaleY": 0.20000000298023224,
+                "ScaleZ": 0.800000011920929,
+                "CollisionType": 2,
+                "CollisionLayer": 1,
+                "CollisionMask": 55
             },
             {
                 "ComponentID": 2,
@@ -1074,70 +1074,6 @@
                 "JumpSpeed": 10.0
             },
             {
-                "Name": "ReaverBot_Horokko",
-                "ProtoName": "Horokko1",
-                "ClassID": 10001,
-                "StateFlag": 1332,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 55.54615783691406,
-                "PosY": 0.0,
-                "PosZ": 125.65484619140625,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": "EnemyTeamAgent"
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "HorokkoModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.07999999821186066,
-                        "ScaleY": 0.07999999821186066,
-                        "ScaleZ": 0.07999999821186066,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "HorokkoCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.6000000238418579,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 0.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.800000011920929,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 0.800000011920929,
-                        "CollisionType": 2,
-                        "CollisionLayer": 1,
-                        "CollisionMask": 55
-                    }
-                ],
-                "HP": 10.0
-            },
-            {
                 "Name": "ReaverBot_Fingerii",
                 "ProtoName": "Fingerii1",
                 "ClassID": 10002,
@@ -1270,7 +1206,7 @@
                 "ProtoName": "HanmuruDoll1",
                 "ClassID": 10009,
                 "StateFlag": 1332,
-                "PriorityTick": 0.0,
+                "PriorityTick": -1.0,
                 "PriorityRender": 0.0,
                 "PosX": 203.0,
                 "PosY": 0.0,
@@ -1507,6 +1443,70 @@
                         "CollisionMask": 0
                     }
                 ]
+            },
+            {
+                "Name": "ReaverBot_Horokko1",
+                "ProtoName": "Horokko1",
+                "ClassID": 10001,
+                "StateFlag": 1332,
+                "PriorityTick": 0.0,
+                "PriorityRender": 0.0,
+                "PosX": 119.78825378417969,
+                "PosY": 0.0,
+                "PosZ": 123.65484619140625,
+                "RotX": 0.0,
+                "RotY": 0.0,
+                "RotZ": 0.0,
+                "ScaleX": 1.0,
+                "ScaleY": 1.0,
+                "ScaleZ": 1.0,
+                "Components": [
+                    {
+                        "ComponentID": 9,
+                        "Name": "TeamAgentComp",
+                        "ProtoName": "EnemyTeamAgent"
+                    },
+                    {
+                        "ComponentID": 2,
+                        "Name": "Model",
+                        "ProtoName": "HorokkoModel",
+                        "PosX": 0.0,
+                        "PosY": 0.0,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 180.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.07999999821186066,
+                        "ScaleY": 0.07999999821186066,
+                        "ScaleZ": 0.07999999821186066,
+                        "ActivePasses": [
+                            {
+                                "PassNum": 0
+                            }
+                        ],
+                        "ModelType": 1,
+                        "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
+                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
+                    },
+                    {
+                        "ComponentID": 1,
+                        "Name": "ColliderComp",
+                        "ProtoName": "HorokkoCollider",
+                        "PosX": 0.0,
+                        "PosY": 0.6000000238418579,
+                        "PosZ": 0.0,
+                        "RotX": 0.0,
+                        "RotY": 0.0,
+                        "RotZ": 0.0,
+                        "ScaleX": 0.800000011920929,
+                        "ScaleY": 0.20000000298023224,
+                        "ScaleZ": 0.800000011920929,
+                        "CollisionType": 2,
+                        "CollisionLayer": 1,
+                        "CollisionMask": 55
+                    }
+                ],
+                "HP": 10.0
             },
             {
                 "Name": "StaticObject037013",
@@ -2501,134 +2501,6 @@
                 "JumpSpeed": 10.0
             },
             {
-                "Name": "ReaverBot_Horokko",
-                "ProtoName": "Horokko1",
-                "ClassID": 10001,
-                "StateFlag": 1332,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 55.54615783691406,
-                "PosY": 0.0,
-                "PosZ": 125.65484619140625,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": "EnemyTeamAgent"
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "HorokkoModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.07999999821186066,
-                        "ScaleY": 0.07999999821186066,
-                        "ScaleZ": 0.07999999821186066,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "HorokkoCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.6000000238418579,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 0.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.800000011920929,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 0.800000011920929,
-                        "CollisionType": 2,
-                        "CollisionLayer": 1,
-                        "CollisionMask": 55
-                    }
-                ],
-                "HP": 10.0
-            },
-            {
-                "Name": "ReaverBot_Horokko0",
-                "ProtoName": "Horokko1",
-                "ClassID": 10001,
-                "StateFlag": 1332,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 57.94525909423828,
-                "PosY": 0.0,
-                "PosZ": 123.5828857421875,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": "EnemyTeamAgent"
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "HorokkoModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.07999999821186066,
-                        "ScaleY": 0.07999999821186066,
-                        "ScaleZ": 0.07999999821186066,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "HorokkoCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.6000000238418579,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 0.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.800000011920929,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 0.800000011920929,
-                        "CollisionType": 2,
-                        "CollisionLayer": 1,
-                        "CollisionMask": 55
-                    }
-                ],
-                "HP": 10.0
-            },
-            {
                 "Name": "ReaverBot_Fingerii",
                 "ProtoName": "Fingerii1",
                 "ClassID": 10002,
@@ -2889,7 +2761,7 @@
                 "ProtoName": "HanmuruDoll1",
                 "ClassID": 10009,
                 "StateFlag": 1332,
-                "PriorityTick": 0.0,
+                "PriorityTick": -1.0,
                 "PriorityRender": 0.0,
                 "PosX": 203.0,
                 "PosY": 0.0,
@@ -3137,134 +3009,6 @@
                 "PosX": 119.78825378417969,
                 "PosY": 0.0,
                 "PosZ": 123.65484619140625,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": "EnemyTeamAgent"
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "HorokkoModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.07999999821186066,
-                        "ScaleY": 0.07999999821186066,
-                        "ScaleZ": 0.07999999821186066,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "HorokkoCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.6000000238418579,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 0.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.800000011920929,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 0.800000011920929,
-                        "CollisionType": 2,
-                        "CollisionLayer": 1,
-                        "CollisionMask": 55
-                    }
-                ],
-                "HP": 10.0
-            },
-            {
-                "Name": "ReaverBot_Horokko00",
-                "ProtoName": "Horokko1",
-                "ClassID": 10001,
-                "StateFlag": 1332,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 47.23650360107422,
-                "PosY": 0.0,
-                "PosZ": 123.5828857421875,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": "EnemyTeamAgent"
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "HorokkoModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.07999999821186066,
-                        "ScaleY": 0.07999999821186066,
-                        "ScaleZ": 0.07999999821186066,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "HorokkoCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.6000000238418579,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 0.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.800000011920929,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 0.800000011920929,
-                        "CollisionType": 2,
-                        "CollisionLayer": 1,
-                        "CollisionMask": 55
-                    }
-                ],
-                "HP": 10.0
-            },
-            {
-                "Name": "ReaverBot_Horokko000",
-                "ProtoName": "Horokko1",
-                "ClassID": 10001,
-                "StateFlag": 1332,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 50.117942810058594,
-                "PosY": 0.0,
-                "PosZ": 125.5828857421875,
                 "RotX": 0.0,
                 "RotY": 0.0,
                 "RotZ": 0.0,
@@ -3915,7 +3659,7 @@
                 "TransitionLevel": "Levels/GamePlay.alevel",
                 "StartPosX": 53.0,
                 "StartPosY": 0.0,
-                "StartPosZ": 128.0,
+                "StartPosZ": 127.0,
                 "StartLookX": 0.0,
                 "StartLookY": 0.0,
                 "StartLookZ": -1.0
@@ -4035,10 +3779,10 @@
                         "CollisionMask": 0
                     }
                 ],
-                "TransitionLevel": "",
-                "StartPosX": 0.0,
+                "TransitionLevel": "Levels/Level1_2.alevel",
+                "StartPosX": 53.0,
                 "StartPosY": 0.0,
-                "StartPosZ": 0.0,
+                "StartPosZ": 137.0,
                 "StartLookX": 0.0,
                 "StartLookY": 0.0,
                 "StartLookZ": 1.0
@@ -8221,70 +7965,6 @@
                         "CollisionMask": 0
                     }
                 ]
-            },
-            {
-                "Name": "ReaverBot_Horokko2",
-                "ProtoName": "Horokko1",
-                "ClassID": 10001,
-                "StateFlag": 1332,
-                "PriorityTick": 0.0,
-                "PriorityRender": 0.0,
-                "PosX": 52.78824996948242,
-                "PosY": 0.0,
-                "PosZ": 123.65484619140625,
-                "RotX": 0.0,
-                "RotY": 0.0,
-                "RotZ": 0.0,
-                "ScaleX": 1.0,
-                "ScaleY": 1.0,
-                "ScaleZ": 1.0,
-                "Components": [
-                    {
-                        "ComponentID": 9,
-                        "Name": "TeamAgentComp",
-                        "ProtoName": "EnemyTeamAgent"
-                    },
-                    {
-                        "ComponentID": 2,
-                        "Name": "Model",
-                        "ProtoName": "HorokkoModel",
-                        "PosX": 0.0,
-                        "PosY": 0.0,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 180.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.07999999821186066,
-                        "ScaleY": 0.07999999821186066,
-                        "ScaleZ": 0.07999999821186066,
-                        "ActivePasses": [
-                            {
-                                "PassNum": 0
-                            }
-                        ],
-                        "ModelType": 1,
-                        "ModelPath": "Model/Character/Reaverbots/Horokko/Horokko.amodel",
-                        "EffectPath": "Runtime/FX_ModelAnim.hlsl"
-                    },
-                    {
-                        "ComponentID": 1,
-                        "Name": "ColliderComp",
-                        "ProtoName": "HorokkoCollider",
-                        "PosX": 0.0,
-                        "PosY": 0.6000000238418579,
-                        "PosZ": 0.0,
-                        "RotX": 0.0,
-                        "RotY": 0.0,
-                        "RotZ": 0.0,
-                        "ScaleX": 0.800000011920929,
-                        "ScaleY": 0.20000000298023224,
-                        "ScaleZ": 0.800000011920929,
-                        "CollisionType": 2,
-                        "CollisionLayer": 1,
-                        "CollisionMask": 55
-                    }
-                ],
-                "HP": 10.0
             },
             {
                 "Name": "ReaverBot_Horokko3",
@@ -14022,10 +13702,10 @@
                 ]
             },
             {
-                "Name": "InvisibleObject12",
+                "Name": "InvisibleObject26",
                 "ProtoName": "InvisibleObject1",
                 "ClassID": 10013,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 54.5,
@@ -14080,10 +13760,10 @@
                 ]
             },
             {
-                "Name": "StaticObject120",
+                "Name": "StaticObject128",
                 "ProtoName": "Wall2",
                 "ClassID": 10004,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 53.0,
@@ -14138,10 +13818,10 @@
                 ]
             },
             {
-                "Name": "InvisibleObject5",
+                "Name": "InvisibleObject27",
                 "ProtoName": "InvisibleObject1",
                 "ClassID": 10013,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 51.5,
@@ -14196,10 +13876,10 @@
                 ]
             },
             {
-                "Name": "Door_Common20",
+                "Name": "Door_Common21",
                 "ProtoName": "Door1",
                 "ClassID": 10010,
-                "StateFlag": 316,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 53.0,
@@ -14261,10 +13941,10 @@
                 "StartLookZ": 1.0
             },
             {
-                "Name": "StaticObject26",
+                "Name": "StaticObject30",
                 "ProtoName": "Wall1_2",
                 "ClassID": 10004,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 47.0,
@@ -14319,10 +13999,10 @@
                 ]
             },
             {
-                "Name": "StaticObject27",
+                "Name": "StaticObject31",
                 "ProtoName": "Wall1_2",
                 "ClassID": 10004,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 59.0,
@@ -14377,10 +14057,10 @@
                 ]
             },
             {
-                "Name": "StaticObject037013131",
+                "Name": "StaticObject37013131",
                 "ProtoName": "Wall1",
                 "ClassID": 10004,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 55.0,
@@ -14435,10 +14115,10 @@
                 ]
             },
             {
-                "Name": "StaticObject03701313",
+                "Name": "StaticObject3701313",
                 "ProtoName": "Wall1",
                 "ClassID": 10004,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 51.0,
@@ -14493,10 +14173,10 @@
                 ]
             },
             {
-                "Name": "StaticObject2",
+                "Name": "StaticObject3",
                 "ProtoName": "Wall2",
                 "ClassID": 10004,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 53.0,
@@ -14551,10 +14231,10 @@
                 ]
             },
             {
-                "Name": "InvisibleObject9",
+                "Name": "InvisibleObject28",
                 "ProtoName": "InvisibleObject1",
                 "ClassID": 10013,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 51.5,
@@ -14609,10 +14289,10 @@
                 ]
             },
             {
-                "Name": "InvisibleObject10",
+                "Name": "InvisibleObject29",
                 "ProtoName": "InvisibleObject1",
                 "ClassID": 10013,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 54.5,
@@ -14667,10 +14347,10 @@
                 ]
             },
             {
-                "Name": "StaticObject03120",
+                "Name": "StaticObject3120",
                 "ProtoName": "BigFloor1",
                 "ClassID": 10004,
-                "StateFlag": 444,
+                "StateFlag": 1460,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 53.0,
@@ -14725,10 +14405,10 @@
                 ]
             },
             {
-                "Name": "Door_Common1",
+                "Name": "Door_Common11",
                 "ProtoName": "Door1",
                 "ClassID": 10010,
-                "StateFlag": 316,
+                "StateFlag": 1332,
                 "PriorityTick": 0.0,
                 "PriorityRender": 0.0,
                 "PosX": 53.0,

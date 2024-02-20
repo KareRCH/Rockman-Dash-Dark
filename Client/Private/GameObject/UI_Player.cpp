@@ -70,8 +70,8 @@ void CUI_Player::Tick(const _float& fTimeDelta)
     
     m_pImage[HP_FRONT]->Set_MinUV({0.f, 1.f - m_fHP.Get_Percent() });
 
-    m_pImage[SUB_USAGE]->Set_MinUV({ 0.f, 1.f - m_fHP.Get_Percent() });
-    m_pImage[SUB_MAIN]->Set_MinUV({ 0.f, 1.f - m_fHP.Get_Percent() });
+    m_pImage[SUB_USAGE]->Set_MinUV({ 0.f, 1.f - 1.f });
+    m_pImage[SUB_MAIN]->Set_MinUV({ 0.f, 1.f - 1.f });
 
 
 

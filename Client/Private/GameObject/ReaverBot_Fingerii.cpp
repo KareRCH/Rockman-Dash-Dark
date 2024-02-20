@@ -172,6 +172,11 @@ HRESULT CReaverBot_Fingerii::Render()
 	{
 		auto pEffectComp = m_pModelComp->EffectComp();
 
+		_float4 vColor = {
+			1.f, 1.f, 1.f, 1.f
+		};
+
+		pEffectComp->Bind_RawValue("g_vColorAdd", VPCast(&vColor), sizeof(_float4));
 		pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&m_fHitStrength), sizeof(_float));
 
 		m_pModelComp->Render();
@@ -188,7 +193,7 @@ void CReaverBot_Fingerii::BeginPlay()
 {
 	SUPER::BeginPlay();
 
-	m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 6.f, 10.f, 6.f };
+	m_vAcceleration = m_vMoveSpeed = m_vMaxMoveSpeed = { 3.f, 10.f, 3.f };
 	m_vAcceleration = { 100.f, g_fGravity, 100.f };
 
 	m_bIsCanGrab = true;
@@ -453,7 +458,7 @@ void CReaverBot_Fingerii::Move_Update(const _float& fTimeDelta)
 
 		if (m_ActionKey.IsAct(EActionKey::LookTarget)
 			&& nullptr != m_pTarget)
-			Transform().Look_At_OnLand(m_pTarget->Transform().Get_PositionVector(), 2.f * fTimeDelta);
+			m_fTurnRadian = Transform().Look_At_OnLand(m_pTarget->Transform().Get_PositionVector(), 2.f * fTimeDelta);
 	}
 }
 
@@ -517,8 +522,10 @@ void CReaverBot_Fingerii::ActState_Idle(const _float& fTimeDelta)
 		// 움직임
 		if (m_ActionKey.IsAct(EActionKey::MoveForward) || m_ActionKey.IsAct(EActionKey::MoveBackward)
 			|| m_ActionKey.IsAct(EActionKey::TurnRight) || m_ActionKey.IsAct(EActionKey::TurnLeft)
-			|| m_ActionKey.IsAct(EActionKey::LookTarget))
+			|| (m_ActionKey.IsAct(EActionKey::LookTarget) && m_fTurnRadian > XMConvertToRadians(10.f * fTimeDelta)))
+		{
 			m_State_Act.Set_State(EState_Act::Walk);
+		}
 	}
 
 	if (m_State_Act.IsState_Exit())
@@ -536,8 +543,6 @@ void CReaverBot_Fingerii::ActState_Walk(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		Move_Update(fTimeDelta);
-
 		// 배리어
 		if (m_ActionKey.IsAct(EActionKey::Barrier))
 			m_State_Act.Set_State(EState_Act::Barrier);
@@ -612,6 +617,7 @@ void CReaverBot_Fingerii::ActState_Dead(const _float& fTimeDelta)
 	if (m_State_Act.IsState_Entered())
 	{
 		m_pModelComp->Set_Animation(2, 2.f, true);
+		m_bIsDead = true;
 	}
 
 	if (m_State_Act.Can_Update())
@@ -642,7 +648,7 @@ void CReaverBot_Fingerii::ActState_Squat(const _float& fTimeDelta)
 
 	if (m_State_Act.Can_Update())
 	{
-		if (m_pModelComp->AnimationComp()->IsAnimation_Range(29.f, 31.f))
+		if (m_pModelComp->AnimationComp()->IsAnimation_Range(25.f, 33.f))
 		{
 			if (m_bIsSquatBonus)
 			{
@@ -734,7 +740,7 @@ void CReaverBot_Fingerii::AIState_Chase(const _float& fTimeDelta)
 {
 	if (m_State_AI.IsState_Entered())
 	{
-		m_fIdleTime.Readjust(4.f);
+		m_fIdleTime.Readjust(3.f);
 	}
 
 	if (m_State_AI.Can_Update())
@@ -750,13 +756,17 @@ void CReaverBot_Fingerii::AIState_Chase(const _float& fTimeDelta)
 			m_ActionKey.Act(EActionKey::LookTarget);
 			m_ActionKey.Act(EActionKey::MoveForward);
 
-			if (m_fIdleTime.Increase(fTimeDelta))
+			_vector vLook = m_pTarget->Transform().Get_PositionVector() - Transform().Get_PositionVector();
+			_float fDistance = XMVector3Length(vLook).m128_f32[0];
+
+			if (m_fIdleTime.Increase(fTimeDelta)
+				|| fDistance < 3.f)
 			{
 				uniform_int_distribution<_uint> RandomPattern(0, 1);
 				switch (RandomPattern(m_RandomNumber))
 				{
 				case 0:
-					m_State_AI.Set_State(EState_AI::Barrier);
+					m_State_AI.Set_State(EState_AI::EnergyBall);
 					break;
 				case 1:
 					m_State_AI.Set_State(EState_AI::EnergyBall);
@@ -851,8 +861,8 @@ void CReaverBot_Fingerii::AIState_EnergyBall(const _float& fTimeDelta)
 			if (fLength <= 3.f)
 			{
 				// 너무 가까우면 배리어를 치러간다.
-				if (m_fIdleTime.Increase(fTimeDelta))
-					m_State_AI.Set_State(EState_AI::Barrier);
+				//if (m_fIdleTime.Increase(fTimeDelta))
+					//m_State_AI.Set_State(EState_AI::Barrier);
 			}
 			if (fLength <= 8.f)
 			{

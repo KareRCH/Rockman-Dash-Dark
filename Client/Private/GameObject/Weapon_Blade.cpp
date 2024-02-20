@@ -3,6 +3,8 @@
 #include "Component/EffectComponent.h"
 #include "Component/CommonModelComp.h"
 #include "Component/ColliderComponent.h"
+#include "GameObject/UI_Blink.h"
+#include "GameObject/Effect_Particle.h"
 
 
 CWeapon_Blade::CWeapon_Blade()
@@ -60,7 +62,7 @@ void CWeapon_Blade::Tick(const _float& fTimeDelta)
 {
 	SUPER::Tick(fTimeDelta);
 
-	if (m_fColor.Increase(360.f * 10.f * fTimeDelta))
+	if (m_fColor.Increase(360.f * 5.f * fTimeDelta))
 		m_fColor.Reset();
 
 	m_pColliderComp->Tick(fTimeDelta);
@@ -86,7 +88,7 @@ HRESULT CWeapon_Blade::Render()
 
 		_float4 vHSV = {
 			m_fColor.fCur / 360.f,
-			1.f, 0.3f, 1.f
+			0.7f, 1.f, 1.f
 		};
 		
 		_vector vSimRGB = XMColorHSVToRGB(XMLoadFloat4(&vHSV));
@@ -210,7 +212,38 @@ void CWeapon_Blade::OnCollisionEntered(CGameObject* pDst, const FContact* pConta
 		if (CTeamAgentComp::ERelation::Hostile ==
 			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
 		{
-			pEnemy->Damage_HP(5.f);
+			pEnemy->Damage_HP(6.f);
+			m_pGI->Add_GameObject(CUI_Blink::Create());
+			m_pGI->Play_Sound(TEXT("RockmanDash2"), TEXT("explosion_small.mp3"), CHANNELID::SOUND_PLAYER3, 1.f);
+
+			auto pParticle = CEffect_Particle::Create();
+			m_pGI->Add_GameObject(pParticle);
+
+			CEffect_Particle::TParticleDesc Desc = {};
+			Desc.InstancingDesc = {
+				{ 0.f, 0.f, 0.f },	// Center
+				{ 0.5f },			// Range
+				{ 10.3f, 15.3f },		// Speed
+				{ 0.05f, 0.15f },	// Scale
+				{ 0.5f, 1.0f }		// LifeTime
+			};
+			Desc.iNumInstances = 20;
+			Desc.strTexturePath = TEXT("Textures/RockmanDash2/Effects/CommonExplosion/Explosion%d.png");
+			Desc.iNumTextures = 8;
+
+			_float4 vHSV = {
+			m_fColor.fCur / 360.f,
+			0.7f, 1.f, 1.f
+			};
+
+			_vector vSimRGB = XMColorHSVToRGB(XMLoadFloat4(&vHSV));
+			XMStoreFloat4(&vHSV, vSimRGB);
+
+			Desc.vBlendColor = vHSV;
+			Desc.fBlendStrength = 0.3f;
+
+			pParticle->Create_Instancing(Desc);
+			pParticle->Transform().Set_Position(pEnemy->Transform().Get_PositionFloat3());
 		}
 	}
 }

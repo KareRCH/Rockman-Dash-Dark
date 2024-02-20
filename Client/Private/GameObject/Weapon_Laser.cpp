@@ -217,7 +217,7 @@ void CWeapon_Laser::OnCollision(CGameObject* pDst, const FContact* pContact)
 		if (CTeamAgentComp::ERelation::Hostile ==
 			CTeamAgentComp::Check_Relation(&TeamAgentComp(), &pEnemy->TeamAgentComp()))
 		{
-			pEnemy->Damage_HP(0.01f);
+			pEnemy->Damage_HP(0.08f);
 			_float fLength = XMVector3Length(XMLoadFloat3(&m_vContactPoint) - Transform().Get_PositionVector()).m128_f32[0];
 			_float fNewLength = XMVector3Length(XMLoadFloat3(&pContact->vContactPoint) - Transform().Get_PositionVector()).m128_f32[0];
 			if (fNewLength < fLength)

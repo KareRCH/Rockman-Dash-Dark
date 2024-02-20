@@ -475,6 +475,14 @@ void CGameInstance::Toggle_LockMouseCenter()
 	m_pInputDev->Toggle_LockMouseCenter();
 }
 
+void CGameInstance::OnOff_LockMouseCenter(_bool bIsOnOff)
+{
+	if (nullptr == m_pInputDev)
+		return;
+
+	m_pInputDev->OnOff_LockMouseCenter(bIsOnOff);
+}
+
 #pragma endregion
 
 
@@ -714,6 +722,14 @@ void CGameInstance::Play_BGM(const wstring& strGroupKey, const wstring& strSound
 	m_pSoundMgr->Play_BGM(strGroupKey, strSoundKey, fVolume);
 }
 
+void CGameInstance::Play_BGM_LoopRange(const wstring& strGroupKey, const wstring& strSoundKey, _float fVolume, _uint iStart, _uint iEnd)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Play_BGM_LoopRange(strGroupKey, strSoundKey, fVolume, iStart, iEnd);
+}
+
 void CGameInstance::Stop_Sound(CHANNELID eID)
 {
 	if (nullptr == m_pSoundMgr)
@@ -921,12 +937,27 @@ void CGameInstance::Tick_LevelMgr(const _float& fTimeDelta)
 	return m_pLevelMgr->Tick(fTimeDelta);
 }
 
-HRESULT CGameInstance::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel)
+HRESULT CGameInstance::Open_Level(_uint iCurrentLevelIndex, CLevel* pNewLevel, _bool bIsNotLoading)
 {
 	if (nullptr == m_pLevelMgr)
 		return E_FAIL;
 
-	return m_pLevelMgr->Open_Level(iCurrentLevelIndex, pNewLevel);
+
+	return m_pLevelMgr->Open_Level(iCurrentLevelIndex, pNewLevel, bIsNotLoading);
+}
+const _bool CGameInstance::IsLevelTransitioned()
+{
+	if (nullptr == m_pLevelMgr)
+		return false;
+
+	return m_pLevelMgr->IsLevelTransitioned();
+}
+const _bool CGameInstance::IsNotLoadingLevel()
+{
+	if (nullptr == m_pLevelMgr)
+		return false;
+
+	return m_pLevelMgr->IsNotLoadingLevelTransition();
 }
 #pragma endregion
 
@@ -1020,6 +1051,14 @@ void CGameInstance::Set_LevelTag(const wstring& strLevelTag)
 	m_pObjectMgr->Set_LevelTag(strLevelTag);
 }
 
+const wstring CGameInstance::Get_CurrentLevelTag()
+{
+	if (nullptr == m_pObjectMgr)
+		return wstring();
+
+	return m_pObjectMgr->Get_CurrentLevelTag();
+}
+
 HRESULT CGameInstance::Add_GameObject(CGameObject* pObj)
 {
 	if (nullptr == m_pObjectMgr)
@@ -1066,6 +1105,22 @@ vector<class CGameObject*> CGameInstance::Get_AllGameObjectFromLevel(const wstri
 		return vector<class CGameObject*>();
 
 	return m_pObjectMgr->Get_AllGameObjectFromLevel(strLevelTag);
+}
+
+void CGameInstance::Pause_ObjectsByCommonTag(const wstring& strCommonTag, _bool bJustTick)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->Pause_ObjectsByCommonTag(strCommonTag, bJustTick);
+}
+
+void CGameInstance::Resume_ObjectsByCommonTag(const wstring& strCommonTag, _bool bJustTick)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->Pause_ObjectsByCommonTag(strCommonTag, bJustTick);
 }
 
 void CGameInstance::Pause_ObjectsByLevelTag(const wstring& strLevelTag)
@@ -1326,6 +1381,22 @@ void CGameInstance::Set_VeiwportSize(_uint iResizeWidth, _uint iResizeHeight)
 		return;
 
 	m_pRenderMgr->Set_ViewportSize(iResizeWidth, iResizeHeight);
+}
+
+void CGameInstance::Set_ShadowViewMatrix(_float4x4 Value)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Set_ShadowViewMatrix(Value);
+}
+
+void CGameInstance::Set_ShadowProjMatrix(_float4x4 Value)
+{
+	if (nullptr == m_pRenderMgr)
+		return;
+
+	m_pRenderMgr->Set_ShadowProjMatrix(Value);
 }
 
 #pragma endregion

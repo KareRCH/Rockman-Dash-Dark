@@ -31,11 +31,18 @@ private:
 public:
     GETSET_2(FGauge, m_fHP, HP, GET_C_REF, SET_C_REF)
     void Access_HP(EMode eMode, FGauge& fHP);
+    void Access_MainWeapon(EMode eMode, EMainWeapon& Value);
+    void Access_SubWeapon(EMode eMode, ESubWeapon& Value);
+    void Access_IsCanUseSubWeapons(EMode eMode, _bool& Value);
 
 private:    // 현재 상태
     FGauge          m_fHP = FGauge(100.f, true);
     FGauge          m_fSubWeapon_Main;
     FGauge          m_fSubWeapon_Usage;
+
+    _bool			m_bIsCanUseSubWeapons = { false };
+    EMainWeapon     m_eMainWeapon = { EMainWeapon::None };
+    ESubWeapon      m_eSubWeapon = { ESubWeapon::ThrowArm };
 
     _int            m_iSubWeapon_Equipped = { -1 };
     _int            m_iHeadPart_Equipped = { -1 };

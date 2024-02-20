@@ -153,13 +153,18 @@ HRESULT CReaverBot_Balfura::Render()
     {
         auto pEffectComp = m_pModelComp->EffectComp();
 
+        _float4 vColor = {
+            1.f, 1.f, 1.f, 1.f
+        };
+
+        pEffectComp->Bind_RawValue("g_vColorAdd", VPCast(&vColor), sizeof(_float4));
         pEffectComp->Bind_RawValue("g_fColorAdd_Strength", VPCast(&m_fHitStrength), sizeof(_float));
 
         m_pModelComp->Render();
     }
 
 #ifdef _DEBUG
-    GI()->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
+    m_pGI->Add_DebugEvent(MakeDelegate(m_pColliderComp, &CColliderComponent::Render));
 #endif
 
     return S_OK;
@@ -453,6 +458,7 @@ void CReaverBot_Balfura::ActState_Dead(const _float& fTimeDelta)
     if (m_State_Act.IsState_Entered())
     {
         m_pModelComp->Set_Animation(0, 1.f, true);
+        m_bIsDead = true;
     }
 
     if (m_State_Act.Can_Update())

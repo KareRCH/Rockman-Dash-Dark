@@ -68,6 +68,14 @@ HRESULT CCollisionObject::Render()
 	return S_OK;
 }
 
+void CCollisionObject::BeginPlay()
+{
+	SUPER::BeginPlay();
+
+	// 필드 유닛 태그를 달아 일시정지에 씀
+	Add_Tag(EGObjTag::Common, TEXT("Field"));
+}
+
 
 void CCollisionObject::Free()
 {

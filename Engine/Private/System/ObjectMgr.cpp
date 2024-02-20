@@ -173,6 +173,11 @@ void CObjectMgr::Set_LevelTag(const wstring& strLevelTag)
 	m_strLevelTag = strLevelTag;
 }
 
+const wstring CObjectMgr::Get_CurrentLevelTag()
+{
+	return m_strLevelTag;
+}
+
 HRESULT CObjectMgr::Add_GameObject(CGameObject* pObj)
 {
 	if (nullptr == pObj)
@@ -371,6 +376,42 @@ vector<CGameObject*> CObjectMgr::Get_AllGameObjectFromLevel(const wstring& strLe
 	return vecObjects;
 }
 
+void CObjectMgr::Pause_ObjectsByCommonTag(const wstring& strCommonTag, _bool bJustTick)
+{
+	for (auto iter = m_vecGameObjects.begin(); iter != m_vecGameObjects.end(); ++iter)
+	{
+		if (nullptr == *iter)
+			continue;
+
+		if ((*iter)->Has_Tag(EGObjTag::Common, strCommonTag))
+		{
+			if (bJustTick)
+				(*iter)->TurnOn_State(EGObjectState::Tick_Pause);
+			else
+				(*iter)->TurnOn_State(EGObjectState::Pause);
+		}
+			
+	}
+}
+
+void CObjectMgr::Resume_ObjectsByCommonTag(const wstring& strCommonTag, _bool bJustTick)
+{
+	for (auto iter = m_vecGameObjects.begin(); iter != m_vecGameObjects.end(); ++iter)
+	{
+		if (nullptr == *iter)
+			continue;
+
+		if ((*iter)->Has_Tag(EGObjTag::Common, strCommonTag))
+		{
+			if (bJustTick)
+				(*iter)->TurnOff_State(EGObjectState::Tick_Pause);
+			else
+				(*iter)->TurnOff_State(EGObjectState::Pause);
+		}
+			
+	}
+}
+
 void CObjectMgr::Pause_ObjectsByLevelTag(const wstring& strLevelTag)
 {
 	for (auto iter = m_vecGameObjects.begin(); iter != m_vecGameObjects.end(); ++iter)
@@ -495,7 +536,7 @@ void CObjectMgr::RegistToTick_GameObjects()
 	// 리스트에 저장, Pause가 아닌 객체만 Tick을 작동시킴
 	copy_if(m_vecGameObjects.begin(), m_vecGameObjects.end(), back_inserter(m_listTickObjects),
 		[](const CGameObject* pObj) {
-			return (!pObj->IsState(EGObjectState::Pause));
+			return (!pObj->IsState(EGObjectState::Pause) && !pObj->IsState(EGObjectState::Tick_Pause));
 		});
 
 	// Tick 우선도 기반 정렬
