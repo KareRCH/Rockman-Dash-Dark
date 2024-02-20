@@ -1,6 +1,6 @@
 #include "System/TextureMgr.h"
 
-#include "System/MultiStateTexture.h"
+#include "System/Texture.h"
 
 #include "DirectXTex.h"
 
@@ -78,15 +78,6 @@ HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _uint iNumTe
 	HRESULT hr = S_OK;
 
 	{
-		//lock_guard<mutex> lock(m_mapMutex);			// 이 코드블록만 보호한다.
-
-		size_t iSlash = strFilePath.find_last_of(L"/") + 1;
-		wstring strPath = strFilePath.substr(0, iSlash);
-		wstring strFileName = strFilePath.substr(iSlash);
-
-		size_t iPeriod = strFileName.find_first_of(L".");
-		wstring strName = strFileName.substr(0, iPeriod);
-
 		auto iter = m_mapTextures.find(strFilePath);
 
 		// 텍스처가 없으니 새로만든다.
@@ -106,42 +97,6 @@ HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const _uint iNumTe
 			pTexture = iter->second;
 		}
 	}
-
-	return hr;
-}
-
-HRESULT CTextureMgr::Load_Texture(const wstring& strFilePath, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent)
-{
-	//CTexture* pTexture;
-	HRESULT hr = S_OK;
-
-	// 파일 존재여부 확인, 잘못된 경로가 있다면 오류 반환
-	//wifstream file(pFilePath);
-	//FALSE_CHECK_RETURN(!file.good(), E_FAIL);
-
-	// 텍스처키로 먼저 텍스처가 있는지 찾아본 후 없다면 새로 만들고.
-	// 아니면 기존의 텍스처 객체에 스테이트 키를 추가한다.
-
-	// 뮤텍스를 통해 m_mapTexture에 객체를 제조하는 것에 대해 보호한다.
-	//{
-	//	//lock_guard<mutex> lock(m_mapMutex);			// 이 코드블록만 보호한다.
-
-	//	auto iter = m_mapTextures.find(strGroupKey);
-
-	//	// 텍스처가 없으니 새로만든다.
-	//	if (iter == m_mapTextures.end())
-	//	{
-	//		pTexture = CMultiStateTexture::Create({ m_pDevice, m_pDeviceContext });
-	//		m_mapTextures.emplace(strGroupKey, pTexture);
-	//	}
-	//	// 텍스처가 있으니 기존에 것에 추가한다.
-	//	else
-	//	{
-	//		pTexture = iter->second;
-	//	}
-	//}
-
-	//hr = pTexture->Insert_Texture(m_strMainPath + strFilePath, bPermanent);
 
 	return hr;
 }

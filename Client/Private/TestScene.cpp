@@ -29,7 +29,7 @@ HRESULT CTestScene::Initialize()
     GI()->Add_GameObject(pSkyBox = CSkyBox::Create());
     auto pModel = pSkyBox->Get_Component<CCylinderModelComp>(TEXT("ModelComp"));
     pModel->VIBufferComp()->Create_Buffer({10});
-    pModel->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/SkyBox/IceSea.dds"), 1);
+    pModel->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/SkyBox/IceSea.dds"), 1);
     pModel->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxCube.hlsl"), SHADER_VTX_CUBETEX::Elements, SHADER_VTX_CUBETEX::iNumElements);
 
     return S_OK;

@@ -227,7 +227,7 @@ HRESULT CUI_Player::Initialize_Component()
     m_pImage[ENEMY_SPOT]->Set_Mode(CPlaneModelComp::ORTHO);
     m_pImage[ENEMY_SPOT]->Transform().Set_Position(-560.f, -280.f, -1.f);
     m_pImage[ENEMY_SPOT]->Transform().Set_Scale(60.f * 1.5f, 72.f * 1.5f, 1.f);
-    m_pImage[ENEMY_SPOT]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/EnemySpot/EnemySpot%d.png"), 12);
+    m_pImage[ENEMY_SPOT]->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/EnemySpot/EnemySpot%d.png"), 12);
     m_pImage[ENEMY_SPOT]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[ENEMY_SPOT]->Reset_ActivePass();
     m_pImage[ENEMY_SPOT]->Set_ActivePass(1);
@@ -239,7 +239,7 @@ HRESULT CUI_Player::Initialize_Component()
     m_pImage[HP_CONTAINER]->Set_Mode(CPlaneModelComp::ORTHO);
     m_pImage[HP_CONTAINER]->Transform().Set_Position(-560.f, -139.f, 1.f);
     m_pImage[HP_CONTAINER]->Transform().Set_Scale(36.f * 1.5f, 116.f * 1.5f, 1.f);
-    m_pImage[HP_CONTAINER]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/HP_Container.png"), 1);
+    m_pImage[HP_CONTAINER]->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/HP_Container.png"), 1);
     m_pImage[HP_CONTAINER]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[HP_CONTAINER]->Reset_ActivePass();
     m_pImage[HP_CONTAINER]->Set_ActivePass(1);
@@ -253,7 +253,7 @@ HRESULT CUI_Player::Initialize_Component()
     m_pImage[HP_FRONT]->Set_Mode(CPlaneModelComp::ORTHO);
     m_pImage[HP_FRONT]->Transform().Set_Position(-560.f, -133.f, 0.f);
     m_pImage[HP_FRONT]->Transform().Set_Scale(12.f * 1.5f, 56.f * 1.5f, 1.f);
-    m_pImage[HP_FRONT]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/HP_Bar.png"), 1);
+    m_pImage[HP_FRONT]->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/HP_Bar.png"), 1);
     m_pImage[HP_FRONT]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[HP_FRONT]->Reset_ActivePass();
     m_pImage[HP_FRONT]->Set_ActivePass(1);
@@ -266,7 +266,7 @@ HRESULT CUI_Player::Initialize_Component()
     m_pImage[SUB_CONTAINER]->Set_Mode(CPlaneModelComp::ORTHO);
     m_pImage[SUB_CONTAINER]->Transform().Set_Position(560.f, -160.f, 0.f);
     m_pImage[SUB_CONTAINER]->Transform().Set_Scale(44.f * 1.5f, 231.f * 1.5f, 1.f);
-    m_pImage[SUB_CONTAINER]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/SubWeapon_Container.png"), 1);
+    m_pImage[SUB_CONTAINER]->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/SubWeapon_Container.png"), 1);
     m_pImage[SUB_CONTAINER]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[SUB_CONTAINER]->Reset_ActivePass();
     m_pImage[SUB_CONTAINER]->Set_ActivePass(1);
@@ -279,7 +279,7 @@ HRESULT CUI_Player::Initialize_Component()
     m_pImage[SUB_USAGE]->Set_Mode(CPlaneModelComp::ORTHO);
     m_pImage[SUB_USAGE]->Transform().Set_Position(548.f, -137.f, 0.f);
     m_pImage[SUB_USAGE]->Transform().Set_Scale(8.f * 1.5f, 140.f * 1.5f, 1.f);
-    m_pImage[SUB_USAGE]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/SubWeapon_Usage.png"), 1);
+    m_pImage[SUB_USAGE]->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/SubWeapon_Usage.png"), 1);
     m_pImage[SUB_USAGE]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[SUB_USAGE]->Reset_ActivePass();
     m_pImage[SUB_USAGE]->Set_ActivePass(1);
@@ -292,7 +292,7 @@ HRESULT CUI_Player::Initialize_Component()
     m_pImage[SUB_MAIN]->Set_Mode(CPlaneModelComp::ORTHO);
     m_pImage[SUB_MAIN]->Transform().Set_Position(570.f, -137.f, 0.f);
     m_pImage[SUB_MAIN]->Transform().Set_Scale(12.f * 1.5f, 140.f * 1.5f, 1.f);
-    m_pImage[SUB_MAIN]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/SubWeapon_Main.png"), 1);
+    m_pImage[SUB_MAIN]->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/SubWeapon_Main.png"), 1);
     m_pImage[SUB_MAIN]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[SUB_MAIN]->Reset_ActivePass();
     m_pImage[SUB_MAIN]->Set_ActivePass(1);
@@ -306,7 +306,7 @@ HRESULT CUI_Player::Initialize_Component()
     m_pImage[THROW]->Set_Mode(CPlaneModelComp::ORTHO);
     m_pImage[THROW]->Transform().Set_Position(560.f, -220.f, 0.f);
     m_pImage[THROW]->Transform().Set_Scale(60.f * 1.5f, 112.f * 1.5f, 1.f);
-    m_pImage[THROW]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/ThrowWeapon%d.png"), 2);
+    m_pImage[THROW]->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/Gauge/ThrowWeapon%d.png"), 2);
     m_pImage[THROW]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[THROW]->Reset_ActivePass();
     m_pImage[THROW]->Set_ActivePass(1);

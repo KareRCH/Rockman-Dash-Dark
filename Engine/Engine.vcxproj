@@ -338,7 +338,6 @@
     <ClInclude Include="Public\System\LevelMgr.h" />
     <ClInclude Include="Public\System\ObjectMgr.h" />
     <ClInclude Include="Public\System\ModelMgr.h" />
-    <ClInclude Include="Public\System\MultiStateTexture.h" />
     <ClInclude Include="Public\System\CustomFont.h" />
     <ClInclude Include="Public\System\ParticleMgr.h" />
     <ClInclude Include="Public\System\PhysicsMgr.h" />
@@ -436,7 +435,6 @@
     <ClCompile Include="Private\System\LevelMgr.cpp" />
     <ClCompile Include="Private\System\ObjectMgr.cpp" />
     <ClCompile Include="Private\System\ModelMgr.cpp" />
-    <ClCompile Include="Private\System\MultiStateTexture.cpp" />
     <ClCompile Include="Private\System\CustomFont.cpp" />
     <ClCompile Include="Private\System\ParticleMgr.cpp" />
     <ClCompile Include="Private\System\PhysicsMgr.cpp" />

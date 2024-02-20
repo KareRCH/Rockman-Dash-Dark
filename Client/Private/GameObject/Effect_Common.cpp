@@ -112,7 +112,7 @@ HRESULT CEffect_Common::Initialize_Component()
 
 	m_pPlaneModelComp->Set_Mode(CPlaneModelComp::PERSP);
 	m_pPlaneModelComp->Transform().Set_Scale(1.3f, 1.3f, 1.3f);
-	m_pPlaneModelComp->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/Effects/CommonExplosion/Explosion%d.png"), 8);
+	m_pPlaneModelComp->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/Effects/CommonExplosion/Explosion%d.png"), 8);
 	m_pPlaneModelComp->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
 
 	return S_OK;

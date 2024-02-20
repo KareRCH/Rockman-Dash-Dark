@@ -189,7 +189,7 @@ HRESULT CUI_Dialog::Initialize_Component()
 		return E_FAIL;
 
 	m_pPlaneModelComp->Set_Mode(CPlaneModelComp::ORTHO);
-	m_pPlaneModelComp->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Dialog/Dialog-%d.png"), 9);
+	m_pPlaneModelComp->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/Dialog/Dialog-%d.png"), 9);
 	m_pPlaneModelComp->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
 
 	return S_OK;

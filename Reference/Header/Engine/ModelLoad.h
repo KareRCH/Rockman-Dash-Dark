@@ -13,6 +13,7 @@ struct TModelHeader
 	_uint_16 iNumMaterials;
 	_uint_16 iNumBones;
 	_uint_16 iNumAnims;
+	//_bool	 bIsOnlyAnims;	// 애니메이션만 로드
 };
 
 //---------------메쉬

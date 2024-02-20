@@ -78,7 +78,7 @@ HRESULT CMaterialComponent::Load_Materials(EModelGroupIndex eGroupIndex, const w
 		if (!pMaterialData->strTexture[i].empty())
 		{
 			m_arrTextureComps[i] = CTextureComponent::Create();
-			if (FAILED(m_arrTextureComps[i]->Bind_Texture(pMaterialData->strTexture[i], 1, false)))
+			if (FAILED(m_arrTextureComps[i]->Load_Texture(pMaterialData->strTexture[i], 1, false)))
 			{
 				// 로드 실패하면 죽이기
 				Safe_Release(m_arrTextureComps[i]);

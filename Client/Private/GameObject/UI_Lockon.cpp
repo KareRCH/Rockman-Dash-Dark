@@ -150,7 +150,7 @@ HRESULT CUI_Lockon::Initialize_Component()
         return E_FAIL;
 
     m_pLockon_Round_Image->Set_Mode(CPlaneModelComp::PERSP);
-    m_pLockon_Round_Image->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Lockon_Round.png"));
+    m_pLockon_Round_Image->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/Lockon_Round.png"));
     m_pLockon_Round_Image->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pLockon_Round_Image->Reset_ActivePass();
     m_pLockon_Round_Image->Set_ActivePass(1);
@@ -159,7 +159,7 @@ HRESULT CUI_Lockon::Initialize_Component()
         return E_FAIL;
 
     m_pLockon_Arrow_Image->Set_Mode(CPlaneModelComp::PERSP);
-    m_pLockon_Arrow_Image->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/Lockon_Arrow_%d.png"), 2);
+    m_pLockon_Arrow_Image->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/Lockon_Arrow_%d.png"), 2);
     m_pLockon_Arrow_Image->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pLockon_Arrow_Image->Reset_ActivePass();
     m_pLockon_Arrow_Image->Set_ActivePass(1);

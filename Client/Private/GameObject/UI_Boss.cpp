@@ -179,7 +179,7 @@ HRESULT CUI_Boss::Initialize_Component()
     m_pImage[HP_CONTAINER]->Set_Mode(CPlaneModelComp::ORTHO);
     m_pImage[HP_CONTAINER]->Transform().Set_Position(360.f, 300.f, 1.f);
     m_pImage[HP_CONTAINER]->Transform().Set_Scale(512.f * 1.f, 64.f * 1.f, 1.f);
-    m_pImage[HP_CONTAINER]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/BossHP/BossHP_Container.png"), 1);
+    m_pImage[HP_CONTAINER]->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/BossHP/BossHP_Container.png"), 1);
     m_pImage[HP_CONTAINER]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[HP_CONTAINER]->Reset_ActivePass();
     m_pImage[HP_CONTAINER]->Set_ActivePass(1);
@@ -193,7 +193,7 @@ HRESULT CUI_Boss::Initialize_Component()
     m_pImage[HP_BAR]->Set_Mode(CPlaneModelComp::ORTHO);
     m_pImage[HP_BAR]->Transform().Set_Position(392.f, 302.f, 1.f);
     m_pImage[HP_BAR]->Transform().Set_Scale(320.f * 1.f, 20.f * 1.f, 1.f);
-    m_pImage[HP_BAR]->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/UI/BossHP/BossHP_Bar.png"), 1);
+    m_pImage[HP_BAR]->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/UI/BossHP/BossHP_Bar.png"), 1);
     m_pImage[HP_BAR]->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pImage[HP_BAR]->Reset_ActivePass();
     m_pImage[HP_BAR]->Set_ActivePass(1);

@@ -33,7 +33,8 @@ HRESULT CReaverBot_Horokko::Initialize_Prototype()
 	m_pModelComp->Transform().Set_RotationFixedY(XMConvertToRadians(180.f));
 	m_pModelComp->Transform().Set_Scale(_float3(0.08f, 0.08f, 0.08f));
 	m_pModelComp->Bind_Effect(L"Runtime/FX_ModelAnim.hlsl", SHADER_VTX_SKINMODEL::Elements, SHADER_VTX_SKINMODEL::iNumElements);
-	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Horokko/Horokko.amodel");
+	//m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Horokko/Horokko.amodel");
+	m_pModelComp->Bind_Model(CCommonModelComp::TYPE_ANIM, EModelGroupIndex::Permanent, L"Model/Character/Reaverbots/Horokko/N_Idle01_1.amodel");
 	m_pModelComp->Set_Animation(0, 1.f, true);
 
 	FAILED_CHECK_RETURN(Add_Component(L"ColliderComp", m_pColliderComp = CColliderComponent::Create()), E_FAIL);

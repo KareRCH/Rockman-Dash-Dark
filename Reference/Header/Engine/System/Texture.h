@@ -4,86 +4,6 @@
 
 BEGIN(Engine)
 
-class FTextureData final
-{
-	THIS_CLASS(FTextureData)
-private:
-	explicit FTextureData() = default;
-	explicit FTextureData(const FTextureData& rhs) = default;
-public:
-	~FTextureData() = default;
-
-public:
-	static	FTextureData* Create(ID3D11Texture2D* const pTexture, ID3D11ShaderResourceView* const pTextureView,
-		const _bool bPermanent)
-	{
-		ThisClass* pInstance = new ThisClass();
-
-		if (FAILED(pInstance->Load(pTexture, pTextureView)))
-		{
-			Safe_Delete(pInstance);
-
-			MSG_BOX("Texture Create Failed");
-			return nullptr;
-		}
-
-		pInstance->bPermanent = bPermanent;
-
-		return pInstance;
-	}
-
-	// 완전 삭제용, 완전 해제시에만 사용할 것.
-	void	Free()
-	{
-		UnLoad();
-		delete this;
-	}
-
-	// 메모리만 해제할 때 사용.
-	void	UnLoad()
-	{
-		Safe_Release(pTexture);
-		Safe_Release(pSRV);
-		bLoaded = false;
-	}
-
-	// 로드시 사용, 로드된 상태일 시 로드하지 않는다.
-	HRESULT	Load(ID3D11Texture2D* _pTexture, ID3D11ShaderResourceView* _pTextureView)
-	{
-		if (bLoaded)
-		{
-			// 들어온 정보를 자동으로 해제한다.
-			Safe_Release(_pTexture);
-			Safe_Release(_pTextureView);
-
-			return E_FAIL;
-		}
-
-		Safe_Release(pTexture);
-		Safe_Release(pSRV);
-
-		pTexture = _pTexture;
-		pSRV = _pTextureView;
-
-		// 둘중 하나가 nullptr이면 로드되지 않았음.
-		if (pTexture && pSRV)
-			bLoaded = true;
-
-		return S_OK;
-	}
-
-	void Set_Permanent(const _bool value) { bPermanent = value; }
-	const _bool& Is_Loaded() const { return bLoaded; }
-	ID3D11Texture2D* const Get_Texture() { return pTexture; }
-	ID3D11ShaderResourceView* const Get_SRV() { return pSRV; }
-
-private:
-	ID3D11Texture2D*			pTexture = nullptr;			// CPU용 텍스처
-	ID3D11ShaderResourceView*	pSRV = nullptr;				// 셰이더 샘플러
-	_bool						bLoaded = false;			// 로드된 텍스처 체크용
-	_bool						bPermanent = false;			// 영구 유지 텍스처 설정, 전역으로 사용되는 용도
-};
-
 /// <summary>
 /// 텍스처 데이터 저장용 클래스
 /// 추상클래스
@@ -112,25 +32,25 @@ protected:
 
 public:
 	// 메모리만 해제할 때 사용.
-	void	UnLoad();
+	void	Unload();
 	HRESULT	Load(ID3D11ShaderResourceView* _pSRV);
 	
 public:
-	virtual HRESULT						Insert_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent);
-	void	Load_Complete() { m_bLoaded = true; }
+	virtual HRESULT		Insert_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent);
+	void				Load_Complete() { m_bIsLoaded = true; }
 
 public:
-	void								Set_Permanent(const _bool value) { m_bPermanent = value; }
-	const _bool&						Is_Loaded() const { return m_bLoaded; }
+	void								Set_Permanent(const _bool value) { m_bIsPermanent = value; }
+	const _bool&						Is_Loaded() const { return m_bIsLoaded; }
 	const _uint&						Get_TextureCount() const { return m_iNumTextures;}
 	ID3D11ShaderResourceView* const		Get_SRV(const _uint iIndex);
 	HRESULT								Reference_SRVs(vector<ComPtr<ID3D11ShaderResourceView>>& RefSRVs);
 
 private:
-	_bool										m_bLoaded = false;			// 로드된 텍스처 체크용
-	_bool										m_bPermanent = false;		// 영구 유지 텍스처 설정, 전역으로 사용되는 용도
+	_bool										m_bIsLoaded = false;			// 로드된 텍스처 체크용
+	_bool										m_bIsPermanent = false;		// 영구 유지 텍스처 설정, 전역으로 사용되는 용도
 	_uint										m_iNumTextures = 0;
-	vector<ComPtr<ID3D11ShaderResourceView>>	m_vecSRV;					// 셰이더 샘플러
+	vector<ComPtr<ID3D11ShaderResourceView>>	m_SRVs;					// 셰이더 샘플러
 
 };
 

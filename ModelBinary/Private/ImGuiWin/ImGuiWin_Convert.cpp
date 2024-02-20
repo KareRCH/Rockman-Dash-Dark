@@ -92,6 +92,12 @@ void CImGuiWin_Convert::Tick(const _float& fTimeDelta)
         
     }
 
+    ImGui::SameLine();
+    if (ImGui::Checkbox(u8"애니메이션만", &m_bIsOnlyAnims))
+    {
+
+    }
+
     // 변환 완료 메시지
     {
         if (m_bShowComplete) {
@@ -616,6 +622,7 @@ HRESULT CImGuiWin_Convert::Save_Binary(const wstring& strPath, class CModelLoad*
         Header.iNumMaterials = Cast<_uint_16>(iNumMaterials);
         Header.iNumBones = Cast<_uint_16>(iNumBones);
         Header.iNumAnims = Cast<_uint_16>(iNumAnims);
+        //Header.bIsOnlyAnims = m_bIsOnlyAnims;
 
         ofs.write(ReCast<const _char*>(&Header), sizeof(TModelHeader));
 

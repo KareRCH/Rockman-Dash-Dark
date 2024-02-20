@@ -32,21 +32,21 @@ void CTexture::Free()
 {
 }
 
-void CTexture::UnLoad()
+void CTexture::Unload()
 {
-	for (auto& Texture : m_vecSRV)
+	for (auto& Texture : m_SRVs)
 		Texture.Reset();
-	m_vecSRV.clear();
+	m_SRVs.clear();
 	m_iNumTextures = 0;
-	m_bLoaded = false;
+	m_bIsLoaded = false;
 }
 
 HRESULT CTexture::Load(ID3D11ShaderResourceView* _pSRV)
 {
-	if (m_bLoaded || _pSRV == nullptr)
+	if (m_bIsLoaded || _pSRV == nullptr)
 		return E_FAIL;
 
-	m_vecSRV.push_back(_pSRV);
+	m_SRVs.push_back(_pSRV);
 
 	return S_OK;
 }
@@ -102,7 +102,7 @@ HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const _uint iNumTex
 		return E_FAIL;
 	}
 
-	m_vecSRV.reserve(iNumTextures);
+	m_SRVs.reserve(iNumTextures);
 	for (_uint i = 0; i < iNumTextures; i++)
 	{
 		// 텍스처 로드
@@ -112,7 +112,7 @@ HRESULT CTexture::Insert_Texture(const wstring& strFilePath, const _uint iNumTex
 		size_t iSubstrPoint = vecStrFullPath[i].find_last_of(TEXT("."));
 		wstring strEXT = vecStrFullPath[i].substr(iSubstrPoint);
 
-		if (strEXT == TEXT(".dds"))
+		if (strEXT.compare(TEXT(".dds")))
 		{
 			hr = LoadFromDDSFile((vecStrFullPath[i]).c_str(), DDS_FLAGS_NONE, nullptr, image);
 			if (FAILED(hr))
@@ -173,7 +173,7 @@ ID3D11ShaderResourceView* const CTexture::Get_SRV(const _uint iIndex)
 	if (iIndex < 0 || iIndex >= m_iNumTextures)
 		return nullptr;
 
-	return m_vecSRV[iIndex].Get();
+	return m_SRVs[iIndex].Get();
 }
 
 HRESULT CTexture::Reference_SRVs(vector<ComPtr<ID3D11ShaderResourceView>>& RefSRVs)
@@ -182,7 +182,7 @@ HRESULT CTexture::Reference_SRVs(vector<ComPtr<ID3D11ShaderResourceView>>& RefSR
 		return E_FAIL;
 
 	RefSRVs.reserve(m_iNumTextures);
-	RefSRVs = m_vecSRV;
+	RefSRVs = m_SRVs;
 
 	return S_OK;
 }

@@ -6,7 +6,7 @@
 
 CTextureComponent::CTextureComponent(const CTextureComponent& rhs)
     : Base(rhs)
-	, m_pTextureMgr(rhs.m_pTextureMgr), m_vecSRVs(rhs.m_vecSRVs)
+	, m_pTextureMgr(rhs.m_pTextureMgr), m_SRVs(rhs.m_SRVs)
 {
 	Safe_AddRef(m_pTextureMgr);
 }
@@ -62,7 +62,7 @@ ID3D11ShaderResourceView* CTextureComponent::Get_ShaderResourseView(const _uint 
 	if (iIndex < 0 || iIndex >= m_iNumTextures)
 		return nullptr;
 
-	return m_vecSRVs[iIndex].Get();
+	return m_SRVs[iIndex].Get();
 }
 
 HRESULT CTextureComponent::Get_ShaderResourceViews(ID3D11ShaderResourceView** Arr, const _uint iNumTextures)
@@ -72,12 +72,12 @@ HRESULT CTextureComponent::Get_ShaderResourceViews(ID3D11ShaderResourceView** Ar
 		return E_FAIL;
 
 	for (_uint i = 0; i < iNumTextures; i++)
-		Arr[i] = m_vecSRVs[i].Get();
+		Arr[i] = m_SRVs[i].Get();
 
 	return S_OK;
 }
 
-HRESULT CTextureComponent::Bind_Texture(const wstring& strFilePath, const _uint iNumTextures, _bool bUseMainPath)
+HRESULT CTextureComponent::Load_Texture(const wstring& strFilePath, const _uint iNumTextures, _bool bUseMainPath)
 {
 	if (iNumTextures == 0)
 	{
@@ -96,20 +96,20 @@ HRESULT CTextureComponent::Bind_Texture(const wstring& strFilePath, const _uint 
 	}
 
 	// 찾았는데 없으면 치명적인 오류
-	if (FAILED(m_pTextureMgr->Reference_SRVs(strFilePath, m_vecSRVs)))
+	if (FAILED(m_pTextureMgr->Reference_SRVs(strFilePath, m_SRVs)))
 		return E_FAIL;
 
 	// 성공시 텍스처 개수를 업데이트
-	m_iNumTextures = Cast<_uint>(m_vecSRVs.size());
+	m_iNumTextures = Cast<_uint>(m_SRVs.size());
 
 	return S_OK;
 }
 
-HRESULT CTextureComponent::Unbind_Texture()
+HRESULT CTextureComponent::Unload_Texture()
 {
-	for (auto& SRV : m_vecSRVs)
+	for (auto& SRV : m_SRVs)
 		SRV.Reset();
-	m_vecSRVs.clear();
+	m_SRVs.clear();
 	m_iNumTextures = 0;
 
 	return S_OK;
@@ -120,7 +120,7 @@ HRESULT CTextureComponent::Bind_SRVToEffect(CEffectComponent* pEffect, const _ch
 	if (iIndex < 0 || iIndex >= m_iNumTextures)
 		return E_FAIL;
 
-	return pEffect->Bind_SRV(pTextureSymbolName, m_vecSRVs[iIndex].Get());
+	return pEffect->Bind_SRV(pTextureSymbolName, m_SRVs[iIndex].Get());
 }
 
 HRESULT CTextureComponent::Link_TextureManager()

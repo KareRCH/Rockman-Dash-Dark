@@ -115,7 +115,7 @@ HRESULT CLoadingScreen::Initialize_Component()
     HRESULT hr = 0;
     m_pPlaneModelComp->Set_CurrentTextureIndex(0);
     m_pPlaneModelComp->Set_Mode(CPlaneModelComp::ORTHO);
-    hr = m_pPlaneModelComp->TextureComp()->Bind_Texture(TEXT("Textures/RockmanDash2/Images/Splash.png"));
+    hr = m_pPlaneModelComp->TextureComp()->Load_Texture(TEXT("Textures/RockmanDash2/Images/Splash.png"));
     hr = m_pPlaneModelComp->EffectComp()->Bind_Effect(TEXT("Runtime/FX_VtxPosTexAlpha.hlsl"), SHADER_VTX_TEXCOORD::Elements, SHADER_VTX_TEXCOORD::iNumElements);
     m_pPlaneModelComp->Reset_ActivePass();
     m_pPlaneModelComp->Set_ActivePass(1);

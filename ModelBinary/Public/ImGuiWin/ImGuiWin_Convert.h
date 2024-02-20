@@ -63,6 +63,7 @@ private:
 	const aiScene*			m_pAiScene = { nullptr };
 
 	_bool					m_bShowComplete = false;
+	_bool					m_bIsOnlyAnims = { false };
 
 
 };

@@ -423,9 +423,6 @@
     <ClInclude Include="Public\System\ObjectMgr.h">
       <Filter>01. System\01. Manager\02. GamePipeline\02. ObjectMgr</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System\MultiStateTexture.h">
-      <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
-    </ClInclude>
     <ClInclude Include="Public\System\Texture.h">
       <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
     </ClInclude>
@@ -772,9 +769,6 @@
     </ClCompile>
     <ClCompile Include="Private\System\ObjectMgr.cpp">
       <Filter>01. System\01. Manager\02. GamePipeline\02. ObjectMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\System\MultiStateTexture.cpp">
-      <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>
     </ClCompile>
     <ClCompile Include="Private\System\Texture.cpp">
       <Filter>01. System\01. Manager\01. Resource\02. Texture</Filter>

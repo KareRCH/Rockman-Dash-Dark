@@ -315,7 +315,7 @@ HRESULT CTerrainModelComp::Bind_Texture(TEXTURE eType, const wstring& strFileNam
     if (!m_pTextureComps[eType])
         return E_FAIL;
 
-    if (FAILED(m_pTextureComps[eType]->Bind_Texture(strFileName, iNumTextures)))
+    if (FAILED(m_pTextureComps[eType]->Load_Texture(strFileName, iNumTextures)))
         return E_FAIL;
 
     switch (eType)
@@ -336,5 +336,5 @@ HRESULT CTerrainModelComp::Unbind_Texture(TEXTURE eType)
     if (!m_pTextureComps[eType])
         return E_FAIL;
 
-    return m_pTextureComps[eType]->Unbind_Texture();
+    return m_pTextureComps[eType]->Unload_Texture();
 }

@@ -50,9 +50,9 @@ public:
 
 public:
 	// 텍스처를 바인드한다. 동시에 텍스처 매니저에 등록도 한다. [완]
-	HRESULT Bind_Texture(const wstring& strFilePath, const _uint iNumTextures = 1, _bool bUseMainPath = true);
+	HRESULT Load_Texture(const wstring& strFilePath, const _uint iNumTextures = 1, _bool bUseMainPath = true);
 	// 텍스처 정리하기 [완]
-	HRESULT Unbind_Texture();
+	HRESULT Unload_Texture();
 
 public:
 	// 이펙트에 텍스처 바인드 [완]
@@ -69,7 +69,7 @@ private:
 	class CTextureMgr*		m_pTextureMgr = { nullptr };	// 전역 텍스처 리소스 관리에 쓰인다.
 
 	_uint					m_iNumTextures = 0;
-	SShaderResourceViews	m_vecSRVs = { nullptr };		// 실제 렌더링 되는 텍스처의 주소이다.
+	SShaderResourceViews	m_SRVs = { nullptr };		// 실제 렌더링 되는 텍스처의 주소이다.
 };
 
 END

@@ -44,16 +44,13 @@ public:
 	ID3D11ShaderResourceView*	Find_SRV(const wstring& strTextureKey, const _uint iIndex);
 	HRESULT						Reference_SRVs(const wstring& strTextureKey, vector<ComPtr<ID3D11ShaderResourceView>>& RefSRVs);
 	HRESULT						Load_Texture(const wstring& strFilePath, const _uint iNumTextures, const _bool bPermanent, _bool bUseMainPath);
-	HRESULT						Load_Texture(const wstring& strFilePath, const wstring& strGroupKey, const wstring& strTextureKey, const _bool bPermanent);
 
 public:
-	//GETSET_1(mutex, m_mapMutex, Mutex, GET_PTR)
 	GETSET_1(wstring, m_strMainPath, MainPath, GET_C_REF)
 
 private:
 	wstring						m_strMainPath = { L"" };
 	map<wstring, CTexture*>		m_mapTextures;				// 텍스처 정보 저장, 패스 이름이 키값. 이제 텍스처는 단일 정보만을 가짐. 여기서는 분류를 하지 않음.
-	//mutex						m_mapMutex;					// 텍스처 객체 제조시 동기화
 
 };
 
